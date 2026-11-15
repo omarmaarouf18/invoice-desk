@@ -1,0 +1,3 @@
+tags:
+  golden:
+    description: Pixel comparisons against committed PNGs (font-rendering sensitive).
