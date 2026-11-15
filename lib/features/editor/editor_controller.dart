@@ -1,0 +1,403 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:invoice_desk/app/providers.dart';
+import 'package:invoice_desk/core/dates.dart';
+import 'package:invoice_desk/core/money.dart';
+import 'package:invoice_desk/data/daos/invoices_dao.dart';
+import 'package:invoice_desk/data/seed.dart';
+import 'package:invoice_desk/domain/invoice_logic.dart';
+import 'package:invoice_desk/domain/models.dart';
+import 'package:uuid/uuid.dart';
+
+enum SaveStatus { saved, dirty, saving, invalid, error }
+
+@immutable
+class EditorState {
+  const EditorState({
+    this.invoice,
+    this.isNew = false,
+    this.status = SaveStatus.saved,
+    this.issues = const {},
+    this.revision = 0,
+  });
+
+  /// The open invoice (the edit buffer); null when nothing is open.
+  final Invoice? invoice;
+
+  /// Not yet in the database.
+  final bool isNew;
+  final SaveStatus status;
+  final Set<InvoiceIssue> issues;
+
+  /// Bumped on every edit; the preview and autosave key off it.
+  final int revision;
+
+  EditorState copyWith({
+    Invoice? invoice,
+    bool? isNew,
+    SaveStatus? status,
+    Set<InvoiceIssue>? issues,
+    int? revision,
+  }) => EditorState(
+    invoice: invoice ?? this.invoice,
+    isNew: isNew ?? this.isNew,
+    status: status ?? this.status,
+    issues: issues ?? this.issues,
+    revision: revision ?? this.revision,
+  );
+}
+
+const _uuid = Uuid();
+String newId() => _uuid.v4();
+
+/// Result of a one-shot action, for the view's snackbar.
+sealed class ActionResult {
+  const ActionResult();
+}
+
+class Created extends ActionResult {
+  const Created(this.number);
+  final String number;
+}
+
+class NothingToRenew extends ActionResult {
+  const NothingToRenew(this.number);
+  final String number;
+}
+
+class Done extends ActionResult {
+  const Done(this.number);
+  final String number;
+}
+
+class Failed extends ActionResult {
+  const Failed();
+}
+
+/// The invoice editor ViewModel. Holds the edit buffer, autosaves 1.5 s
+/// after the last edit, and owns the invoice-level actions.
+class EditorController extends Notifier<EditorState> {
+  static const autosaveDelay = Duration(milliseconds: 1500);
+
+  Timer? _timer;
+  Future<void>? _inFlight;
+
+  @override
+  EditorState build() {
+    ref.onDispose(() => _timer?.cancel());
+    return const EditorState();
+  }
+
+  CalendarDate get _today => todayFrom(ref);
+
+  // ── Opening ─────────────────────────────────────────────────────────
+  Future<void> open(String id) async {
+    if (state.invoice?.id == id) return;
+    await flush();
+    final inv = await ref.read(databaseProvider).invoicesDao.getById(id);
+    if (!ref.mounted || inv == null) return;
+    state = EditorState(invoice: inv, revision: state.revision + 1);
+    ref.read(uiPrefsProvider).lastInvoiceId = id;
+    ref.read(workspaceProvider.notifier).show(Workspace.invoice);
+  }
+
+  void close() {
+    _timer?.cancel();
+    state = EditorState(revision: state.revision + 1);
+  }
+
+  Future<String> _nextNumber(int year, String prefix) async {
+    final seq = await ref.read(databaseProvider).invoicesDao.nextSeqFor(year);
+    return formatInvoiceNumber(prefix, year, seq);
+  }
+
+  /// Opens a fresh draft (not saved until it has a client).
+  Future<void> newInvoice({String? clientId}) async {
+    await flush();
+    final db = ref.read(databaseProvider);
+    final settings = await db.settingsDao.get();
+    final today = _today;
+    final number = await _nextNumber(today.year, settings.invoicePrefix);
+    final parsed = parseInvoiceNumber(number)!;
+    if (!ref.mounted) return;
+    state = EditorState(
+      isNew: true,
+      status: SaveStatus.dirty,
+      revision: state.revision + 1,
+      invoice: Invoice(
+        id: newId(),
+        clientId: clientId ?? '',
+        number: number,
+        year: parsed.year,
+        seq: parsed.seq,
+        issueDate: today,
+        dueDate: today.addDays(settings.defaultDueDays),
+        notesEn: settings.notesEn,
+        notesAr: settings.notesAr,
+        sections: defaultSections(newId),
+      ),
+    );
+    ref.read(workspaceProvider.notifier).show(Workspace.invoice);
+    if (clientId != null) _schedule();
+  }
+
+  // ── Editing ─────────────────────────────────────────────────────────
+  void edit(Invoice Function(Invoice inv) change) {
+    final inv = state.invoice;
+    if (inv == null) return;
+    state = state.copyWith(
+      invoice: change(inv),
+      status: SaveStatus.dirty,
+      revision: state.revision + 1,
+    );
+    _schedule();
+  }
+
+  void setIssueDate(CalendarDate date) => edit((inv) {
+    // Keep the due date in step when it was the default offset.
+    final offset = inv.issueDate.daysUntil(inv.dueDate);
+    return inv.copyWith(issueDate: date, dueDate: date.addDays(offset));
+  });
+
+  void setStatus(InvoiceStatus status) => edit(
+    (inv) => inv.copyWith(
+      status: status,
+      paidDate: () =>
+          status == InvoiceStatus.paid ? (inv.paidDate ?? _today) : null,
+    ),
+  );
+
+  void editSection(
+    String sectionId,
+    InvoiceSection Function(InvoiceSection s) change,
+  ) => edit(
+    (inv) => inv.copyWith(
+      sections: [
+        for (final s in inv.sections) s.id == sectionId ? change(s) : s,
+      ],
+    ),
+  );
+
+  void editItem(
+    String sectionId,
+    String itemId,
+    LineItem Function(LineItem i) change,
+  ) => editSection(
+    sectionId,
+    (s) => s.copyWith(
+      items: [for (final i in s.items) i.id == itemId ? change(i) : i],
+    ),
+  );
+
+  /// Adds an empty row after [afterId] (or at the end). Returns its id.
+  String addItem(String sectionId, {String? afterId}) {
+    final item = LineItem(id: newId());
+    editSection(sectionId, (s) {
+      final list = [...s.items];
+      final at = afterId == null
+          ? list.length
+          : list.indexWhere((i) => i.id == afterId) + 1;
+      list.insert(at.clamp(0, list.length), item);
+      return s.copyWith(items: list);
+    });
+    return item.id;
+  }
+
+  void removeItem(String sectionId, String itemId) => editSection(
+    sectionId,
+    (s) => s.copyWith(items: s.items.where((i) => i.id != itemId).toList()),
+  );
+
+  void reorderItem(String sectionId, int from, int to) =>
+      editSection(sectionId, (s) {
+        final list = [...s.items];
+        final item = list.removeAt(from);
+        list.insert(to.clamp(0, list.length), item);
+        return s.copyWith(items: list);
+      });
+
+  void addSection() => edit(
+    (inv) => inv.copyWith(
+      sections: [
+        ...inv.sections,
+        InvoiceSection(
+          id: newId(),
+          currency: inv.sections.isEmpty
+              ? Currency.egp
+              : inv.sections.last.currency,
+          items: [LineItem(id: newId())],
+        ),
+      ],
+    ),
+  );
+
+  void removeSection(String sectionId) => edit(
+    (inv) => inv.copyWith(
+      sections: inv.sections.where((s) => s.id != sectionId).toList(),
+    ),
+  );
+
+  // ── Saving ──────────────────────────────────────────────────────────
+  void _schedule() {
+    _timer?.cancel();
+    _timer = Timer(autosaveDelay, () => unawaited(save()));
+  }
+
+  /// Saves now if there is anything to save (Ctrl+S, switching invoices).
+  Future<void> flush() async {
+    _timer?.cancel();
+    if (_inFlight != null) await _inFlight;
+    if (state.status == SaveStatus.dirty) await save();
+  }
+
+  Future<void> save() {
+    _timer?.cancel();
+    final run = _save();
+    _inFlight = run;
+    return run.whenComplete(() => _inFlight = null);
+  }
+
+  Future<void> _save() async {
+    final inv = state.invoice;
+    if (inv == null) return;
+    final rev = state.revision;
+    final dao = ref.read(databaseProvider).invoicesDao;
+    final taken = await dao.numberTaken(inv.number.trim(), exceptId: inv.id);
+    final issues = validateInvoice(inv, numberTaken: (_, _) => taken);
+    if (!ref.mounted) return;
+    if (issues.isNotEmpty) {
+      state = state.copyWith(status: SaveStatus.invalid, issues: issues);
+      return;
+    }
+    state = state.copyWith(status: SaveStatus.saving, issues: const {});
+    try {
+      await dao.saveInvoice(inv);
+    } on DuplicateInvoiceNumber {
+      if (!ref.mounted) return;
+      state = state.copyWith(
+        status: SaveStatus.invalid,
+        issues: {InvoiceIssue.duplicateNumber},
+      );
+      return;
+    } on Object catch (e, st) {
+      debugPrint('save failed: $e\n$st');
+      if (!ref.mounted) return;
+      state = state.copyWith(status: SaveStatus.error);
+      return;
+    }
+    if (!ref.mounted) return;
+    ref.read(uiPrefsProvider).lastInvoiceId = inv.id;
+    // Edits that arrived while saving stay dirty and get their own save.
+    final changed = state.revision != rev;
+    state = state.copyWith(
+      isNew: false,
+      status: changed ? SaveStatus.dirty : SaveStatus.saved,
+    );
+    if (changed) _schedule();
+  }
+
+  // ── Actions ─────────────────────────────────────────────────────────
+  Future<Invoice?> _load(String id) async {
+    if (state.invoice?.id == id) {
+      await flush();
+      return state.invoice;
+    }
+    return ref.read(databaseProvider).invoicesDao.getById(id);
+  }
+
+  Future<ActionResult> _createFrom(
+    Invoice src,
+    List<InvoiceSection> sections, {
+    required bool keepScope,
+    required bool todayDates,
+  }) async {
+    final db = ref.read(databaseProvider);
+    final settings = await db.settingsDao.get();
+    final today = _today;
+    final number = await _nextNumber(today.year, settings.invoicePrefix);
+    final p = parseInvoiceNumber(number)!;
+    final terms = src.issueDate.daysUntil(src.dueDate);
+    final copy = src.copyWith(
+      id: newId(),
+      number: number,
+      year: p.year,
+      seq: p.seq,
+      status: InvoiceStatus.draft,
+      paidDate: () => null,
+      issueDate: todayDates ? today : src.issueDate,
+      dueDate: todayDates
+          ? today.addDays(terms > 0 ? terms : settings.defaultDueDays)
+          : src.dueDate,
+      scope: keepScope ? src.scope : src.scope.copyWith(enabled: false),
+      sections: sections,
+      createdAt: 0,
+    );
+    try {
+      await db.invoicesDao.saveInvoice(copy);
+    } on Object catch (e) {
+      debugPrint('create failed: $e');
+      return const Failed();
+    }
+    await open(copy.id);
+    return Created(number);
+  }
+
+  Future<ActionResult> duplicate(String id) async {
+    final src = await _load(id);
+    if (src == null || src.clientId.isEmpty) return const Failed();
+    return _createFrom(
+      src,
+      cloneSections(src.sections, newId),
+      keepScope: true,
+      todayDates: false,
+    );
+  }
+
+  Future<ActionResult> renew(String id) async {
+    final src = await _load(id);
+    if (src == null || src.clientId.isEmpty) return const Failed();
+    final sections = renewalSections(src.sections, newId);
+    if (sections == null) return NothingToRenew(src.number);
+    return _createFrom(src, sections, keepScope: false, todayDates: true);
+  }
+
+  Future<ActionResult> markPaid(String id) async {
+    if (state.invoice?.id == id) {
+      setStatus(InvoiceStatus.paid);
+      await save();
+      return Done(state.invoice!.number);
+    }
+    final dao = ref.read(databaseProvider).invoicesDao;
+    final inv = await dao.getById(id);
+    if (inv == null) return const Failed();
+    await dao.markPaid(id, _today);
+    return Done(inv.number);
+  }
+
+  /// Soft delete. Returns the number for the Undo snackbar.
+  Future<String?> delete(String id) async {
+    final dao = ref.read(databaseProvider).invoicesDao;
+    if (state.invoice?.id == id) {
+      if (state.isNew) {
+        close();
+        return null;
+      }
+      await flush();
+      close();
+    }
+    final inv = await dao.getById(id);
+    await dao.softDelete(id);
+    return inv?.number;
+  }
+
+  Future<void> undoDelete(String id) async {
+    await ref.read(databaseProvider).invoicesDao.undoDelete(id);
+    await open(id);
+  }
+}
+
+final editorProvider = NotifierProvider<EditorController, EditorState>(
+  EditorController.new,
+);

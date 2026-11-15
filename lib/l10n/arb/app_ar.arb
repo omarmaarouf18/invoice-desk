@@ -1,0 +1,278 @@
+{
+  "@@locale": "ar",
+  "appTitle": "Invoice Desk",
+  "sidebarTitle": "سجل الفواتير",
+  "myProfile": "بياناتي",
+  "searchHint": "ابحث باسم العميل أو رقم الفاتورة",
+  "newInvoice": "فاتورة جديدة",
+  "newClient": "عميل جديد",
+  "filterAll": "الكل",
+  "filterUnpaid": "غير مدفوعة",
+  "filterOverdue": "متأخرة",
+  "filterPaid": "مدفوعة",
+  "filterDrafts": "مسودات",
+  "summaryUnpaid": "غير مدفوع",
+  "summaryOverdue": "متأخرة",
+  "summaryNothingDue": "لا مستحقات مفتوحة",
+  "invoiceCount": "{count} فاتورة",
+  "unpaidCount": "{count} غير مدفوعة",
+  "noResults": "لا نتائج لـ «{query}»",
+  "clearSearch": "مسح البحث",
+  "noInvoicesForClient": "لا فواتير مطابقة",
+  "noClientsYet": "لا عملاء بعد",
+  "statusDraft": "مسودة",
+  "statusSent": "مُرسلة",
+  "statusOverdue": "متأخرة",
+  "statusPaid": "مدفوعة",
+  "statusVoid": "ملغاة",
+  "menuOpen": "فتح",
+  "menuDuplicate": "تكرار",
+  "menuRenew": "فاتورة تجديد",
+  "menuMarkPaid": "تحديد كمدفوعة",
+  "menuDelete": "حذف",
+  "menuEdit": "تعديل",
+  "menuArchive": "أرشفة",
+  "menuUnarchive": "إلغاء الأرشفة",
+  "archived": "مؤرشف",
+  "tabEdit": "تعديل",
+  "tabPreview": "معاينة",
+  "save": "حفظ",
+  "exportPdf": "PDF",
+  "exportPdfLong": "تصدير PDF",
+  "more": "المزيد",
+  "saved": "محفوظ",
+  "saving": "جارٍ الحفظ…",
+  "unsaved": "تغييرات لم تُحفظ بعد",
+  "notSavedFix": "لم تُحفظ — راجع الحقول",
+  "saveFailed": "تعذّر الحفظ",
+  "cardDetails": "بيانات الفاتورة",
+  "client": "العميل",
+  "chooseClient": "اختر عميلًا",
+  "invoiceNumber": "رقم الفاتورة",
+  "issueDate": "تاريخ الإصدار",
+  "dueDate": "تاريخ الاستحقاق",
+  "contractRef": "مرجع العقد",
+  "status": "الحالة",
+  "paidDate": "تاريخ السداد",
+  "cardSections": "الأقسام والبنود",
+  "sectionTitleEn": "عنوان القسم (EN)",
+  "sectionTitleAr": "عنوان القسم (AR)",
+  "currency": "العملة",
+  "deleteSection": "حذف القسم",
+  "addSection": "إضافة قسم",
+  "addItem": "إضافة بند",
+  "deleteItem": "حذف البند",
+  "dragToReorder": "اسحب لإعادة الترتيب",
+  "colService": "الخدمة",
+  "colDescription": "الوصف",
+  "colCycle": "الدورة",
+  "colQty": "الكمية",
+  "colUnitPrice": "سعر الوحدة",
+  "colLineTotal": "الإجمالي",
+  "cycleOneTime": "مرة واحدة",
+  "cycleMonthly": "شهري",
+  "cycleAnnual": "سنوي",
+  "subtotal": "الإجمالي الفرعي",
+  "sectionN": "القسم {n}",
+  "cardTotals": "الإجماليات والضريبة",
+  "vat": "ضريبة القيمة المضافة",
+  "vatRate": "النسبة %",
+  "vatLine": "الضريبة",
+  "totalDue": "الإجمالي المستحق",
+  "dueBy": "مستحقة السداد في {date}",
+  "cardNotes": "ملاحظات",
+  "notesEn": "ملاحظات بالإنجليزية — سطر لكل ملاحظة",
+  "notesAr": "ملاحظات بالعربية — سطر لكل ملاحظة",
+  "cardScope": "صفحة نطاق المشروع",
+  "scopeToggle": "إضافة صفحة نطاق المشروع إلى الفاتورة",
+  "scopeTitle": "عنوان المشروع",
+  "scopeOverview": "نظرة عامة",
+  "scopeDone": "ما تم تنفيذه — سطر لكل بند",
+  "scopeDelivered": "ما يستلمه العميل — سطر لكل بند",
+  "scopeWarranty": "الضمان والدعم",
+  "errMissingClient": "اختر العميل",
+  "errEmptyNumber": "أدخل رقم الفاتورة",
+  "errDuplicateNumber": "هذا الرقم مستخدم في فاتورة أخرى",
+  "errAmount": "مبلغ غير صالح",
+  "errQty": "كمية غير صالحة",
+  "errRate": "نسبة غير صالحة",
+  "exportedPdf": "تم حفظ {name}",
+  "openFile": "فتح الملف",
+  "openFolder": "فتح المجلد",
+  "exportFailed": "تعذّر حفظ الملف",
+  "deleted": "اتحذفت {number}",
+  "undo": "تراجع",
+  "renewNone": "لا توجد بنود شهرية أو سنوية في {number} لتجديدها",
+  "renewCreated": "فاتورة تجديد جديدة: {number}",
+  "duplicated": "نسخة جديدة: {number}",
+  "markedPaid": "{number} مدفوعة",
+  "nothingOpen": "افتح فاتورة أولًا",
+  "clientDialogNew": "عميل جديد",
+  "clientDialogEdit": "تعديل العميل",
+  "clientName": "اسم العميل",
+  "clientContact": "الشخص المسؤول",
+  "clientCity": "المدينة",
+  "clientPhone": "الهاتف",
+  "clientEmail": "البريد الإلكتروني",
+  "cancel": "إلغاء",
+  "errClientName": "أدخل اسم العميل",
+  "settingsTitle": "بياناتي",
+  "settingsSubtitle": "تظهر هذه البيانات على كل فاتورة. تُحفظ تلقائيًا.",
+  "back": "رجوع",
+  "profile": "الملف الشخصي",
+  "name": "الاسم",
+  "role": "المسمى الوظيفي",
+  "city": "المدينة",
+  "email": "البريد الإلكتروني",
+  "phone": "الهاتف",
+  "website": "الموقع",
+  "invoicing": "الترقيم والاستحقاق",
+  "invoicePrefix": "بادئة الترقيم",
+  "prefixHint": "تُطبّق على الفواتير الجديدة فقط",
+  "defaultDueDays": "أيام الاستحقاق الافتراضية",
+  "payment": "بيانات الدفع",
+  "instapay": "InstaPay",
+  "wallet": "المحفظة الإلكترونية",
+  "bankIban": "البنك / IBAN",
+  "defaultNotes": "الملاحظات الافتراضية",
+  "appearance": "المظهر",
+  "themeSystem": "حسب النظام",
+  "themeLight": "فاتح",
+  "themeDark": "داكن",
+  "backup": "النسخ الاحتياطي والتصدير",
+  "backupDir": "مجلد النسخ الاحتياطية",
+  "chooseFolder": "اختيار مجلد…",
+  "backupNow": "نسخ احتياطي الآن",
+  "restore": "استعادة من نسخة",
+  "exportCsv": "تصدير CSV للمحاسب",
+  "lastBackup": "آخر نسخة: {date}",
+  "never": "لم تُؤخذ أي نسخة بعد",
+  "backupAuto": "تُؤخذ نسخة تلقائيًا عند فتح التطبيق إذا مرّ يوم على آخر نسخة، ويُحتفظ بآخر 30 نسخة.",
+  "backupDone": "تم حفظ النسخة الاحتياطية",
+  "backupFailed": "تعذّر أخذ النسخة الاحتياطية",
+  "restoreConfirmTitle": "استعادة هذه النسخة؟",
+  "restoreConfirmBody": "نسخة بتاريخ {date} تحتوي على {count} فاتورة و{clients} عميل.\nستُستبدل كل البيانات الحالية بها، وتُحفظ نسخة من بياناتك الحالية أولًا.",
+  "restoreAction": "استعادة",
+  "restoreDone": "تمت الاستعادة",
+  "restoreBad": "الملف ليس نسخة صالحة من Invoice Desk",
+  "csvDone": "تم تصدير {name}",
+  "emptyTitle": "أهلًا بك في Invoice Desk",
+  "emptyBody": "خطوتان وتبدأ أول فاتورة.",
+  "stepProfile": "أضف بياناتك",
+  "stepProfileBody": "الاسم وبيانات الدفع التي تظهر على الفاتورة.",
+  "stepClient": "أضف أول عميل",
+  "stepClientBody": "اسم العميل ورقم التواصل.",
+  "stepInvoice": "أنشئ أول فاتورة",
+  "done": "تم",
+  "pickInvoice": "اختر فاتورة من السجل",
+  "pickInvoiceBody": "أو أنشئ فاتورة جديدة لتبدأ.",
+  "dbErrorTitle": "تعذّر فتح قاعدة البيانات",
+  "dbErrorBody": "قد يكون الملف تالفًا أو مستخدمًا من نسخة أخرى من التطبيق. يمكنك الاستعادة من آخر نسخة احتياطية.",
+  "retry": "إعادة المحاولة",
+  "previewLoading": "جارٍ تجهيز المعاينة…",
+  "shortcutsHint": "اختصارات: Ctrl+N فاتورة · Ctrl+K بحث · Ctrl+S حفظ · Ctrl+E PDF",
+  "@invoiceCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@unpaidCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@noResults": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "@sectionN": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "@dueBy": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@exportedPdf": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@deleted": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "@renewNone": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "@renewCreated": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "@duplicated": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "@markedPaid": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "@lastBackup": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@restoreConfirmBody": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      },
+      "clients": {
+        "type": "int"
+      }
+    }
+  },
+  "@csvDone": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
+}
