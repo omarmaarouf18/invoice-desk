@@ -274,5 +274,17 @@
         "type": "String"
       }
     }
+  },
+  "about": "حول البرنامج",
+  "aboutVersion": "الإصدار {version}",
+  "aboutBody": "برنامج فواتير يعمل دون اتصال. بياناتك محفوظة على هذا الجهاز فقط.",
+  "aboutDataDir": "مجلد البيانات",
+  "notTaxInvoice": "ليست فاتورة ضريبية إلكترونية رسمية.",
+  "@aboutVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
   }
 }

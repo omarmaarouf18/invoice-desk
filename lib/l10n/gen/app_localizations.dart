@@ -1120,6 +1120,36 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'اختصارات: Ctrl+N فاتورة · Ctrl+K بحث · Ctrl+S حفظ · Ctrl+E PDF'**
   String get shortcutsHint;
+
+  /// No description provided for @about.
+  ///
+  /// In ar, this message translates to:
+  /// **'حول البرنامج'**
+  String get about;
+
+  /// No description provided for @aboutVersion.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإصدار {version}'**
+  String aboutVersion(String version);
+
+  /// No description provided for @aboutBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'برنامج فواتير يعمل دون اتصال. بياناتك محفوظة على هذا الجهاز فقط.'**
+  String get aboutBody;
+
+  /// No description provided for @aboutDataDir.
+  ///
+  /// In ar, this message translates to:
+  /// **'مجلد البيانات'**
+  String get aboutDataDir;
+
+  /// No description provided for @notTaxInvoice.
+  ///
+  /// In ar, this message translates to:
+  /// **'ليست فاتورة ضريبية إلكترونية رسمية.'**
+  String get notTaxInvoice;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

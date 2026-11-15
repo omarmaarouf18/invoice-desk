@@ -551,4 +551,21 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get shortcutsHint => 'اختصارات: Ctrl+N فاتورة · Ctrl+K بحث · Ctrl+S حفظ · Ctrl+E PDF';
+
+  @override
+  String get about => 'حول البرنامج';
+
+  @override
+  String aboutVersion(String version) {
+    return 'الإصدار $version';
+  }
+
+  @override
+  String get aboutBody => 'برنامج فواتير يعمل دون اتصال. بياناتك محفوظة على هذا الجهاز فقط.';
+
+  @override
+  String get aboutDataDir => 'مجلد البيانات';
+
+  @override
+  String get notTaxInvoice => 'ليست فاتورة ضريبية إلكترونية رسمية.';
 }

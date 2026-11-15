@@ -9,6 +9,7 @@ import 'package:invoice_desk/data/backup.dart';
 import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/pdf/invoice_pdf.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 /// Seams: overridden in bootstrap (and in tests).
 final databaseProvider = Provider<AppDatabase>(
@@ -97,3 +98,11 @@ class PreviewTabNotifier extends Notifier<bool> {
 final previewTabProvider = NotifierProvider<PreviewTabNotifier, bool>(
   PreviewTabNotifier.new,
 );
+
+/// `0.1.0 (1)` from the build (pubspec version / --build-name).
+final appVersionProvider = FutureProvider<String>((ref) async {
+  final info = await PackageInfo.fromPlatform();
+  return info.buildNumber.isEmpty
+      ? info.version
+      : '${info.version} (${info.buildNumber})';
+});
