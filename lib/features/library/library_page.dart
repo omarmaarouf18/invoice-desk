@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invoice_desk/app/providers.dart';
-import 'package:invoice_desk/data/daos/library_dao.dart';
+import 'package:invoice_desk/data/repositories/library_repository.dart';
 import 'package:invoice_desk/domain/contract_models.dart';
 import 'package:invoice_desk/features/contracts/contract_widgets.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart' show newId;
@@ -39,7 +39,7 @@ class _LibraryPageState extends ConsumerState<LibraryPage> {
         name: l.newTemplate,
         clauses: [LibraryClause(id: newId())],
       );
-      await ref.read(databaseProvider).libraryDao.saveTemplate(t);
+      await ref.read(libraryRepositoryProvider).saveTemplate(t);
       setState(() => _selected = t.id);
     }
 
@@ -150,7 +150,7 @@ class _TemplateEditorState extends ConsumerState<_TemplateEditor> {
   late ClauseTemplate _t = widget.initial;
   Timer? _timer;
   bool _dirty = false;
-  late final LibraryDao _dao = ref.read(databaseProvider).libraryDao;
+  late final LibraryRepository _dao = ref.read(libraryRepositoryProvider);
 
   @override
   void dispose() {

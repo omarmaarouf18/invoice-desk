@@ -1,6 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:invoice_desk/core/digits.dart';
+import 'package:meta/meta.dart';
 
 /// Supported invoice currencies. All use two minor digits.
 enum Currency {

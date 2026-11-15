@@ -5,10 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/core/money.dart';
-import 'package:invoice_desk/data/daos/invoices_dao.dart';
-import 'package:invoice_desk/data/seed.dart';
+import 'package:invoice_desk/domain/invoice_defaults.dart';
 import 'package:invoice_desk/domain/invoice_logic.dart';
 import 'package:invoice_desk/domain/models.dart';
+import 'package:invoice_desk/domain/results.dart';
 import 'package:invoice_desk/features/contracts/contract_controller.dart';
 import 'package:uuid/uuid.dart';
 
@@ -101,7 +101,7 @@ class EditorController extends Notifier<EditorState> {
       return;
     }
     await flush();
-    final inv = await ref.read(databaseProvider).invoicesDao.getById(id);
+    final inv = await ref.read(invoiceRepositoryProvider).getById(id);
     if (!ref.mounted || inv == null) return;
     state = EditorState(invoice: inv, revision: state.revision + 1);
     ref.read(uiPrefsProvider).lastInvoiceId = id;
@@ -114,7 +114,7 @@ class EditorController extends Notifier<EditorState> {
   }
 
   Future<String> _nextNumber(int year, String prefix) async {
-    final seq = await ref.read(databaseProvider).invoicesDao.nextSeqFor(year);
+    final seq = await ref.read(invoiceRepositoryProvider).nextSeqFor(year);
     return formatInvoiceNumber(prefix, year, seq);
   }
 
@@ -122,8 +122,7 @@ class EditorController extends Notifier<EditorState> {
   Future<void> newInvoice({String? clientId}) async {
     await flush();
     await ref.read(contractProvider.notifier).flush();
-    final db = ref.read(databaseProvider);
-    final settings = await db.settingsDao.get();
+    final settings = await ref.read(settingsRepositoryProvider).get();
     final today = _today;
     final number = await _nextNumber(today.year, settings.invoicePrefix);
     final parsed = parseInvoiceNumber(number)!;
@@ -269,8 +268,8 @@ class EditorController extends Notifier<EditorState> {
     final inv = state.invoice;
     if (inv == null) return;
     final rev = state.revision;
-    final dao = ref.read(databaseProvider).invoicesDao;
-    final taken = await dao.numberTaken(inv.number.trim(), exceptId: inv.id);
+    final repo = ref.read(invoiceRepositoryProvider);
+    final taken = await repo.numberTaken(inv.number.trim(), exceptId: inv.id);
     final issues = validateInvoice(inv, numberTaken: (_, _) => taken);
     if (!ref.mounted) return;
     if (issues.isNotEmpty) {
@@ -279,14 +278,14 @@ class EditorController extends Notifier<EditorState> {
     }
     state = state.copyWith(status: SaveStatus.saving, issues: const {});
     try {
-      await dao.saveInvoice(inv);
-    } on DuplicateInvoiceNumber {
-      if (!ref.mounted) return;
-      state = state.copyWith(
-        status: SaveStatus.invalid,
-        issues: {InvoiceIssue.duplicateNumber},
-      );
-      return;
+      if (await repo.save(inv) is DuplicateNumber) {
+        if (!ref.mounted) return;
+        state = state.copyWith(
+          status: SaveStatus.invalid,
+          issues: {InvoiceIssue.duplicateNumber},
+        );
+        return;
+      }
     } on Object catch (e, st) {
       debugPrint('save failed: $e\n$st');
       if (!ref.mounted) return;
@@ -310,7 +309,7 @@ class EditorController extends Notifier<EditorState> {
       await flush();
       return state.invoice;
     }
-    return ref.read(databaseProvider).invoicesDao.getById(id);
+    return ref.read(invoiceRepositoryProvider).getById(id);
   }
 
   Future<ActionResult> _createFrom(
@@ -319,8 +318,7 @@ class EditorController extends Notifier<EditorState> {
     required bool keepScope,
     required bool todayDates,
   }) async {
-    final db = ref.read(databaseProvider);
-    final settings = await db.settingsDao.get();
+    final settings = await ref.read(settingsRepositoryProvider).get();
     final today = _today;
     final number = await _nextNumber(today.year, settings.invoicePrefix);
     final p = parseInvoiceNumber(number)!;
@@ -341,7 +339,9 @@ class EditorController extends Notifier<EditorState> {
       createdAt: 0,
     );
     try {
-      await db.invoicesDao.saveInvoice(copy);
+      if (await ref.read(invoiceRepositoryProvider).save(copy) is! Saved) {
+        return const Failed();
+      }
     } on Object catch (e) {
       debugPrint('create failed: $e');
       return const Failed();
@@ -375,7 +375,7 @@ class EditorController extends Notifier<EditorState> {
       await save();
       return Done(state.invoice!.number);
     }
-    final dao = ref.read(databaseProvider).invoicesDao;
+    final dao = ref.read(invoiceRepositoryProvider);
     final inv = await dao.getById(id);
     if (inv == null) return const Failed();
     await dao.markPaid(id, _today);
@@ -384,7 +384,7 @@ class EditorController extends Notifier<EditorState> {
 
   /// Soft delete. Returns the number for the Undo snackbar.
   Future<String?> delete(String id) async {
-    final dao = ref.read(databaseProvider).invoicesDao;
+    final dao = ref.read(invoiceRepositoryProvider);
     if (state.invoice?.id == id) {
       if (state.isNew) {
         close();
@@ -407,7 +407,7 @@ class EditorController extends Notifier<EditorState> {
   }
 
   Future<void> undoDelete(String id) async {
-    await ref.read(databaseProvider).invoicesDao.undoDelete(id);
+    await ref.read(invoiceRepositoryProvider).undoDelete(id);
     await open(id);
   }
 }

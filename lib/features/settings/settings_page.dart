@@ -8,7 +8,7 @@ import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/data/backup.dart';
-import 'package:invoice_desk/data/daos/settings_dao.dart';
+import 'package:invoice_desk/data/repositories/settings_repository.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/actions.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
@@ -42,12 +42,12 @@ class _SettingsFormState extends ConsumerState<_SettingsForm> {
   Timer? _timer;
   bool _dirty = false;
   // Captured while ref is valid; also used from dispose.
-  late final SettingsDao _dao;
+  late final SettingsRepository _repo;
 
   @override
   void initState() {
     super.initState();
-    _dao = ref.read(databaseProvider).settingsDao;
+    _repo = ref.read(settingsRepositoryProvider);
   }
 
   @override
@@ -73,11 +73,8 @@ class _SettingsFormState extends ConsumerState<_SettingsForm> {
     _timer = Timer(const Duration(milliseconds: 600), () => unawaited(_save()));
   }
 
-  Future<void> _persist() async {
-    final current = await _dao.get();
-    // Backup bookkeeping is owned by the backup service.
-    await _dao.save(_draft.copyWith(lastBackupAt: current.lastBackupAt));
-  }
+  // Backup bookkeeping is owned by the backup service; save() keeps it.
+  Future<void> _persist() => _repo.save(_draft);
 
   Future<void> _save() async {
     _timer?.cancel();
@@ -444,18 +441,7 @@ class _BackupCardState extends ConsumerState<_BackupCard> {
     final l = context.l10n;
     final dir = _dir;
     try {
-      await ref.read(backupServiceProvider).backupNow(Directory(dir));
-      final dao = ref.read(databaseProvider).settingsDao;
-      final s = await dao.get();
-      await dao.save(
-        s.copyWith(
-          lastBackupAt: ref
-              .read(clockProvider)
-              .now()
-              .toUtc()
-              .millisecondsSinceEpoch,
-        ),
-      );
+      await ref.read(backupServiceProvider).backupNowAndRecord(Directory(dir));
       showSnack(
         l.backupDone,
         actions: [(l.openFolder, () => openPath(dir))],

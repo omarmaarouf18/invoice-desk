@@ -52,7 +52,7 @@ class _Pair extends StatelessWidget {
 const _gap = SizedBox(height: Space.m - 4);
 
 /// A date that may be empty, with a clear button.
-class OptionalDateField extends StatelessWidget {
+class OptionalDateField extends ConsumerWidget {
   const OptionalDateField({
     required this.label,
     required this.value,
@@ -67,13 +67,13 @@ class OptionalDateField extends StatelessWidget {
   final bool enabled;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
+    final today = ref.watch(todayProvider);
     Future<void> pick() async {
       final picked = await showDatePicker(
         context: context,
-        initialDate: (value ?? CalendarDate.fromDateTime(DateTime.now()))
-            .toDateTime(),
+        initialDate: (value ?? today).toDateTime(),
         firstDate: DateTime(2000),
         lastDate: DateTime(2100),
       );

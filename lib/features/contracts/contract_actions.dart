@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/core/digits.dart';
-import 'package:invoice_desk/data/daos/contracts_dao.dart';
 import 'package:invoice_desk/domain/contract_logic.dart';
 import 'package:invoice_desk/domain/contract_models.dart';
+import 'package:invoice_desk/domain/results.dart';
 import 'package:invoice_desk/features/actions.dart';
 import 'package:invoice_desk/features/contracts/contract_controller.dart';
 import 'package:invoice_desk/features/contracts/contract_widgets.dart';
@@ -104,43 +104,49 @@ class ContractActions {
     if (target == null) return;
     final l = this.l;
     final ctl = this.ctl;
-    try {
-      final r = await ctl.delete(target);
-      if (r == null) return;
-      showSnack(
-        l.undoOrTrash(l.contractDeleted(r.number)),
-        duration: const Duration(seconds: 8),
-        actions: [(l.undo, () => unawaited(ctl.undoDelete(target, r.stamp)))],
-      );
-    } on ContractHasInvoices catch (e) {
-      if (!context.mounted) return;
-      final c = await ref.read(databaseProvider).contractsDao.getById(target);
-      if (c == null || !context.mounted) return;
-      final cancel = await showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text(l.contractHasInvoicesTitle(c.number)),
-          content: SizedBox(
-            width: 440,
-            child: Text(l.contractHasInvoicesBody(l.invoiceCount(e.count))),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(l.cancel),
-            ),
-            if (c.status != ContractStatus.cancelled)
-              FilledButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: Text(l.cancelContract),
-              ),
-          ],
+    switch (await ctl.delete(target)) {
+      case Deleted(:final number, :final stamp):
+        showSnack(
+          l.undoOrTrash(l.contractDeleted(number)),
+          duration: const Duration(seconds: 8),
+          actions: [(l.undo, () => unawaited(ctl.undoDelete(target, stamp)))],
+        );
+      case HasLinkedInvoices(:final count):
+        await _offerCancel(target, count);
+      case NotFound():
+        return;
+    }
+  }
+
+  /// Delete was refused because invoices are linked: offer "ملغي" instead.
+  Future<void> _offerCancel(String target, int count) async {
+    final l = this.l;
+    final c = await ref.read(contractRepositoryProvider).getById(target);
+    if (c == null || !context.mounted) return;
+    final cancel = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l.contractHasInvoicesTitle(c.number)),
+        content: SizedBox(
+          width: 440,
+          child: Text(l.contractHasInvoicesBody(l.invoiceCount(count))),
         ),
-      );
-      if (cancel ?? false) {
-        await ctl.open(target);
-        setStatus(ContractStatus.cancelled);
-      }
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l.cancel),
+          ),
+          if (c.status != ContractStatus.cancelled)
+            FilledButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(l.cancelContract),
+            ),
+        ],
+      ),
+    );
+    if (cancel ?? false) {
+      await ctl.open(target);
+      setStatus(ContractStatus.cancelled);
     }
   }
 
@@ -155,7 +161,7 @@ class ContractActions {
   }
 
   Future<void> _openInvoiceNumber(String number) async {
-    final all = await ref.read(databaseProvider).invoicesDao.getAll();
+    final all = await ref.read(invoiceRepositoryProvider).getAll();
     final inv = all.where((i) => i.number == number).firstOrNull;
     if (inv != null) await openInvoice(inv.id);
   }
@@ -171,7 +177,7 @@ class ContractActions {
     final libId = x.fromLibraryClauseId;
     final lib = libId == null
         ? null
-        : await ref.read(databaseProvider).libraryDao.clauseById(libId);
+        : await ref.read(libraryRepositoryProvider).clauseById(libId);
     if (lib == null) return showSnack(l.restoreMissing);
     if (lib.title == x.title && lib.body == x.body) {
       return showSnack(l.restoreSame);
@@ -214,8 +220,7 @@ class ContractActions {
     );
     if (!(ok ?? false)) return;
     await ref
-        .read(databaseProvider)
-        .libraryDao
+        .read(libraryRepositoryProvider)
         .updateClauseText(libId, title: x.title, body: x.body);
     showSnack(l.savedToLibrary);
   }
@@ -234,14 +239,15 @@ class ContractActions {
     final c = ref.read(contractProvider).contract;
     if (c == null) return showSnack(l.nothingOpen);
     await ctl.flush();
-    final db = ref.read(databaseProvider);
-    final client = (await db.clientsDao.getAll())
-        .where((x) => x.id == c.clientId)
-        .firstOrNull;
-    final settings = await db.settingsDao.get();
+    final client = await ref
+        .read(clientRepositoryProvider)
+        .getById(
+          c.clientId,
+        );
+    final settings = await ref.read(settingsRepositoryProvider).get();
     final parent = c.parentId == null
         ? null
-        : await db.contractsDao.getById(c.parentId!);
+        : await ref.read(contractRepositoryProvider).getById(c.parentId!);
     final fonts = await ref.read(pdfFontsProvider.future);
     final prefs = ref.read(uiPrefsProvider);
     final location = await getSaveLocation(

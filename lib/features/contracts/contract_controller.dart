@@ -5,11 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/core/money.dart';
-import 'package:invoice_desk/data/daos/contracts_dao.dart';
+import 'package:invoice_desk/data/repositories/contract_repository.dart';
 import 'package:invoice_desk/domain/contract_logic.dart';
 import 'package:invoice_desk/domain/contract_models.dart';
 import 'package:invoice_desk/domain/invoice_logic.dart';
 import 'package:invoice_desk/domain/models.dart';
+import 'package:invoice_desk/domain/results.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart'
     show SaveStatus, editorProvider, newId;
 
@@ -135,7 +136,7 @@ class ContractController extends Notifier<ContractEditorState> {
     return const ContractEditorState();
   }
 
-  ContractsDao get _dao => ref.read(databaseProvider).contractsDao;
+  ContractRepository get _dao => ref.read(contractRepositoryProvider);
   CalendarDate get _today => todayFrom(ref);
   int get _nowMs =>
       ref.read(clockProvider).now().toUtc().millisecondsSinceEpoch;
@@ -160,7 +161,7 @@ class ContractController extends Notifier<ContractEditorState> {
   Future<({int year, int seq, String number})> _nextNumber(
     TemplateKind series,
   ) async {
-    final settings = await ref.read(databaseProvider).settingsDao.get();
+    final settings = await ref.read(settingsRepositoryProvider).get();
     final year = _today.year;
     final seq = await _dao.nextSeqFor(series, year);
     final prefix = series == TemplateKind.quote
@@ -177,7 +178,7 @@ class ContractController extends Notifier<ContractEditorState> {
   /// it and opens it.
   Future<Contract> create(NewContractRequest r) async {
     await flush();
-    final settings = await ref.read(databaseProvider).settingsDao.get();
+    final settings = await ref.read(settingsRepositoryProvider).get();
     final t = r.template;
     final n = await _nextNumber(t.kind);
     final c = Contract(
@@ -202,7 +203,7 @@ class ContractController extends Notifier<ContractEditorState> {
       scope: [ScopeItem(id: newId())],
       milestones: defaultMilestones(t.kind),
     );
-    await _dao.saveContract(c);
+    await _dao.save(c);
     await open(c.id);
     return c;
   }
@@ -418,14 +419,14 @@ class ContractController extends Notifier<ContractEditorState> {
     }
     state = state.copyWith(status: SaveStatus.saving, issues: const {});
     try {
-      await _dao.saveContract(c);
-    } on DuplicateContractNumber {
-      if (!ref.mounted) return;
-      state = state.copyWith(
-        status: SaveStatus.invalid,
-        issues: {ContractIssue.duplicateNumber},
-      );
-      return;
+      if (await _dao.save(c) is DuplicateNumber) {
+        if (!ref.mounted) return;
+        state = state.copyWith(
+          status: SaveStatus.invalid,
+          issues: {ContractIssue.duplicateNumber},
+        );
+        return;
+      }
     } on Object catch (e, st) {
       debugPrint('contract save failed: $e\n$st');
       if (!ref.mounted) return;
@@ -466,7 +467,7 @@ class ContractController extends Notifier<ContractEditorState> {
       history: const [],
       createdAt: 0,
     );
-    await _dao.saveContract(copy);
+    await _dao.save(copy);
     await open(copy.id);
     return copy;
   }
@@ -485,7 +486,7 @@ class ContractController extends Notifier<ContractEditorState> {
         : parent;
     if (root == null) return null;
     final no = await _dao.nextAmendmentNo(root.id);
-    final settings = await ref.read(databaseProvider).settingsDao.get();
+    final settings = await ref.read(settingsRepositoryProvider).get();
     final prefix = root.series == TemplateKind.quote
         ? settings.quotePrefix
         : settings.contractPrefix;
@@ -517,7 +518,7 @@ class ContractController extends Notifier<ContractEditorState> {
       vars: {...root.vars},
       clauses: [ContractClause(id: newId(), title: clauseTitle)],
     );
-    await _dao.saveContract(a);
+    await _dao.save(a);
     await open(a.id);
     return a;
   }
@@ -533,10 +534,10 @@ class ContractController extends Notifier<ContractEditorState> {
     final amount = milestoneAmounts(c.totalMinor, c.milestones)[i];
     if (amount <= 0) return null;
     final m = c.milestones[i];
-    final db = ref.read(databaseProvider);
-    final settings = await db.settingsDao.get();
+    final invoices = ref.read(invoiceRepositoryProvider);
+    final settings = await ref.read(settingsRepositoryProvider).get();
     final today = _today;
-    final seq = await db.invoicesDao.nextSeqFor(today.year);
+    final seq = await invoices.nextSeqFor(today.year);
     final number = formatInvoiceNumber(settings.invoicePrefix, today.year, seq);
     final label = m.label.trim().isEmpty ? c.number : m.label.trim();
     final inv = Invoice(
@@ -569,7 +570,7 @@ class ContractController extends Notifier<ContractEditorState> {
         ),
       ],
     );
-    await db.invoicesDao.saveInvoice(inv);
+    if (await invoices.save(inv) is! Saved) return null;
     await _dao.linkMilestone(m.id, inv.id);
     if (!ref.mounted) return number;
     // Keep the buffer in step without marking it dirty.
@@ -588,13 +589,16 @@ class ContractController extends Notifier<ContractEditorState> {
     return number;
   }
 
-  /// Soft delete (with amendments). Throws [ContractHasInvoices].
-  Future<({String number, int stamp})?> delete(String id) async {
-    final c = await _load(id);
-    if (c == null) return null;
-    final stamp = await _dao.softDelete(id);
-    if (state.contract?.id == id || state.contract?.parentId == id) close();
-    return (number: c.number, stamp: stamp);
+  /// Soft delete (with amendments); [HasLinkedInvoices] while invoices
+  /// point at it.
+  Future<DeleteResult> delete(String id) async {
+    await _load(id);
+    final r = await _dao.softDelete(id);
+    if (r is Deleted &&
+        (state.contract?.id == id || state.contract?.parentId == id)) {
+      close();
+    }
+    return r;
   }
 
   Future<void> undoDelete(String id, int stamp) async {

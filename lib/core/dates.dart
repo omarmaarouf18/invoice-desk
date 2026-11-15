@@ -1,5 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:invoice_desk/core/digits.dart';
+import 'package:meta/meta.dart';
 
 @immutable
 /// A local calendar day with no time or zone. Stored as `YYYY-MM-DD`.

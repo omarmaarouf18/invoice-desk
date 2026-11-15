@@ -1,78 +1,22 @@
-import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invoice_desk/app/ui_prefs.dart';
 import 'package:invoice_desk/core/dates.dart';
-import 'package:invoice_desk/data/app_paths.dart';
-import 'package:invoice_desk/data/backup.dart';
-import 'package:invoice_desk/data/db.dart';
-import 'package:invoice_desk/data/repositories/trash_repository.dart';
-import 'package:invoice_desk/domain/contract_models.dart';
-import 'package:invoice_desk/domain/models.dart';
-import 'package:invoice_desk/domain/trash.dart';
+import 'package:invoice_desk/data/providers.dart';
 import 'package:invoice_desk/pdf/invoice_pdf.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-/// Seams: overridden in bootstrap (and in tests).
-final databaseProvider = Provider<AppDatabase>(
-  (ref) => throw UnimplementedError('override databaseProvider'),
-);
+export 'package:invoice_desk/data/providers.dart';
 
 final uiPrefsProvider = Provider<UiPrefs>(
   (ref) => throw UnimplementedError('override uiPrefsProvider'),
 );
 
-final appPathsProvider = Provider<AppPaths>(
-  (ref) => throw UnimplementedError('override appPathsProvider'),
-);
-
-final clockProvider = Provider<Clock>((ref) => const Clock());
-
 CalendarDate todayFrom(Ref ref) =>
     CalendarDate.fromDateTime(ref.read(clockProvider).now());
 
 final todayProvider = Provider<CalendarDate>(todayFrom);
-
-final backupServiceProvider = Provider<BackupService>(
-  (ref) => BackupService(
-    ref.watch(databaseProvider),
-    paths: ref.watch(appPathsProvider),
-  ),
-);
-
-final trashRepositoryProvider = Provider<TrashRepository>(
-  (ref) => TrashRepository(
-    ref.watch(databaseProvider),
-    ref.watch(backupServiceProvider),
-  ),
-);
-
-/// "المحذوفات", newest deletion first.
-final trashProvider = StreamProvider<List<TrashEntry>>(
-  (ref) => ref.watch(trashRepositoryProvider).watch(),
-);
-
-final settingsProvider = StreamProvider<Settings>(
-  (ref) => ref.watch(databaseProvider).settingsDao.watch(),
-);
-
-final clientsProvider = StreamProvider<List<Client>>(
-  (ref) => ref.watch(databaseProvider).clientsDao.watchAll(),
-);
-
-final invoicesProvider = StreamProvider<List<Invoice>>(
-  (ref) => ref.watch(databaseProvider).invoicesDao.watchAll(),
-);
-
-final contractsProvider = StreamProvider<List<Contract>>(
-  (ref) => ref.watch(databaseProvider).contractsDao.watchAll(),
-);
-
-/// The clause library (Settings → مكتبة البنود).
-final libraryProvider = StreamProvider<List<ClauseTemplate>>(
-  (ref) => ref.watch(databaseProvider).libraryDao.watchAll(),
-);
 
 /// Fonts for the PDF, loaded once from bundled assets.
 final pdfFontsProvider = FutureProvider<PdfFonts>((ref) async {

@@ -75,7 +75,7 @@ class AppActions {
   Future<Client?> newClient() async {
     final client = await showClientDialog(context);
     if (client == null) return null;
-    await ref.read(databaseProvider).clientsDao.upsert(client);
+    await ref.read(clientRepositoryProvider).save(client);
     return client;
   }
 
@@ -86,21 +86,18 @@ class AppActions {
       onDelete: () => unawaited(deleteClient(c)),
     );
     if (updated == null) return;
-    await ref.read(databaseProvider).clientsDao.upsert(updated);
+    await ref.read(clientRepositoryProvider).save(updated);
   }
 
   Future<void> setArchived(Client c, {required bool archived}) => archived
       ? archiveClient(c)
-      : ref
-            .read(databaseProvider)
-            .clientsDao
-            .setArchived(c.id, archived: false);
+      : ref.read(clientRepositoryProvider).setArchived(c.id, archived: false);
 
   /// Hides the client and their invoices from the list and search.
   Future<void> archiveClient(Client c) async {
     // Read everything up front: the tile this runs from goes away.
     final l = this.l;
-    final dao = ref.read(databaseProvider).clientsDao;
+    final dao = ref.read(clientRepositoryProvider);
     await editor.closeIfClient(c.id);
     await ref.read(contractProvider.notifier).closeIfClient(c.id);
     await dao.setArchived(c.id, archived: true);
@@ -117,8 +114,8 @@ class AppActions {
   /// (default) or, after typing the name and a backup, delete everything.
   Future<void> deleteClient(Client c) async {
     final l = this.l;
-    final db = ref.read(databaseProvider);
-    final dao = db.clientsDao;
+    final dao = ref.read(clientRepositoryProvider);
+    final invoices = ref.read(invoiceRepositoryProvider);
     final ed = editor;
     final ced = ref.read(contractProvider.notifier);
     final backups = ref.read(backupServiceProvider);
@@ -142,7 +139,7 @@ class AppActions {
     }
 
     final unpaid = MoneyBag();
-    for (final i in await db.invoicesDao.getAll()) {
+    for (final i in await invoices.getAll()) {
       if (i.clientId == c.id && i.isUnpaid) unpaid.addBag(i.totals.total);
     }
     if (!context.mounted) return;
@@ -260,10 +257,12 @@ class AppActions {
     final inv = ref.read(editorProvider).invoice;
     if (inv == null) return showSnack(l.nothingOpen);
     await editor.flush();
-    final db = ref.read(databaseProvider);
-    final clients = await db.clientsDao.getAll();
-    final client = clients.where((c) => c.id == inv.clientId).firstOrNull;
-    final settings = await db.settingsDao.get();
+    final client = await ref
+        .read(clientRepositoryProvider)
+        .getById(
+          inv.clientId,
+        );
+    final settings = await ref.read(settingsRepositoryProvider).get();
     final fonts = await ref.read(pdfFontsProvider.future);
     final prefs = ref.read(uiPrefsProvider);
     final location = await getSaveLocation(
@@ -298,10 +297,10 @@ class AppActions {
   }
 
   Future<void> exportCsv() async {
-    final db = ref.read(databaseProvider);
-    final invoices = await db.invoicesDao.getAll();
+    final invoices = await ref.read(invoiceRepositoryProvider).getAll();
     final clients = {
-      for (final c in await db.clientsDao.getAll()) c.id: c.name,
+      for (final c in await ref.read(clientRepositoryProvider).getAll())
+        c.id: c.name,
     };
     final location = await getSaveLocation(
       suggestedName: 'invoices.csv',

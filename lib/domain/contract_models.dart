@@ -1,6 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/core/money.dart';
+import 'package:meta/meta.dart';
 
 enum TemplateKind {
   contract('contract'),

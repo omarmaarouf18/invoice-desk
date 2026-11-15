@@ -7,6 +7,7 @@ import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/data/library_seed.dart';
 import 'package:invoice_desk/domain/contract_models.dart';
 import 'package:invoice_desk/domain/models.dart';
+import 'package:invoice_desk/domain/results.dart';
 import 'package:invoice_desk/features/contracts/contract_controller.dart';
 import 'package:invoice_desk/features/sidebar/sidebar.dart';
 
@@ -235,7 +236,10 @@ void main() {
     expect(find.text('مدفوعة'), findsWidgets);
 
     // A contract with linked invoices can't be deleted.
-    await expectLater(ctl().delete(open().id), throwsA(anything));
+    expect(
+      await drive(tester, () => ctl().delete(open().id)),
+      isA<HasLinkedInvoices>(),
+    );
   });
 
   testWidgets('restore from library needs a confirm; snapshot stays put', (

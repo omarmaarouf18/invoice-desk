@@ -171,11 +171,12 @@ void main() {
     () async {
       final dir = await Directory.systemTemp.createTemp('bk');
       addTearDown(() => dir.delete(recursive: true));
-      final service = BackupService(db, paths: AppPaths(dir));
-      final file = await withClock(
-        Clock.fixed(DateTime(2026, 11, 15, 9, 5, 7)),
-        () => service.backupBefore('delete-client'),
+      final service = BackupService(
+        db,
+        paths: AppPaths(dir),
+        clock: Clock.fixed(DateTime(2026, 11, 15, 9, 5, 7)),
       );
+      final file = await service.backupBefore('delete-client');
       expect(
         file.path,
         endsWith('backups/before-delete-client-2026-11-15-090507.sqlite'),

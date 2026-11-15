@@ -1,0 +1,60 @@
+import 'package:clock/clock.dart';
+import 'package:invoice_desk/data/daos/contracts_dao.dart';
+import 'package:invoice_desk/data/db.dart';
+import 'package:invoice_desk/data/repositories/repository.dart';
+import 'package:invoice_desk/domain/contract_models.dart';
+import 'package:invoice_desk/domain/results.dart';
+
+/// Contracts with clauses, scope items and milestones, saved as one
+/// aggregate.
+class ContractRepository with ClockedRepository {
+  ContractRepository(this._db, {this.clock = const Clock()});
+  final AppDatabase _db;
+  @override
+  final Clock clock;
+
+  ContractsDao get _dao => _db.contractsDao;
+
+  Stream<List<Contract>> watchAll() => _dao.watchAll();
+
+  Future<List<Contract>> getAll() => _dao.getAll();
+
+  Future<Contract?> getById(String id) => _dao.getById(id);
+
+  /// Next sequence of a numbering series in [year]; amendments don't count.
+  Future<int> nextSeqFor(TemplateKind series, int year) =>
+      _dao.nextSeqFor(series, year);
+
+  /// Next `-A<n>` for amendments of [parentId], starting at 1.
+  Future<int> nextAmendmentNo(String parentId) =>
+      _dao.nextAmendmentNo(parentId);
+
+  Future<bool> numberTaken(String number, {String? exceptId}) =>
+      _dao.numberTaken(number, exceptId: exceptId);
+
+  Future<SaveResult> save(Contract c) => at(() async {
+    try {
+      await _dao.saveContract(c);
+      return const Saved();
+    } on DuplicateContractNumber catch (e) {
+      return DuplicateNumber(e.number);
+    }
+  });
+
+  Future<void> linkMilestone(String milestoneId, String invoiceId) =>
+      at(() => _dao.linkMilestone(milestoneId, invoiceId));
+
+  /// Soft delete with its amendments; refused while invoices are linked.
+  Future<DeleteResult> softDelete(String id) => at(() async {
+    final c = await _dao.getById(id);
+    if (c == null) return const NotFound();
+    try {
+      return Deleted(c.number, await _dao.softDelete(id));
+    } on ContractHasInvoices catch (e) {
+      return HasLinkedInvoices(e.count);
+    }
+  });
+
+  Future<void> undoDelete(String id, int stamp) =>
+      at(() => _dao.undoDelete(id, stamp));
+}

@@ -40,8 +40,11 @@ class BackupException implements Exception {
 final _backupName = RegExp(r'^invoice-desk-\d{4}-\d{2}-\d{2}\.sqlite$');
 
 class BackupService {
-  BackupService(this._db, {required this.paths});
+  /// [clock] dates the backup files and `lastBackupAt`.
+  BackupService(this._db, {required this.paths, this.clock = const Clock()});
   final AppDatabase _db;
+
+  final Clock clock;
 
   /// Where the default backup folder comes from (follows the data dir).
   final AppPaths paths;
@@ -92,6 +95,16 @@ class BackupService {
     if (target.existsSync()) await target.delete();
     await tmp.rename(target.path);
     return target;
+  }
+
+  /// "نسخ احتياطي الآن": a backup into [dir], recorded as the last backup.
+  Future<File> backupNowAndRecord(Directory dir) async {
+    final file = await backupNow(dir);
+    final s = await _db.settingsDao.get();
+    await _db.settingsDao.save(
+      s.copyWith(lastBackupAt: clock.now().toUtc().millisecondsSinceEpoch),
+    );
+    return file;
   }
 
   /// Runs a backup when the last one is older than 24 h. Returns the file
