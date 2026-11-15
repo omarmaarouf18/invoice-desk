@@ -31,11 +31,29 @@ class _ClientDialogState extends State<_ClientDialog> {
   late final _city = TextEditingController(text: widget.client?.city);
   late final _phone = TextEditingController(text: widget.client?.phone);
   late final _email = TextEditingController(text: widget.client?.email);
+  late final _legalName = TextEditingController(text: widget.client?.legalName);
+  late final _registry = TextEditingController(text: widget.client?.registryNo);
+  late final _address = TextEditingController(text: widget.client?.address);
+  late final _rep = TextEditingController(text: widget.client?.representative);
+  late final _repTitle = TextEditingController(
+    text: widget.client?.representativeTitle,
+  );
   bool _showError = false;
 
   @override
   void dispose() {
-    for (final c in [_name, _contact, _city, _phone, _email]) {
+    for (final c in [
+      _name,
+      _contact,
+      _city,
+      _phone,
+      _email,
+      _legalName,
+      _registry,
+      _address,
+      _rep,
+      _repTitle,
+    ]) {
       c.dispose();
     }
     super.dispose();
@@ -54,6 +72,11 @@ class _ClientDialogState extends State<_ClientDialog> {
         city: _city.text.trim(),
         phone: _phone.text.trim(),
         email: _email.text.trim(),
+        legalName: _legalName.text.trim(),
+        registryNo: _registry.text.trim(),
+        address: _address.text.trim(),
+        representative: _rep.text.trim(),
+        representativeTitle: _repTitle.text.trim(),
       ),
     );
   }
@@ -89,40 +112,73 @@ class _ClientDialogState extends State<_ClientDialog> {
         widget.client == null ? l.clientDialogNew : l.clientDialogEdit,
       ),
       content: SizedBox(
-        width: 420,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            field(
-              _name,
-              l.clientName,
-              autofocus: true,
-              error: _showError ? l.errClientName : null,
-            ),
-            field(_contact, l.clientContact),
-            field(_city, l.clientCity),
-            Row(
-              children: [
-                Expanded(
-                  child: field(
-                    _phone,
-                    l.clientPhone,
-                    dir: TextDirection.ltr,
-                    type: TextInputType.phone,
+        width: 460,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              field(
+                _name,
+                l.clientName,
+                autofocus: true,
+                error: _showError ? l.errClientName : null,
+              ),
+              field(_contact, l.clientContact),
+              field(_city, l.clientCity),
+              Row(
+                children: [
+                  Expanded(
+                    child: field(
+                      _phone,
+                      l.clientPhone,
+                      dir: TextDirection.ltr,
+                      type: TextInputType.phone,
+                    ),
                   ),
-                ),
-                const SizedBox(width: Space.s + 4),
-                Expanded(
-                  child: field(
-                    _email,
-                    l.clientEmail,
-                    dir: TextDirection.ltr,
-                    type: TextInputType.emailAddress,
+                  const SizedBox(width: Space.s + 4),
+                  Expanded(
+                    child: field(
+                      _email,
+                      l.clientEmail,
+                      dir: TextDirection.ltr,
+                      type: TextInputType.emailAddress,
+                    ),
                   ),
+                ],
+              ),
+              Theme(
+                data: Theme.of(
+                  context,
+                ).copyWith(dividerColor: Colors.transparent),
+                child: ExpansionTile(
+                  key: const ValueKey('client-legal'),
+                  tilePadding: EdgeInsets.zero,
+                  childrenPadding: EdgeInsets.zero,
+                  initiallyExpanded:
+                      (widget.client?.legalName.isNotEmpty ?? false) ||
+                      (widget.client?.representative.isNotEmpty ?? false),
+                  title: Text(
+                    l.clientLegal,
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                  children: [
+                    field(_legalName, l.legalName),
+                    field(_registry, l.clientRegistry),
+                    field(_address, l.address),
+                    Row(
+                      children: [
+                        Expanded(child: field(_rep, l.clientRepresentative)),
+                        const SizedBox(width: Space.s + 4),
+                        Expanded(
+                          child: field(_repTitle, l.clientRepresentativeTitle),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
       actions: [

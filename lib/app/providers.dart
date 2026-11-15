@@ -7,6 +7,7 @@ import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/data/app_paths.dart';
 import 'package:invoice_desk/data/backup.dart';
 import 'package:invoice_desk/data/db.dart';
+import 'package:invoice_desk/domain/contract_models.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/pdf/invoice_pdf.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -50,6 +51,15 @@ final invoicesProvider = StreamProvider<List<Invoice>>(
   (ref) => ref.watch(databaseProvider).invoicesDao.watchAll(),
 );
 
+final contractsProvider = StreamProvider<List<Contract>>(
+  (ref) => ref.watch(databaseProvider).contractsDao.watchAll(),
+);
+
+/// The clause library (Settings → مكتبة البنود).
+final libraryProvider = StreamProvider<List<ClauseTemplate>>(
+  (ref) => ref.watch(databaseProvider).libraryDao.watchAll(),
+);
+
 /// Fonts for the PDF, loaded once from bundled assets.
 final pdfFontsProvider = FutureProvider<PdfFonts>((ref) async {
   Future<ByteData> f(String w) =>
@@ -75,7 +85,9 @@ final themeModeProvider = NotifierProvider<ThemeModeNotifier, ThemeMode>(
   ThemeModeNotifier.new,
 );
 
-enum Workspace { invoice, settings }
+/// What the main pane shows. Invoice and contract editors keep their own
+/// buffers; switching between them flushes the one being left.
+enum Workspace { invoice, contract, settings, library }
 
 class WorkspaceNotifier extends Notifier<Workspace> {
   @override

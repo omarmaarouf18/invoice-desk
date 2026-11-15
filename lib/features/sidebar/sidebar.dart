@@ -8,12 +8,23 @@ import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/domain/invoice_logic.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/actions.dart';
+import 'package:invoice_desk/features/contracts/contract_actions.dart';
+import 'package:invoice_desk/features/contracts/contract_controller.dart';
+import 'package:invoice_desk/features/contracts/contract_widgets.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart';
 import 'package:invoice_desk/features/sidebar/sidebar_model.dart';
 import 'package:invoice_desk/features/sidebar/sidebar_providers.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
 import 'package:invoice_desk/widgets/common.dart';
+
+/// Two document buttons share the sidebar width; tighter padding keeps
+/// "فاتورة جديدة" on one line.
+final _compact = ButtonStyle(
+  padding: WidgetStateProperty.all(
+    const EdgeInsetsDirectional.symmetric(horizontal: 12),
+  ),
+);
 
 class Sidebar extends ConsumerWidget {
   const Sidebar({super.key});
@@ -53,6 +64,11 @@ class Sidebar extends ConsumerWidget {
                     ),
                   ),
                 ),
+                IconButton(
+                  tooltip: '${l.newClient} (Ctrl+Shift+N)',
+                  onPressed: () => unawaited(actions.newClient()),
+                  icon: const Icon(Icons.person_add_alt, size: 20),
+                ),
                 Tooltip(
                   message: l.myProfile,
                   child: TextButton.icon(
@@ -86,6 +102,7 @@ class Sidebar extends ConsumerWidget {
                   child: Tooltip(
                     message: '${l.newInvoice} (Ctrl+N)',
                     child: FilledButton.icon(
+                      style: _compact,
                       onPressed: actions.newInvoice,
                       icon: const Icon(Icons.add, size: 18),
                       label: Text(l.newInvoice),
@@ -95,11 +112,15 @@ class Sidebar extends ConsumerWidget {
                 const SizedBox(width: Space.s),
                 Expanded(
                   child: Tooltip(
-                    message: '${l.newClient} (Ctrl+Shift+N)',
-                    child: OutlinedButton.icon(
-                      onPressed: () => unawaited(actions.newClient()),
-                      icon: const Icon(Icons.person_add_alt, size: 18),
-                      label: Text(l.newClient),
+                    message: '${l.newContract} (Ctrl+Shift+K)',
+                    child: FilledButton.tonalIcon(
+                      key: const ValueKey('sidebar-new-contract'),
+                      style: _compact,
+                      onPressed: () => unawaited(
+                        ContractActions(ref, context).newContract(),
+                      ),
+                      icon: const Icon(Icons.gavel_outlined, size: 18),
+                      label: Text(l.newContract),
                     ),
                   ),
                 ),
@@ -224,6 +245,7 @@ class _FilterChips extends ConsumerWidget {
       SidebarFilter.overdue: l.filterOverdue,
       SidebarFilter.paid: l.filterPaid,
       SidebarFilter.drafts: l.filterDrafts,
+      SidebarFilter.contractsInForce: l.filterContractsInForce,
       SidebarFilter.archived: l.archived,
     };
     // Wraps rather than scrolls, so every filter (the archive included)
@@ -237,9 +259,17 @@ class _FilterChips extends ConsumerWidget {
           for (final e in labels.entries)
             ChoiceChip(
               label: Text(e.value),
-              avatar: e.key == SidebarFilter.archived
-                  ? const Icon(Icons.archive_outlined, size: 16)
-                  : null,
+              avatar: switch (e.key) {
+                SidebarFilter.archived => const Icon(
+                  Icons.archive_outlined,
+                  size: 16,
+                ),
+                SidebarFilter.contractsInForce => const Icon(
+                  Icons.gavel_outlined,
+                  size: 16,
+                ),
+                _ => null,
+              },
               selected: current == e.key,
               visualDensity: const VisualDensity(
                 horizontal: -4,
@@ -461,6 +491,9 @@ class _ClientGroupTile extends ConsumerWidget {
         query.trim().isNotEmpty ||
         ref.watch(sidebarFilterProvider) != SidebarFilter.all;
     final expanded = isActive || searching || (override ?? false);
+    final filter = ref.watch(sidebarFilterProvider);
+    final browsing =
+        filter == SidebarFilter.all || filter == SidebarFilter.archived;
     final actions = AppActions(ref, context);
     // ignore: avoid_positional_boolean_parameters, local helper
     void toggle([bool? to]) => ref
@@ -503,6 +536,13 @@ class _ClientGroupTile extends ConsumerWidget {
                     l.newInvoice,
                     Icons.add,
                     () => actions.newInvoice(clientId: c.id),
+                  ),
+                  (
+                    l.newContract,
+                    Icons.gavel_outlined,
+                    () => unawaited(
+                      ContractActions(ref, context).newContract(clientId: c.id),
+                    ),
                   ),
                   (
                     l.menuEdit,
@@ -559,6 +599,8 @@ class _ClientGroupTile extends ConsumerWidget {
                           Text(
                             [
                               l.invoiceCount(group.invoiceCount),
+                              if (group.contractCount > 0)
+                                l.contractCount(group.contractCount),
                               if (group.unpaidCount > 0)
                                 l.unpaidCount(group.unpaidCount),
                               if (c.archived) l.archived,
@@ -581,9 +623,25 @@ class _ClientGroupTile extends ConsumerWidget {
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    for (final inv in group.invoices)
-                      _InvoiceRow(invoice: inv, query: query),
-                    if (group.invoices.isEmpty)
+                    if (group.contracts.isNotEmpty ||
+                        (browsing && group.contractCount > 0)) ...[
+                      _GroupHeader(
+                        l.groupContracts(group.contractCount),
+                        icon: Icons.gavel_outlined,
+                      ),
+                      for (final e in group.contracts)
+                        _ContractRow(entry: e, query: query),
+                    ],
+                    if (group.invoices.isNotEmpty || browsing) ...[
+                      if (group.contracts.isNotEmpty || group.contractCount > 0)
+                        _GroupHeader(
+                          l.groupInvoices(group.invoiceCount),
+                          icon: Icons.receipt_long_outlined,
+                        ),
+                      for (final inv in group.invoices)
+                        _InvoiceRow(invoice: inv, query: query),
+                    ],
+                    if (group.invoices.isEmpty && group.contracts.isEmpty)
                       Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(
                           40,
@@ -614,9 +672,9 @@ class _InvoiceRow extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
     final theme = Theme.of(context);
-    final selected = ref.watch(
-      editorProvider.select((s) => s.invoice?.id == invoice.id),
-    );
+    final selected =
+        ref.watch(workspaceProvider) == Workspace.invoice &&
+        ref.watch(editorProvider.select((s) => s.invoice?.id == invoice.id));
     final today = ref.watch(todayProvider);
     final status = invoice.displayStatus(today);
     final actions = AppActions(ref, context);
@@ -708,6 +766,148 @@ class _InvoiceRow extends ConsumerWidget {
                     color: theme.colorScheme.onSurface,
                   ),
                 ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _GroupHeader extends StatelessWidget {
+  const _GroupHeader(this.label, {required this.icon});
+  final String label;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final muted = context.colors.muted;
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(
+        Space.l + 6,
+        Space.xs,
+        Space.m,
+        2,
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 13, color: muted),
+          const SizedBox(width: Space.xs),
+          Text(
+            label,
+            style: theme.textTheme.labelSmall?.copyWith(color: muted),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ContractRow extends ConsumerWidget {
+  const _ContractRow({required this.entry, required this.query});
+  final ContractEntry entry;
+  final String query;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
+    final theme = Theme.of(context);
+    final c = entry.contract;
+    final selected =
+        ref.watch(workspaceProvider) == Workspace.contract &&
+        ref.watch(contractProvider.select((s) => s.contract?.id == c.id));
+    final a = ContractActions(ref, context);
+    final accent = theme.colorScheme.primary;
+    final indent = entry.depth * 16.0;
+    return Padding(
+      padding: EdgeInsetsDirectional.fromSTEB(
+        Space.l + 4 + indent,
+        1,
+        Space.s + 4,
+        1,
+      ),
+      child: Material(
+        color: selected
+            ? theme.colorScheme.primaryContainer.withValues(alpha: 0.45)
+            : Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Space.radiusSmall),
+          side: BorderSide(
+            color: selected ? accent : Colors.transparent,
+            width: 1.5,
+          ),
+        ),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(Space.radiusSmall),
+          onTap: () => unawaited(a.open(c.id)),
+          onSecondaryTapUp: (d) => unawaited(
+            _menu(context, d.globalPosition, [
+              (l.menuOpen, Icons.open_in_new, () => unawaited(a.open(c.id))),
+              if (!c.isAmendment)
+                (
+                  l.duplicateContract,
+                  Icons.copy_outlined,
+                  () => unawaited(a.duplicate(c.id)),
+                ),
+              (
+                l.createAmendment,
+                Icons.note_add_outlined,
+                () => unawaited(a.amendment(c.id)),
+              ),
+              (
+                l.menuDelete,
+                Icons.delete_outline,
+                () => unawaited(a.delete(c.id)),
+              ),
+            ]),
+          ),
+          child: Padding(
+            padding: const EdgeInsetsDirectional.symmetric(
+              horizontal: Space.s + 2,
+              vertical: Space.s - 1,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    if (entry.depth > 0) ...[
+                      Icon(
+                        Icons.subdirectory_arrow_left,
+                        size: 14,
+                        color: context.colors.muted,
+                      ),
+                      const SizedBox(width: 2),
+                    ],
+                    Flexible(
+                      child: HighlightText(
+                        c.number,
+                        query: query,
+                        textDirection: TextDirection.ltr,
+                        style: theme.textTheme.labelLarge,
+                      ),
+                    ),
+                    const SizedBox(width: Space.s),
+                    ContractStatusChip(c.status, dense: true),
+                  ],
+                ),
+                if (c.title.trim().isNotEmpty || c.projectName.isNotEmpty)
+                  HighlightText(
+                    c.title.trim().isNotEmpty ? c.title : c.projectName,
+                    query: query,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                if (c.totalMinor > 0)
+                  Text(
+                    c.total.format(),
+                    textDirection: TextDirection.ltr,
+                    textAlign: TextAlign.right,
+                    style: theme.textTheme.bodySmall,
+                  ),
               ],
             ),
           ),

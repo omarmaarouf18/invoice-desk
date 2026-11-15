@@ -233,6 +233,79 @@ class _SettingsFormState extends ConsumerState<_SettingsForm> {
                 ),
                 cardGap,
                 PanelCard(
+                  title: l.contractsSettings,
+                  icon: Icons.gavel_outlined,
+                  trailing: FilledButton.tonalIcon(
+                    key: const ValueKey('open-library'),
+                    onPressed: () => ref
+                        .read(workspaceProvider.notifier)
+                        .show(Workspace.library),
+                    icon: const Icon(Icons.library_books_outlined, size: 18),
+                    label: Text(l.openLibrary),
+                  ),
+                  child: Column(
+                    children: [
+                      pair(
+                        f(
+                          l.legalName,
+                          s.legalName,
+                          (x, v) => x.copyWith(legalName: v),
+                        ),
+                        f(
+                          l.nationalIdOrRegistry,
+                          s.nationalIdOrRegistry,
+                          (x, v) => x.copyWith(nationalIdOrRegistry: v),
+                        ),
+                      ),
+                      gap,
+                      f(
+                        l.address,
+                        s.address,
+                        (x, v) => x.copyWith(address: v),
+                      ),
+                      gap,
+                      pair(
+                        f(
+                          l.contractPrefix,
+                          s.contractPrefix,
+                          (x, v) => x.copyWith(
+                            contractPrefix: v.trim().isEmpty
+                                ? x.contractPrefix
+                                : v.trim(),
+                          ),
+                          dir: TextDirection.ltr,
+                        ),
+                        f(
+                          l.quotePrefix,
+                          s.quotePrefix,
+                          (x, v) => x.copyWith(
+                            quotePrefix: v.trim().isEmpty
+                                ? x.quotePrefix
+                                : v.trim(),
+                          ),
+                          dir: TextDirection.ltr,
+                        ),
+                      ),
+                      gap,
+                      f(
+                        l.defaultJurisdiction,
+                        s.defaultJurisdiction,
+                        (x, v) => x.copyWith(defaultJurisdiction: v),
+                      ),
+                      gap,
+                      SwitchListTile(
+                        contentPadding: EdgeInsets.zero,
+                        value: s.contractWesternDigits,
+                        title: Text(l.westernDigits),
+                        onChanged: (v) => _update(
+                          (x) => x.copyWith(contractWesternDigits: v),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                cardGap,
+                PanelCard(
                   title: l.payment,
                   icon: Icons.account_balance_outlined,
                   child: Column(

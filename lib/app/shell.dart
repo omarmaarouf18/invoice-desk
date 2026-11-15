@@ -5,8 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/features/actions.dart';
+import 'package:invoice_desk/features/contracts/contract_actions.dart';
+import 'package:invoice_desk/features/contracts/contract_controller.dart';
+import 'package:invoice_desk/features/contracts/contract_page.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart';
 import 'package:invoice_desk/features/editor/editor_page.dart';
+import 'package:invoice_desk/features/library/library_page.dart';
 import 'package:invoice_desk/features/settings/settings_page.dart';
 import 'package:invoice_desk/features/sidebar/sidebar.dart';
 import 'package:invoice_desk/features/sidebar/sidebar_providers.dart';
@@ -24,6 +28,9 @@ class Shell extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final a = AppActions(ref, context);
+    final ca = ContractActions(ref, context);
+    // Ctrl+S/E/D act on whichever document the workspace shows.
+    bool onContract() => ref.read(workspaceProvider) == Workspace.contract;
     void focusSearch() {
       final f = ref.read(searchFocusProvider)..requestFocus();
       final ctx = f.context;
@@ -41,11 +48,19 @@ class Shell extends ConsumerWidget {
         ctrl(LogicalKeyboardKey.keyN): a.newInvoice,
         ctrl(LogicalKeyboardKey.keyN, shift: true): () =>
             unawaited(a.newClient()),
+        ctrl(LogicalKeyboardKey.keyK, shift: true): () =>
+            unawaited(ca.newContract()),
         ctrl(LogicalKeyboardKey.keyK): focusSearch,
         ctrl(LogicalKeyboardKey.keyF): focusSearch,
-        ctrl(LogicalKeyboardKey.keyS): a.save,
-        ctrl(LogicalKeyboardKey.keyE): () => unawaited(a.exportPdf()),
-        ctrl(LogicalKeyboardKey.keyD): () => unawaited(a.duplicate()),
+        ctrl(LogicalKeyboardKey.keyS): () => onContract()
+            ? unawaited(ref.read(contractProvider.notifier).flush())
+            : a.save(),
+        ctrl(LogicalKeyboardKey.keyE): () => unawaited(
+          onContract() ? ca.exportPdf() : a.exportPdf(),
+        ),
+        ctrl(LogicalKeyboardKey.keyD): () => unawaited(
+          onContract() ? ca.duplicate() : a.duplicate(),
+        ),
         ctrl(LogicalKeyboardKey.keyR): () => unawaited(a.renew()),
         ctrl(LogicalKeyboardKey.digit1): () =>
             ref.read(previewTabProvider.notifier).set(false),
@@ -77,14 +92,20 @@ class _Workspace extends ConsumerWidget {
     final hasInvoice = ref.watch(
       editorProvider.select((s) => s.invoice != null),
     );
+    final hasContract = ref.watch(
+      contractProvider.select((s) => s.contract != null),
+    );
     final Widget child = switch (ws) {
       Workspace.settings => const SettingsPage(),
+      Workspace.library => const LibraryPage(),
       Workspace.invoice when hasInvoice => const EditorPage(),
-      Workspace.invoice => const WelcomePane(),
+      Workspace.contract when hasContract => const ContractPage(),
+      Workspace.invoice || Workspace.contract => const WelcomePane(),
     };
+    final open = ws == Workspace.contract ? hasContract : hasInvoice;
     return AnimatedSwitcher(
       duration: motion(context),
-      child: KeyedSubtree(key: ValueKey('${ws.name}$hasInvoice'), child: child),
+      child: KeyedSubtree(key: ValueKey('${ws.name}$open'), child: child),
     );
   }
 }

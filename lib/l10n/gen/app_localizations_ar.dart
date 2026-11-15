@@ -618,4 +618,494 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get clientDeleteFailed => 'ماقدرناش نحذف العميل';
+
+  @override
+  String get newContract => 'عقد جديد';
+
+  @override
+  String groupContracts(int count) {
+    return 'العقود ($count)';
+  }
+
+  @override
+  String groupInvoices(int count) {
+    return 'الفواتير ($count)';
+  }
+
+  @override
+  String get filterContractsInForce => 'عقود سارية';
+
+  @override
+  String contractCount(int count) {
+    return '$count عقد';
+  }
+
+  @override
+  String get cStatusDraft => 'مسودة';
+
+  @override
+  String get cStatusSent => 'مُرسل';
+
+  @override
+  String get cStatusSigned => 'موقّع';
+
+  @override
+  String get cStatusActive => 'ساري';
+
+  @override
+  String get cStatusCompleted => 'مكتمل';
+
+  @override
+  String get cStatusCancelled => 'ملغي';
+
+  @override
+  String get kindContract => 'عقد';
+
+  @override
+  String get kindQuote => 'عرض سعر';
+
+  @override
+  String get kindAmendment => 'ملحق تعديل';
+
+  @override
+  String get newContractTitle => 'عقد جديد';
+
+  @override
+  String get chooseTemplate => 'اختر القالب';
+
+  @override
+  String clauseCount(int count) {
+    return '$count بند';
+  }
+
+  @override
+  String get contractTitle => 'عنوان العقد';
+
+  @override
+  String get contractTitleHint => 'مثال: تطوير وتشغيل منصة تعليمية';
+
+  @override
+  String get projectName => 'اسم المشروع';
+
+  @override
+  String get projectSummary => 'ملخص المشروع';
+
+  @override
+  String get create => 'إنشاء';
+
+  @override
+  String get noTemplates => 'لا توجد قوالب في المكتبة. أضف قالبًا من الإعدادات ← مكتبة البنود.';
+
+  @override
+  String get cardContractDetails => 'بيانات العقد';
+
+  @override
+  String get cardVariables => 'المتغيرات';
+
+  @override
+  String get cardClauses => 'البنود';
+
+  @override
+  String get cardScopeAnnex => 'ملحق (1) نطاق العمل';
+
+  @override
+  String get cardPaymentAnnex => 'ملحق (2) المقابل والدفعات';
+
+  @override
+  String get cardLinkedInvoices => 'الفواتير المرتبطة';
+
+  @override
+  String get contractNumber => 'رقم العقد';
+
+  @override
+  String get startDate => 'تاريخ البدء';
+
+  @override
+  String get endDate => 'تاريخ الانتهاء';
+
+  @override
+  String get signedDate => 'تاريخ التوقيع';
+
+  @override
+  String get jurisdiction => 'جهة الفصل في النزاعات';
+
+  @override
+  String get clearDate => 'مسح التاريخ';
+
+  @override
+  String get preamble => 'التمهيد';
+
+  @override
+  String get closingLine => 'سطر الختام';
+
+  @override
+  String missingVariables(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count متغير ناقص',
+      few: '$count متغيرات ناقصة',
+      two: 'متغيران ناقصان',
+      one: 'متغير واحد ناقص',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get allVariablesFilled => 'كل المتغيرات مكتملة';
+
+  @override
+  String get noCustomVariables => 'البنود المفعّلة لا تستخدم متغيرات خاصة.';
+
+  @override
+  String builtInMissing(String source) {
+    return 'ناقص من بيانات $source';
+  }
+
+  @override
+  String get sourceClient => 'العميل';
+
+  @override
+  String get sourceSettings => 'الإعدادات';
+
+  @override
+  String get sourceContract => 'العقد';
+
+  @override
+  String get editClientData => 'تعديل بيانات العميل';
+
+  @override
+  String get openSettings => 'فتح الإعدادات';
+
+  @override
+  String get variablesHelp => 'اكتب قوسين معقوفين مزدوجين داخل أي بند لإدراج متغير. القيم هنا تخص هذا العقد فقط.';
+
+  @override
+  String get optionalTag => 'اختياري';
+
+  @override
+  String get clauseEnabled => 'مفعّل';
+
+  @override
+  String get clauseTitle => 'عنوان البند';
+
+  @override
+  String get clauseBody => 'نص البند';
+
+  @override
+  String get clauseBodyHelp => 'الأسطر التي تبدأ بـ «- » تصبح بنودًا فرعية مرقمة.';
+
+  @override
+  String get addClause => 'بند';
+
+  @override
+  String get addBlankClause => 'بند فارغ';
+
+  @override
+  String get addFromLibrary => 'من المكتبة…';
+
+  @override
+  String get restoreFromLibrary => 'استرجاع النص من المكتبة';
+
+  @override
+  String get saveToLibrary => 'حفظ في المكتبة';
+
+  @override
+  String get duplicateClause => 'تكرار';
+
+  @override
+  String get deleteClause => 'حذف البند';
+
+  @override
+  String get restoreTitle => 'استرجاع نص المكتبة؟';
+
+  @override
+  String get restoreBody => 'سيُستبدل نص هذا البند في العقد بنسخة المكتبة الحالية:';
+
+  @override
+  String get restoreConfirm => 'استرجاع';
+
+  @override
+  String get restoreSame => 'نص البند مطابق للمكتبة.';
+
+  @override
+  String get restoreMissing => 'البند الأصلي لم يعد موجودًا في المكتبة.';
+
+  @override
+  String get saveToLibraryTitle => 'حفظ هذا النص في المكتبة؟';
+
+  @override
+  String saveToLibraryBody(String title) {
+    return 'سيُستبدل نص البند «$title» في قالب المكتبة. العقود الموجودة لن تتغير.';
+  }
+
+  @override
+  String get savedToLibrary => 'اتحفظ النص في المكتبة';
+
+  @override
+  String get pickLibraryClause => 'إضافة بند من المكتبة';
+
+  @override
+  String get searchClauses => 'ابحث في البنود';
+
+  @override
+  String get scopePhase => 'المرحلة';
+
+  @override
+  String get scopeItem => 'البند';
+
+  @override
+  String get scopeDescription => 'الوصف';
+
+  @override
+  String get scopeAcceptance => 'معيار القبول';
+
+  @override
+  String get addScopeRow => 'صف';
+
+  @override
+  String get outOfScope => 'خارج النطاق';
+
+  @override
+  String get outOfScopeHint => 'سطر لكل بند';
+
+  @override
+  String get contractTotal => 'إجمالي المقابل';
+
+  @override
+  String get milestoneLabel => 'الدفعة';
+
+  @override
+  String get milestoneShare => 'النسبة أو المبلغ';
+
+  @override
+  String get milestoneShareHint => '30% أو 25000';
+
+  @override
+  String get milestoneTrigger => 'الاستحقاق';
+
+  @override
+  String get milestoneTriggerHint => 'عند التوقيع';
+
+  @override
+  String get milestoneDue => 'تاريخ الاستحقاق';
+
+  @override
+  String get milestoneAmount => 'المبلغ';
+
+  @override
+  String get addMilestone => 'دفعة';
+
+  @override
+  String get milestonesBalanced => 'الدفعات = الإجمالي';
+
+  @override
+  String milestonesOff(String sum, String total, String diff) {
+    return 'الدفعات $sum لا تساوي الإجمالي $total (فرق $diff)';
+  }
+
+  @override
+  String milestonesPercentOff(String pct) {
+    return 'مجموع النسب $pct% وليس 100%';
+  }
+
+  @override
+  String get createInvoice => 'إنشاء فاتورة';
+
+  @override
+  String invoiceCreatedFromMilestone(String number, String label) {
+    return 'فاتورة جديدة $number من «$label»';
+  }
+
+  @override
+  String get milestoneNeedsAmount => 'حدد مبلغ الدفعة أولًا';
+
+  @override
+  String get noLinkedInvoices => 'لا توجد فواتير مرتبطة بعد. أنشئ فاتورة من أي دفعة، أو اكتب رقم العقد في «رقم العقد» داخل الفاتورة.';
+
+  @override
+  String get lockedBanner => 'هذا العقد موقّع، فهو للقراءة فقط. لأي تغيير أنشئ ملحق تعديل.';
+
+  @override
+  String unlockedBanner(String date) {
+    return 'تم إلغاء قفل هذا العقد الموقّع في $date. التعديلات الآن تغيّر المستند الموقّع.';
+  }
+
+  @override
+  String get createAmendment => 'ملحق تعديل';
+
+  @override
+  String get unlock => 'إلغاء القفل';
+
+  @override
+  String get relock => 'إعادة القفل';
+
+  @override
+  String get unlockTitle => 'إلغاء قفل عقد موقّع؟';
+
+  @override
+  String get unlockBody => 'التعديل بعد التوقيع يجعل نسختك مختلفة عن النسخة الموقّعة. الطريقة المعتادة هي ملحق تعديل. سيُسجَّل تاريخ إلغاء القفل في سجل العقد.';
+
+  @override
+  String statusBlocked(String status, String missing) {
+    return 'لا يمكن تغيير الحالة إلى «$status»: $missing';
+  }
+
+  @override
+  String amendmentCreated(String number) {
+    return 'ملحق تعديل جديد: $number';
+  }
+
+  @override
+  String amendmentOf(String number) {
+    return 'ملحق للعقد $number';
+  }
+
+  @override
+  String amendmentPreamble(String number, String date) {
+    return 'إلحاقًا بالعقد رقم $number المؤرخ في $date بين الطرفين، اتفق الطرفان على تعديله على النحو التالي، وتظل باقي بنوده وملاحقه سارية دون تغيير.';
+  }
+
+  @override
+  String get amendmentClauseTitle => 'موضوع التعديل';
+
+  @override
+  String contractDeleted(String number) {
+    return 'اتحذف $number';
+  }
+
+  @override
+  String contractHasInvoicesTitle(String number) {
+    return '$number مرتبط بفواتير';
+  }
+
+  @override
+  String contractHasInvoicesBody(String invoices) {
+    return 'مرتبط بـ $invoices، فلا يمكن حذفه حتى لا تفقد الفواتير مرجعها. يمكنك إلغاؤه بدلًا من ذلك، أو أرشفة العميل.';
+  }
+
+  @override
+  String get cancelContract => 'تحويل الحالة إلى «ملغي»';
+
+  @override
+  String get duplicateContract => 'تكرار كعقد جديد';
+
+  @override
+  String contractDuplicated(String number) {
+    return 'عقد جديد: $number';
+  }
+
+  @override
+  String get changeStatus => 'تغيير الحالة';
+
+  @override
+  String get history => 'سجل العقد';
+
+  @override
+  String get historyUnlock => 'إلغاء القفل';
+
+  @override
+  String get historyRelock => 'إعادة القفل';
+
+  @override
+  String historyStatus(String status) {
+    return 'الحالة: $status';
+  }
+
+  @override
+  String get libraryTitle => 'مكتبة البنود';
+
+  @override
+  String get librarySubtitle => 'القوالب والبنود التي تُنسخ في كل عقد جديد. تعديلها لا يغيّر العقود الموجودة.';
+
+  @override
+  String get openLibrary => 'فتح مكتبة البنود';
+
+  @override
+  String get newTemplate => 'قالب جديد';
+
+  @override
+  String get templateName => 'اسم القالب';
+
+  @override
+  String get templateKind => 'النوع';
+
+  @override
+  String get templateDefaults => 'القيم الافتراضية للمتغيرات';
+
+  @override
+  String get templateDefaultsHint => 'سطر لكل متغير: الاسم=القيمة';
+
+  @override
+  String get deleteTemplate => 'حذف القالب';
+
+  @override
+  String deleteTemplateBody(String name) {
+    return 'سيُحذف القالب «$name» وبنوده من المكتبة. العقود المنشأة منه لن تتغير.';
+  }
+
+  @override
+  String get enabledByDefault => 'مفعّل افتراضيًا';
+
+  @override
+  String get pickTemplateToEdit => 'اختر قالبًا لتعديله';
+
+  @override
+  String get draftNotLegalAdvice => 'النصوص المبدئية مسودة وليست استشارة قانونية؛ راجعها مع محامٍ.';
+
+  @override
+  String get contractsSettings => 'العقود';
+
+  @override
+  String get legalName => 'الاسم القانوني';
+
+  @override
+  String get nationalIdOrRegistry => 'الرقم القومي / السجل التجاري';
+
+  @override
+  String get address => 'العنوان';
+
+  @override
+  String get contractPrefix => 'بادئة أرقام العقود';
+
+  @override
+  String get quotePrefix => 'بادئة أرقام العروض';
+
+  @override
+  String get defaultJurisdiction => 'جهة الفصل الافتراضية';
+
+  @override
+  String get westernDigits => 'أرقام البنود الفرعية بالأرقام الغربية (1. بدلًا من ١.)';
+
+  @override
+  String get clientLegal => 'البيانات القانونية (للعقود)';
+
+  @override
+  String get clientRegistry => 'سجل تجاري / رقم قومي';
+
+  @override
+  String get clientRepresentative => 'الممثل القانوني';
+
+  @override
+  String get clientRepresentativeTitle => 'صفته';
+
+  @override
+  String clientHasDocumentsBody(String invoices, String contracts, String unpaid) {
+    return 'عنده $invoices و$contracts، والمبلغ غير المدفوع: $unpaid.\nالأرشفة بتخفي العميل وفواتيره وعقوده من القائمة والبحث من غير ما تمسح حاجة، وتقدر ترجّعه من فلتر «مؤرشف».';
+  }
+
+  @override
+  String clientDeletedWithDocuments(String name, String documents) {
+    return 'اتحذف $name و$documents';
+  }
+
+  @override
+  String confirmDeleteDocumentsBody(String documents) {
+    return 'هيتحذف $documents، منها المدفوع والمُرسل والموقّع. هنعمل نسخة احتياطية الأول، وتقدر تتراجع لمدة ٨ ثواني.\nاكتب اسم العميل للتأكيد:';
+  }
+
+  @override
+  String andJoin(String a, String b) {
+    return '$a و$b';
+  }
 }

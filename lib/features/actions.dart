@@ -10,6 +10,7 @@ import 'package:invoice_desk/domain/invoice_logic.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/clients/client_dialog.dart';
 import 'package:invoice_desk/features/clients/client_removal_dialogs.dart';
+import 'package:invoice_desk/features/contracts/contract_controller.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/pdf/invoice_pdf.dart';
@@ -101,6 +102,7 @@ class AppActions {
     final l = this.l;
     final dao = ref.read(databaseProvider).clientsDao;
     await editor.closeIfClient(c.id);
+    await ref.read(contractProvider.notifier).closeIfClient(c.id);
     await dao.setArchived(c.id, archived: true);
     showSnack(
       l.clientArchivedSnack(c.name),
@@ -118,11 +120,14 @@ class AppActions {
     final db = ref.read(databaseProvider);
     final dao = db.clientsDao;
     final ed = editor;
+    final ced = ref.read(contractProvider.notifier);
     final backups = ref.read(backupServiceProvider);
     final count = await dao.countLiveInvoices(c.id);
+    final contracts = await dao.countLiveContracts(c.id);
 
-    if (count == 0) {
+    if (count == 0 && contracts == 0) {
       await ed.closeIfClient(c.id);
+      await ced.closeIfClient(c.id);
       try {
         await dao.softDelete(c.id);
       } on Object catch (e) {
@@ -145,6 +150,7 @@ class AppActions {
       context,
       client: c,
       invoiceCount: count,
+      contractCount: contracts,
       unpaid: unpaid,
     );
     switch (choice) {
@@ -158,9 +164,11 @@ class AppActions {
           context,
           client: c,
           invoiceCount: count,
+          contractCount: contracts,
         );
         if (!confirmed) return;
         await ed.closeIfClient(c.id);
+        await ced.closeIfClient(c.id);
         try {
           await backups.backupBefore('delete-client');
         } on Object catch (e) {
@@ -175,7 +183,12 @@ class AppActions {
           return showSnack(l.clientDeleteFailed);
         }
         showSnack(
-          l.clientDeletedWithInvoices(c.name, l.invoiceCount(count)),
+          contracts == 0
+              ? l.clientDeletedWithInvoices(c.name, l.invoiceCount(count))
+              : l.clientDeletedWithDocuments(
+                  c.name,
+                  l.andJoin(l.invoiceCount(count), l.contractCount(contracts)),
+                ),
           duration: const Duration(seconds: 8),
           actions: [
             (

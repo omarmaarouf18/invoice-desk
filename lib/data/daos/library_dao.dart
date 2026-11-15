@@ -20,7 +20,9 @@ class LibraryDao extends DatabaseAccessor<AppDatabase> with _$LibraryDaoMixin {
 
   /// Every template with its clauses, by position. Re-emits on any change.
   Stream<List<ClauseTemplate>> watchAll() => customSelect(
-    'SELECT 1',
+    // Drift shares watch streams by SQL text: each aggregate needs its own
+    // query, or it inherits another stream's table set.
+    'SELECT 1 AS library_tick',
     readsFrom: {clauseTemplates, libraryClauses},
   ).watch().asyncMap((_) => getAll());
 

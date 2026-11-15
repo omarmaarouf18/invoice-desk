@@ -29,7 +29,9 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
   /// Every live (not soft-deleted) invoice, fully loaded. Re-emits on any
   /// change to invoices, sections or items.
   Stream<List<Invoice>> watchAll() => customSelect(
-    'SELECT 1',
+    // Drift shares watch streams by SQL text: each aggregate needs its own
+    // query, or it inherits another stream's table set.
+    'SELECT 1 AS invoices_tick',
     readsFrom: {invoices, sections, items},
   ).watch().asyncMap((_) => getAll());
 

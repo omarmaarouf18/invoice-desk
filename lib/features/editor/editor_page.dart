@@ -124,7 +124,7 @@ class _TopBar extends ConsumerWidget {
           const SizedBox(width: Space.s + 4),
           StatusChip(inv.displayStatus(today)),
           const SizedBox(width: Space.m),
-          _SaveIndicator(status: st.status),
+          SaveIndicator(status: st.status),
           const Spacer(),
           if (!wide) ...[
             SegmentedButton<bool>(
@@ -219,8 +219,8 @@ class _TopBar extends ConsumerWidget {
   }
 }
 
-class _SaveIndicator extends StatelessWidget {
-  const _SaveIndicator({required this.status});
+class SaveIndicator extends StatelessWidget {
+  const SaveIndicator({required this.status, super.key});
   final SaveStatus status;
 
   @override

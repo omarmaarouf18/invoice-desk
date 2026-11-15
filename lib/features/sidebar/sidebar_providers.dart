@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invoice_desk/app/providers.dart';
+import 'package:invoice_desk/features/contracts/contract_controller.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart';
 import 'package:invoice_desk/features/sidebar/sidebar_model.dart';
 
@@ -44,15 +45,19 @@ final searchFocusProvider = Provider<FocusNode>((ref) {
   return node;
 });
 
-/// Client id of the open invoice (kept expanded and visible).
+/// Client id of the open document (kept expanded and visible).
 final activeClientIdProvider = Provider<String?>((ref) {
-  final id = ref.watch(editorProvider.select((s) => s.invoice?.clientId));
+  final ws = ref.watch(workspaceProvider);
+  final id = ws == Workspace.contract
+      ? ref.watch(contractProvider.select((s) => s.contract?.clientId))
+      : ref.watch(editorProvider.select((s) => s.invoice?.clientId));
   return id == null || id.isEmpty ? null : id;
 });
 
 final sidebarDataProvider = Provider<AsyncValue<SidebarData>>((ref) {
   final clients = ref.watch(clientsProvider);
   final invoices = ref.watch(invoicesProvider);
+  final contracts = ref.watch(contractsProvider);
   final query = ref.watch(searchQueryProvider);
   final filter = ref.watch(sidebarFilterProvider);
   final today = ref.watch(todayProvider);
@@ -71,6 +76,7 @@ final sidebarDataProvider = Provider<AsyncValue<SidebarData>>((ref) {
       query: query,
       filter: filter,
       today: today,
+      contracts: contracts.value ?? const [],
       keepClientId: keep,
     ),
   );

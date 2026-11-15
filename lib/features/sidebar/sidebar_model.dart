@@ -1,12 +1,29 @@
 import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/core/digits.dart';
 import 'package:invoice_desk/core/money.dart';
+import 'package:invoice_desk/domain/contract_models.dart';
 import 'package:invoice_desk/domain/invoice_logic.dart';
 import 'package:invoice_desk/domain/models.dart';
 
-/// [archived] shows only archived clients (and all their invoices); every
-/// other filter hides them.
-enum SidebarFilter { all, unpaid, overdue, paid, drafts, archived }
+/// [archived] shows only archived clients (and all their documents); every
+/// other filter hides them. [contractsInForce] shows signed/active
+/// contracts only; the invoice filters show invoices only.
+enum SidebarFilter {
+  all,
+  unpaid,
+  overdue,
+  paid,
+  drafts,
+  contractsInForce,
+  archived,
+}
+
+/// A contract row; amendments sit under their original ([depth] 1).
+class ContractEntry {
+  const ContractEntry(this.contract, {this.depth = 0});
+  final Contract contract;
+  final int depth;
+}
 
 class ClientGroup {
   const ClientGroup({
@@ -14,9 +31,16 @@ class ClientGroup {
     required this.invoices,
     required this.invoiceCount,
     required this.unpaidCount,
+    this.contracts = const [],
+    this.contractCount = 0,
   });
 
   final Client client;
+
+  /// Contracts shown under the client (filtered), originals newest first,
+  /// each followed by its amendments.
+  final List<ContractEntry> contracts;
+  final int contractCount;
 
   /// Invoices shown under the client (filtered), newest first.
   final List<Invoice> invoices;
@@ -46,6 +70,15 @@ bool matchesFilter(Invoice i, SidebarFilter f, CalendarDate today) =>
       SidebarFilter.paid => i.status == InvoiceStatus.paid,
       SidebarFilter.drafts => i.status == InvoiceStatus.draft,
       SidebarFilter.archived => true,
+      SidebarFilter.contractsInForce => false,
+    };
+
+bool _contractMatches(Contract c, SidebarFilter f, Contract? parent) =>
+    switch (f) {
+      SidebarFilter.all || SidebarFilter.archived => true,
+      SidebarFilter.contractsInForce =>
+        c.status.isInForce || (parent?.status.isInForce ?? false),
+      _ => false,
     };
 
 /// Arabic-aware A→Z ordering key.
@@ -58,6 +91,7 @@ SidebarData buildSidebar({
   required String query,
   required SidebarFilter filter,
   required CalendarDate today,
+  List<Contract> contracts = const [],
   String? keepClientId,
 }) {
   final q = foldForSearch(query.trim());
@@ -77,6 +111,10 @@ SidebarData buildSidebar({
   }
   final browsing =
       filter == SidebarFilter.all || filter == SidebarFilter.archived;
+  final contractsByClient = <String, List<Contract>>{};
+  for (final c in contracts) {
+    (contractsByClient[c.clientId] ??= []).add(c);
+  }
 
   bool hit(String s) => q.isNotEmpty && foldForSearch(s).contains(q);
 
@@ -102,8 +140,44 @@ SidebarData buildSidebar({
           final d = b.issueDate.compareTo(a.issueDate);
           return d != 0 ? d : b.seq.compareTo(a.seq);
         });
+    final allContracts = contractsByClient[c.id] ?? const <Contract>[];
+    final byId = {for (final k in allContracts) k.id: k};
+    bool contractHit(Contract k) =>
+        clientHit || hit(k.number) || hit(k.title) || hit(k.projectName);
+    final originals = allContracts.where((k) => k.parentId == null).toList()
+      ..sort((a, b) {
+        final d = b.issueDate.compareTo(a.issueDate);
+        return d != 0 ? d : b.number.compareTo(a.number);
+      });
+    final shownContracts = <ContractEntry>[];
+    for (final o in originals) {
+      final amendments = allContracts.where((k) => k.parentId == o.id).toList()
+        ..sort((a, b) => a.amendmentNo.compareTo(b.amendmentNo));
+      // A hit on an amendment keeps its original visible (and vice versa).
+      if (![o, ...amendments].any(contractHit)) continue;
+      if (_contractMatches(o, filter, null)) {
+        shownContracts.add(ContractEntry(o));
+      }
+      for (final a in amendments) {
+        if (_contractMatches(a, filter, o)) {
+          shownContracts.add(ContractEntry(a, depth: 1));
+        }
+      }
+    }
+    // Amendments whose original is gone (deleted separately) still show.
+    for (final a in allContracts) {
+      if (a.parentId != null &&
+          !byId.containsKey(a.parentId) &&
+          contractHit(a) &&
+          _contractMatches(a, filter, null)) {
+        shownContracts.add(ContractEntry(a));
+      }
+    }
     final include =
-        browsing && q.isEmpty || (shown.isNotEmpty || (browsing && clientHit));
+        browsing && q.isEmpty ||
+        shown.isNotEmpty ||
+        shownContracts.isNotEmpty ||
+        (browsing && clientHit);
     if (!include) continue;
     groups.add(
       ClientGroup(
@@ -111,6 +185,8 @@ SidebarData buildSidebar({
         invoices: shown,
         invoiceCount: all.length,
         unpaidCount: all.where((i) => i.isUnpaid).length,
+        contracts: shownContracts,
+        contractCount: allContracts.length,
       ),
     );
   }

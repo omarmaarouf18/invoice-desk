@@ -136,6 +136,7 @@ class SyncedTextField extends StatefulWidget {
     this.style,
     this.dense = false,
     this.textInputAction,
+    this.readOnly = false,
   });
 
   final String value;
@@ -158,6 +159,9 @@ class SyncedTextField extends StatefulWidget {
   final TextStyle? style;
   final bool dense;
   final TextInputAction? textInputAction;
+
+  /// Locked documents: selectable, not editable.
+  final bool readOnly;
 
   @override
   State<SyncedTextField> createState() => _SyncedTextFieldState();
@@ -223,6 +227,7 @@ class _SyncedTextFieldState extends State<SyncedTextField> {
       autofocus: widget.autofocus,
       onChanged: widget.onChanged,
       onSubmitted: widget.onSubmitted,
+      readOnly: widget.readOnly,
       maxLines: widget.maxLines,
       minLines: widget.minLines,
       textDirection: widget.textDirection,

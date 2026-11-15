@@ -184,12 +184,13 @@ class BackupService {
     try {
       await _db.transaction(() async {
         Future<List<String>> backupColumns(String t) async => [
-          for (final r in await _db
-              .customSelect(
-                'SELECT name FROM pragma_table_info(?, ?)',
-                variables: [Variable(t), const Variable('bk')],
-              )
-              .get())
+          for (final r
+              in await _db
+                  .customSelect(
+                    'SELECT name FROM pragma_table_info(?, ?)',
+                    variables: [Variable(t), const Variable('bk')],
+                  )
+                  .get())
             '"${r.read<String>('name')}"',
         ];
         final cols = {for (final t in tables) t: await backupColumns(t)};

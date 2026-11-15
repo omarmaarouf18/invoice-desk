@@ -38,7 +38,9 @@ class ContractsDao extends DatabaseAccessor<AppDatabase>
 
   /// Every live contract, fully loaded. Re-emits on any related change.
   Stream<List<Contract>> watchAll() => customSelect(
-    'SELECT 1',
+    // Drift shares watch streams by SQL text: each aggregate needs its own
+    // query, or it inherits another stream's table set.
+    'SELECT 1 AS contracts_tick',
     readsFrom: {contracts, contractClauses, scopeItems, paymentMilestones},
   ).watch().asyncMap((_) => getAll());
 

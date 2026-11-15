@@ -353,5 +353,351 @@
     }
   },
   "deleteBackupFailed": "فشلت النسخة الاحتياطية، فما اتحذفش حاجة",
-  "clientDeleteFailed": "ماقدرناش نحذف العميل"
+  "clientDeleteFailed": "ماقدرناش نحذف العميل",
+  "newContract": "عقد جديد",
+  "groupContracts": "العقود ({count})",
+  "@groupContracts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "groupInvoices": "الفواتير ({count})",
+  "@groupInvoices": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "filterContractsInForce": "عقود سارية",
+  "contractCount": "{count} عقد",
+  "@contractCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cStatusDraft": "مسودة",
+  "cStatusSent": "مُرسل",
+  "cStatusSigned": "موقّع",
+  "cStatusActive": "ساري",
+  "cStatusCompleted": "مكتمل",
+  "cStatusCancelled": "ملغي",
+  "kindContract": "عقد",
+  "kindQuote": "عرض سعر",
+  "kindAmendment": "ملحق تعديل",
+  "newContractTitle": "عقد جديد",
+  "chooseTemplate": "اختر القالب",
+  "clauseCount": "{count} بند",
+  "@clauseCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "contractTitle": "عنوان العقد",
+  "contractTitleHint": "مثال: تطوير وتشغيل منصة تعليمية",
+  "projectName": "اسم المشروع",
+  "projectSummary": "ملخص المشروع",
+  "create": "إنشاء",
+  "noTemplates": "لا توجد قوالب في المكتبة. أضف قالبًا من الإعدادات ← مكتبة البنود.",
+  "cardContractDetails": "بيانات العقد",
+  "cardVariables": "المتغيرات",
+  "cardClauses": "البنود",
+  "cardScopeAnnex": "ملحق (1) نطاق العمل",
+  "cardPaymentAnnex": "ملحق (2) المقابل والدفعات",
+  "cardLinkedInvoices": "الفواتير المرتبطة",
+  "contractNumber": "رقم العقد",
+  "startDate": "تاريخ البدء",
+  "endDate": "تاريخ الانتهاء",
+  "signedDate": "تاريخ التوقيع",
+  "jurisdiction": "جهة الفصل في النزاعات",
+  "clearDate": "مسح التاريخ",
+  "preamble": "التمهيد",
+  "closingLine": "سطر الختام",
+  "missingVariables": "{count, plural, =1{متغير واحد ناقص} =2{متغيران ناقصان} few{{count} متغيرات ناقصة} other{{count} متغير ناقص}}",
+  "@missingVariables": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "allVariablesFilled": "كل المتغيرات مكتملة",
+  "noCustomVariables": "البنود المفعّلة لا تستخدم متغيرات خاصة.",
+  "builtInMissing": "ناقص من بيانات {source}",
+  "@builtInMissing": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "sourceClient": "العميل",
+  "sourceSettings": "الإعدادات",
+  "sourceContract": "العقد",
+  "editClientData": "تعديل بيانات العميل",
+  "openSettings": "فتح الإعدادات",
+  "variablesHelp": "اكتب قوسين معقوفين مزدوجين داخل أي بند لإدراج متغير. القيم هنا تخص هذا العقد فقط.",
+  "optionalTag": "اختياري",
+  "clauseEnabled": "مفعّل",
+  "clauseTitle": "عنوان البند",
+  "clauseBody": "نص البند",
+  "clauseBodyHelp": "الأسطر التي تبدأ بـ «- » تصبح بنودًا فرعية مرقمة.",
+  "addClause": "بند",
+  "addBlankClause": "بند فارغ",
+  "addFromLibrary": "من المكتبة…",
+  "restoreFromLibrary": "استرجاع النص من المكتبة",
+  "saveToLibrary": "حفظ في المكتبة",
+  "duplicateClause": "تكرار",
+  "deleteClause": "حذف البند",
+  "restoreTitle": "استرجاع نص المكتبة؟",
+  "restoreBody": "سيُستبدل نص هذا البند في العقد بنسخة المكتبة الحالية:",
+  "restoreConfirm": "استرجاع",
+  "restoreSame": "نص البند مطابق للمكتبة.",
+  "restoreMissing": "البند الأصلي لم يعد موجودًا في المكتبة.",
+  "saveToLibraryTitle": "حفظ هذا النص في المكتبة؟",
+  "saveToLibraryBody": "سيُستبدل نص البند «{title}» في قالب المكتبة. العقود الموجودة لن تتغير.",
+  "@saveToLibraryBody": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "savedToLibrary": "اتحفظ النص في المكتبة",
+  "pickLibraryClause": "إضافة بند من المكتبة",
+  "searchClauses": "ابحث في البنود",
+  "scopePhase": "المرحلة",
+  "scopeItem": "البند",
+  "scopeDescription": "الوصف",
+  "scopeAcceptance": "معيار القبول",
+  "addScopeRow": "صف",
+  "outOfScope": "خارج النطاق",
+  "outOfScopeHint": "سطر لكل بند",
+  "contractTotal": "إجمالي المقابل",
+  "milestoneLabel": "الدفعة",
+  "milestoneShare": "النسبة أو المبلغ",
+  "milestoneShareHint": "30% أو 25000",
+  "milestoneTrigger": "الاستحقاق",
+  "milestoneTriggerHint": "عند التوقيع",
+  "milestoneDue": "تاريخ الاستحقاق",
+  "milestoneAmount": "المبلغ",
+  "addMilestone": "دفعة",
+  "milestonesBalanced": "الدفعات = الإجمالي",
+  "milestonesOff": "الدفعات {sum} لا تساوي الإجمالي {total} (فرق {diff})",
+  "@milestonesOff": {
+    "placeholders": {
+      "sum": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      },
+      "diff": {
+        "type": "String"
+      }
+    }
+  },
+  "milestonesPercentOff": "مجموع النسب {pct}% وليس 100%",
+  "@milestonesPercentOff": {
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
+  "createInvoice": "إنشاء فاتورة",
+  "invoiceCreatedFromMilestone": "فاتورة جديدة {number} من «{label}»",
+  "@invoiceCreatedFromMilestone": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      },
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "milestoneNeedsAmount": "حدد مبلغ الدفعة أولًا",
+  "noLinkedInvoices": "لا توجد فواتير مرتبطة بعد. أنشئ فاتورة من أي دفعة، أو اكتب رقم العقد في «رقم العقد» داخل الفاتورة.",
+  "lockedBanner": "هذا العقد موقّع، فهو للقراءة فقط. لأي تغيير أنشئ ملحق تعديل.",
+  "unlockedBanner": "تم إلغاء قفل هذا العقد الموقّع في {date}. التعديلات الآن تغيّر المستند الموقّع.",
+  "@unlockedBanner": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "createAmendment": "ملحق تعديل",
+  "unlock": "إلغاء القفل",
+  "relock": "إعادة القفل",
+  "unlockTitle": "إلغاء قفل عقد موقّع؟",
+  "unlockBody": "التعديل بعد التوقيع يجعل نسختك مختلفة عن النسخة الموقّعة. الطريقة المعتادة هي ملحق تعديل. سيُسجَّل تاريخ إلغاء القفل في سجل العقد.",
+  "statusBlocked": "لا يمكن تغيير الحالة إلى «{status}»: {missing}",
+  "@statusBlocked": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      },
+      "missing": {
+        "type": "String"
+      }
+    }
+  },
+  "amendmentCreated": "ملحق تعديل جديد: {number}",
+  "@amendmentCreated": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "amendmentOf": "ملحق للعقد {number}",
+  "@amendmentOf": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "amendmentPreamble": "إلحاقًا بالعقد رقم {number} المؤرخ في {date} بين الطرفين، اتفق الطرفان على تعديله على النحو التالي، وتظل باقي بنوده وملاحقه سارية دون تغيير.",
+  "@amendmentPreamble": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "amendmentClauseTitle": "موضوع التعديل",
+  "contractDeleted": "اتحذف {number}",
+  "@contractDeleted": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "contractHasInvoicesTitle": "{number} مرتبط بفواتير",
+  "@contractHasInvoicesTitle": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "contractHasInvoicesBody": "مرتبط بـ {invoices}، فلا يمكن حذفه حتى لا تفقد الفواتير مرجعها. يمكنك إلغاؤه بدلًا من ذلك، أو أرشفة العميل.",
+  "@contractHasInvoicesBody": {
+    "placeholders": {
+      "invoices": {
+        "type": "String"
+      }
+    }
+  },
+  "cancelContract": "تحويل الحالة إلى «ملغي»",
+  "duplicateContract": "تكرار كعقد جديد",
+  "contractDuplicated": "عقد جديد: {number}",
+  "@contractDuplicated": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "changeStatus": "تغيير الحالة",
+  "history": "سجل العقد",
+  "historyUnlock": "إلغاء القفل",
+  "historyRelock": "إعادة القفل",
+  "historyStatus": "الحالة: {status}",
+  "@historyStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "libraryTitle": "مكتبة البنود",
+  "librarySubtitle": "القوالب والبنود التي تُنسخ في كل عقد جديد. تعديلها لا يغيّر العقود الموجودة.",
+  "openLibrary": "فتح مكتبة البنود",
+  "newTemplate": "قالب جديد",
+  "templateName": "اسم القالب",
+  "templateKind": "النوع",
+  "templateDefaults": "القيم الافتراضية للمتغيرات",
+  "templateDefaultsHint": "سطر لكل متغير: الاسم=القيمة",
+  "deleteTemplate": "حذف القالب",
+  "deleteTemplateBody": "سيُحذف القالب «{name}» وبنوده من المكتبة. العقود المنشأة منه لن تتغير.",
+  "@deleteTemplateBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "enabledByDefault": "مفعّل افتراضيًا",
+  "pickTemplateToEdit": "اختر قالبًا لتعديله",
+  "draftNotLegalAdvice": "النصوص المبدئية مسودة وليست استشارة قانونية؛ راجعها مع محامٍ.",
+  "contractsSettings": "العقود",
+  "legalName": "الاسم القانوني",
+  "nationalIdOrRegistry": "الرقم القومي / السجل التجاري",
+  "address": "العنوان",
+  "contractPrefix": "بادئة أرقام العقود",
+  "quotePrefix": "بادئة أرقام العروض",
+  "defaultJurisdiction": "جهة الفصل الافتراضية",
+  "westernDigits": "أرقام البنود الفرعية بالأرقام الغربية (1. بدلًا من ١.)",
+  "clientLegal": "البيانات القانونية (للعقود)",
+  "clientRegistry": "سجل تجاري / رقم قومي",
+  "clientRepresentative": "الممثل القانوني",
+  "clientRepresentativeTitle": "صفته",
+  "clientHasDocumentsBody": "عنده {invoices} و{contracts}، والمبلغ غير المدفوع: {unpaid}.\nالأرشفة بتخفي العميل وفواتيره وعقوده من القائمة والبحث من غير ما تمسح حاجة، وتقدر ترجّعه من فلتر «مؤرشف».",
+  "@clientHasDocumentsBody": {
+    "placeholders": {
+      "invoices": {
+        "type": "String"
+      },
+      "contracts": {
+        "type": "String"
+      },
+      "unpaid": {
+        "type": "String"
+      }
+    }
+  },
+  "clientDeletedWithDocuments": "اتحذف {name} و{documents}",
+  "@clientDeletedWithDocuments": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "documents": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmDeleteDocumentsBody": "هيتحذف {documents}، منها المدفوع والمُرسل والموقّع. هنعمل نسخة احتياطية الأول، وتقدر تتراجع لمدة ٨ ثواني.\nاكتب اسم العميل للتأكيد:",
+  "@confirmDeleteDocumentsBody": {
+    "placeholders": {
+      "documents": {
+        "type": "String"
+      }
+    }
+  },
+  "andJoin": "{a} و{b}",
+  "@andJoin": {
+    "placeholders": {
+      "a": {
+        "type": "String"
+      },
+      "b": {
+        "type": "String"
+      }
+    }
+  }
 }

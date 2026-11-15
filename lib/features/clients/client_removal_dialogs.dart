@@ -12,6 +12,7 @@ Future<ClientRemoval?> showClientHasInvoicesDialog(
   required Client client,
   required int invoiceCount,
   required MoneyBag unpaid,
+  int contractCount = 0,
 }) => showDialog<ClientRemoval>(
   context: context,
   builder: (context) {
@@ -22,10 +23,16 @@ Future<ClientRemoval?> showClientHasInvoicesDialog(
       content: SizedBox(
         width: 440,
         child: Text(
-          l.clientHasInvoicesBody(
-            l.invoiceCount(invoiceCount),
-            unpaid.format(),
-          ),
+          contractCount == 0
+              ? l.clientHasInvoicesBody(
+                  l.invoiceCount(invoiceCount),
+                  unpaid.format(),
+                )
+              : l.clientHasDocumentsBody(
+                  l.invoiceCount(invoiceCount),
+                  l.contractCount(contractCount),
+                  unpaid.format(),
+                ),
         ),
       ),
       actions: [
@@ -56,18 +63,27 @@ Future<bool> showConfirmDeleteAllDialog(
   BuildContext context, {
   required Client client,
   required int invoiceCount,
+  int contractCount = 0,
 }) async =>
     await showDialog<bool>(
       context: context,
-      builder: (_) =>
-          _ConfirmDeleteAll(client: client, invoiceCount: invoiceCount),
+      builder: (_) => _ConfirmDeleteAll(
+        client: client,
+        invoiceCount: invoiceCount,
+        contractCount: contractCount,
+      ),
     ) ??
     false;
 
 class _ConfirmDeleteAll extends StatefulWidget {
-  const _ConfirmDeleteAll({required this.client, required this.invoiceCount});
+  const _ConfirmDeleteAll({
+    required this.client,
+    required this.invoiceCount,
+    required this.contractCount,
+  });
   final Client client;
   final int invoiceCount;
+  final int contractCount;
 
   @override
   State<_ConfirmDeleteAll> createState() => _ConfirmDeleteAllState();
@@ -100,7 +116,16 @@ class _ConfirmDeleteAllState extends State<_ConfirmDeleteAll> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(l.confirmDeleteAllBody(l.invoiceCount(widget.invoiceCount))),
+            Text(
+              widget.contractCount == 0
+                  ? l.confirmDeleteAllBody(l.invoiceCount(widget.invoiceCount))
+                  : l.confirmDeleteDocumentsBody(
+                      l.andJoin(
+                        l.invoiceCount(widget.invoiceCount),
+                        l.contractCount(widget.contractCount),
+                      ),
+                    ),
+            ),
             const SizedBox(height: Space.s + 4),
             TextField(
               key: const ValueKey('confirm-client-name'),

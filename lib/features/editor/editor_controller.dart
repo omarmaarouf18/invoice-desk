@@ -9,6 +9,7 @@ import 'package:invoice_desk/data/daos/invoices_dao.dart';
 import 'package:invoice_desk/data/seed.dart';
 import 'package:invoice_desk/domain/invoice_logic.dart';
 import 'package:invoice_desk/domain/models.dart';
+import 'package:invoice_desk/features/contracts/contract_controller.dart';
 import 'package:uuid/uuid.dart';
 
 enum SaveStatus { saved, dirty, saving, invalid, error }
@@ -94,7 +95,11 @@ class EditorController extends Notifier<EditorState> {
 
   // ── Opening ─────────────────────────────────────────────────────────
   Future<void> open(String id) async {
-    if (state.invoice?.id == id) return;
+    await ref.read(contractProvider.notifier).flush();
+    if (state.invoice?.id == id) {
+      ref.read(workspaceProvider.notifier).show(Workspace.invoice);
+      return;
+    }
     await flush();
     final inv = await ref.read(databaseProvider).invoicesDao.getById(id);
     if (!ref.mounted || inv == null) return;
@@ -116,6 +121,7 @@ class EditorController extends Notifier<EditorState> {
   /// Opens a fresh draft (not saved until it has a client).
   Future<void> newInvoice({String? clientId}) async {
     await flush();
+    await ref.read(contractProvider.notifier).flush();
     final db = ref.read(databaseProvider);
     final settings = await db.settingsDao.get();
     final today = _today;

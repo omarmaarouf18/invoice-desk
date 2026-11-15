@@ -1222,6 +1222,870 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'ماقدرناش نحذف العميل'**
   String get clientDeleteFailed;
+
+  /// No description provided for @newContract.
+  ///
+  /// In ar, this message translates to:
+  /// **'عقد جديد'**
+  String get newContract;
+
+  /// No description provided for @groupContracts.
+  ///
+  /// In ar, this message translates to:
+  /// **'العقود ({count})'**
+  String groupContracts(int count);
+
+  /// No description provided for @groupInvoices.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفواتير ({count})'**
+  String groupInvoices(int count);
+
+  /// No description provided for @filterContractsInForce.
+  ///
+  /// In ar, this message translates to:
+  /// **'عقود سارية'**
+  String get filterContractsInForce;
+
+  /// No description provided for @contractCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} عقد'**
+  String contractCount(int count);
+
+  /// No description provided for @cStatusDraft.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسودة'**
+  String get cStatusDraft;
+
+  /// No description provided for @cStatusSent.
+  ///
+  /// In ar, this message translates to:
+  /// **'مُرسل'**
+  String get cStatusSent;
+
+  /// No description provided for @cStatusSigned.
+  ///
+  /// In ar, this message translates to:
+  /// **'موقّع'**
+  String get cStatusSigned;
+
+  /// No description provided for @cStatusActive.
+  ///
+  /// In ar, this message translates to:
+  /// **'ساري'**
+  String get cStatusActive;
+
+  /// No description provided for @cStatusCompleted.
+  ///
+  /// In ar, this message translates to:
+  /// **'مكتمل'**
+  String get cStatusCompleted;
+
+  /// No description provided for @cStatusCancelled.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملغي'**
+  String get cStatusCancelled;
+
+  /// No description provided for @kindContract.
+  ///
+  /// In ar, this message translates to:
+  /// **'عقد'**
+  String get kindContract;
+
+  /// No description provided for @kindQuote.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض سعر'**
+  String get kindQuote;
+
+  /// No description provided for @kindAmendment.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملحق تعديل'**
+  String get kindAmendment;
+
+  /// No description provided for @newContractTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'عقد جديد'**
+  String get newContractTitle;
+
+  /// No description provided for @chooseTemplate.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر القالب'**
+  String get chooseTemplate;
+
+  /// No description provided for @clauseCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} بند'**
+  String clauseCount(int count);
+
+  /// No description provided for @contractTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'عنوان العقد'**
+  String get contractTitle;
+
+  /// No description provided for @contractTitleHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: تطوير وتشغيل منصة تعليمية'**
+  String get contractTitleHint;
+
+  /// No description provided for @projectName.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم المشروع'**
+  String get projectName;
+
+  /// No description provided for @projectSummary.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملخص المشروع'**
+  String get projectSummary;
+
+  /// No description provided for @create.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء'**
+  String get create;
+
+  /// No description provided for @noTemplates.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد قوالب في المكتبة. أضف قالبًا من الإعدادات ← مكتبة البنود.'**
+  String get noTemplates;
+
+  /// No description provided for @cardContractDetails.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيانات العقد'**
+  String get cardContractDetails;
+
+  /// No description provided for @cardVariables.
+  ///
+  /// In ar, this message translates to:
+  /// **'المتغيرات'**
+  String get cardVariables;
+
+  /// No description provided for @cardClauses.
+  ///
+  /// In ar, this message translates to:
+  /// **'البنود'**
+  String get cardClauses;
+
+  /// No description provided for @cardScopeAnnex.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملحق (1) نطاق العمل'**
+  String get cardScopeAnnex;
+
+  /// No description provided for @cardPaymentAnnex.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملحق (2) المقابل والدفعات'**
+  String get cardPaymentAnnex;
+
+  /// No description provided for @cardLinkedInvoices.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفواتير المرتبطة'**
+  String get cardLinkedInvoices;
+
+  /// No description provided for @contractNumber.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم العقد'**
+  String get contractNumber;
+
+  /// No description provided for @startDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ البدء'**
+  String get startDate;
+
+  /// No description provided for @endDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ الانتهاء'**
+  String get endDate;
+
+  /// No description provided for @signedDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ التوقيع'**
+  String get signedDate;
+
+  /// No description provided for @jurisdiction.
+  ///
+  /// In ar, this message translates to:
+  /// **'جهة الفصل في النزاعات'**
+  String get jurisdiction;
+
+  /// No description provided for @clearDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسح التاريخ'**
+  String get clearDate;
+
+  /// No description provided for @preamble.
+  ///
+  /// In ar, this message translates to:
+  /// **'التمهيد'**
+  String get preamble;
+
+  /// No description provided for @closingLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'سطر الختام'**
+  String get closingLine;
+
+  /// No description provided for @missingVariables.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =1{متغير واحد ناقص} =2{متغيران ناقصان} few{{count} متغيرات ناقصة} other{{count} متغير ناقص}}'**
+  String missingVariables(int count);
+
+  /// No description provided for @allVariablesFilled.
+  ///
+  /// In ar, this message translates to:
+  /// **'كل المتغيرات مكتملة'**
+  String get allVariablesFilled;
+
+  /// No description provided for @noCustomVariables.
+  ///
+  /// In ar, this message translates to:
+  /// **'البنود المفعّلة لا تستخدم متغيرات خاصة.'**
+  String get noCustomVariables;
+
+  /// No description provided for @builtInMissing.
+  ///
+  /// In ar, this message translates to:
+  /// **'ناقص من بيانات {source}'**
+  String builtInMissing(String source);
+
+  /// No description provided for @sourceClient.
+  ///
+  /// In ar, this message translates to:
+  /// **'العميل'**
+  String get sourceClient;
+
+  /// No description provided for @sourceSettings.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإعدادات'**
+  String get sourceSettings;
+
+  /// No description provided for @sourceContract.
+  ///
+  /// In ar, this message translates to:
+  /// **'العقد'**
+  String get sourceContract;
+
+  /// No description provided for @editClientData.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل بيانات العميل'**
+  String get editClientData;
+
+  /// No description provided for @openSettings.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح الإعدادات'**
+  String get openSettings;
+
+  /// No description provided for @variablesHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب قوسين معقوفين مزدوجين داخل أي بند لإدراج متغير. القيم هنا تخص هذا العقد فقط.'**
+  String get variablesHelp;
+
+  /// No description provided for @optionalTag.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختياري'**
+  String get optionalTag;
+
+  /// No description provided for @clauseEnabled.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفعّل'**
+  String get clauseEnabled;
+
+  /// No description provided for @clauseTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'عنوان البند'**
+  String get clauseTitle;
+
+  /// No description provided for @clauseBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'نص البند'**
+  String get clauseBody;
+
+  /// No description provided for @clauseBodyHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأسطر التي تبدأ بـ «- » تصبح بنودًا فرعية مرقمة.'**
+  String get clauseBodyHelp;
+
+  /// No description provided for @addClause.
+  ///
+  /// In ar, this message translates to:
+  /// **'بند'**
+  String get addClause;
+
+  /// No description provided for @addBlankClause.
+  ///
+  /// In ar, this message translates to:
+  /// **'بند فارغ'**
+  String get addBlankClause;
+
+  /// No description provided for @addFromLibrary.
+  ///
+  /// In ar, this message translates to:
+  /// **'من المكتبة…'**
+  String get addFromLibrary;
+
+  /// No description provided for @restoreFromLibrary.
+  ///
+  /// In ar, this message translates to:
+  /// **'استرجاع النص من المكتبة'**
+  String get restoreFromLibrary;
+
+  /// No description provided for @saveToLibrary.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ في المكتبة'**
+  String get saveToLibrary;
+
+  /// No description provided for @duplicateClause.
+  ///
+  /// In ar, this message translates to:
+  /// **'تكرار'**
+  String get duplicateClause;
+
+  /// No description provided for @deleteClause.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف البند'**
+  String get deleteClause;
+
+  /// No description provided for @restoreTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'استرجاع نص المكتبة؟'**
+  String get restoreTitle;
+
+  /// No description provided for @restoreBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيُستبدل نص هذا البند في العقد بنسخة المكتبة الحالية:'**
+  String get restoreBody;
+
+  /// No description provided for @restoreConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'استرجاع'**
+  String get restoreConfirm;
+
+  /// No description provided for @restoreSame.
+  ///
+  /// In ar, this message translates to:
+  /// **'نص البند مطابق للمكتبة.'**
+  String get restoreSame;
+
+  /// No description provided for @restoreMissing.
+  ///
+  /// In ar, this message translates to:
+  /// **'البند الأصلي لم يعد موجودًا في المكتبة.'**
+  String get restoreMissing;
+
+  /// No description provided for @saveToLibraryTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ هذا النص في المكتبة؟'**
+  String get saveToLibraryTitle;
+
+  /// No description provided for @saveToLibraryBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيُستبدل نص البند «{title}» في قالب المكتبة. العقود الموجودة لن تتغير.'**
+  String saveToLibraryBody(String title);
+
+  /// No description provided for @savedToLibrary.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتحفظ النص في المكتبة'**
+  String get savedToLibrary;
+
+  /// No description provided for @pickLibraryClause.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة بند من المكتبة'**
+  String get pickLibraryClause;
+
+  /// No description provided for @searchClauses.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابحث في البنود'**
+  String get searchClauses;
+
+  /// No description provided for @scopePhase.
+  ///
+  /// In ar, this message translates to:
+  /// **'المرحلة'**
+  String get scopePhase;
+
+  /// No description provided for @scopeItem.
+  ///
+  /// In ar, this message translates to:
+  /// **'البند'**
+  String get scopeItem;
+
+  /// No description provided for @scopeDescription.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوصف'**
+  String get scopeDescription;
+
+  /// No description provided for @scopeAcceptance.
+  ///
+  /// In ar, this message translates to:
+  /// **'معيار القبول'**
+  String get scopeAcceptance;
+
+  /// No description provided for @addScopeRow.
+  ///
+  /// In ar, this message translates to:
+  /// **'صف'**
+  String get addScopeRow;
+
+  /// No description provided for @outOfScope.
+  ///
+  /// In ar, this message translates to:
+  /// **'خارج النطاق'**
+  String get outOfScope;
+
+  /// No description provided for @outOfScopeHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'سطر لكل بند'**
+  String get outOfScopeHint;
+
+  /// No description provided for @contractTotal.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي المقابل'**
+  String get contractTotal;
+
+  /// No description provided for @milestoneLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدفعة'**
+  String get milestoneLabel;
+
+  /// No description provided for @milestoneShare.
+  ///
+  /// In ar, this message translates to:
+  /// **'النسبة أو المبلغ'**
+  String get milestoneShare;
+
+  /// No description provided for @milestoneShareHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'30% أو 25000'**
+  String get milestoneShareHint;
+
+  /// No description provided for @milestoneTrigger.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاستحقاق'**
+  String get milestoneTrigger;
+
+  /// No description provided for @milestoneTriggerHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'عند التوقيع'**
+  String get milestoneTriggerHint;
+
+  /// No description provided for @milestoneDue.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ الاستحقاق'**
+  String get milestoneDue;
+
+  /// No description provided for @milestoneAmount.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبلغ'**
+  String get milestoneAmount;
+
+  /// No description provided for @addMilestone.
+  ///
+  /// In ar, this message translates to:
+  /// **'دفعة'**
+  String get addMilestone;
+
+  /// No description provided for @milestonesBalanced.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدفعات = الإجمالي'**
+  String get milestonesBalanced;
+
+  /// No description provided for @milestonesOff.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدفعات {sum} لا تساوي الإجمالي {total} (فرق {diff})'**
+  String milestonesOff(String sum, String total, String diff);
+
+  /// No description provided for @milestonesPercentOff.
+  ///
+  /// In ar, this message translates to:
+  /// **'مجموع النسب {pct}% وليس 100%'**
+  String milestonesPercentOff(String pct);
+
+  /// No description provided for @createInvoice.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء فاتورة'**
+  String get createInvoice;
+
+  /// No description provided for @invoiceCreatedFromMilestone.
+  ///
+  /// In ar, this message translates to:
+  /// **'فاتورة جديدة {number} من «{label}»'**
+  String invoiceCreatedFromMilestone(String number, String label);
+
+  /// No description provided for @milestoneNeedsAmount.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدد مبلغ الدفعة أولًا'**
+  String get milestoneNeedsAmount;
+
+  /// No description provided for @noLinkedInvoices.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد فواتير مرتبطة بعد. أنشئ فاتورة من أي دفعة، أو اكتب رقم العقد في «رقم العقد» داخل الفاتورة.'**
+  String get noLinkedInvoices;
+
+  /// No description provided for @lockedBanner.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذا العقد موقّع، فهو للقراءة فقط. لأي تغيير أنشئ ملحق تعديل.'**
+  String get lockedBanner;
+
+  /// No description provided for @unlockedBanner.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إلغاء قفل هذا العقد الموقّع في {date}. التعديلات الآن تغيّر المستند الموقّع.'**
+  String unlockedBanner(String date);
+
+  /// No description provided for @createAmendment.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملحق تعديل'**
+  String get createAmendment;
+
+  /// No description provided for @unlock.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء القفل'**
+  String get unlock;
+
+  /// No description provided for @relock.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة القفل'**
+  String get relock;
+
+  /// No description provided for @unlockTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء قفل عقد موقّع؟'**
+  String get unlockTitle;
+
+  /// No description provided for @unlockBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'التعديل بعد التوقيع يجعل نسختك مختلفة عن النسخة الموقّعة. الطريقة المعتادة هي ملحق تعديل. سيُسجَّل تاريخ إلغاء القفل في سجل العقد.'**
+  String get unlockBody;
+
+  /// No description provided for @statusBlocked.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يمكن تغيير الحالة إلى «{status}»: {missing}'**
+  String statusBlocked(String status, String missing);
+
+  /// No description provided for @amendmentCreated.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملحق تعديل جديد: {number}'**
+  String amendmentCreated(String number);
+
+  /// No description provided for @amendmentOf.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملحق للعقد {number}'**
+  String amendmentOf(String number);
+
+  /// No description provided for @amendmentPreamble.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلحاقًا بالعقد رقم {number} المؤرخ في {date} بين الطرفين، اتفق الطرفان على تعديله على النحو التالي، وتظل باقي بنوده وملاحقه سارية دون تغيير.'**
+  String amendmentPreamble(String number, String date);
+
+  /// No description provided for @amendmentClauseTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'موضوع التعديل'**
+  String get amendmentClauseTitle;
+
+  /// No description provided for @contractDeleted.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتحذف {number}'**
+  String contractDeleted(String number);
+
+  /// No description provided for @contractHasInvoicesTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'{number} مرتبط بفواتير'**
+  String contractHasInvoicesTitle(String number);
+
+  /// No description provided for @contractHasInvoicesBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرتبط بـ {invoices}، فلا يمكن حذفه حتى لا تفقد الفواتير مرجعها. يمكنك إلغاؤه بدلًا من ذلك، أو أرشفة العميل.'**
+  String contractHasInvoicesBody(String invoices);
+
+  /// No description provided for @cancelContract.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحويل الحالة إلى «ملغي»'**
+  String get cancelContract;
+
+  /// No description provided for @duplicateContract.
+  ///
+  /// In ar, this message translates to:
+  /// **'تكرار كعقد جديد'**
+  String get duplicateContract;
+
+  /// No description provided for @contractDuplicated.
+  ///
+  /// In ar, this message translates to:
+  /// **'عقد جديد: {number}'**
+  String contractDuplicated(String number);
+
+  /// No description provided for @changeStatus.
+  ///
+  /// In ar, this message translates to:
+  /// **'تغيير الحالة'**
+  String get changeStatus;
+
+  /// No description provided for @history.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل العقد'**
+  String get history;
+
+  /// No description provided for @historyUnlock.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء القفل'**
+  String get historyUnlock;
+
+  /// No description provided for @historyRelock.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة القفل'**
+  String get historyRelock;
+
+  /// No description provided for @historyStatus.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحالة: {status}'**
+  String historyStatus(String status);
+
+  /// No description provided for @libraryTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مكتبة البنود'**
+  String get libraryTitle;
+
+  /// No description provided for @librarySubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'القوالب والبنود التي تُنسخ في كل عقد جديد. تعديلها لا يغيّر العقود الموجودة.'**
+  String get librarySubtitle;
+
+  /// No description provided for @openLibrary.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح مكتبة البنود'**
+  String get openLibrary;
+
+  /// No description provided for @newTemplate.
+  ///
+  /// In ar, this message translates to:
+  /// **'قالب جديد'**
+  String get newTemplate;
+
+  /// No description provided for @templateName.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم القالب'**
+  String get templateName;
+
+  /// No description provided for @templateKind.
+  ///
+  /// In ar, this message translates to:
+  /// **'النوع'**
+  String get templateKind;
+
+  /// No description provided for @templateDefaults.
+  ///
+  /// In ar, this message translates to:
+  /// **'القيم الافتراضية للمتغيرات'**
+  String get templateDefaults;
+
+  /// No description provided for @templateDefaultsHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'سطر لكل متغير: الاسم=القيمة'**
+  String get templateDefaultsHint;
+
+  /// No description provided for @deleteTemplate.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف القالب'**
+  String get deleteTemplate;
+
+  /// No description provided for @deleteTemplateBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيُحذف القالب «{name}» وبنوده من المكتبة. العقود المنشأة منه لن تتغير.'**
+  String deleteTemplateBody(String name);
+
+  /// No description provided for @enabledByDefault.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفعّل افتراضيًا'**
+  String get enabledByDefault;
+
+  /// No description provided for @pickTemplateToEdit.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر قالبًا لتعديله'**
+  String get pickTemplateToEdit;
+
+  /// No description provided for @draftNotLegalAdvice.
+  ///
+  /// In ar, this message translates to:
+  /// **'النصوص المبدئية مسودة وليست استشارة قانونية؛ راجعها مع محامٍ.'**
+  String get draftNotLegalAdvice;
+
+  /// No description provided for @contractsSettings.
+  ///
+  /// In ar, this message translates to:
+  /// **'العقود'**
+  String get contractsSettings;
+
+  /// No description provided for @legalName.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاسم القانوني'**
+  String get legalName;
+
+  /// No description provided for @nationalIdOrRegistry.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرقم القومي / السجل التجاري'**
+  String get nationalIdOrRegistry;
+
+  /// No description provided for @address.
+  ///
+  /// In ar, this message translates to:
+  /// **'العنوان'**
+  String get address;
+
+  /// No description provided for @contractPrefix.
+  ///
+  /// In ar, this message translates to:
+  /// **'بادئة أرقام العقود'**
+  String get contractPrefix;
+
+  /// No description provided for @quotePrefix.
+  ///
+  /// In ar, this message translates to:
+  /// **'بادئة أرقام العروض'**
+  String get quotePrefix;
+
+  /// No description provided for @defaultJurisdiction.
+  ///
+  /// In ar, this message translates to:
+  /// **'جهة الفصل الافتراضية'**
+  String get defaultJurisdiction;
+
+  /// No description provided for @westernDigits.
+  ///
+  /// In ar, this message translates to:
+  /// **'أرقام البنود الفرعية بالأرقام الغربية (1. بدلًا من ١.)'**
+  String get westernDigits;
+
+  /// No description provided for @clientLegal.
+  ///
+  /// In ar, this message translates to:
+  /// **'البيانات القانونية (للعقود)'**
+  String get clientLegal;
+
+  /// No description provided for @clientRegistry.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل تجاري / رقم قومي'**
+  String get clientRegistry;
+
+  /// No description provided for @clientRepresentative.
+  ///
+  /// In ar, this message translates to:
+  /// **'الممثل القانوني'**
+  String get clientRepresentative;
+
+  /// No description provided for @clientRepresentativeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'صفته'**
+  String get clientRepresentativeTitle;
+
+  /// No description provided for @clientHasDocumentsBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'عنده {invoices} و{contracts}، والمبلغ غير المدفوع: {unpaid}.\nالأرشفة بتخفي العميل وفواتيره وعقوده من القائمة والبحث من غير ما تمسح حاجة، وتقدر ترجّعه من فلتر «مؤرشف».'**
+  String clientHasDocumentsBody(String invoices, String contracts, String unpaid);
+
+  /// No description provided for @clientDeletedWithDocuments.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتحذف {name} و{documents}'**
+  String clientDeletedWithDocuments(String name, String documents);
+
+  /// No description provided for @confirmDeleteDocumentsBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'هيتحذف {documents}، منها المدفوع والمُرسل والموقّع. هنعمل نسخة احتياطية الأول، وتقدر تتراجع لمدة ٨ ثواني.\nاكتب اسم العميل للتأكيد:'**
+  String confirmDeleteDocumentsBody(String documents);
+
+  /// No description provided for @andJoin.
+  ///
+  /// In ar, this message translates to:
+  /// **'{a} و{b}'**
+  String andJoin(String a, String b);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
