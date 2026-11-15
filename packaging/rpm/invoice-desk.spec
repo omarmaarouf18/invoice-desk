@@ -9,7 +9,7 @@
 %global __provides_exclude_from ^/opt/invoice-desk/.*$
 
 # Passed by scripts/package_linux.sh from pubspec.yaml.
-%{!?pkgversion: %global pkgversion 0.2.0}
+%{!?pkgversion: %global pkgversion 0.3.0}
 
 Name:           invoice-desk
 Version:        %{pkgversion}
@@ -67,6 +67,10 @@ fi
 %{_datadir}/icons/hicolor/256x256/apps/invoice-desk.png
 
 %changelog
+* Sun Nov 15 2026 Omar Maarouf <omarmaarouf18@users.noreply.github.com> - 0.3.0-1
+- Trash (المحذوفات) with restore and permanent delete; sync-ready data
+  (schema v4); architecture clean-up; documentation; CI
+
 * Sun Nov 15 2026 Omar Maarouf <omarmaarouf18@users.noreply.github.com> - 0.2.0-1
 - Contracts and quotes from a clause library, with amendments, variables,
   annexes, milestone invoices and an Arabic contract PDF (schema v3)

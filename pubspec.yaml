@@ -1,6 +1,6 @@
 name: invoice_desk
 description: Invoice Desk — desktop invoicing for a solo freelancer.
-version: 0.2.0+3
+version: 0.3.0+4
 publish_to: none
 
 environment:
