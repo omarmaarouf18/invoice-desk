@@ -84,27 +84,24 @@ class _ClientDialogState extends State<_ClientDialog> {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    Widget field(
+    _Field field(
       TextEditingController c,
       String label, {
       bool autofocus = false,
       String? error,
       TextDirection? dir,
       TextInputType? type,
-    }) => Padding(
-      padding: const EdgeInsetsDirectional.only(bottom: Space.m - 4),
-      child: TextField(
-        controller: c,
-        autofocus: autofocus,
-        textDirection: dir,
-        keyboardType: type,
-        textInputAction: TextInputAction.next,
-        onSubmitted: (_) => _submit(),
-        onChanged: error == null
-            ? null
-            : (_) => setState(() => _showError = false),
-        decoration: InputDecoration(labelText: label, errorText: error),
-      ),
+    }) => _Field(
+      controller: c,
+      label: label,
+      autofocus: autofocus,
+      error: error,
+      dir: dir,
+      type: type,
+      onSubmitted: _submit,
+      onChanged: error == null
+          ? null
+          : () => setState(() => _showError = false),
     );
 
     return AlertDialog(
@@ -125,57 +122,33 @@ class _ClientDialogState extends State<_ClientDialog> {
               ),
               field(_contact, l.clientContact),
               field(_city, l.clientCity),
-              Row(
+              _Row(
+                field(
+                  _phone,
+                  l.clientPhone,
+                  dir: TextDirection.ltr,
+                  type: TextInputType.phone,
+                ),
+                field(
+                  _email,
+                  l.clientEmail,
+                  dir: TextDirection.ltr,
+                  type: TextInputType.emailAddress,
+                ),
+              ),
+              _LegalSection(
+                expanded:
+                    (widget.client?.legalName.isNotEmpty ?? false) ||
+                    (widget.client?.representative.isNotEmpty ?? false),
                 children: [
-                  Expanded(
-                    child: field(
-                      _phone,
-                      l.clientPhone,
-                      dir: TextDirection.ltr,
-                      type: TextInputType.phone,
-                    ),
-                  ),
-                  const SizedBox(width: Space.s + 4),
-                  Expanded(
-                    child: field(
-                      _email,
-                      l.clientEmail,
-                      dir: TextDirection.ltr,
-                      type: TextInputType.emailAddress,
-                    ),
+                  field(_legalName, l.legalName),
+                  field(_registry, l.clientRegistry),
+                  field(_address, l.address),
+                  _Row(
+                    field(_rep, l.clientRepresentative),
+                    field(_repTitle, l.clientRepresentativeTitle),
                   ),
                 ],
-              ),
-              Theme(
-                data: Theme.of(
-                  context,
-                ).copyWith(dividerColor: Colors.transparent),
-                child: ExpansionTile(
-                  key: const ValueKey('client-legal'),
-                  tilePadding: EdgeInsets.zero,
-                  childrenPadding: EdgeInsets.zero,
-                  initiallyExpanded:
-                      (widget.client?.legalName.isNotEmpty ?? false) ||
-                      (widget.client?.representative.isNotEmpty ?? false),
-                  title: Text(
-                    l.clientLegal,
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                  children: [
-                    field(_legalName, l.legalName),
-                    field(_registry, l.clientRegistry),
-                    field(_address, l.address),
-                    Row(
-                      children: [
-                        Expanded(child: field(_rep, l.clientRepresentative)),
-                        const SizedBox(width: Space.s + 4),
-                        Expanded(
-                          child: field(_repTitle, l.clientRepresentativeTitle),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
               ),
             ],
           ),
@@ -183,18 +156,7 @@ class _ClientDialogState extends State<_ClientDialog> {
       ),
       actions: [
         if (widget.client != null && widget.onDelete != null)
-          TextButton.icon(
-            key: const ValueKey('client-dialog-delete'),
-            style: TextButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.error,
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-              widget.onDelete!();
-            },
-            icon: const Icon(Icons.delete_outline, size: 18),
-            label: Text(l.menuDeleteClient),
-          ),
+          _DeleteButton(onDelete: widget.onDelete!),
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
           child: Text(l.cancel),
@@ -203,4 +165,98 @@ class _ClientDialogState extends State<_ClientDialog> {
       ],
     );
   }
+}
+
+class _Field extends StatelessWidget {
+  const _Field({
+    required this.controller,
+    required this.label,
+    required this.onSubmitted,
+    this.autofocus = false,
+    this.error,
+    this.dir,
+    this.type,
+    this.onChanged,
+  });
+
+  final TextEditingController controller;
+  final String label;
+  final VoidCallback onSubmitted;
+  final bool autofocus;
+  final String? error;
+  final TextDirection? dir;
+  final TextInputType? type;
+  final VoidCallback? onChanged;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsetsDirectional.only(bottom: Space.m - 4),
+    child: TextField(
+      controller: controller,
+      autofocus: autofocus,
+      textDirection: dir,
+      keyboardType: type,
+      textInputAction: TextInputAction.next,
+      onSubmitted: (_) => onSubmitted(),
+      onChanged: onChanged == null ? null : (_) => onChanged!(),
+      decoration: InputDecoration(labelText: label, errorText: error),
+    ),
+  );
+}
+
+class _Row extends StatelessWidget {
+  const _Row(this.a, this.b);
+  final Widget a;
+  final Widget b;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    children: [
+      Expanded(child: a),
+      const SizedBox(width: Space.s + 4),
+      Expanded(child: b),
+    ],
+  );
+}
+
+/// "البيانات القانونية (للعقود)": collapsed unless already filled in.
+class _LegalSection extends StatelessWidget {
+  const _LegalSection({required this.expanded, required this.children});
+  final bool expanded;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) => Theme(
+    data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+    child: ExpansionTile(
+      key: const ValueKey('client-legal'),
+      tilePadding: EdgeInsets.zero,
+      childrenPadding: EdgeInsets.zero,
+      initiallyExpanded: expanded,
+      title: Text(
+        context.l10n.clientLegal,
+        style: Theme.of(context).textTheme.titleSmall,
+      ),
+      children: children,
+    ),
+  );
+}
+
+class _DeleteButton extends StatelessWidget {
+  const _DeleteButton({required this.onDelete});
+  final VoidCallback onDelete;
+
+  @override
+  Widget build(BuildContext context) => TextButton.icon(
+    key: const ValueKey('client-dialog-delete'),
+    style: TextButton.styleFrom(
+      foregroundColor: Theme.of(context).colorScheme.error,
+    ),
+    onPressed: () {
+      Navigator.of(context).pop();
+      onDelete();
+    },
+    icon: const Icon(Icons.delete_outline, size: 18),
+    label: Text(context.l10n.menuDeleteClient),
+  );
 }

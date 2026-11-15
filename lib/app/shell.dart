@@ -129,28 +129,7 @@ class WelcomePane extends ConsumerWidget {
     final clientDone = clients.isNotEmpty;
 
     if (profileDone && clientDone && invoices.isNotEmpty) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.receipt_long_outlined,
-              size: 40,
-              color: context.colors.muted,
-            ),
-            const SizedBox(height: Space.m - 4),
-            Text(l.pickInvoice, style: theme.textTheme.titleMedium),
-            const SizedBox(height: Space.xs),
-            Text(l.pickInvoiceBody, style: theme.textTheme.bodySmall),
-            const SizedBox(height: Space.m),
-            FilledButton.icon(
-              onPressed: a.newInvoice,
-              icon: const Icon(Icons.add, size: 18),
-              label: Text('${l.newInvoice}  ·  Ctrl+N'),
-            ),
-          ],
-        ),
-      );
+      return _PickOne(onNew: a.newInvoice);
     }
 
     return Center(
@@ -201,6 +180,40 @@ class WelcomePane extends ConsumerWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Everything is set up: nudge towards the list or a new invoice.
+class _PickOne extends StatelessWidget {
+  const _PickOne({required this.onNew});
+  final VoidCallback onNew;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final theme = Theme.of(context);
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.receipt_long_outlined,
+            size: 40,
+            color: context.colors.muted,
+          ),
+          const SizedBox(height: Space.m - 4),
+          Text(l.pickInvoice, style: theme.textTheme.titleMedium),
+          const SizedBox(height: Space.xs),
+          Text(l.pickInvoiceBody, style: theme.textTheme.bodySmall),
+          const SizedBox(height: Space.m),
+          FilledButton.icon(
+            onPressed: onNew,
+            icon: const Icon(Icons.add, size: 18),
+            label: Text('${l.newInvoice}  ·  Ctrl+N'),
+          ),
+        ],
       ),
     );
   }

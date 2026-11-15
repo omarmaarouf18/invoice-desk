@@ -8,119 +8,14 @@ import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/data/repositories/contract_repository.dart';
 import 'package:invoice_desk/domain/contract_logic.dart';
 import 'package:invoice_desk/domain/contract_models.dart';
-import 'package:invoice_desk/domain/invoice_logic.dart';
+import 'package:invoice_desk/domain/contract_ops.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/domain/results.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart'
     show SaveStatus, editorProvider, newId;
 
-@immutable
-class ContractEditorState {
-  const ContractEditorState({
-    this.contract,
-    this.status = SaveStatus.saved,
-    this.issues = const {},
-    this.revision = 0,
-    this.focusVariable,
-    this.focusTick = 0,
-  });
-
-  /// The open contract (the edit buffer); null when nothing is open.
-  final Contract? contract;
-  final SaveStatus status;
-  final Set<ContractIssue> issues;
-
-  /// Bumped on every edit; the preview and autosave key off it.
-  final int revision;
-
-  /// Set by "N متغيرات ناقصة": the variables panel focuses this one.
-  final String? focusVariable;
-  final int focusTick;
-
-  ContractEditorState copyWith({
-    Contract? contract,
-    SaveStatus? status,
-    Set<ContractIssue>? issues,
-    int? revision,
-    String? focusVariable,
-    int? focusTick,
-  }) => ContractEditorState(
-    contract: contract ?? this.contract,
-    status: status ?? this.status,
-    issues: issues ?? this.issues,
-    revision: revision ?? this.revision,
-    focusVariable: focusVariable ?? this.focusVariable,
-    focusTick: focusTick ?? this.focusTick,
-  );
-}
-
-/// Outcome of a status change.
-sealed class StatusChange {
-  const StatusChange();
-}
-
-class StatusChanged extends StatusChange {
-  const StatusChanged();
-}
-
-/// Moving past draft needs every variable resolved.
-class StatusBlocked extends StatusChange {
-  const StatusBlocked(this.missing);
-  final List<String> missing;
-}
-
-/// What a new contract starts from (the "عقد جديد" sheet).
-class NewContractRequest {
-  const NewContractRequest({
-    required this.clientId,
-    required this.template,
-    this.title = '',
-    this.projectName = '',
-  });
-
-  final String clientId;
-  final ClauseTemplate template;
-  final String title;
-  final String projectName;
-}
-
-/// Default payment schedules, by kind.
-List<PaymentMilestone> defaultMilestones(TemplateKind kind) => switch (kind) {
-  TemplateKind.contract => [
-    PaymentMilestone(
-      id: newId(),
-      label: 'الدفعة المقدمة',
-      percentBp: 3000,
-      trigger: 'عند التوقيع',
-    ),
-    PaymentMilestone(
-      id: newId(),
-      label: 'الدفعة الثانية',
-      percentBp: 4000,
-      trigger: 'عند قبول المرحلة 1',
-    ),
-    PaymentMilestone(
-      id: newId(),
-      label: 'الدفعة الأخيرة',
-      percentBp: 3000,
-      trigger: 'عند التسليم النهائي',
-    ),
-  ],
-  TemplateKind.quote => [
-    PaymentMilestone(
-      id: newId(),
-      label: 'الدفعة المقدمة',
-      percentBp: 5000,
-      trigger: 'عند الموافقة على العرض',
-    ),
-    PaymentMilestone(
-      id: newId(),
-      label: 'الدفعة الأخيرة',
-      percentBp: 5000,
-      trigger: 'عند التسليم',
-    ),
-  ],
-};
+part 'controller/contract_state.dart';
+part 'controller/read_models.dart';
 
 /// The contract editor ViewModel: edit buffer, autosave 1.5 s after the
 /// last edit, locking, and the contract-level actions.
@@ -201,7 +96,7 @@ class ContractController extends Notifier<ContractEditorState> {
       vars: {...t.varDefaults},
       clauses: clausesFromTemplate(t, newId),
       scope: [ScopeItem(id: newId())],
-      milestones: defaultMilestones(t.kind),
+      milestones: defaultMilestones(t.kind, newId),
     );
     await _dao.save(c);
     await open(c.id);
@@ -490,33 +385,14 @@ class ContractController extends Notifier<ContractEditorState> {
     final prefix = root.series == TemplateKind.quote
         ? settings.quotePrefix
         : settings.contractPrefix;
-    final a = Contract(
-      id: newId(),
-      clientId: root.clientId,
-      number: formatContractNumber(
-        root.number.startsWith('$prefix-')
-            ? prefix
-            : root.number.split('-').first,
-        root.year,
-        root.seq,
-        amendmentNo: no,
-      ),
-      series: root.series,
-      year: root.year,
-      seq: root.seq,
-      amendmentNo: no,
-      parentId: root.id,
-      kind: ContractKind.amendment,
-      templateName: root.templateName,
-      title: root.title,
-      projectName: root.projectName,
-      projectSummary: root.projectSummary,
+    final a = buildAmendment(
+      root: root,
+      no: no,
+      prefix: prefix,
+      today: _today,
       preamble: preamble(root.number, formatArabicDate(root.issueDate)),
-      issueDate: _today,
-      jurisdiction: root.jurisdiction,
-      currency: root.currency,
-      vars: {...root.vars},
-      clauses: [ContractClause(id: newId(), title: clauseTitle)],
+      clauseTitle: clauseTitle,
+      newId: newId,
     );
     await _dao.save(a);
     await open(a.id);
@@ -531,45 +407,18 @@ class ContractController extends Notifier<ContractEditorState> {
     if (c == null) return null;
     final i = c.milestones.indexWhere((m) => m.id == milestoneId);
     if (i < 0) return null;
-    final amount = milestoneAmounts(c.totalMinor, c.milestones)[i];
-    if (amount <= 0) return null;
     final m = c.milestones[i];
     final invoices = ref.read(invoiceRepositoryProvider);
-    final settings = await ref.read(settingsRepositoryProvider).get();
-    final today = _today;
-    final seq = await invoices.nextSeqFor(today.year);
-    final number = formatInvoiceNumber(settings.invoicePrefix, today.year, seq);
-    final label = m.label.trim().isEmpty ? c.number : m.label.trim();
-    final inv = Invoice(
-      id: newId(),
-      clientId: c.clientId,
-      number: number,
-      year: today.year,
-      seq: seq,
-      issueDate: today,
-      dueDate: m.dueDate ?? today.addDays(settings.defaultDueDays),
-      contractRef: c.number,
-      notesEn: settings.notesEn,
-      notesAr: settings.notesAr,
-      sections: [
-        InvoiceSection(
-          id: newId(),
-          currency: c.currency,
-          titleAr: c.projectName,
-          items: [
-            LineItem(
-              id: newId(),
-              service: label,
-              description: [
-                c.projectName.trim(),
-                m.trigger.trim(),
-              ].where((e) => e.isNotEmpty).join(' — '),
-              unitPriceMinor: amount,
-            ),
-          ],
-        ),
-      ],
+    final inv = invoiceForMilestone(
+      c: c,
+      index: i,
+      seq: await invoices.nextSeqFor(_today.year),
+      today: _today,
+      settings: await ref.read(settingsRepositoryProvider).get(),
+      newId: newId,
     );
+    if (inv == null) return null;
+    final number = inv.number;
     if (await invoices.save(inv) is! Saved) return null;
     await _dao.linkMilestone(m.id, inv.id);
     if (!ref.mounted) return number;
@@ -618,30 +467,3 @@ final contractProvider =
     NotifierProvider<ContractController, ContractEditorState>(
       ContractController.new,
     );
-
-/// Resolver for the open contract, rebuilt when it, the client or the
-/// settings change.
-final openResolverProvider = Provider<VariableResolver?>((ref) {
-  final c = ref.watch(contractProvider.select((s) => s.contract));
-  if (c == null) return null;
-  final clients = ref.watch(clientsProvider).value ?? const <Client>[];
-  final settings = ref.watch(settingsProvider).value ?? const Settings();
-  return VariableResolver(
-    contract: c,
-    client: clients.where((x) => x.id == c.clientId).firstOrNull,
-    settings: settings,
-  );
-});
-
-/// Missing variables of the open contract, in document order.
-final openMissingProvider = Provider<List<String>>(
-  (ref) => ref.watch(openResolverProvider)?.missing() ?? const [],
-);
-
-/// Clock-free helper for tests and the history list.
-DateTime eventTime(ContractEvent e) =>
-    DateTime.fromMillisecondsSinceEpoch(e.at, isUtc: true).toLocal();
-
-/// A milestone's money, for the UI.
-Money milestoneMoney(Contract c, int index) =>
-    Money(milestoneAmounts(c.totalMinor, c.milestones)[index], c.currency);
