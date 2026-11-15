@@ -6,164 +6,174 @@ class ContractDetailsCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
-    final theme = Theme.of(context);
-    final issues = ref.watch(contractProvider.select((s) => s.issues));
     final locked = _locked(ref);
-    final number = _watch(ref, (c) => c.number);
-    final title = _watch(ref, (c) => c.title);
-    final project = _watch(ref, (c) => c.projectName);
-    final summary = _watch(ref, (c) => c.projectSummary);
-    final issue = _watch(ref, (c) => c.issueDate);
-    final start = _watch(ref, (c) => c.startDate);
-    final end = _watch(ref, (c) => c.endDate);
-    final signed = _watch(ref, (c) => c.signedDate);
-    final status = _watch(ref, (c) => c.status);
-    final jurisdiction = _watch(ref, (c) => c.jurisdiction);
     final kind = _watch(ref, (c) => c.kind);
-    final history = _watch(ref, (c) => c.history);
-    final ctl = _ctl(ref);
-    final a = ContractActions(ref, context);
-
-    String? numberError;
-    if (issues.contains(ContractIssue.emptyNumber)) {
-      numberError = l.errEmptyNumber;
-    }
-    if (issues.contains(ContractIssue.duplicateNumber)) {
-      numberError = l.errDuplicateNumber;
-    }
-
+    final hasHistory = _watch(ref, (c) => c.history.isNotEmpty);
     return PanelCard(
       title: l.cardContractDetails,
       icon: Icons.gavel_outlined,
       trailing: Text(
         contractKindLabel(context, kind),
-        style: theme.textTheme.labelMedium?.copyWith(
-          color: context.colors.muted,
-        ),
+        style: Theme.of(
+          context,
+        ).textTheme.labelMedium?.copyWith(color: context.colors.muted),
       ),
       child: Column(
         children: [
           _ContractClientPicker(enabled: !locked),
           _gap,
-          _Pair(
-            SyncedTextField(
-              label: l.contractNumber,
-              value: number,
-              readOnly: locked,
-              textDirection: TextDirection.ltr,
-              errorText: numberError,
-              onChanged: (v) => ctl.edit((c) => c.copyWith(number: v.trim())),
-            ),
-            DropdownButtonFormField<ContractStatus>(
-              key: ValueKey('cstatus-$status'),
-              initialValue: status,
-              decoration: InputDecoration(labelText: l.status),
-              items: [
-                for (final s in ContractStatus.values)
-                  DropdownMenuItem(
-                    value: s,
-                    child: Text(contractStatusLabel(context, s)),
-                  ),
-              ],
-              onChanged: (s) {
-                if (s != null) a.setStatus(s);
-              },
-            ),
-          ),
+          const _NumberAndStatus(),
           _gap,
-          _Pair(
-            SyncedTextField(
-              label: l.contractTitle,
-              hint: l.contractTitleHint,
-              value: title,
-              readOnly: locked,
-              onChanged: (v) => ctl.edit((c) => c.copyWith(title: v)),
-            ),
-            SyncedTextField(
-              label: l.projectName,
-              value: project,
-              readOnly: locked,
-              onChanged: (v) => ctl.edit((c) => c.copyWith(projectName: v)),
-            ),
-          ),
+          const _TitleFields(),
           _gap,
-          SyncedTextField(
-            label: l.projectSummary,
-            value: summary,
-            readOnly: locked,
-            minLines: 2,
-            maxLines: 5,
-            keyboardType: TextInputType.multiline,
-            onChanged: (v) => ctl.edit((c) => c.copyWith(projectSummary: v)),
-          ),
-          _gap,
-          _Pair(
-            IgnorePointer(
-              ignoring: locked,
-              child: DateField(
-                label: l.issueDate,
-                value: issue,
-                onChanged: (d) => ctl.edit((c) => c.copyWith(issueDate: d)),
-              ),
-            ),
-            OptionalDateField(
-              label: l.signedDate,
-              value: signed,
-              onChanged: (d) => ctl.edit(
-                (c) => c.copyWith(signedDate: () => d),
-                allowLocked: true,
-              ),
-            ),
-          ),
-          _gap,
-          _Pair(
-            OptionalDateField(
-              label: l.startDate,
-              value: start,
-              onChanged: (d) => ctl.edit(
-                (c) => c.copyWith(startDate: () => d),
-                allowLocked: true,
-              ),
-            ),
-            OptionalDateField(
-              label: l.endDate,
-              value: end,
-              onChanged: (d) => ctl.edit(
-                (c) => c.copyWith(endDate: () => d),
-                allowLocked: true,
-              ),
-            ),
-          ),
+          const _ContractDates(),
           _gap,
           SyncedTextField(
             label: l.jurisdiction,
-            value: jurisdiction,
+            value: _watch(ref, (c) => c.jurisdiction),
             readOnly: locked,
-            onChanged: (v) => ctl.edit((c) => c.copyWith(jurisdiction: v)),
+            onChanged: (v) =>
+                _ctl(ref).edit((c) => c.copyWith(jurisdiction: v)),
           ),
-          if (history.isNotEmpty) ...[
-            _gap,
-            Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: Text(l.history, style: theme.textTheme.labelLarge),
-            ),
-            const SizedBox(height: Space.xs),
-            for (final e in history.reversed.take(6))
-              Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: Text(
-                  '${formatArabicDate(CalendarDate.fromDateTime(eventTime(e)))} · '
-                  '${_eventLabel(context, e)}',
-                  style: theme.textTheme.bodySmall,
-                ),
-              ),
-          ],
+          if (hasHistory) ...[_gap, const _HistoryList()],
         ],
       ),
     );
   }
+}
 
-  static String _eventLabel(BuildContext context, ContractEvent e) {
+class _NumberAndStatus extends ConsumerWidget {
+  const _NumberAndStatus();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
+    final issues = ref.watch(contractProvider.select((s) => s.issues));
+    final status = _watch(ref, (c) => c.status);
+    final numberError = issues.contains(ContractIssue.duplicateNumber)
+        ? l.errDuplicateNumber
+        : issues.contains(ContractIssue.emptyNumber)
+        ? l.errEmptyNumber
+        : null;
+    return _Pair(
+      SyncedTextField(
+        label: l.contractNumber,
+        value: _watch(ref, (c) => c.number),
+        readOnly: _locked(ref),
+        textDirection: TextDirection.ltr,
+        errorText: numberError,
+        onChanged: (v) => _ctl(ref).edit((c) => c.copyWith(number: v.trim())),
+      ),
+      DropdownButtonFormField<ContractStatus>(
+        key: ValueKey('cstatus-$status'),
+        initialValue: status,
+        decoration: InputDecoration(labelText: l.status),
+        items: [
+          for (final s in ContractStatus.values)
+            DropdownMenuItem(
+              value: s,
+              child: Text(contractStatusLabel(context, s)),
+            ),
+        ],
+        onChanged: (s) {
+          if (s != null) ContractActions(ref, context).setStatus(s);
+        },
+      ),
+    );
+  }
+}
+
+class _TitleFields extends ConsumerWidget {
+  const _TitleFields();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
+    final locked = _locked(ref);
+    final ctl = _ctl(ref);
+    return Column(
+      children: [
+        _Pair(
+          SyncedTextField(
+            label: l.contractTitle,
+            hint: l.contractTitleHint,
+            value: _watch(ref, (c) => c.title),
+            readOnly: locked,
+            onChanged: (v) => ctl.edit((c) => c.copyWith(title: v)),
+          ),
+          SyncedTextField(
+            label: l.projectName,
+            value: _watch(ref, (c) => c.projectName),
+            readOnly: locked,
+            onChanged: (v) => ctl.edit((c) => c.copyWith(projectName: v)),
+          ),
+        ),
+        _gap,
+        SyncedTextField(
+          label: l.projectSummary,
+          value: _watch(ref, (c) => c.projectSummary),
+          readOnly: locked,
+          minLines: 2,
+          maxLines: 5,
+          keyboardType: TextInputType.multiline,
+          onChanged: (v) => ctl.edit((c) => c.copyWith(projectSummary: v)),
+        ),
+      ],
+    );
+  }
+}
+
+/// Issue date follows the lock; signed/start/end stay editable on a signed
+/// contract (they record what happened to it).
+class _ContractDates extends ConsumerWidget {
+  const _ContractDates();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
+    final ctl = _ctl(ref);
+    void date(Contract Function(Contract c) f) =>
+        ctl.edit(f, allowLocked: true);
+    return Column(
+      children: [
+        _Pair(
+          IgnorePointer(
+            ignoring: _locked(ref),
+            child: DateField(
+              label: l.issueDate,
+              value: _watch(ref, (c) => c.issueDate),
+              onChanged: (d) => ctl.edit((c) => c.copyWith(issueDate: d)),
+            ),
+          ),
+          OptionalDateField(
+            label: l.signedDate,
+            value: _watch(ref, (c) => c.signedDate),
+            onChanged: (d) => date((c) => c.copyWith(signedDate: () => d)),
+          ),
+        ),
+        _gap,
+        _Pair(
+          OptionalDateField(
+            label: l.startDate,
+            value: _watch(ref, (c) => c.startDate),
+            onChanged: (d) => date((c) => c.copyWith(startDate: () => d)),
+          ),
+          OptionalDateField(
+            label: l.endDate,
+            value: _watch(ref, (c) => c.endDate),
+            onChanged: (d) => date((c) => c.copyWith(endDate: () => d)),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// "سجل العقد": the last six events, newest first.
+class _HistoryList extends ConsumerWidget {
+  const _HistoryList();
+
+  static String _label(BuildContext context, ContractEvent e) {
     final l = context.l10n;
     if (e.event == 'unlock') return l.historyUnlock;
     if (e.event == 'relock') return l.historyRelock;
@@ -172,6 +182,25 @@ class ContractDetailsCard extends ConsumerWidget {
       return l.historyStatus(contractStatusLabel(context, s));
     }
     return e.event;
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final history = _watch(ref, (c) => c.history);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(context.l10n.history, style: theme.textTheme.labelLarge),
+        const SizedBox(height: Space.xs),
+        for (final e in history.reversed.take(6))
+          Text(
+            '${formatArabicDate(CalendarDate.fromDateTime(eventTime(e)))} · '
+            '${_label(context, e)}',
+            style: theme.textTheme.bodySmall,
+          ),
+      ],
+    );
   }
 }
 

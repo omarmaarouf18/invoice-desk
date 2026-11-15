@@ -39,7 +39,6 @@ class _VariablesCardState extends ConsumerState<VariablesCard> {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    final theme = Theme.of(context);
     ref.listen(contractProvider.select((s) => s.focusTick), (_, _) {
       final name = ref.read(contractProvider).focusVariable;
       if (name != null) {
@@ -48,139 +47,205 @@ class _VariablesCardState extends ConsumerState<VariablesCard> {
     });
     final c = ref.watch(contractProvider.select((s) => s.contract))!;
     final resolver = ref.watch(openResolverProvider);
-    final locked = c.isLocked;
     final used = usedVariables(c);
     final custom = used.where((v) => !isBuiltInVariable(v)).toList();
     final builtInMissing = [
       for (final v in used)
         if (isBuiltInVariable(v) && resolver?.resolve(v) == null) v,
     ];
-    final amber = missingColors(context);
-    final client = (ref.watch(clientsProvider).value ?? const <Client>[])
-        .where((x) => x.id == c.clientId)
-        .firstOrNull;
-
-    String source(String v) => v.startsWith('client.')
-        ? l.sourceClient
-        : v.startsWith('provider.')
-        ? l.sourceSettings
-        : l.sourceContract;
-
     return PanelCard(
       title: l.cardVariables,
       icon: Icons.data_object,
       trailing: Text(
         l.variablesHelp,
-        style: theme.textTheme.bodySmall,
+        style: Theme.of(context).textTheme.bodySmall,
         overflow: TextOverflow.ellipsis,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (custom.isEmpty)
-            Text(l.noCustomVariables, style: theme.textTheme.bodySmall),
+            Text(
+              l.noCustomVariables,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
           for (final v in custom)
-            Padding(
+            _CustomVariableRow(
               key: _key(v),
-              padding: const EdgeInsetsDirectional.only(bottom: Space.s),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 200,
-                    child: Text(
-                      v,
-                      textDirection: TextDirection.ltr,
-                      textAlign: TextAlign.end,
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        color: resolver?.resolve(v) == null
-                            ? amber.fg
-                            : theme.colorScheme.primary,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: Space.m - 4),
-                  Expanded(
-                    child: SyncedTextField(
-                      key: ValueKey('var-$v'),
-                      value: c.vars[v] ?? '',
-                      focusNode: _node(v),
-                      readOnly: locked,
-                      dense: true,
-                      hint: '{{$v}}',
-                      errorText: resolver?.resolve(v) == null ? '' : null,
-                      onChanged: (x) => _ctl(ref).setVariable(v, x),
-                    ),
-                  ),
-                ],
-              ),
+              name: v,
+              value: c.vars[v] ?? '',
+              missing: resolver?.resolve(v) == null,
+              locked: c.isLocked,
+              focusNode: _node(v),
             ),
           for (final v in builtInMissing)
-            Padding(
+            _BuiltInMissingRow(
               key: _key(v),
-              padding: const EdgeInsetsDirectional.only(bottom: Space.s),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 200,
-                    child: Text(
-                      v,
-                      textDirection: TextDirection.ltr,
-                      textAlign: TextAlign.end,
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        color: amber.fg,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: Space.m - 4),
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsetsDirectional.symmetric(
-                        horizontal: Space.s + 4,
-                        vertical: Space.s,
-                      ),
-                      decoration: BoxDecoration(
-                        color: amber.bg,
-                        borderRadius: BorderRadius.circular(
-                          Space.radiusSmall,
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              l.builtInMissing(source(v)),
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: amber.fg,
-                              ),
-                            ),
-                          ),
-                          if (v.startsWith('client.') && client != null)
-                            TextButton(
-                              focusNode: _node(v),
-                              onPressed: () => unawaited(
-                                AppActions(ref, context).editClient(client),
-                              ),
-                              child: Text(l.editClientData),
-                            )
-                          else if (v.startsWith('provider.'))
-                            TextButton(
-                              focusNode: _node(v),
-                              onPressed: () => ref
-                                  .read(workspaceProvider.notifier)
-                                  .show(Workspace.settings),
-                              child: Text(l.openSettings),
-                            )
-                          else
-                            Focus(focusNode: _node(v), child: const SizedBox()),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              name: v,
+              clientId: c.clientId,
+              focusNode: _node(v),
             ),
         ],
       ),
     );
+  }
+}
+
+/// The variable's name, right-aligned in a fixed column, amber if missing.
+class _VariableName extends StatelessWidget {
+  const _VariableName(this.name, {required this.missing});
+  final String name;
+  final bool missing;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    width: 200,
+    child: Text(
+      name,
+      textDirection: TextDirection.ltr,
+      textAlign: TextAlign.end,
+      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+        color: missing
+            ? missingColors(context).fg
+            : Theme.of(context).colorScheme.primary,
+      ),
+    ),
+  );
+}
+
+/// A per-contract variable with its value field.
+class _CustomVariableRow extends ConsumerWidget {
+  const _CustomVariableRow({
+    required this.name,
+    required this.value,
+    required this.missing,
+    required this.locked,
+    required this.focusNode,
+    super.key,
+  });
+
+  final String name;
+  final String value;
+  final bool missing;
+  final bool locked;
+  final FocusNode focusNode;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => Padding(
+    padding: const EdgeInsetsDirectional.only(bottom: Space.s),
+    child: Row(
+      children: [
+        _VariableName(name, missing: missing),
+        const SizedBox(width: Space.m - 4),
+        Expanded(
+          child: SyncedTextField(
+            key: ValueKey('var-$name'),
+            value: value,
+            focusNode: focusNode,
+            readOnly: locked,
+            dense: true,
+            hint: '{{$name}}',
+            errorText: missing ? '' : null,
+            onChanged: (x) => _ctl(ref).setVariable(name, x),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+/// A missing built-in (client, settings or contract data) with a shortcut
+/// to where it is filled in.
+class _BuiltInMissingRow extends ConsumerWidget {
+  const _BuiltInMissingRow({
+    required this.name,
+    required this.clientId,
+    required this.focusNode,
+    super.key,
+  });
+
+  final String name;
+  final String clientId;
+  final FocusNode focusNode;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
+    final amber = missingColors(context);
+    final source = name.startsWith('client.')
+        ? l.sourceClient
+        : name.startsWith('provider.')
+        ? l.sourceSettings
+        : l.sourceContract;
+    return Padding(
+      padding: const EdgeInsetsDirectional.only(bottom: Space.s),
+      child: Row(
+        children: [
+          _VariableName(name, missing: true),
+          const SizedBox(width: Space.m - 4),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsetsDirectional.symmetric(
+                horizontal: Space.s + 4,
+                vertical: Space.s,
+              ),
+              decoration: BoxDecoration(
+                color: amber.bg,
+                borderRadius: BorderRadius.circular(Space.radiusSmall),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      l.builtInMissing(source),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodySmall?.copyWith(color: amber.fg),
+                    ),
+                  ),
+                  _FixButton(name: name, clientId: clientId, focus: focusNode),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FixButton extends ConsumerWidget {
+  const _FixButton({
+    required this.name,
+    required this.clientId,
+    required this.focus,
+  });
+
+  final String name;
+  final String clientId;
+  final FocusNode focus;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
+    final client = (ref.watch(clientsProvider).value ?? const <Client>[])
+        .where((x) => x.id == clientId)
+        .firstOrNull;
+    if (name.startsWith('client.') && client != null) {
+      return TextButton(
+        focusNode: focus,
+        onPressed: () => unawaited(AppActions(ref, context).editClient(client)),
+        child: Text(l.editClientData),
+      );
+    }
+    if (name.startsWith('provider.')) {
+      return TextButton(
+        focusNode: focus,
+        onPressed: () =>
+            ref.read(workspaceProvider.notifier).show(Workspace.settings),
+        child: Text(l.openSettings),
+      );
+    }
+    return Focus(focusNode: focus, child: const SizedBox());
   }
 }

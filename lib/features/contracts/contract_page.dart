@@ -15,6 +15,7 @@ import 'package:invoice_desk/features/editor/editor_page.dart'
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/pdf/contract_pdf.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
+import 'package:invoice_desk/widgets/editor_chrome.dart';
 import 'package:printing/printing.dart';
 
 /// The contract editor: same shell as the invoice editor (autosave, edit /
@@ -110,16 +111,12 @@ class _TopBar extends ConsumerWidget {
     final theme = Theme.of(context);
     final st = ref.watch(contractProvider);
     final c = st.contract!;
-    final missing = ref.watch(openMissingProvider);
     final a = ContractActions(ref, context);
-    final preview = ref.watch(previewTabProvider);
-    final amber = missingColors(context);
     final parent = c.parentId == null
         ? null
         : (ref.watch(contractsProvider).value ?? const <Contract>[])
               .where((x) => x.id == c.parentId)
               .firstOrNull;
-
     return Container(
       height: 64,
       color: theme.colorScheme.surface,
@@ -146,119 +143,94 @@ class _TopBar extends ConsumerWidget {
           const SizedBox(width: Space.m),
           SaveIndicator(status: st.status),
           const SizedBox(width: Space.m),
-          if (missing.isNotEmpty)
-            Tooltip(
-              message: missing.join('، '),
-              child: ActionChip(
-                key: const ValueKey('missing-variables'),
-                backgroundColor: amber.bg,
-                side: BorderSide.none,
-                avatar: Icon(
-                  Icons.warning_amber_rounded,
-                  size: 16,
-                  color: amber.fg,
-                ),
-                label: Text(
-                  l.missingVariables(missing.length),
-                  style: theme.textTheme.labelMedium?.copyWith(color: amber.fg),
-                ),
-                onPressed: () => ref
-                    .read(contractProvider.notifier)
-                    .focusFirstMissing(missing),
-              ),
-            ),
+          const _MissingChip(),
           const Spacer(),
           if (!wide) ...[
-            SegmentedButton<bool>(
-              showSelectedIcon: false,
-              segments: [
-                ButtonSegment(
-                  value: false,
-                  label: Tooltip(message: 'Ctrl+1', child: Text(l.tabEdit)),
-                  icon: const Icon(Icons.edit_outlined, size: 16),
-                ),
-                ButtonSegment(
-                  value: true,
-                  label: Tooltip(message: 'Ctrl+2', child: Text(l.tabPreview)),
-                  icon: const Icon(Icons.visibility_outlined, size: 16),
-                ),
-              ],
-              selected: {preview},
-              onSelectionChanged: (s) =>
-                  ref.read(previewTabProvider.notifier).set(s.first),
-            ),
+            const EditPreviewTabs(),
             const SizedBox(width: Space.s + 4),
           ],
-          Tooltip(
-            message: '${l.save} (Ctrl+S)',
-            child: OutlinedButton(
-              onPressed: () =>
-                  unawaited(ref.read(contractProvider.notifier).flush()),
-              child: Text(l.save),
-            ),
-          ),
-          const SizedBox(width: Space.s),
-          Tooltip(
-            message: '${l.exportPdfLong} (Ctrl+E)',
-            child: FilledButton.icon(
-              onPressed: () => unawaited(a.exportPdf()),
-              icon: const Icon(Icons.picture_as_pdf_outlined, size: 18),
-              label: Text(l.exportPdf),
-            ),
+          SaveExportButtons(
+            onSave: () =>
+                unawaited(ref.read(contractProvider.notifier).flush()),
+            onExport: () => unawaited(a.exportPdf()),
           ),
           const SizedBox(width: Space.xs),
-          MenuAnchor(
-            builder: (context, controller, _) => IconButton(
-              key: const ValueKey('contract-more'),
-              tooltip: l.more,
-              onPressed: () =>
-                  controller.isOpen ? controller.close() : controller.open(),
-              icon: const Icon(Icons.more_horiz),
-            ),
-            menuChildren: [
-              if (!c.isAmendment)
-                MenuItemButton(
-                  leadingIcon: const Icon(Icons.copy_outlined, size: 18),
-                  shortcut: const SingleActivator(
-                    LogicalKeyboardKey.keyD,
-                    control: true,
-                  ),
-                  onPressed: () => unawaited(a.duplicate()),
-                  child: Text(l.duplicateContract),
-                ),
-              MenuItemButton(
-                leadingIcon: const Icon(Icons.note_add_outlined, size: 18),
-                onPressed: () => unawaited(a.amendment()),
-                child: Text(l.createAmendment),
-              ),
-              if (c.status.locks)
-                MenuItemButton(
-                  leadingIcon: Icon(
-                    c.unlocked ? Icons.lock_outline : Icons.lock_open_outlined,
-                    size: 18,
-                  ),
-                  onPressed: c.unlocked
-                      ? ref.read(contractProvider.notifier).relock
-                      : () => unawaited(a.unlock()),
-                  child: Text(c.unlocked ? l.relock : l.unlock),
-                ),
-              const Divider(),
-              MenuItemButton(
-                leadingIcon: Icon(
-                  Icons.delete_outline,
-                  size: 18,
-                  color: theme.colorScheme.error,
-                ),
-                onPressed: () => unawaited(a.delete()),
-                child: Text(
-                  l.menuDelete,
-                  style: TextStyle(color: theme.colorScheme.error),
-                ),
-              ),
-            ],
-          ),
+          _ContractMenu(contract: c),
         ],
       ),
+    );
+  }
+}
+
+/// "N متغيرات ناقصة": jumps to the first missing variable.
+class _MissingChip extends ConsumerWidget {
+  const _MissingChip();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final missing = ref.watch(openMissingProvider);
+    if (missing.isEmpty) return const SizedBox.shrink();
+    final amber = missingColors(context);
+    return Tooltip(
+      message: missing.join('، '),
+      child: ActionChip(
+        key: const ValueKey('missing-variables'),
+        backgroundColor: amber.bg,
+        side: BorderSide.none,
+        avatar: Icon(Icons.warning_amber_rounded, size: 16, color: amber.fg),
+        label: Text(
+          context.l10n.missingVariables(missing.length),
+          style: Theme.of(
+            context,
+          ).textTheme.labelMedium?.copyWith(color: amber.fg),
+        ),
+        onPressed: () =>
+            ref.read(contractProvider.notifier).focusFirstMissing(missing),
+      ),
+    );
+  }
+}
+
+class _ContractMenu extends ConsumerWidget {
+  const _ContractMenu({required this.contract});
+  final Contract contract;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
+    final c = contract;
+    final a = ContractActions(ref, context);
+    return MoreMenu(
+      children: [
+        if (!c.isAmendment)
+          MenuItemButton(
+            leadingIcon: const Icon(Icons.copy_outlined, size: 18),
+            shortcut: const SingleActivator(
+              LogicalKeyboardKey.keyD,
+              control: true,
+            ),
+            onPressed: () => unawaited(a.duplicate()),
+            child: Text(l.duplicateContract),
+          ),
+        MenuItemButton(
+          leadingIcon: const Icon(Icons.note_add_outlined, size: 18),
+          onPressed: () => unawaited(a.amendment()),
+          child: Text(l.createAmendment),
+        ),
+        if (c.status.locks)
+          MenuItemButton(
+            leadingIcon: Icon(
+              c.unlocked ? Icons.lock_outline : Icons.lock_open_outlined,
+              size: 18,
+            ),
+            onPressed: c.unlocked
+                ? ref.read(contractProvider.notifier).relock
+                : () => unawaited(a.unlock()),
+            child: Text(c.unlocked ? l.relock : l.unlock),
+          ),
+        const Divider(),
+        DeleteMenuItem(onPressed: () => unawaited(a.delete())),
+      ],
     );
   }
 }
