@@ -11,6 +11,7 @@ import 'package:invoice_desk/data/tables.dart';
 import 'package:invoice_desk/domain/contract_models.dart';
 
 part 'contracts_dao.g.dart';
+part 'contracts/children_sync.dart';
 
 /// Thrown when saving a contract whose number is already used.
 class DuplicateContractNumber implements Exception {
@@ -49,21 +50,24 @@ class ContractsDao extends DatabaseAccessor<AppDatabase>
     if (!includeDeleted) q.where((c) => c.deletedAt.isNull());
     final rows = await q.get();
     final cl = groupBy(
-      await (select(
-        contractClauses,
-      )..orderBy([(x) => OrderingTerm.asc(x.position)])).get(),
+      await (select(contractClauses)
+            ..where((x) => x.deletedAt.isNull())
+            ..orderBy([(x) => OrderingTerm.asc(x.position)]))
+          .get(),
       (r) => r.contractId,
     );
     final sc = groupBy(
-      await (select(
-        scopeItems,
-      )..orderBy([(x) => OrderingTerm.asc(x.position)])).get(),
+      await (select(scopeItems)
+            ..where((x) => x.deletedAt.isNull())
+            ..orderBy([(x) => OrderingTerm.asc(x.position)]))
+          .get(),
       (r) => r.contractId,
     );
     final ms = groupBy(
-      await (select(
-        paymentMilestones,
-      )..orderBy([(x) => OrderingTerm.asc(x.position)])).get(),
+      await (select(paymentMilestones)
+            ..where((x) => x.deletedAt.isNull())
+            ..orderBy([(x) => OrderingTerm.asc(x.position)]))
+          .get(),
       (r) => r.contractId,
     );
     return [
@@ -84,17 +88,17 @@ class ContractsDao extends DatabaseAccessor<AppDatabase>
     if (r == null) return null;
     final cl =
         await (select(contractClauses)
-              ..where((x) => x.contractId.equals(id))
+              ..where((x) => x.contractId.equals(id) & x.deletedAt.isNull())
               ..orderBy([(x) => OrderingTerm.asc(x.position)]))
             .get();
     final sc =
         await (select(scopeItems)
-              ..where((x) => x.contractId.equals(id))
+              ..where((x) => x.contractId.equals(id) & x.deletedAt.isNull())
               ..orderBy([(x) => OrderingTerm.asc(x.position)]))
             .get();
     final ms =
         await (select(paymentMilestones)
-              ..where((x) => x.contractId.equals(id))
+              ..where((x) => x.contractId.equals(id) & x.deletedAt.isNull())
               ..orderBy([(x) => OrderingTerm.asc(x.position)]))
             .get();
     return _toModel(r, cl, sc, ms);
@@ -180,69 +184,20 @@ class ContractsDao extends DatabaseAccessor<AppDatabase>
         updatedAt: now,
       ),
     );
-    await (delete(
-      contractClauses,
-    )..where((x) => x.contractId.equals(c.id))).go();
-    await (delete(scopeItems)..where((x) => x.contractId.equals(c.id))).go();
-    await (delete(
-      paymentMilestones,
-    )..where((x) => x.contractId.equals(c.id))).go();
-    for (final (i, x) in c.clauses.indexed) {
-      await into(contractClauses).insert(
-        ContractClausesCompanion.insert(
-          id: x.id,
-          contractId: c.id,
-          position: i,
-          title: Value(x.title),
-          body: Value(x.body),
-          enabled: Value(x.enabled),
-          optional: Value(x.optional),
-          fromLibraryClauseId: Value(x.fromLibraryClauseId),
-        ),
-      );
-    }
-    for (final (i, x) in c.scope.indexed) {
-      await into(scopeItems).insert(
-        ScopeItemsCompanion.insert(
-          id: x.id,
-          contractId: c.id,
-          position: i,
-          phase: Value(x.phase),
-          item: Value(x.item),
-          description: Value(x.description),
-          acceptance: Value(x.acceptance),
-        ),
-      );
-    }
-    for (final (i, x) in c.milestones.indexed) {
-      // A milestone may point at an invoice that was purged since.
-      final inv = x.invoiceId == null
-          ? null
-          : await (select(
-              invoices,
-            )..where((v) => v.id.equals(x.invoiceId!))).getSingleOrNull();
-      await into(paymentMilestones).insert(
-        PaymentMilestonesCompanion.insert(
-          id: x.id,
-          contractId: c.id,
-          position: i,
-          label: Value(x.label),
-          percentBp: Value(x.percentBp),
-          amountMinor: Value(x.amountMinor),
-          trigger: Value(x.trigger),
-          dueDate: Value(x.dueDate?.toIso()),
-          invoiceId: Value(inv?.id),
-        ),
-      );
-    }
+    await _syncChildren(c, now);
   });
 
   /// Links a milestone to an invoice (after "إنشاء فاتورة").
   Future<void> linkMilestone(String milestoneId, String invoiceId) =>
       transaction(() async {
-        await (update(paymentMilestones)
-              ..where((m) => m.id.equals(milestoneId)))
-            .write(PaymentMilestonesCompanion(invoiceId: Value(invoiceId)));
+        await (update(
+          paymentMilestones,
+        )..where((m) => m.id.equals(milestoneId))).write(
+          PaymentMilestonesCompanion(
+            invoiceId: Value(invoiceId),
+            updatedAt: Value(_now()),
+          ),
+        );
       });
 
   /// Live invoices linked to [c]: by milestone or by `contractRef`.
@@ -273,7 +228,9 @@ class ContractsDao extends DatabaseAccessor<AppDatabase>
           (x) =>
               (x.id.equals(id) | x.parentId.equals(id)) & x.deletedAt.isNull(),
         ))
-        .write(ContractsCompanion(deletedAt: Value(stamp)));
+        .write(
+          ContractsCompanion(deletedAt: Value(stamp), updatedAt: Value(stamp)),
+        );
     return stamp;
   });
 
@@ -283,13 +240,29 @@ class ContractsDao extends DatabaseAccessor<AppDatabase>
               (x.id.equals(id) | x.parentId.equals(id)) &
               x.deletedAt.equals(stamp),
         ))
-        .write(const ContractsCompanion(deletedAt: Value(null)));
+        .write(
+          ContractsCompanion(
+            deletedAt: const Value(null),
+            updatedAt: Value(_now()),
+          ),
+        );
   });
 
-  /// Hard-deletes contracts soft-deleted more than [age] ago.
+  /// Hard-deletes contracts soft-deleted more than [age] ago, and clause,
+  /// scope and milestone tombstones of the same age.
+  // TODO(sync): once sync exists, keep tombstones that were never pushed.
   Future<int> purgeDeleted({Duration age = const Duration(days: 30)}) =>
       transaction(() async {
         final cutoff = _now() - age.inMilliseconds;
+        await (delete(
+          contractClauses,
+        )..where((x) => x.deletedAt.isSmallerThanValue(cutoff))).go();
+        await (delete(
+          scopeItems,
+        )..where((x) => x.deletedAt.isSmallerThanValue(cutoff))).go();
+        await (delete(
+          paymentMilestones,
+        )..where((x) => x.deletedAt.isSmallerThanValue(cutoff))).go();
         return (delete(
           contracts,
         )..where((c) => c.deletedAt.isSmallerThanValue(cutoff))).go();

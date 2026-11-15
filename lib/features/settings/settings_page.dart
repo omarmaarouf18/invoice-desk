@@ -12,6 +12,7 @@ import 'package:invoice_desk/data/repositories/settings_repository.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/actions.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
+import 'package:invoice_desk/sync/sync.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
 import 'package:invoice_desk/widgets/common.dart';
 
@@ -19,6 +20,7 @@ part 'settings/appearance_card.dart';
 part 'settings/backup_card.dart';
 part 'settings/about_card.dart';
 part 'settings/form_cards.dart';
+part 'settings/sync_card.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -124,6 +126,8 @@ class _SettingsFormState extends ConsumerState<_SettingsForm> {
                   settings: s,
                   onDirChanged: (d) => _update((x) => x.copyWith(backupDir: d)),
                 ),
+                cardGap,
+                const _SyncCard(),
                 cardGap,
                 const _AboutCard(),
               ],

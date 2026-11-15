@@ -2242,6 +2242,30 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'فاتورة'**
   String get kindInvoiceLabel;
+
+  /// No description provided for @cloudSync.
+  ///
+  /// In ar, this message translates to:
+  /// **'المزامنة السحابية'**
+  String get cloudSync;
+
+  /// No description provided for @cloudSyncOff.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير مفعّلة — قريبًا'**
+  String get cloudSyncOff;
+
+  /// No description provided for @cloudSyncOn.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفعّلة'**
+  String get cloudSyncOn;
+
+  /// No description provided for @cloudSyncBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشتراك اختياري لاحقًا: مزامنة مشفّرة من طرف إلى طرف بين أجهزتك. البرنامج المكتبي يظل مجانيًا وكاملًا بدونها، وبياناتك لا تغادر جهازك اليوم.'**
+  String get cloudSyncBody;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

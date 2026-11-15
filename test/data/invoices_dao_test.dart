@@ -37,8 +37,8 @@ void main() {
         inv.sections.first.copyWith(
           items: [
             ...inv.sections.first.items,
-            // duplicate primary key → constraint failure mid-transaction
-            inv.sections.first.items.first,
+            // CHECK (qty >= 0) fails mid-transaction
+            const LineItem(id: 'bad', qty: -1),
           ],
         ),
       ],

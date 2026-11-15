@@ -6,6 +6,7 @@ import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:invoice_desk/account/account.dart';
 import 'package:invoice_desk/app/app.dart';
 import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/app/ui_prefs.dart';
@@ -14,6 +15,7 @@ import 'package:invoice_desk/data/backup.dart';
 import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
+import 'package:invoice_desk/sync/sync.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -79,6 +81,9 @@ Future<void> _start(AppPaths paths, UiPrefs prefs) async {
   final container = ProviderContainer(
     overrides: [
       databaseProvider.overrideWithValue(db),
+      // The desktop app is local-only; sync is a future add-on.
+      accountServiceProvider.overrideWithValue(const LocalAccountService()),
+      syncServiceProvider.overrideWithValue(const NoopSyncService()),
       uiPrefsProvider.overrideWithValue(prefs),
       appPathsProvider.overrideWithValue(paths),
     ],

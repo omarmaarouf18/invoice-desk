@@ -1239,4 +1239,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get kindInvoiceLabel => 'فاتورة';
+
+  @override
+  String get cloudSync => 'المزامنة السحابية';
+
+  @override
+  String get cloudSyncOff => 'غير مفعّلة — قريبًا';
+
+  @override
+  String get cloudSyncOn => 'مفعّلة';
+
+  @override
+  String get cloudSyncBody => 'اشتراك اختياري لاحقًا: مزامنة مشفّرة من طرف إلى طرف بين أجهزتك. البرنامج المكتبي يظل مجانيًا وكاملًا بدونها، وبياناتك لا تغادر جهازك اليوم.';
 }

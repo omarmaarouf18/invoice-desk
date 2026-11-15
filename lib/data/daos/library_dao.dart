@@ -27,12 +27,16 @@ class LibraryDao extends DatabaseAccessor<AppDatabase> with _$LibraryDaoMixin {
   ).watch().asyncMap((_) => getAll());
 
   Future<List<ClauseTemplate>> getAll() async {
-    final ts = await (select(
-      clauseTemplates,
-    )..orderBy([(t) => OrderingTerm.asc(t.position)])).get();
-    final cs = await (select(
-      libraryClauses,
-    )..orderBy([(c) => OrderingTerm.asc(c.position)])).get();
+    final ts =
+        await (select(clauseTemplates)
+              ..where((t) => t.deletedAt.isNull())
+              ..orderBy([(t) => OrderingTerm.asc(t.position)]))
+            .get();
+    final cs =
+        await (select(libraryClauses)
+              ..where((c) => c.deletedAt.isNull())
+              ..orderBy([(c) => OrderingTerm.asc(c.position)]))
+            .get();
     final byTemplate = groupBy(cs, (c) => c.templateId);
     return [
       for (final t in ts) _toModel(t, byTemplate[t.id] ?? const []),
@@ -45,7 +49,7 @@ class LibraryDao extends DatabaseAccessor<AppDatabase> with _$LibraryDaoMixin {
   Future<LibraryClause?> clauseById(String id) async {
     final r = await (select(
       libraryClauses,
-    )..where((c) => c.id.equals(id))).getSingleOrNull();
+    )..where((c) => c.id.equals(id) & c.deletedAt.isNull())).getSingleOrNull();
     return r == null ? null : _clauseToModel(r);
   }
 
@@ -78,11 +82,31 @@ class LibraryDao extends DatabaseAccessor<AppDatabase> with _$LibraryDaoMixin {
         updatedAt: now,
       ),
     );
-    await (delete(
-      libraryClauses,
-    )..where((c) => c.templateId.equals(t.id))).go();
+    final old = {
+      for (final r in await (select(
+        libraryClauses,
+      )..where((c) => c.templateId.equals(t.id))).get())
+        r.id: r,
+    };
+    for (final r in old.values) {
+      if (r.deletedAt == null && !t.clauses.any((c) => c.id == r.id)) {
+        await (update(libraryClauses)..where((c) => c.id.equals(r.id))).write(
+          LibraryClausesCompanion(deletedAt: Value(now), updatedAt: Value(now)),
+        );
+      }
+    }
     for (final (i, c) in t.clauses.indexed) {
-      await into(libraryClauses).insert(
+      final o = old[c.id];
+      if (o != null &&
+          o.deletedAt == null &&
+          o.position == i &&
+          o.title == c.title &&
+          o.body == c.body &&
+          o.optional == c.optional &&
+          o.enabledByDefault == c.enabledByDefault) {
+        continue;
+      }
+      await into(libraryClauses).insertOnConflictUpdate(
         LibraryClausesCompanion.insert(
           id: c.id,
           templateId: t.id,
@@ -91,6 +115,8 @@ class LibraryDao extends DatabaseAccessor<AppDatabase> with _$LibraryDaoMixin {
           body: Value(c.body),
           optional: Value(c.optional),
           enabledByDefault: Value(c.enabledByDefault),
+          updatedAt: Value(now),
+          deletedAt: const Value(null),
         ),
       );
     }
@@ -107,15 +133,42 @@ class LibraryDao extends DatabaseAccessor<AppDatabase> with _$LibraryDaoMixin {
     )..where((c) => c.id.equals(id))).getSingleOrNull();
     if (r == null) return;
     await (update(libraryClauses)..where((c) => c.id.equals(id))).write(
-      LibraryClausesCompanion(title: Value(title), body: Value(body)),
+      LibraryClausesCompanion(
+        title: Value(title),
+        body: Value(body),
+        updatedAt: Value(_now()),
+      ),
     );
     await (update(clauseTemplates)..where((t) => t.id.equals(r.templateId)))
         .write(ClauseTemplatesCompanion(updatedAt: Value(_now())));
   });
 
+  /// Tombstones the template and its clauses (v4: no hard delete before
+  /// purge). Contracts keep their copies.
   Future<void> deleteTemplate(String id) => transaction(() async {
-    await (delete(clauseTemplates)..where((t) => t.id.equals(id))).go();
+    final now = _now();
+    await (update(
+      libraryClauses,
+    )..where((c) => c.templateId.equals(id) & c.deletedAt.isNull())).write(
+      LibraryClausesCompanion(deletedAt: Value(now), updatedAt: Value(now)),
+    );
+    await (update(clauseTemplates)..where((t) => t.id.equals(id))).write(
+      ClauseTemplatesCompanion(deletedAt: Value(now), updatedAt: Value(now)),
+    );
   });
+
+  /// Hard-deletes template and clause tombstones older than [age].
+  // TODO(sync): once sync exists, keep tombstones that were never pushed.
+  Future<int> purgeDeleted({Duration age = const Duration(days: 30)}) =>
+      transaction(() async {
+        final cutoff = _now() - age.inMilliseconds;
+        await (delete(
+          libraryClauses,
+        )..where((c) => c.deletedAt.isSmallerThanValue(cutoff))).go();
+        return (delete(
+          clauseTemplates,
+        )..where((t) => t.deletedAt.isSmallerThanValue(cutoff))).go();
+      });
 
   /// Seeds the starting templates when the library is empty.
   Future<void> seedIfEmpty() => transaction(() async {

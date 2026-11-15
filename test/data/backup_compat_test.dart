@@ -15,7 +15,7 @@ void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   final verifier = SchemaVerifier(GeneratedHelper());
 
-  for (final version in [1, 2]) {
+  for (final version in [1, 2, 3]) {
     test('a v$version backup restores into the current schema', () async {
       final dir = await Directory.systemTemp.createTemp('bk');
       addTearDown(() => dir.delete(recursive: true));
@@ -45,8 +45,14 @@ void main() {
       expect((await db.invoicesDao.getAll()).single.number, 'OM-2026-0001');
       expect((await db.settingsDao.get()).contractPrefix, 'CT');
       expect(await db.contractsDao.getAll(), isEmpty);
-      // An old backup has no library, so the current one stays.
-      expect(await db.libraryDao.getAll(), hasLength(2));
+      // v1/v2 backups have no library tables, so the current library stays;
+      // a v3 backup has its own (empty here) library, which replaces it.
+      expect(await db.libraryDao.getAll(), hasLength(version < 3 ? 2 : 0));
+      // Restored rows are sync-ready and this device keeps its id.
+      final device = await db
+          .customSelect('SELECT device_id FROM settings')
+          .getSingle();
+      expect(device.read<String>('device_id'), hasLength(36));
     });
   }
 }

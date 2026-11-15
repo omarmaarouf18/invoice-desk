@@ -44,13 +44,16 @@ class ClientsDao extends DatabaseAccessor<AppDatabase> with _$ClientsDaoMixin {
   /// `clients_soft_delete_guard` aborts otherwise.
   Future<void> softDelete(String id) => transaction(() async {
     await (update(clients)..where((c) => c.id.equals(id))).write(
-      ClientsCompanion(deletedAt: Value(_now())),
+      ClientsCompanion(deletedAt: Value(_now()), updatedAt: Value(_now())),
     );
   });
 
   Future<void> undoDelete(String id) => transaction(() async {
     await (update(clients)..where((c) => c.id.equals(id))).write(
-      const ClientsCompanion(deletedAt: Value(null)),
+      ClientsCompanion(
+        deletedAt: const Value(null),
+        updatedAt: Value(_now()),
+      ),
     );
   });
 
@@ -60,14 +63,18 @@ class ClientsDao extends DatabaseAccessor<AppDatabase> with _$ClientsDaoMixin {
   /// this batch.
   Future<int> softDeleteWithDocuments(String id) => transaction(() async {
     final stamp = _now();
-    await (update(invoices)
-          ..where((i) => i.clientId.equals(id) & i.deletedAt.isNull()))
-        .write(InvoicesCompanion(deletedAt: Value(stamp)));
-    await (update(contracts)
-          ..where((c) => c.clientId.equals(id) & c.deletedAt.isNull()))
-        .write(ContractsCompanion(deletedAt: Value(stamp)));
+    await (update(
+      invoices,
+    )..where((i) => i.clientId.equals(id) & i.deletedAt.isNull())).write(
+      InvoicesCompanion(deletedAt: Value(stamp), updatedAt: Value(stamp)),
+    );
+    await (update(
+      contracts,
+    )..where((c) => c.clientId.equals(id) & c.deletedAt.isNull())).write(
+      ContractsCompanion(deletedAt: Value(stamp), updatedAt: Value(stamp)),
+    );
     await (update(clients)..where((c) => c.id.equals(id))).write(
-      ClientsCompanion(deletedAt: Value(stamp)),
+      ClientsCompanion(deletedAt: Value(stamp), updatedAt: Value(stamp)),
     );
     return stamp;
   });
@@ -77,16 +84,29 @@ class ClientsDao extends DatabaseAccessor<AppDatabase> with _$ClientsDaoMixin {
   Future<void> undoDeleteWithDocuments(String id, int stamp) =>
       transaction(() async {
         await (update(clients)..where((c) => c.id.equals(id))).write(
-          const ClientsCompanion(deletedAt: Value(null)),
+          ClientsCompanion(
+            deletedAt: const Value(null),
+            updatedAt: Value(_now()),
+          ),
         );
         await (update(invoices)..where(
               (i) => i.clientId.equals(id) & i.deletedAt.equals(stamp),
             ))
-            .write(const InvoicesCompanion(deletedAt: Value(null)));
+            .write(
+              InvoicesCompanion(
+                deletedAt: const Value(null),
+                updatedAt: Value(_now()),
+              ),
+            );
         await (update(contracts)..where(
               (c) => c.clientId.equals(id) & c.deletedAt.equals(stamp),
             ))
-            .write(const ContractsCompanion(deletedAt: Value(null)));
+            .write(
+              ContractsCompanion(
+                deletedAt: const Value(null),
+                updatedAt: Value(_now()),
+              ),
+            );
       });
 
   /// Hard-deletes clients soft-deleted more than [age] ago once no invoice

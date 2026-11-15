@@ -1,0 +1,195 @@
+import 'tables.dart';
+
+-- v4: every insert and update of a syncable row bumps its `rev` and records
+-- the change in `outbox` (one row per entity row, latest revision), in the
+-- same transaction as the write. A future sync engine reads only the outbox.
+-- The WHEN guard stops the rev bump itself from counting as a change.
+-- (DELETE + INSERT, not INSERT OR REPLACE: an outer statement's conflict
+-- clause, such as drift's upsert, would override OR REPLACE in a trigger.)
+
+CREATE TRIGGER settings_sync_insert AFTER INSERT ON settings
+BEGIN
+  UPDATE settings SET rev = NEW.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'settings' AND row_id = CAST(NEW.id AS TEXT);
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('settings', CAST(NEW.id AS TEXT), NEW.rev + 1, NEW.updated_at);
+END;
+
+CREATE TRIGGER settings_sync_update AFTER UPDATE ON settings
+WHEN NEW.rev = OLD.rev
+BEGIN
+  UPDATE settings SET rev = OLD.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'settings' AND row_id = CAST(NEW.id AS TEXT);
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('settings', CAST(NEW.id AS TEXT), OLD.rev + 1, NEW.updated_at);
+END;
+
+CREATE TRIGGER clients_sync_insert AFTER INSERT ON clients
+BEGIN
+  UPDATE clients SET rev = NEW.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'clients' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('clients', NEW.id, NEW.rev + 1, NEW.updated_at);
+END;
+
+CREATE TRIGGER clients_sync_update AFTER UPDATE ON clients
+WHEN NEW.rev = OLD.rev
+BEGIN
+  UPDATE clients SET rev = OLD.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'clients' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('clients', NEW.id, OLD.rev + 1, NEW.updated_at);
+END;
+
+CREATE TRIGGER invoices_sync_insert AFTER INSERT ON invoices
+BEGIN
+  UPDATE invoices SET rev = NEW.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'invoices' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('invoices', NEW.id, NEW.rev + 1, NEW.updated_at);
+END;
+
+CREATE TRIGGER invoices_sync_update AFTER UPDATE ON invoices
+WHEN NEW.rev = OLD.rev
+BEGIN
+  UPDATE invoices SET rev = OLD.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'invoices' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('invoices', NEW.id, OLD.rev + 1, NEW.updated_at);
+END;
+
+CREATE TRIGGER sections_sync_insert AFTER INSERT ON sections
+BEGIN
+  UPDATE sections SET rev = NEW.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'sections' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('sections', NEW.id, NEW.rev + 1, NEW.updated_at);
+END;
+
+CREATE TRIGGER sections_sync_update AFTER UPDATE ON sections
+WHEN NEW.rev = OLD.rev
+BEGIN
+  UPDATE sections SET rev = OLD.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'sections' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('sections', NEW.id, OLD.rev + 1, NEW.updated_at);
+END;
+
+CREATE TRIGGER items_sync_insert AFTER INSERT ON items
+BEGIN
+  UPDATE items SET rev = NEW.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'items' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('items', NEW.id, NEW.rev + 1, NEW.updated_at);
+END;
+
+CREATE TRIGGER items_sync_update AFTER UPDATE ON items
+WHEN NEW.rev = OLD.rev
+BEGIN
+  UPDATE items SET rev = OLD.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'items' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('items', NEW.id, OLD.rev + 1, NEW.updated_at);
+END;
+
+CREATE TRIGGER clause_templates_sync_insert AFTER INSERT ON clause_templates
+BEGIN
+  UPDATE clause_templates SET rev = NEW.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'clause_templates' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('clause_templates', NEW.id, NEW.rev + 1, NEW.updated_at);
+END;
+
+CREATE TRIGGER clause_templates_sync_update AFTER UPDATE ON clause_templates
+WHEN NEW.rev = OLD.rev
+BEGIN
+  UPDATE clause_templates SET rev = OLD.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'clause_templates' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('clause_templates', NEW.id, OLD.rev + 1, NEW.updated_at);
+END;
+
+CREATE TRIGGER library_clauses_sync_insert AFTER INSERT ON library_clauses
+BEGIN
+  UPDATE library_clauses SET rev = NEW.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'library_clauses' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('library_clauses', NEW.id, NEW.rev + 1, NEW.updated_at);
+END;
+
+CREATE TRIGGER library_clauses_sync_update AFTER UPDATE ON library_clauses
+WHEN NEW.rev = OLD.rev
+BEGIN
+  UPDATE library_clauses SET rev = OLD.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'library_clauses' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('library_clauses', NEW.id, OLD.rev + 1, NEW.updated_at);
+END;
+
+CREATE TRIGGER contracts_sync_insert AFTER INSERT ON contracts
+BEGIN
+  UPDATE contracts SET rev = NEW.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'contracts' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('contracts', NEW.id, NEW.rev + 1, NEW.updated_at);
+END;
+
+CREATE TRIGGER contracts_sync_update AFTER UPDATE ON contracts
+WHEN NEW.rev = OLD.rev
+BEGIN
+  UPDATE contracts SET rev = OLD.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'contracts' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('contracts', NEW.id, OLD.rev + 1, NEW.updated_at);
+END;
+
+CREATE TRIGGER contract_clauses_sync_insert AFTER INSERT ON contract_clauses
+BEGIN
+  UPDATE contract_clauses SET rev = NEW.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'contract_clauses' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('contract_clauses', NEW.id, NEW.rev + 1, NEW.updated_at);
+END;
+
+CREATE TRIGGER contract_clauses_sync_update AFTER UPDATE ON contract_clauses
+WHEN NEW.rev = OLD.rev
+BEGIN
+  UPDATE contract_clauses SET rev = OLD.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'contract_clauses' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('contract_clauses', NEW.id, OLD.rev + 1, NEW.updated_at);
+END;
+
+CREATE TRIGGER scope_items_sync_insert AFTER INSERT ON scope_items
+BEGIN
+  UPDATE scope_items SET rev = NEW.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'scope_items' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('scope_items', NEW.id, NEW.rev + 1, NEW.updated_at);
+END;
+
+CREATE TRIGGER scope_items_sync_update AFTER UPDATE ON scope_items
+WHEN NEW.rev = OLD.rev
+BEGIN
+  UPDATE scope_items SET rev = OLD.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'scope_items' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('scope_items', NEW.id, OLD.rev + 1, NEW.updated_at);
+END;
+
+CREATE TRIGGER payment_milestones_sync_insert AFTER INSERT ON payment_milestones
+BEGIN
+  UPDATE payment_milestones SET rev = NEW.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'payment_milestones' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('payment_milestones', NEW.id, NEW.rev + 1, NEW.updated_at);
+END;
+
+CREATE TRIGGER payment_milestones_sync_update AFTER UPDATE ON payment_milestones
+WHEN NEW.rev = OLD.rev
+BEGIN
+  UPDATE payment_milestones SET rev = OLD.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'payment_milestones' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('payment_milestones', NEW.id, OLD.rev + 1, NEW.updated_at);
+END;

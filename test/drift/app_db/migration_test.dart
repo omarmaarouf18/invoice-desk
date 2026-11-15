@@ -81,19 +81,19 @@ void main() {
     expect(await db.contractsDao.getAll(), isEmpty);
   }
 
-  test('v1 → v3 keeps data, adds guards and seeds the library', () async {
+  test('v1 → current keeps data, adds guards and seeds the library', () async {
     final schema = await verifier.schemaAt(1);
     insertV1Data(schema.rawDatabase);
     final db = AppDatabase(schema.newConnection());
     addTearDown(db.close);
-    await verifier.migrateAndValidate(db, 3);
+    await verifier.migrateAndValidate(db, AppDatabase.currentSchemaVersion);
     await expectCarriedOver(db);
     await expectLater(db.clientsDao.softDelete('c1'), throwsA(anything));
     await db.clientsDao.softDelete('c2');
     expect((await db.clientsDao.getAll()).single.id, 'c1');
   });
 
-  test('v2 → v3 keeps a soft-deleted client and its batch', () async {
+  test('v2 → current keeps a soft-deleted client and its batch', () async {
     final schema = await verifier.schemaAt(2);
     insertV1Data(schema.rawDatabase);
     schema.rawDatabase
@@ -109,7 +109,7 @@ void main() {
       );
     final db = AppDatabase(schema.newConnection());
     addTearDown(db.close);
-    await verifier.migrateAndValidate(db, 3);
+    await verifier.migrateAndValidate(db, AppDatabase.currentSchemaVersion);
     await expectCarriedOver(db);
     final gone = await (db.select(
       db.clients,
@@ -132,8 +132,113 @@ void main() {
     final schema = await verifier.schemaAt(2);
     final db = AppDatabase(schema.newConnection());
     addTearDown(db.close);
-    await verifier.migrateAndValidate(db, 3);
+    await verifier.migrateAndValidate(db, AppDatabase.currentSchemaVersion);
     await db.libraryDao.seedIfEmpty();
     expect(await db.libraryDao.getAll(), hasLength(2));
   });
+
+  test(
+    'v3 → v4: rev 1, outbox for every row, device id, live triggers',
+    () async {
+      final schema = await verifier.schemaAt(3);
+      insertV1Data(schema.rawDatabase);
+      schema.rawDatabase
+        ..execute(
+          'INSERT INTO clause_templates (id, name, kind, position, created_at, '
+          "updated_at) VALUES ('t1', 'T', 'contract', 0, 1, 1)",
+        )
+        ..execute(
+          'INSERT INTO library_clauses (id, template_id, position, title) '
+          "VALUES ('lc1', 't1', 0, 'بند')",
+        )
+        ..execute(
+          'INSERT INTO contracts (id, client_id, number, series, year, seq, '
+          'kind, issue_date, status, currency, created_at, updated_at) VALUES '
+          "('k1', 'c1', 'CT-2026-0001', 'contract', 2026, 1, 'contract', "
+          "'2026-11-15', 'draft', 'EGP', 1, 3)",
+        )
+        ..execute(
+          'INSERT INTO contract_clauses (id, contract_id, position, title) '
+          "VALUES ('cc1', 'k1', 0, 'بند')",
+        )
+        ..execute(
+          'INSERT INTO payment_milestones (id, contract_id, position, label, '
+          "percent_bp) VALUES ('m1', 'k1', 0, 'مقدم', 10000)",
+        );
+      final db = AppDatabase(schema.newConnection());
+      addTearDown(db.close);
+      await verifier.migrateAndValidate(db, AppDatabase.currentSchemaVersion);
+
+      Future<int> one(String sql) async =>
+          (await db.customSelect(sql).getSingle()).data.values.first! as int;
+      const syncable = [
+        'settings',
+        'clients',
+        'invoices',
+        'sections',
+        'items',
+        'clause_templates',
+        'library_clauses',
+        'contracts',
+        'contract_clauses',
+        'scope_items',
+        'payment_milestones',
+      ];
+      for (final t in syncable) {
+        final rows = await one('SELECT COUNT(*) FROM $t');
+        final id = t == 'settings' ? 'CAST(x.id AS TEXT)' : 'x.id';
+        expect(
+          await one('SELECT COUNT(*) FROM $t WHERE rev >= 1'),
+          rows,
+          reason: t,
+        );
+        // Each row has exactly one outbox entry, at its current revision.
+        expect(
+          await one(
+            'SELECT COUNT(*) FROM $t x JOIN outbox o '
+            "ON o.entity = '$t' AND o.row_id = $id AND o.rev = x.rev",
+          ),
+          rows,
+          reason: t,
+        );
+      }
+      // Backfilled rows start at rev 1; settings is at 2 because the device
+      // id was written right after the migration.
+      expect(await one('SELECT rev FROM invoices'), 1);
+      expect(await one('SELECT rev FROM settings'), 2);
+      expect(
+        await one('SELECT COUNT(*) FROM sections WHERE updated_at = 0'),
+        0,
+      );
+      expect(
+        await one(
+          "SELECT COUNT(*) FROM outbox WHERE entity = 'contracts' AND changed_at = 3",
+        ),
+        1,
+      );
+      final device = await db
+          .customSelect('SELECT device_id FROM settings')
+          .getSingle();
+      expect(device.read<String>('device_id'), hasLength(36));
+
+      // Triggers are live: a write bumps rev and the outbox entry.
+      await db.clientsDao.setArchived('c1', archived: true);
+      expect(await one("SELECT rev FROM clients WHERE id = 'c1'"), 2);
+      expect(
+        await one(
+          "SELECT rev FROM outbox WHERE entity = 'clients' AND row_id = 'c1'",
+        ),
+        2,
+      );
+      // Old data still reads the same.
+      expect(
+        (await db.invoicesDao.getAll()).single.sections.single.items,
+        hasLength(1),
+      );
+      expect(
+        (await db.contractsDao.getById('k1'))!.milestones.single.percentBp,
+        10000,
+      );
+    },
+  );
 }

@@ -2,7 +2,7 @@
 import 'package:drift/drift.dart';
 
 @DataClassName('SettingsRow')
-class AppSettings extends Table {
+class AppSettings extends Table with SyncRev {
   @override
   String get tableName => 'settings';
 
@@ -40,6 +40,11 @@ class AppSettings extends Table {
   BoolColumn get contractWesternDigits =>
       boolean().withDefault(const Constant(false))();
 
+  // v4: sync.
+  /// Random UUID of this installation, generated once.
+  TextColumn get deviceId => text().withDefault(const Constant(''))();
+  IntColumn get updatedAt => integer().withDefault(const Constant(0))();
+
   @override
   Set<Column<Object>> get primaryKey => {id};
 
@@ -48,7 +53,7 @@ class AppSettings extends Table {
 }
 
 @DataClassName('ClientRow')
-class Clients extends Table {
+class Clients extends Table with SyncRev {
   TextColumn get id => text()();
   TextColumn get name =>
       text().check(name.trim().length.isBiggerThanValue(0))();
@@ -81,7 +86,7 @@ class Clients extends Table {
 
 @DataClassName('InvoiceRow')
 @TableIndex(name: 'invoices_client', columns: {#clientId})
-class Invoices extends Table {
+class Invoices extends Table with SyncRev {
   TextColumn get id => text()();
   TextColumn get clientId =>
       text().references(Clients, #id, onDelete: KeyAction.restrict)();
@@ -124,7 +129,7 @@ class Invoices extends Table {
 
 @DataClassName('SectionRow')
 @TableIndex(name: 'sections_invoice', columns: {#invoiceId})
-class Sections extends Table {
+class Sections extends Table with SyncRev, ChildSync {
   TextColumn get id => text()();
   TextColumn get invoiceId =>
       text().references(Invoices, #id, onDelete: KeyAction.cascade)();
@@ -143,7 +148,7 @@ class Sections extends Table {
 
 @DataClassName('ItemRow')
 @TableIndex(name: 'items_section', columns: {#sectionId})
-class Items extends Table {
+class Items extends Table with SyncRev, ChildSync {
   TextColumn get id => text()();
   TextColumn get sectionId =>
       text().references(Sections, #id, onDelete: KeyAction.cascade)();
@@ -168,7 +173,7 @@ class Items extends Table {
 /// A library template: an ordered set of clauses plus the preamble, the
 /// closing line and default values for its custom variables.
 @DataClassName('TemplateRow')
-class ClauseTemplates extends Table {
+class ClauseTemplates extends Table with SyncRev {
   TextColumn get id => text()();
   TextColumn get name =>
       text().check(name.trim().length.isBiggerThanValue(0))();
@@ -180,6 +185,9 @@ class ClauseTemplates extends Table {
 
   /// JSON object of variable name → default value.
   TextColumn get varDefaults => text().withDefault(const Constant('{}'))();
+
+  /// v4: tombstone instead of a hard delete.
+  IntColumn get deletedAt => integer().nullable()();
   IntColumn get createdAt => integer()();
   IntColumn get updatedAt => integer()();
 
@@ -192,7 +200,7 @@ class ClauseTemplates extends Table {
 
 @DataClassName('LibraryClauseRow')
 @TableIndex(name: 'library_clauses_template', columns: {#templateId})
-class LibraryClauses extends Table {
+class LibraryClauses extends Table with SyncRev, ChildSync {
   TextColumn get id => text()();
   TextColumn get templateId =>
       text().references(ClauseTemplates, #id, onDelete: KeyAction.cascade)();
@@ -213,7 +221,7 @@ class LibraryClauses extends Table {
 @DataClassName('ContractRow')
 @TableIndex(name: 'contracts_client', columns: {#clientId})
 @TableIndex(name: 'contracts_parent', columns: {#parentId})
-class Contracts extends Table {
+class Contracts extends Table with SyncRev {
   TextColumn get id => text()();
   TextColumn get clientId =>
       text().references(Clients, #id, onDelete: KeyAction.restrict)();
@@ -293,7 +301,7 @@ class Contracts extends Table {
 
 @DataClassName('ContractClauseRow')
 @TableIndex(name: 'contract_clauses_contract', columns: {#contractId})
-class ContractClauses extends Table {
+class ContractClauses extends Table with SyncRev, ChildSync {
   TextColumn get id => text()();
   TextColumn get contractId =>
       text().references(Contracts, #id, onDelete: KeyAction.cascade)();
@@ -316,7 +324,7 @@ class ContractClauses extends Table {
 
 @DataClassName('ScopeItemRow')
 @TableIndex(name: 'scope_items_contract', columns: {#contractId})
-class ScopeItems extends Table {
+class ScopeItems extends Table with SyncRev, ChildSync {
   TextColumn get id => text()();
   TextColumn get contractId =>
       text().references(Contracts, #id, onDelete: KeyAction.cascade)();
@@ -336,7 +344,7 @@ class ScopeItems extends Table {
 @DataClassName('MilestoneRow')
 @TableIndex(name: 'milestones_contract', columns: {#contractId})
 @TableIndex(name: 'milestones_invoice', columns: {#invoiceId})
-class PaymentMilestones extends Table {
+class PaymentMilestones extends Table with SyncRev, ChildSync {
   TextColumn get id => text()();
   TextColumn get contractId =>
       text().references(Contracts, #id, onDelete: KeyAction.cascade)();
@@ -357,6 +365,57 @@ class PaymentMilestones extends Table {
 
   @override
   Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  bool get isStrict => true;
+}
+
+// ── v4: sync-ready rows ────────────────────────────────────────────────
+
+/// Every syncable table: a revision that triggers bump on each insert and
+/// update (see sync_triggers.drift), in the same transaction as the write.
+mixin SyncRev on Table {
+  IntColumn get rev => integer().withDefault(const Constant(0))();
+}
+
+/// Child rows (sections, items, clauses, …) that used to be replaced
+/// wholesale: since v4 they are upserted and tombstoned, so a future sync
+/// engine sees every change and every deletion.
+mixin ChildSync on Table {
+  /// UTC epoch ms of the last write; 0 for rows from before v4 until the
+  /// migration backfills it.
+  IntColumn get updatedAt => integer().withDefault(const Constant(0))();
+
+  /// Tombstone: hidden everywhere, purged after 30 days.
+  IntColumn get deletedAt => integer().nullable()();
+}
+
+/// What a future sync engine pushes: one row per changed entity row, kept
+/// at its latest revision. Written by triggers in the same transaction as
+/// the change.
+@DataClassName('OutboxRow')
+class Outbox extends Table {
+  @override
+  String get tableName => 'outbox';
+
+  IntColumn get id => integer().autoIncrement()();
+
+  /// Table name of the changed row.
+  TextColumn get entity => text()();
+
+  /// The changed row's id (settings: `1`).
+  TextColumn get rowId => text()();
+
+  /// The row's revision after the change.
+  IntColumn get rev => integer()();
+
+  /// The row's `updated_at` (UTC epoch ms) at the change.
+  IntColumn get changedAt => integer()();
+
+  @override
+  List<Set<Column<Object>>> get uniqueKeys => [
+    {entity, rowId},
+  ];
 
   @override
   bool get isStrict => true;

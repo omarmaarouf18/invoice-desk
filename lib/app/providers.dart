@@ -1,16 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:invoice_desk/account/account.dart';
 import 'package:invoice_desk/app/ui_prefs.dart';
 import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/data/providers.dart';
 import 'package:invoice_desk/pdf/invoice_pdf.dart';
+import 'package:invoice_desk/sync/sync.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 export 'package:invoice_desk/data/providers.dart';
 
 final uiPrefsProvider = Provider<UiPrefs>(
   (ref) => throw UnimplementedError('override uiPrefsProvider'),
+);
+
+/// Seam: who the user is to the future sync service. Bootstrap wires
+/// [LocalAccountService]; nothing in the UI is ever gated on it.
+final accountServiceProvider = Provider<AccountService>(
+  (ref) => throw UnimplementedError('override accountServiceProvider'),
+);
+
+/// Seam: the future encrypted sync. Bootstrap wires [NoopSyncService].
+final syncServiceProvider = Provider<SyncService>(
+  (ref) => throw UnimplementedError('override syncServiceProvider'),
+);
+
+final syncStatusProvider = StreamProvider<SyncStatus>(
+  (ref) => ref.watch(syncServiceProvider).status,
 );
 
 CalendarDate todayFrom(Ref ref) =>

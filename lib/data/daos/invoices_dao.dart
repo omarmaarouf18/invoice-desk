@@ -39,12 +39,16 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
     final q = select(invoices);
     if (!includeDeleted) q.where((i) => i.deletedAt.isNull());
     final invRows = await q.get();
-    final secRows = await (select(
-      sections,
-    )..orderBy([(s) => OrderingTerm.asc(s.position)])).get();
-    final itemRows = await (select(
-      items,
-    )..orderBy([(i) => OrderingTerm.asc(i.position)])).get();
+    final secRows =
+        await (select(sections)
+              ..where((s) => s.deletedAt.isNull())
+              ..orderBy([(s) => OrderingTerm.asc(s.position)]))
+            .get();
+    final itemRows =
+        await (select(items)
+              ..where((i) => i.deletedAt.isNull())
+              ..orderBy([(i) => OrderingTerm.asc(i.position)]))
+            .get();
     final itemsBySection = groupBy(itemRows, (r) => r.sectionId);
     final sectionsByInvoice = groupBy(secRows, (r) => r.invoiceId);
     return [
@@ -66,14 +70,14 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
     if (r == null) return null;
     final secRows =
         await (select(sections)
-              ..where((s) => s.invoiceId.equals(id))
+              ..where((s) => s.invoiceId.equals(id) & s.deletedAt.isNull())
               ..orderBy([(s) => OrderingTerm.asc(s.position)]))
             .get();
     final out = <InvoiceSection>[];
     for (final s in secRows) {
       final itemRows =
           await (select(items)
-                ..where((i) => i.sectionId.equals(s.id))
+                ..where((i) => i.sectionId.equals(s.id) & i.deletedAt.isNull())
                 ..orderBy([(i) => OrderingTerm.asc(i.position)]))
               .get();
       out.add(_sectionToModel(s, itemRows));
@@ -154,21 +158,82 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
         updatedAt: now,
       ),
     );
-    // Replace children; items go with their sections (ON DELETE CASCADE).
-    await (delete(sections)..where((s) => s.invoiceId.equals(inv.id))).go();
+    await _syncChildren(inv, now);
+  });
+
+  /// Upserts the sections and items that changed and tombstones the ones
+  /// that were removed (v4: no hard deletes before purge, so a future sync
+  /// sees every change). Unchanged rows are not written, so their `rev`
+  /// doesn't move.
+  Future<void> _syncChildren(Invoice inv, int now) async {
+    final oldSections = {
+      for (final r in await (select(
+        sections,
+      )..where((s) => s.invoiceId.equals(inv.id))).get())
+        r.id: r,
+    };
+    final oldItems = {
+      for (final r in await (select(
+        items,
+      )..where((i) => i.sectionId.isIn(oldSections.keys))).get())
+        r.id: r,
+    };
+    final keepSections = {for (final s in inv.sections) s.id};
+    final keepItems = {
+      for (final s in inv.sections)
+        for (final i in s.items) i.id,
+    };
+    for (final r in oldItems.values) {
+      if (!keepItems.contains(r.id) && r.deletedAt == null) {
+        await (update(items)..where((i) => i.id.equals(r.id))).write(
+          ItemsCompanion(deletedAt: Value(now), updatedAt: Value(now)),
+        );
+      }
+    }
+    for (final r in oldSections.values) {
+      if (!keepSections.contains(r.id) && r.deletedAt == null) {
+        await (update(sections)..where((x) => x.id.equals(r.id))).write(
+          SectionsCompanion(deletedAt: Value(now), updatedAt: Value(now)),
+        );
+      }
+    }
     for (final (si, s) in inv.sections.indexed) {
-      await into(sections).insert(
-        SectionsCompanion.insert(
-          id: s.id,
-          invoiceId: inv.id,
-          position: si,
-          titleEn: Value(s.titleEn),
-          titleAr: Value(s.titleAr),
-          currency: s.currency.code,
-        ),
-      );
+      final old = oldSections[s.id];
+      final same =
+          old != null &&
+          old.deletedAt == null &&
+          old.position == si &&
+          old.titleEn == s.titleEn &&
+          old.titleAr == s.titleAr &&
+          old.currency == s.currency.code;
+      if (!same) {
+        await into(sections).insertOnConflictUpdate(
+          SectionsCompanion.insert(
+            id: s.id,
+            invoiceId: inv.id,
+            position: si,
+            titleEn: Value(s.titleEn),
+            titleAr: Value(s.titleAr),
+            currency: s.currency.code,
+            updatedAt: Value(now),
+            deletedAt: const Value(null),
+          ),
+        );
+      }
       for (final (ii, it) in s.items.indexed) {
-        await into(items).insert(
+        final o = oldItems[it.id];
+        final sameItem =
+            o != null &&
+            o.deletedAt == null &&
+            o.sectionId == s.id &&
+            o.position == ii &&
+            o.service == it.service &&
+            o.description == it.description &&
+            o.cycle == it.cycle.dbValue &&
+            o.qty == it.qty &&
+            o.unitPriceMinor == it.unitPriceMinor;
+        if (sameItem) continue;
+        await into(items).insertOnConflictUpdate(
           ItemsCompanion.insert(
             id: it.id,
             sectionId: s.id,
@@ -178,28 +243,41 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
             cycle: it.cycle.dbValue,
             qty: it.qty,
             unitPriceMinor: it.unitPriceMinor,
+            updatedAt: Value(now),
+            deletedAt: const Value(null),
           ),
         );
       }
     }
-  });
+  }
 
   Future<void> softDelete(String id) => transaction(() async {
     await (update(invoices)..where((i) => i.id.equals(id))).write(
-      InvoicesCompanion(deletedAt: Value(_now())),
+      InvoicesCompanion(deletedAt: Value(_now()), updatedAt: Value(_now())),
     );
   });
 
   Future<void> undoDelete(String id) => transaction(() async {
     await (update(invoices)..where((i) => i.id.equals(id))).write(
-      const InvoicesCompanion(deletedAt: Value(null)),
+      InvoicesCompanion(
+        deletedAt: const Value(null),
+        updatedAt: Value(_now()),
+      ),
     );
   });
 
-  /// Hard-deletes invoices soft-deleted more than [age] ago.
+  /// Hard-deletes invoices soft-deleted more than [age] ago, and section
+  /// and item tombstones of the same age.
+  // TODO(sync): once sync exists, keep tombstones that were never pushed.
   Future<int> purgeDeleted({Duration age = const Duration(days: 30)}) =>
       transaction(() async {
         final cutoff = _now() - age.inMilliseconds;
+        await (delete(
+          items,
+        )..where((i) => i.deletedAt.isSmallerThanValue(cutoff))).go();
+        await (delete(
+          sections,
+        )..where((x) => x.deletedAt.isSmallerThanValue(cutoff))).go();
         return (delete(
           invoices,
         )..where((i) => i.deletedAt.isSmallerThanValue(cutoff))).go();

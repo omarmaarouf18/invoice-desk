@@ -77,6 +77,7 @@ final trashRepositoryProvider = Provider<TrashRepository>(
   (ref) => TrashRepository(
     ref.watch(databaseProvider),
     ref.watch(backupServiceProvider),
+    clock: ref.watch(clockProvider),
   ),
 );
 

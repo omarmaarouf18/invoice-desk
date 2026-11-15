@@ -193,6 +193,10 @@ class BackupService {
     ];
     // A v1/v2 backup has no library: keep the current one in that case.
     const library = {'clause_templates', 'library_clauses'};
+    // This installation keeps its device id whatever the backup says.
+    final device = await _db
+        .customSelect('SELECT device_id FROM settings WHERE id = 1')
+        .getSingleOrNull();
     await _db.customStatement('ATTACH DATABASE ? AS bk', [file.path]);
     try {
       await _db.transaction(() async {
@@ -224,6 +228,14 @@ class BackupService {
     } finally {
       await _db.customStatement('DETACH DATABASE bk');
     }
+    final keep = device?.read<String>('device_id') ?? '';
+    if (keep.isNotEmpty) {
+      await _db.customStatement(
+        'UPDATE settings SET device_id = ? WHERE id = 1',
+        [keep],
+      );
+    }
+    await _db.ensureDeviceId();
     _db.markAllUpdated();
   }
 }
@@ -233,5 +245,6 @@ Future<File?> startupHousekeeping(AppDatabase db, AppPaths paths) async {
   await db.contractsDao.purgeDeleted();
   await db.invoicesDao.purgeDeleted();
   await db.clientsDao.purgeDeleted();
+  await db.libraryDao.purgeDeleted();
   return BackupService(db, paths: paths).backupIfDue();
 }

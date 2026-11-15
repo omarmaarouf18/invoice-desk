@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:clock/clock.dart';
 import 'package:drift/drift.dart';
 import 'package:invoice_desk/data/backup.dart';
 import 'package:invoice_desk/data/db.dart';
@@ -9,10 +10,16 @@ import 'package:invoice_desk/domain/trash.dart';
 /// them within the database guards, and deletes them for good (after a
 /// `before-purge-…` backup).
 class TrashRepository {
-  /// [_backups] writes the `before-purge-…` file before any hard delete.
-  TrashRepository(this._db, this._backups);
+  /// [_backups] writes the `before-purge-…` file before any hard delete;
+  /// [clock] stamps restores.
+  TrashRepository(this._db, this._backups, {this.clock = const Clock()});
   final AppDatabase _db;
   final BackupService _backups;
+
+  /// Dates every write (restores set `updated_at`).
+  final Clock clock;
+
+  int get _nowMs => clock.now().toUtc().millisecondsSinceEpoch;
 
   /// Every trash entry, newest deletion first. Re-emits on any change.
   Stream<List<TrashEntry>> watch() => _db
@@ -80,13 +87,19 @@ class TrashRepository {
             if (row?.deletedAt == null) return const NotInTrash();
             final stamp = row!.deletedAt!;
             final docs = await _countBatch(e.id, stamp);
-            await _db.clientsDao.undoDeleteWithDocuments(e.id, stamp);
+            await withClock(
+              clock,
+              () => _db.clientsDao.undoDeleteWithDocuments(e.id, stamp),
+            );
             return Restored(1 + docs);
           case TrashKind.invoice || TrashKind.contract:
             final owner = await _clientRow(e.clientId!);
             if (owner?.deletedAt != null) {
               if (!withClient) return NeedsClient(owner!.name);
-              await _db.clientsDao.undoDelete(owner!.id);
+              await withClock(
+                clock,
+                () => _db.clientsDao.undoDelete(owner!.id),
+              );
             }
             final n = e.kind == TrashKind.invoice
                 ? await _restoreInvoice(e.id)
@@ -97,9 +110,14 @@ class TrashRepository {
       });
 
   Future<int> _restoreInvoice(String id) async =>
-      (_db.update(_db.invoices)
-            ..where((t) => t.id.equals(id) & t.deletedAt.isNotNull()))
-          .write(const InvoicesCompanion(deletedAt: Value(null)));
+      (_db.update(
+        _db.invoices,
+      )..where((t) => t.id.equals(id) & t.deletedAt.isNotNull())).write(
+        InvoicesCompanion(
+          deletedAt: const Value(null),
+          updatedAt: Value(_nowMs),
+        ),
+      );
 
   /// A contract comes back with the amendments deleted alongside it.
   Future<int> _restoreContract(String id) async {
@@ -113,7 +131,12 @@ class TrashRepository {
               (t.id.equals(id) | t.parentId.equals(id)) &
               t.deletedAt.equals(stamp),
         ))
-        .write(const ContractsCompanion(deletedAt: Value(null)));
+        .write(
+          ContractsCompanion(
+            deletedAt: const Value(null),
+            updatedAt: Value(_nowMs),
+          ),
+        );
   }
 
   Future<ClientRow?> _clientRow(String id) => (_db.select(

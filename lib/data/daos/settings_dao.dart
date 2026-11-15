@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:drift/drift.dart';
 import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/data/tables.dart';
@@ -37,6 +38,7 @@ class SettingsDao extends DatabaseAccessor<AppDatabase>
         notesAr: Value(s.notesAr),
         backupDir: Value(s.backupDir),
         lastBackupAt: Value(s.lastBackupAt),
+        updatedAt: Value(clock.now().toUtc().millisecondsSinceEpoch),
         legalName: Value(s.legalName),
         nationalIdOrRegistry: Value(s.nationalIdOrRegistry),
         address: Value(s.address),

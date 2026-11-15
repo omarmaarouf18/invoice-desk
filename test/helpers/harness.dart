@@ -7,11 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:invoice_desk/account/account.dart';
 import 'package:invoice_desk/app/app.dart';
 import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/app/ui_prefs.dart';
 import 'package:invoice_desk/data/app_paths.dart';
 import 'package:invoice_desk/data/db.dart';
+import 'package:invoice_desk/sync/sync.dart';
 
 final testNow = DateTime(2026, 11, 15, 10);
 
@@ -52,6 +54,8 @@ Future<ProviderContainer> pumpShell(
   final container = ProviderContainer(
     overrides: [
       databaseProvider.overrideWithValue(db),
+      accountServiceProvider.overrideWithValue(const LocalAccountService()),
+      syncServiceProvider.overrideWithValue(const NoopSyncService()),
       uiPrefsProvider.overrideWithValue(prefs),
       clockProvider.overrideWithValue(Clock.fixed(testNow)),
       appPathsProvider.overrideWithValue(
