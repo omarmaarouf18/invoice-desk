@@ -11,6 +11,8 @@ import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
 import 'package:invoice_desk/widgets/common.dart';
 
+part 'library/template_widgets.dart';
+
 /// Settings → مكتبة البنود: templates on the start side, the selected
 /// template's preamble, defaults and clauses beside it. Autosaves.
 class LibraryPage extends ConsumerStatefulWidget {
@@ -48,26 +50,7 @@ class _LibraryPageState extends ConsumerState<LibraryPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(l.libraryTitle, style: theme.textTheme.headlineSmall),
-                    Text(l.librarySubtitle, style: theme.textTheme.bodySmall),
-                  ],
-                ),
-              ),
-              OutlinedButton.icon(
-                onPressed: () => ref
-                    .read(workspaceProvider.notifier)
-                    .show(Workspace.settings),
-                icon: const Icon(Icons.arrow_forward, size: 18),
-                label: Text(l.back),
-              ),
-            ],
-          ),
+          const _LibraryHeader(),
           const SizedBox(height: Space.s),
           Text(
             l.draftNotLegalAdvice,
@@ -80,45 +63,11 @@ class _LibraryPageState extends ConsumerState<LibraryPage> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  width: 260,
-                  child: Card(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(
-                          child: ListView(
-                            children: [
-                              for (final t in templates)
-                                ListTile(
-                                  selected: t.id == selected?.id,
-                                  leading: Icon(
-                                    t.kind == TemplateKind.quote
-                                        ? Icons.request_quote_outlined
-                                        : Icons.gavel_outlined,
-                                    size: 18,
-                                  ),
-                                  title: Text(t.name),
-                                  subtitle: Text(
-                                    l.clauseCount(t.clauses.length),
-                                  ),
-                                  onTap: () => setState(() => _selected = t.id),
-                                ),
-                            ],
-                          ),
-                        ),
-                        const Divider(height: 1),
-                        Padding(
-                          padding: const EdgeInsets.all(Space.s),
-                          child: OutlinedButton.icon(
-                            onPressed: () => unawaited(addTemplate()),
-                            icon: const Icon(Icons.add, size: 18),
-                            label: Text(l.newTemplate),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                _TemplateList(
+                  templates: templates,
+                  selectedId: selected?.id,
+                  onSelect: (id) => setState(() => _selected = id),
+                  onAdd: () => unawaited(addTemplate()),
                 ),
                 const SizedBox(width: Space.m),
                 Expanded(
@@ -220,95 +169,13 @@ class _TemplateEditorState extends ConsumerState<_TemplateEditor> {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    final theme = Theme.of(context);
-    const gap = SizedBox(height: Space.m - 4);
     return ListView(
       children: [
-        PanelCard(
-          title: _t.name,
-          icon: Icons.description_outlined,
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                _dirty ? l.saving : l.saved,
-                style: theme.textTheme.bodySmall,
-              ),
-              IconButton(
-                tooltip: l.deleteTemplate,
-                onPressed: () => unawaited(_delete()),
-                icon: Icon(
-                  Icons.delete_outline,
-                  color: theme.colorScheme.error,
-                ),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: SyncedTextField(
-                      label: l.templateName,
-                      value: _t.name,
-                      onChanged: (v) => _update(
-                        (t) => t.copyWith(name: v.trim().isEmpty ? t.name : v),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: Space.m - 4),
-                  SegmentedButton<TemplateKind>(
-                    showSelectedIcon: false,
-                    segments: [
-                      ButtonSegment(
-                        value: TemplateKind.contract,
-                        label: Text(l.kindContract),
-                      ),
-                      ButtonSegment(
-                        value: TemplateKind.quote,
-                        label: Text(l.kindQuote),
-                      ),
-                    ],
-                    selected: {_t.kind},
-                    onSelectionChanged: (s) =>
-                        _update((t) => t.copyWith(kind: s.first)),
-                  ),
-                ],
-              ),
-              gap,
-              SyncedTextField(
-                label: l.preamble,
-                value: _t.preamble,
-                minLines: 3,
-                maxLines: 10,
-                keyboardType: TextInputType.multiline,
-                onChanged: (v) => _update((t) => t.copyWith(preamble: v)),
-              ),
-              gap,
-              SyncedTextField(
-                label: l.closingLine,
-                value: _t.closing,
-                minLines: 1,
-                maxLines: 4,
-                keyboardType: TextInputType.multiline,
-                onChanged: (v) => _update((t) => t.copyWith(closing: v)),
-              ),
-              gap,
-              SyncedTextField(
-                label: l.templateDefaults,
-                hint: l.templateDefaultsHint,
-                value: _defaultsText(_t.varDefaults),
-                textDirection: TextDirection.ltr,
-                minLines: 3,
-                maxLines: 12,
-                keyboardType: TextInputType.multiline,
-                onChanged: (v) =>
-                    _update((t) => t.copyWith(varDefaults: _parseDefaults(v))),
-              ),
-            ],
-          ),
+        _TemplateFields(
+          t: _t,
+          dirty: _dirty,
+          update: _update,
+          onDelete: () => unawaited(_delete()),
         ),
         const SizedBox(height: Space.m),
         PanelCard(
@@ -338,84 +205,14 @@ class _TemplateEditorState extends ConsumerState<_TemplateEditor> {
             }),
             children: [
               for (final (i, c) in _t.clauses.indexed)
-                Container(
-                  key: ValueKey(c.id),
-                  margin: const EdgeInsetsDirectional.only(bottom: Space.s),
-                  padding: const EdgeInsets.all(Space.s),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: context.colors.border),
-                    borderRadius: BorderRadius.circular(Space.radiusSmall),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Row(
-                        children: [
-                          ReorderableDragStartListener(
-                            index: i,
-                            child: Icon(
-                              Icons.drag_indicator,
-                              size: 18,
-                              color: context.colors.muted,
-                            ),
-                          ),
-                          const SizedBox(width: Space.s),
-                          Expanded(
-                            child: SyncedTextField(
-                              value: c.title,
-                              hint: l.clauseTitle,
-                              dense: true,
-                              onChanged: (v) => _editClause(
-                                c.id,
-                                (x) => x.copyWith(title: v),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: Space.s),
-                          FilterChip(
-                            label: Text(l.optionalTag),
-                            selected: c.optional,
-                            onSelected: (v) => _editClause(
-                              c.id,
-                              (x) => x.copyWith(
-                                optional: v,
-                                enabledByDefault: !v || x.enabledByDefault,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: Space.xs),
-                          FilterChip(
-                            label: Text(l.enabledByDefault),
-                            selected: c.enabledByDefault,
-                            onSelected: (v) => _editClause(
-                              c.id,
-                              (x) => x.copyWith(enabledByDefault: v),
-                            ),
-                          ),
-                          IconButton(
-                            tooltip: l.deleteClause,
-                            onPressed: () => _update(
-                              (t) => t.copyWith(
-                                clauses: t.clauses
-                                    .where((x) => x.id != c.id)
-                                    .toList(),
-                              ),
-                            ),
-                            icon: const Icon(Icons.close, size: 16),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: Space.xs),
-                      SyncedTextField(
-                        value: c.body,
-                        hint: l.clauseBody,
-                        minLines: 2,
-                        maxLines: 12,
-                        keyboardType: TextInputType.multiline,
-                        onChanged: (v) =>
-                            _editClause(c.id, (x) => x.copyWith(body: v)),
-                      ),
-                    ],
+                _LibraryClauseRow(
+                  i: i,
+                  c: c,
+                  edit: _editClause,
+                  onDelete: () => _update(
+                    (t) => t.copyWith(
+                      clauses: t.clauses.where((x) => x.id != c.id).toList(),
+                    ),
                   ),
                 ),
             ],

@@ -74,7 +74,6 @@ class _ItemRow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
-    final theme = Theme.of(context);
     final ctl = ref.read(editorProvider.notifier);
     void set(LineItem Function(LineItem i) f) =>
         ctl.editItem(sectionId, item.id, f);
@@ -84,44 +83,14 @@ class _ItemRow extends ConsumerWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: _wHandle,
-            height: 40,
-            child: ReorderableDragStartListener(
-              index: index,
-              child: MouseRegion(
-                cursor: SystemMouseCursors.grab,
-                child: Tooltip(
-                  message: l.dragToReorder,
-                  child: Icon(
-                    Icons.drag_indicator,
-                    size: 18,
-                    color: context.colors.muted,
-                  ),
-                ),
-              ),
-            ),
+          _DragHandle(
+            index: index,
           ),
-          Expanded(
-            flex: 3,
-            child: _ServiceField(
-              item: item,
-              currency: currency,
-              autofocus: autofocus,
-              onChanged: (v) => set((i) => i.copyWith(service: v)),
-              onPicked: (s) => set(
-                (i) => i.copyWith(
-                  service: s.item.service,
-                  cycle: s.item.cycle,
-                  description: i.description.isEmpty
-                      ? s.item.description
-                      : i.description,
-                  unitPriceMinor: s.currency == currency
-                      ? s.item.unitPriceMinor
-                      : i.unitPriceMinor,
-                ),
-              ),
-            ),
+          _ServiceCell(
+            item: item,
+            currency: currency,
+            autofocus: autofocus,
+            set: set,
           ),
           _gap,
           Expanded(
@@ -135,28 +104,9 @@ class _ItemRow extends ConsumerWidget {
             ),
           ),
           _gap,
-          SizedBox(
-            width: _wCycle,
-            child: DropdownButtonFormField<BillingCycle>(
-              key: ValueKey(item.cycle),
-              initialValue: item.cycle,
-              decoration: const InputDecoration(
-                contentPadding: EdgeInsetsDirectional.symmetric(
-                  horizontal: 8,
-                  vertical: 9,
-                ),
-              ),
-              items: [
-                for (final c in BillingCycle.values)
-                  DropdownMenuItem(
-                    value: c,
-                    child: Text(cycleLabel(context, c)),
-                  ),
-              ],
-              onChanged: (c) {
-                if (c != null) set((i) => i.copyWith(cycle: c));
-              },
-            ),
+          _CycleCell(
+            item: item,
+            set: set,
           ),
           _gap,
           SizedBox(
@@ -184,17 +134,9 @@ class _ItemRow extends ConsumerWidget {
             ),
           ),
           _gap,
-          SizedBox(
-            width: _wTotal,
-            height: 40,
-            child: Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: Text(
-                formatAmount(item.lineMinor, currency),
-                textDirection: TextDirection.ltr,
-                style: theme.textTheme.titleSmall,
-              ),
-            ),
+          _LineTotal(
+            item: item,
+            currency: currency,
           ),
           SizedBox(
             width: _wDelete,
@@ -259,6 +201,133 @@ class _NumberFieldState extends State<_NumberField> {
           if (_bad != (parsed == null)) setState(() => _bad = parsed == null);
           if (parsed != null) widget.onValid(parsed);
         },
+      ),
+    );
+  }
+}
+
+/// Grab handle that reorders the row.
+class _DragHandle extends StatelessWidget {
+  const _DragHandle({required this.index});
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return SizedBox(
+      width: _wHandle,
+      height: 40,
+      child: ReorderableDragStartListener(
+        index: index,
+        child: MouseRegion(
+          cursor: SystemMouseCursors.grab,
+          child: Tooltip(
+            message: l.dragToReorder,
+            child: Icon(
+              Icons.drag_indicator,
+              size: 18,
+              color: context.colors.muted,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Billing cycle (مرة واحدة / شهري / سنوي).
+class _CycleCell extends StatelessWidget {
+  const _CycleCell({required this.item, required this.set});
+  final LineItem item;
+  final void Function(LineItem Function(LineItem i) f) set;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: _wCycle,
+      child: DropdownButtonFormField<BillingCycle>(
+        key: ValueKey(item.cycle),
+        initialValue: item.cycle,
+        decoration: const InputDecoration(
+          contentPadding: EdgeInsetsDirectional.symmetric(
+            horizontal: 8,
+            vertical: 9,
+          ),
+        ),
+        items: [
+          for (final c in BillingCycle.values)
+            DropdownMenuItem(
+              value: c,
+              child: Text(cycleLabel(context, c)),
+            ),
+        ],
+        onChanged: (c) {
+          if (c != null) set((i) => i.copyWith(cycle: c));
+        },
+      ),
+    );
+  }
+}
+
+/// qty × unit price, read-only.
+class _LineTotal extends StatelessWidget {
+  const _LineTotal({required this.item, required this.currency});
+  final LineItem item;
+  final Currency currency;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return SizedBox(
+      width: _wTotal,
+      height: 40,
+      child: Align(
+        alignment: AlignmentDirectional.centerEnd,
+        child: Text(
+          formatAmount(item.lineMinor, currency),
+          textDirection: TextDirection.ltr,
+          style: theme.textTheme.titleSmall,
+        ),
+      ),
+    );
+  }
+}
+
+/// Service with suggestions; picking one fills cycle, description and
+/// (same currency only) the price.
+class _ServiceCell extends StatelessWidget {
+  const _ServiceCell({
+    required this.item,
+    required this.currency,
+    required this.autofocus,
+    required this.set,
+  });
+  final LineItem item;
+  final Currency currency;
+  final bool autofocus;
+  final void Function(LineItem Function(LineItem i) f) set;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      flex: 3,
+      child: _ServiceField(
+        item: item,
+        currency: currency,
+        autofocus: autofocus,
+        onChanged: (v) => set((i) => i.copyWith(service: v)),
+        onPicked: (s) => set(
+          (i) => i.copyWith(
+            service: s.item.service,
+            cycle: s.item.cycle,
+            description: i.description.isEmpty
+                ? s.item.description
+                : i.description,
+            unitPriceMinor: s.currency == currency
+                ? s.item.unitPriceMinor
+                : i.unitPriceMinor,
+          ),
+        ),
       ),
     );
   }

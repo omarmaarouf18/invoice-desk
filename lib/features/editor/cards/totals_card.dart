@@ -70,61 +70,9 @@ class TotalsCard extends ConsumerWidget {
               t.vat.format(),
             ),
           const SizedBox(height: Space.s),
-          Container(
-            padding: const EdgeInsetsDirectional.symmetric(
-              horizontal: Space.m,
-              vertical: Space.m - 4,
-            ),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.inverseSurface,
-              borderRadius: BorderRadius.circular(Space.radiusSmall),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l.totalDue,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: theme.colorScheme.onInverseSurface,
-                        ),
-                      ),
-                      Text(
-                        l.dueBy(formatArabicDate(due)),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onInverseSurface.withValues(
-                            alpha: 0.7,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    for (final m in totals.nonZero)
-                      Text(
-                        m.format(),
-                        textDirection: TextDirection.ltr,
-                        style: theme.textTheme.headlineSmall?.copyWith(
-                          color: theme.colorScheme.onInverseSurface,
-                        ),
-                      ),
-                    if (totals.isEmpty)
-                      Text(
-                        '0',
-                        style: theme.textTheme.headlineSmall?.copyWith(
-                          color: theme.colorScheme.onInverseSurface,
-                        ),
-                      ),
-                  ],
-                ),
-              ],
-            ),
+          _TotalDueBox(
+            totals: totals,
+            due: due,
           ),
         ],
       ),
@@ -168,6 +116,75 @@ class _RateFieldState extends State<_RateField> {
             if (ok) widget.onChanged(bp);
           },
         ),
+      ),
+    );
+  }
+}
+
+/// The dark "المستحق" box: total per currency and the due date.
+class _TotalDueBox extends StatelessWidget {
+  const _TotalDueBox({required this.totals, required this.due});
+  final MoneyBag totals;
+  final CalendarDate due;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsetsDirectional.symmetric(
+        horizontal: Space.m,
+        vertical: Space.m - 4,
+      ),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.inverseSurface,
+        borderRadius: BorderRadius.circular(Space.radiusSmall),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l.totalDue,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: theme.colorScheme.onInverseSurface,
+                  ),
+                ),
+                Text(
+                  l.dueBy(formatArabicDate(due)),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onInverseSurface.withValues(
+                      alpha: 0.7,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              for (final m in totals.nonZero)
+                Text(
+                  m.format(),
+                  textDirection: TextDirection.ltr,
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    color: theme.colorScheme.onInverseSurface,
+                  ),
+                ),
+              if (totals.isEmpty)
+                Text(
+                  '0',
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    color: theme.colorScheme.onInverseSurface,
+                  ),
+                ),
+            ],
+          ),
+        ],
       ),
     );
   }

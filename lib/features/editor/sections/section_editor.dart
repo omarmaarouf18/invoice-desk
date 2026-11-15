@@ -29,8 +29,6 @@ class _SectionEditorState extends ConsumerState<_SectionEditor> {
 
   @override
   Widget build(BuildContext context) {
-    final l = context.l10n;
-    final theme = Theme.of(context);
     final section = ref.watch(editorProvider.select(_section));
     if (section == null) return const SizedBox.shrink();
     final ctl = ref.read(editorProvider.notifier);
@@ -46,72 +44,9 @@ class _SectionEditorState extends ConsumerState<_SectionEditor> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsetsDirectional.only(
-                    top: 10,
-                    end: Space.s,
-                  ),
-                  child: Text(
-                    '${widget.index}',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: theme.colorScheme.primary,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 4,
-                  child: SyncedTextField(
-                    label: l.sectionTitleEn,
-                    value: section.titleEn,
-                    textDirection: TextDirection.ltr,
-                    onChanged: (v) => ctl.editSection(
-                      section.id,
-                      (s) => s.copyWith(titleEn: v),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: Space.s),
-                Expanded(
-                  flex: 3,
-                  child: SyncedTextField(
-                    label: l.sectionTitleAr,
-                    value: section.titleAr,
-                    textDirection: TextDirection.rtl,
-                    onChanged: (v) => ctl.editSection(
-                      section.id,
-                      (s) => s.copyWith(titleAr: v),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: Space.s),
-                SizedBox(
-                  width: 104,
-                  child: DropdownButtonFormField<Currency>(
-                    initialValue: section.currency,
-                    decoration: InputDecoration(labelText: l.currency),
-                    items: [
-                      for (final cur in Currency.values)
-                        DropdownMenuItem(value: cur, child: Text(cur.code)),
-                    ],
-                    onChanged: (cur) {
-                      if (cur != null) {
-                        ctl.editSection(
-                          section.id,
-                          (s) => s.copyWith(currency: cur),
-                        );
-                      }
-                    },
-                  ),
-                ),
-                IconButton(
-                  tooltip: l.deleteSection,
-                  onPressed: () => ctl.removeSection(section.id),
-                  icon: const Icon(Icons.delete_outline, size: 20),
-                ),
-              ],
+            _SectionHeader(
+              section: section,
+              index: widget.index,
             ),
             const SizedBox(height: Space.s + 4),
             const _HeaderRow(),
@@ -143,30 +78,130 @@ class _SectionEditorState extends ConsumerState<_SectionEditor> {
               },
             ),
             const SizedBox(height: Space.s),
-            Row(
-              children: [
-                TextButton.icon(
-                  onPressed: () => _addAfter(section.items.lastOrNull?.id),
-                  icon: const Icon(Icons.add, size: 18),
-                  label: Text(l.addItem),
-                ),
-                const Spacer(),
-                Text(
-                  l.subtotal,
-                  style: theme.textTheme.bodyMedium?.copyWith(color: c.muted),
-                ),
-                const SizedBox(width: Space.m),
-                Text(
-                  section.subtotal.format(),
-                  textDirection: TextDirection.ltr,
-                  style: theme.textTheme.titleMedium,
-                ),
-                const SizedBox(width: Space.s),
-              ],
+            _SectionFooter(
+              section: section,
+              onAdd: () => _addAfter(section.items.lastOrNull?.id),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Section number, bilingual title, currency and delete.
+class _SectionHeader extends ConsumerWidget {
+  const _SectionHeader({required this.section, required this.index});
+  final InvoiceSection section;
+  final int index;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ctl = ref.read(editorProvider.notifier);
+    final l = context.l10n;
+    final theme = Theme.of(context);
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsetsDirectional.only(
+            top: 10,
+            end: Space.s,
+          ),
+          child: Text(
+            '$index',
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: theme.colorScheme.primary,
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 4,
+          child: SyncedTextField(
+            label: l.sectionTitleEn,
+            value: section.titleEn,
+            textDirection: TextDirection.ltr,
+            onChanged: (v) => ctl.editSection(
+              section.id,
+              (s) => s.copyWith(titleEn: v),
+            ),
+          ),
+        ),
+        const SizedBox(width: Space.s),
+        Expanded(
+          flex: 3,
+          child: SyncedTextField(
+            label: l.sectionTitleAr,
+            value: section.titleAr,
+            textDirection: TextDirection.rtl,
+            onChanged: (v) => ctl.editSection(
+              section.id,
+              (s) => s.copyWith(titleAr: v),
+            ),
+          ),
+        ),
+        const SizedBox(width: Space.s),
+        SizedBox(
+          width: 104,
+          child: DropdownButtonFormField<Currency>(
+            initialValue: section.currency,
+            decoration: InputDecoration(labelText: l.currency),
+            items: [
+              for (final cur in Currency.values)
+                DropdownMenuItem(value: cur, child: Text(cur.code)),
+            ],
+            onChanged: (cur) {
+              if (cur != null) {
+                ctl.editSection(
+                  section.id,
+                  (s) => s.copyWith(currency: cur),
+                );
+              }
+            },
+          ),
+        ),
+        IconButton(
+          tooltip: l.deleteSection,
+          onPressed: () => ctl.removeSection(section.id),
+          icon: const Icon(Icons.delete_outline, size: 20),
+        ),
+      ],
+    );
+  }
+}
+
+/// "+ بند" and the section subtotal.
+class _SectionFooter extends StatelessWidget {
+  const _SectionFooter({required this.section, required this.onAdd});
+  final InvoiceSection section;
+  final VoidCallback onAdd;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final theme = Theme.of(context);
+    return Row(
+      children: [
+        TextButton.icon(
+          onPressed: onAdd,
+          icon: const Icon(Icons.add, size: 18),
+          label: Text(l.addItem),
+        ),
+        const Spacer(),
+        Text(
+          l.subtotal,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: context.colors.muted,
+          ),
+        ),
+        const SizedBox(width: Space.m),
+        Text(
+          section.subtotal.format(),
+          textDirection: TextDirection.ltr,
+          style: theme.textTheme.titleMedium,
+        ),
+        const SizedBox(width: Space.s),
+      ],
     );
   }
 }

@@ -80,22 +80,10 @@ class _NewContractSheetState extends ConsumerState<_NewContractSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              DropdownMenu<String>(
-                key: const ValueKey('new-contract-client'),
-                width: 560,
-                initialSelection: _clientId,
-                enableFilter: true,
-                requestFocusOnTap: true,
-                label: Text(l.client),
-                hintText: l.chooseClient,
-                errorText: _tried && _clientId == null
-                    ? l.errMissingClient
-                    : null,
-                menuHeight: 320,
-                dropdownMenuEntries: [
-                  for (final c in clients)
-                    DropdownMenuEntry(value: c.id, label: c.name),
-                ],
+              _ClientField(
+                clients: clients,
+                clientId: _clientId,
+                missing: _tried && _clientId == null,
                 onSelected: (id) => setState(() => _clientId = id),
               ),
               const SizedBox(height: Space.m),
@@ -104,17 +92,10 @@ class _NewContractSheetState extends ConsumerState<_NewContractSheet> {
               if (templates.isEmpty)
                 Text(l.noTemplates, style: theme.textTheme.bodySmall)
               else
-                Wrap(
-                  spacing: Space.s,
-                  runSpacing: Space.s,
-                  children: [
-                    for (final t in templates)
-                      _TemplateCard(
-                        template: t,
-                        selected: t.id == _templateId,
-                        onTap: () => setState(() => _templateId = t.id),
-                      ),
-                  ],
+                _TemplatePicker(
+                  templates: templates,
+                  selectedId: _templateId,
+                  onSelect: (id) => setState(() => _templateId = id),
                 ),
               const SizedBox(height: Space.m),
               TextField(
@@ -231,6 +212,67 @@ class _TemplateCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Template cards; one is always selected.
+class _TemplatePicker extends StatelessWidget {
+  const _TemplatePicker({
+    required this.templates,
+    required this.selectedId,
+    required this.onSelect,
+  });
+  final List<ClauseTemplate> templates;
+  final String? selectedId;
+  final ValueChanged<String> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: Space.s,
+      runSpacing: Space.s,
+      children: [
+        for (final t in templates)
+          _TemplateCard(
+            template: t,
+            selected: t.id == selectedId,
+            onTap: () => onSelect(t.id),
+          ),
+      ],
+    );
+  }
+}
+
+class _ClientField extends StatelessWidget {
+  const _ClientField({
+    required this.clients,
+    required this.clientId,
+    required this.missing,
+    required this.onSelected,
+  });
+  final List<Client> clients;
+  final String? clientId;
+  final bool missing;
+  final ValueChanged<String?> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return DropdownMenu<String>(
+      key: const ValueKey('new-contract-client'),
+      width: 560,
+      initialSelection: clientId,
+      enableFilter: true,
+      requestFocusOnTap: true,
+      label: Text(l.client),
+      hintText: l.chooseClient,
+      errorText: missing ? l.errMissingClient : null,
+      menuHeight: 320,
+      dropdownMenuEntries: [
+        for (final c in clients) DropdownMenuEntry(value: c.id, label: c.name),
+      ],
+      onSelected: onSelected,
     );
   }
 }

@@ -93,49 +93,68 @@ class _ServiceFieldState extends ConsumerState<_ServiceField> {
               padding: const EdgeInsets.symmetric(vertical: Space.xs),
               children: [
                 for (final (i, s) in options.indexed)
-                  Builder(
-                    builder: (context) {
-                      final highlighted =
-                          AutocompleteHighlightedOption.of(context) == i;
-                      return InkWell(
-                        onTap: () => onSelected(s),
-                        child: Container(
-                          color: highlighted
-                              ? theme.colorScheme.primaryContainer
-                              : null,
-                          padding: const EdgeInsetsDirectional.symmetric(
-                            horizontal: Space.m - 4,
-                            vertical: Space.s,
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  s.item.service,
-                                  style: theme.textTheme.bodyMedium,
-                                ),
-                              ),
-                              const SizedBox(width: Space.s),
-                              Text(
-                                '${cycleLabel(context, s.item.cycle)} · ',
-                                style: theme.textTheme.bodySmall,
-                              ),
-                              Text(
-                                formatMoney(s.item.unitPriceMinor, s.currency),
-                                textDirection: TextDirection.ltr,
-                                style: theme.textTheme.bodySmall,
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
+                  _SuggestionTile(
+                    i: i,
+                    s: s,
+                    onSelected: onSelected,
                   ),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+/// One remembered service: name, cycle and last price.
+class _SuggestionTile extends StatelessWidget {
+  const _SuggestionTile({
+    required this.i,
+    required this.s,
+    required this.onSelected,
+  });
+  final int i;
+  final ServiceSuggestion s;
+  final AutocompleteOnSelected<ServiceSuggestion> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Builder(
+      builder: (context) {
+        final highlighted = AutocompleteHighlightedOption.of(context) == i;
+        return InkWell(
+          onTap: () => onSelected(s),
+          child: Container(
+            color: highlighted ? theme.colorScheme.primaryContainer : null,
+            padding: const EdgeInsetsDirectional.symmetric(
+              horizontal: Space.m - 4,
+              vertical: Space.s,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    s.item.service,
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                ),
+                const SizedBox(width: Space.s),
+                Text(
+                  '${cycleLabel(context, s.item.cycle)} · ',
+                  style: theme.textTheme.bodySmall,
+                ),
+                Text(
+                  formatMoney(s.item.unitPriceMinor, s.currency),
+                  textDirection: TextDirection.ltr,
+                  style: theme.textTheme.bodySmall,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

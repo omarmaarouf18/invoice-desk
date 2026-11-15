@@ -61,40 +61,10 @@ class DetailsCard extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: Space.m - 4),
-          _Pair(
-            DropdownButtonFormField<InvoiceStatus>(
-              key: ValueKey(status),
-              initialValue: status,
-              decoration: InputDecoration(labelText: l.status),
-              items: [
-                for (final s in InvoiceStatus.values)
-                  DropdownMenuItem(
-                    value: s,
-                    child: Text(
-                      statusLabel(context, switch (s) {
-                        InvoiceStatus.draft => DisplayStatus.draft,
-                        InvoiceStatus.sent => DisplayStatus.sent,
-                        InvoiceStatus.paid => DisplayStatus.paid,
-                        InvoiceStatus.voided => DisplayStatus.voided,
-                      }),
-                    ),
-                  ),
-              ],
-              onChanged: (s) {
-                if (s != null) ctl.setStatus(s);
-              },
-            ),
-            AnimatedSwitcher(
-              duration: motion(context),
-              child: status == InvoiceStatus.paid
-                  ? DateField(
-                      label: l.paidDate,
-                      value: paid ?? issue,
-                      onChanged: (d) =>
-                          ctl.edit((i) => i.copyWith(paidDate: () => d)),
-                    )
-                  : const SizedBox.shrink(),
-            ),
+          _StatusAndPaid(
+            status: status,
+            paid: paid,
+            issue: issue,
           ),
         ],
       ),
@@ -202,6 +172,59 @@ class DateField extends StatelessWidget {
           suffixIcon: const Icon(Icons.calendar_today_outlined, size: 16),
         ),
         child: Text(formatArabicDate(value)),
+      ),
+    );
+  }
+}
+
+/// Status, and the paid date once it is paid.
+class _StatusAndPaid extends ConsumerWidget {
+  const _StatusAndPaid({
+    required this.status,
+    required this.paid,
+    required this.issue,
+  });
+  final InvoiceStatus status;
+  final CalendarDate? paid;
+  final CalendarDate issue;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ctl = _ctl(ref);
+    final l = context.l10n;
+    return _Pair(
+      DropdownButtonFormField<InvoiceStatus>(
+        key: ValueKey(status),
+        initialValue: status,
+        decoration: InputDecoration(labelText: l.status),
+        items: [
+          for (final s in InvoiceStatus.values)
+            DropdownMenuItem(
+              value: s,
+              child: Text(
+                statusLabel(context, switch (s) {
+                  InvoiceStatus.draft => DisplayStatus.draft,
+                  InvoiceStatus.sent => DisplayStatus.sent,
+                  InvoiceStatus.paid => DisplayStatus.paid,
+                  InvoiceStatus.voided => DisplayStatus.voided,
+                }),
+              ),
+            ),
+        ],
+        onChanged: (s) {
+          if (s != null) ctl.setStatus(s);
+        },
+      ),
+      AnimatedSwitcher(
+        duration: motion(context),
+        child: status == InvoiceStatus.paid
+            ? DateField(
+                label: l.paidDate,
+                value: paid ?? issue,
+                onChanged: (d) =>
+                    ctl.edit((i) => i.copyWith(paidDate: () => d)),
+              )
+            : const SizedBox.shrink(),
       ),
     );
   }
