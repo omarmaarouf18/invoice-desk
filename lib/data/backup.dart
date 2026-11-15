@@ -164,27 +164,46 @@ class BackupService {
         [p.join(safetyDir.path, 'before-restore-$stamp.sqlite')],
       );
     }
-    const tables = ['settings', 'clients', 'invoices', 'sections', 'items'];
+    // Parents before children; deleted in reverse.
+    const tables = [
+      'settings',
+      'clients',
+      'invoices',
+      'sections',
+      'items',
+      'clause_templates',
+      'library_clauses',
+      'contracts',
+      'contract_clauses',
+      'scope_items',
+      'payment_milestones',
+    ];
+    // A v1/v2 backup has no library: keep the current one in that case.
+    const library = {'clause_templates', 'library_clauses'};
     await _db.customStatement('ATTACH DATABASE ? AS bk', [file.path]);
     try {
       await _db.transaction(() async {
+        Future<List<String>> backupColumns(String t) async => [
+          for (final r in await _db
+              .customSelect(
+                'SELECT name FROM pragma_table_info(?, ?)',
+                variables: [Variable(t), const Variable('bk')],
+              )
+              .get())
+            '"${r.read<String>('name')}"',
+        ];
+        final cols = {for (final t in tables) t: await backupColumns(t)};
+        bool skip(String t) => library.contains(t) && cols[t]!.isEmpty;
         for (final t in tables.reversed) {
-          await _db.customStatement('DELETE FROM main.$t');
+          if (!skip(t)) await _db.customStatement('DELETE FROM main.$t');
         }
         for (final t in tables) {
-          // Named columns, so an older backup (fewer columns) still loads.
-          final cols = [
-            for (final r
-                in await _db
-                    .customSelect(
-                      'SELECT name FROM pragma_table_info(?, ?)',
-                      variables: [Variable(t), const Variable('bk')],
-                    )
-                    .get())
-              '"${r.read<String>('name')}"',
-          ].join(', ');
+          // Named columns, so an older backup (fewer columns, fewer
+          // tables) still loads; new columns take their defaults.
+          if (cols[t]!.isEmpty) continue;
+          final list = cols[t]!.join(', ');
           await _db.customStatement(
-            'INSERT INTO main.$t ($cols) SELECT $cols FROM bk.$t',
+            'INSERT INTO main.$t ($list) SELECT $list FROM bk.$t',
           );
         }
       });
@@ -197,6 +216,7 @@ class BackupService {
 
 /// Start-up housekeeping: purge old soft-deletes, then the daily backup.
 Future<File?> startupHousekeeping(AppDatabase db, AppPaths paths) async {
+  await db.contractsDao.purgeDeleted();
   await db.invoicesDao.purgeDeleted();
   await db.clientsDao.purgeDeleted();
   return BackupService(db, paths: paths).backupIfDue();

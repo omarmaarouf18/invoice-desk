@@ -763,8 +763,1065 @@ i1.GeneratedColumn<int> _column_50(String aliasedName) =>
       type: i1.DriftSqlType.int,
       $customConstraints: 'NOT NULL CHECK (unit_price_minor >= 0)',
     );
+
+final class Schema3 extends i0.VersionedSchema {
+  Schema3({required super.database}) : super(version: 3);
+  @override
+  late final List<i1.DatabaseSchemaEntity> entities = [
+    clients,
+    invoices,
+    contracts,
+    clientsSoftDeleteGuard,
+    invoicesReviveGuard,
+    invoicesInsertGuard,
+    contractsReviveGuard,
+    contractsInsertGuard,
+    settings,
+    sections,
+    items,
+    clauseTemplates,
+    libraryClauses,
+    contractClauses,
+    scopeItems,
+    paymentMilestones,
+    invoicesClient,
+    sectionsInvoice,
+    itemsSection,
+    libraryClausesTemplate,
+    contractsClient,
+    contractsParent,
+    contractClausesContract,
+    scopeItemsContract,
+    milestonesContract,
+    milestonesInvoice,
+  ];
+  late final Shape5 clients = Shape5(
+    source: i0.VersionedTable(
+      entityName: 'clients',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_3,
+        _column_4,
+        _column_5,
+        _column_6,
+        _column_7,
+        _column_8,
+        _column_9,
+        _column_51,
+        _column_52,
+        _column_53,
+        _column_54,
+        _column_55,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape1 invoices = Shape1(
+    source: i0.VersionedTable(
+      entityName: 'invoices',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['PRIMARY KEY(id)', 'UNIQUE(year, seq)'],
+      columns: [
+        _column_0,
+        _column_10,
+        _column_11,
+        _column_12,
+        _column_13,
+        _column_14,
+        _column_15,
+        _column_16,
+        _column_17,
+        _column_18,
+        _column_19,
+        _column_20,
+        _column_21,
+        _column_22,
+        _column_23,
+        _column_24,
+        _column_25,
+        _column_26,
+        _column_27,
+        _column_28,
+        _column_9,
+        _column_6,
+        _column_7,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape6 contracts = Shape6(
+    source: i0.VersionedTable(
+      entityName: 'contracts',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: [
+        'PRIMARY KEY(id)',
+        'UNIQUE(series, year, seq, amendment_no)',
+      ],
+      columns: [
+        _column_0,
+        _column_10,
+        _column_11,
+        _column_56,
+        _column_12,
+        _column_13,
+        _column_57,
+        _column_58,
+        _column_59,
+        _column_60,
+        _column_61,
+        _column_62,
+        _column_63,
+        _column_64,
+        _column_65,
+        _column_14,
+        _column_66,
+        _column_67,
+        _column_68,
+        _column_69,
+        _column_70,
+        _column_44,
+        _column_71,
+        _column_72,
+        _column_73,
+        _column_74,
+        _column_75,
+        _column_9,
+        _column_6,
+        _column_7,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger clientsSoftDeleteGuard = i1.Trigger(
+    'CREATE TRIGGER clients_soft_delete_guard BEFORE UPDATE OF deleted_at ON clients WHEN NEW.deleted_at IS NOT NULL AND(EXISTS (SELECT 1 FROM invoices WHERE client_id = NEW.id AND deleted_at IS NULL) OR EXISTS (SELECT 1 FROM contracts WHERE client_id = NEW.id AND deleted_at IS NULL))BEGIN SELECT RAISE (ABORT, \'client has live documents\');END',
+    'clients_soft_delete_guard',
+  );
+  final i1.Trigger invoicesReviveGuard = i1.Trigger(
+    'CREATE TRIGGER invoices_revive_guard BEFORE UPDATE OF deleted_at ON invoices WHEN NEW.deleted_at IS NULL AND EXISTS (SELECT 1 FROM clients WHERE id = NEW.client_id AND deleted_at IS NOT NULL) BEGIN SELECT RAISE (ABORT, \'client is deleted\');END',
+    'invoices_revive_guard',
+  );
+  final i1.Trigger invoicesInsertGuard = i1.Trigger(
+    'CREATE TRIGGER invoices_insert_guard BEFORE INSERT ON invoices WHEN NEW.deleted_at IS NULL AND EXISTS (SELECT 1 FROM clients WHERE id = NEW.client_id AND deleted_at IS NOT NULL) BEGIN SELECT RAISE (ABORT, \'client is deleted\');END',
+    'invoices_insert_guard',
+  );
+  final i1.Trigger contractsReviveGuard = i1.Trigger(
+    'CREATE TRIGGER contracts_revive_guard BEFORE UPDATE OF deleted_at ON contracts WHEN NEW.deleted_at IS NULL AND EXISTS (SELECT 1 FROM clients WHERE id = NEW.client_id AND deleted_at IS NOT NULL) BEGIN SELECT RAISE (ABORT, \'client is deleted\');END',
+    'contracts_revive_guard',
+  );
+  final i1.Trigger contractsInsertGuard = i1.Trigger(
+    'CREATE TRIGGER contracts_insert_guard BEFORE INSERT ON contracts WHEN NEW.deleted_at IS NULL AND EXISTS (SELECT 1 FROM clients WHERE id = NEW.client_id AND deleted_at IS NOT NULL) BEGIN SELECT RAISE (ABORT, \'client is deleted\');END',
+    'contracts_insert_guard',
+  );
+  late final Shape7 settings = Shape7(
+    source: i0.VersionedTable(
+      entityName: 'settings',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_29,
+        _column_30,
+        _column_31,
+        _column_3,
+        _column_5,
+        _column_4,
+        _column_32,
+        _column_33,
+        _column_34,
+        _column_35,
+        _column_36,
+        _column_37,
+        _column_21,
+        _column_22,
+        _column_38,
+        _column_39,
+        _column_51,
+        _column_76,
+        _column_53,
+        _column_77,
+        _column_78,
+        _column_79,
+        _column_80,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape3 sections = Shape3(
+    source: i0.VersionedTable(
+      entityName: 'sections',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_40,
+        _column_41,
+        _column_42,
+        _column_43,
+        _column_44,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape4 items = Shape4(
+    source: i0.VersionedTable(
+      entityName: 'items',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_45,
+        _column_41,
+        _column_46,
+        _column_47,
+        _column_48,
+        _column_49,
+        _column_50,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape8 clauseTemplates = Shape8(
+    source: i0.VersionedTable(
+      entityName: 'clause_templates',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_81,
+        _column_41,
+        _column_8,
+        _column_64,
+        _column_65,
+        _column_82,
+        _column_6,
+        _column_7,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape9 libraryClauses = Shape9(
+    source: i0.VersionedTable(
+      entityName: 'library_clauses',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_83,
+        _column_41,
+        _column_61,
+        _column_84,
+        _column_85,
+        _column_86,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape10 contractClauses = Shape10(
+    source: i0.VersionedTable(
+      entityName: 'contract_clauses',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_87,
+        _column_41,
+        _column_61,
+        _column_84,
+        _column_88,
+        _column_85,
+        _column_89,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape11 scopeItems = Shape11(
+    source: i0.VersionedTable(
+      entityName: 'scope_items',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_87,
+        _column_41,
+        _column_90,
+        _column_91,
+        _column_47,
+        _column_92,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape12 paymentMilestones = Shape12(
+    source: i0.VersionedTable(
+      entityName: 'payment_milestones',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_87,
+        _column_41,
+        _column_93,
+        _column_94,
+        _column_95,
+        _column_96,
+        _column_97,
+        _column_98,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Index invoicesClient = i1.Index(
+    'invoices_client',
+    'CREATE INDEX invoices_client ON invoices (client_id)',
+  );
+  final i1.Index sectionsInvoice = i1.Index(
+    'sections_invoice',
+    'CREATE INDEX sections_invoice ON sections (invoice_id)',
+  );
+  final i1.Index itemsSection = i1.Index(
+    'items_section',
+    'CREATE INDEX items_section ON items (section_id)',
+  );
+  final i1.Index libraryClausesTemplate = i1.Index(
+    'library_clauses_template',
+    'CREATE INDEX library_clauses_template ON library_clauses (template_id)',
+  );
+  final i1.Index contractsClient = i1.Index(
+    'contracts_client',
+    'CREATE INDEX contracts_client ON contracts (client_id)',
+  );
+  final i1.Index contractsParent = i1.Index(
+    'contracts_parent',
+    'CREATE INDEX contracts_parent ON contracts (parent_id)',
+  );
+  final i1.Index contractClausesContract = i1.Index(
+    'contract_clauses_contract',
+    'CREATE INDEX contract_clauses_contract ON contract_clauses (contract_id)',
+  );
+  final i1.Index scopeItemsContract = i1.Index(
+    'scope_items_contract',
+    'CREATE INDEX scope_items_contract ON scope_items (contract_id)',
+  );
+  final i1.Index milestonesContract = i1.Index(
+    'milestones_contract',
+    'CREATE INDEX milestones_contract ON payment_milestones (contract_id)',
+  );
+  final i1.Index milestonesInvoice = i1.Index(
+    'milestones_invoice',
+    'CREATE INDEX milestones_invoice ON payment_milestones (invoice_id)',
+  );
+}
+
+class Shape5 extends i0.VersionedTable {
+  Shape5({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get id =>
+      columnsByName['id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get name =>
+      columnsByName['name']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get contact =>
+      columnsByName['contact']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get city =>
+      columnsByName['city']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get phone =>
+      columnsByName['phone']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get email =>
+      columnsByName['email']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get createdAt =>
+      columnsByName['created_at']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get updatedAt =>
+      columnsByName['updated_at']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get archived =>
+      columnsByName['archived']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get deletedAt =>
+      columnsByName['deleted_at']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get legalName =>
+      columnsByName['legal_name']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get registryNo =>
+      columnsByName['registry_no']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get address =>
+      columnsByName['address']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get representative =>
+      columnsByName['representative']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get representativeTitle =>
+      columnsByName['representative_title']! as i1.GeneratedColumn<String>;
+}
+
+i1.GeneratedColumn<String> _column_51(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'legal_name',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'\'',
+      defaultValue: const i1.CustomExpression('\'\''),
+    );
+i1.GeneratedColumn<String> _column_52(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'registry_no',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'\'',
+      defaultValue: const i1.CustomExpression('\'\''),
+    );
+i1.GeneratedColumn<String> _column_53(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'address',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'\'',
+      defaultValue: const i1.CustomExpression('\'\''),
+    );
+i1.GeneratedColumn<String> _column_54(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'representative',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'\'',
+      defaultValue: const i1.CustomExpression('\'\''),
+    );
+i1.GeneratedColumn<String> _column_55(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'representative_title',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'\'',
+      defaultValue: const i1.CustomExpression('\'\''),
+    );
+
+class Shape6 extends i0.VersionedTable {
+  Shape6({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get id =>
+      columnsByName['id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get clientId =>
+      columnsByName['client_id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get number =>
+      columnsByName['number']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get series =>
+      columnsByName['series']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get year =>
+      columnsByName['year']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get seq =>
+      columnsByName['seq']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get amendmentNo =>
+      columnsByName['amendment_no']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get parentId =>
+      columnsByName['parent_id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get kind =>
+      columnsByName['kind']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get templateName =>
+      columnsByName['template_name']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get title =>
+      columnsByName['title']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get projectName =>
+      columnsByName['project_name']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get projectSummary =>
+      columnsByName['project_summary']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get preamble =>
+      columnsByName['preamble']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get closing =>
+      columnsByName['closing']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get issueDate =>
+      columnsByName['issue_date']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get startDate =>
+      columnsByName['start_date']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get signedDate =>
+      columnsByName['signed_date']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get endDate =>
+      columnsByName['end_date']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get status =>
+      columnsByName['status']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get jurisdiction =>
+      columnsByName['jurisdiction']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get currency =>
+      columnsByName['currency']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get totalMinor =>
+      columnsByName['total_minor']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get vars =>
+      columnsByName['vars']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get outOfScope =>
+      columnsByName['out_of_scope']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get unlocked =>
+      columnsByName['unlocked']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get history =>
+      columnsByName['history']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get deletedAt =>
+      columnsByName['deleted_at']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get createdAt =>
+      columnsByName['created_at']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get updatedAt =>
+      columnsByName['updated_at']! as i1.GeneratedColumn<int>;
+}
+
+i1.GeneratedColumn<String> _column_56(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'series',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints:
+          'NOT NULL CHECK (series IN (\'contract\', \'quote\'))',
+    );
+i1.GeneratedColumn<int> _column_57(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'amendment_no',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NOT NULL DEFAULT 0 CHECK (amendment_no >= 0)',
+      defaultValue: const i1.CustomExpression('0'),
+    );
+i1.GeneratedColumn<String> _column_58(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'parent_id',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NULL REFERENCES contracts(id)ON DELETE CASCADE',
+    );
+i1.GeneratedColumn<String> _column_59(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'kind',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints:
+          'NOT NULL CHECK (kind IN (\'contract\', \'quote\', \'amendment\'))',
+    );
+i1.GeneratedColumn<String> _column_60(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'template_name',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'\'',
+      defaultValue: const i1.CustomExpression('\'\''),
+    );
+i1.GeneratedColumn<String> _column_61(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'title',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'\'',
+      defaultValue: const i1.CustomExpression('\'\''),
+    );
+i1.GeneratedColumn<String> _column_62(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'project_name',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'\'',
+      defaultValue: const i1.CustomExpression('\'\''),
+    );
+i1.GeneratedColumn<String> _column_63(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'project_summary',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'\'',
+      defaultValue: const i1.CustomExpression('\'\''),
+    );
+i1.GeneratedColumn<String> _column_64(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'preamble',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'\'',
+      defaultValue: const i1.CustomExpression('\'\''),
+    );
+i1.GeneratedColumn<String> _column_65(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'closing',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'\'',
+      defaultValue: const i1.CustomExpression('\'\''),
+    );
+i1.GeneratedColumn<String> _column_66(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'start_date',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NULL',
+    );
+i1.GeneratedColumn<String> _column_67(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'signed_date',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NULL',
+    );
+i1.GeneratedColumn<String> _column_68(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'end_date',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NULL',
+    );
+i1.GeneratedColumn<String> _column_69(
+  String aliasedName,
+) => i1.GeneratedColumn<String>(
+  'status',
+  aliasedName,
+  false,
+  type: i1.DriftSqlType.string,
+  $customConstraints:
+      'NOT NULL CHECK (status IN (\'draft\', \'sent\', \'signed\', \'active\', \'completed\', \'cancelled\'))',
+);
+i1.GeneratedColumn<String> _column_70(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'jurisdiction',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'\'',
+      defaultValue: const i1.CustomExpression('\'\''),
+    );
+i1.GeneratedColumn<int> _column_71(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'total_minor',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NOT NULL DEFAULT 0 CHECK (total_minor >= 0)',
+      defaultValue: const i1.CustomExpression('0'),
+    );
+i1.GeneratedColumn<String> _column_72(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'vars',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'{}\'',
+      defaultValue: const i1.CustomExpression('\'{}\''),
+    );
+i1.GeneratedColumn<String> _column_73(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'out_of_scope',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'\'',
+      defaultValue: const i1.CustomExpression('\'\''),
+    );
+i1.GeneratedColumn<int> _column_74(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'unlocked',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NOT NULL DEFAULT 0 CHECK (unlocked IN (0, 1))',
+      defaultValue: const i1.CustomExpression('0'),
+    );
+i1.GeneratedColumn<String> _column_75(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'history',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'[]\'',
+      defaultValue: const i1.CustomExpression('\'[]\''),
+    );
+
+class Shape7 extends i0.VersionedTable {
+  Shape7({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<int> get id =>
+      columnsByName['id']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get name =>
+      columnsByName['name']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get role =>
+      columnsByName['role']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get city =>
+      columnsByName['city']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get email =>
+      columnsByName['email']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get phone =>
+      columnsByName['phone']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get website =>
+      columnsByName['website']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get invoicePrefix =>
+      columnsByName['invoice_prefix']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get defaultDueDays =>
+      columnsByName['default_due_days']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get instapay =>
+      columnsByName['instapay']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get wallet =>
+      columnsByName['wallet']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get bankIban =>
+      columnsByName['bank_iban']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get notesEn =>
+      columnsByName['notes_en']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get notesAr =>
+      columnsByName['notes_ar']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get backupDir =>
+      columnsByName['backup_dir']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get lastBackupAt =>
+      columnsByName['last_backup_at']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get legalName =>
+      columnsByName['legal_name']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get nationalIdOrRegistry =>
+      columnsByName['national_id_or_registry']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get address =>
+      columnsByName['address']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get contractPrefix =>
+      columnsByName['contract_prefix']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get quotePrefix =>
+      columnsByName['quote_prefix']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get defaultJurisdiction =>
+      columnsByName['default_jurisdiction']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get contractWesternDigits =>
+      columnsByName['contract_western_digits']! as i1.GeneratedColumn<int>;
+}
+
+i1.GeneratedColumn<String> _column_76(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'national_id_or_registry',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'\'',
+      defaultValue: const i1.CustomExpression('\'\''),
+    );
+i1.GeneratedColumn<String> _column_77(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'contract_prefix',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'CT\'',
+      defaultValue: const i1.CustomExpression('\'CT\''),
+    );
+i1.GeneratedColumn<String> _column_78(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'quote_prefix',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'QT\'',
+      defaultValue: const i1.CustomExpression('\'QT\''),
+    );
+i1.GeneratedColumn<String> _column_79(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'default_jurisdiction',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'المحكمة الاقتصادية المختصة\'',
+      defaultValue: const i1.CustomExpression('\'المحكمة الاقتصادية المختصة\''),
+    );
+i1.GeneratedColumn<int> _column_80(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'contract_western_digits',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.int,
+      $customConstraints:
+          'NOT NULL DEFAULT 0 CHECK (contract_western_digits IN (0, 1))',
+      defaultValue: const i1.CustomExpression('0'),
+    );
+
+class Shape8 extends i0.VersionedTable {
+  Shape8({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get id =>
+      columnsByName['id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get name =>
+      columnsByName['name']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get kind =>
+      columnsByName['kind']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get position =>
+      columnsByName['position']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get archived =>
+      columnsByName['archived']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get preamble =>
+      columnsByName['preamble']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get closing =>
+      columnsByName['closing']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get varDefaults =>
+      columnsByName['var_defaults']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get createdAt =>
+      columnsByName['created_at']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get updatedAt =>
+      columnsByName['updated_at']! as i1.GeneratedColumn<int>;
+}
+
+i1.GeneratedColumn<String> _column_81(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'kind',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL CHECK (kind IN (\'contract\', \'quote\'))',
+    );
+i1.GeneratedColumn<String> _column_82(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'var_defaults',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'{}\'',
+      defaultValue: const i1.CustomExpression('\'{}\''),
+    );
+
+class Shape9 extends i0.VersionedTable {
+  Shape9({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get id =>
+      columnsByName['id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get templateId =>
+      columnsByName['template_id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get position =>
+      columnsByName['position']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get title =>
+      columnsByName['title']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get body =>
+      columnsByName['body']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get optional =>
+      columnsByName['optional']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get enabledByDefault =>
+      columnsByName['enabled_by_default']! as i1.GeneratedColumn<int>;
+}
+
+i1.GeneratedColumn<String> _column_83(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'template_id',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints:
+          'NOT NULL REFERENCES clause_templates(id)ON DELETE CASCADE',
+    );
+i1.GeneratedColumn<String> _column_84(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'body',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'\'',
+      defaultValue: const i1.CustomExpression('\'\''),
+    );
+i1.GeneratedColumn<int> _column_85(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'optional',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NOT NULL DEFAULT 0 CHECK (optional IN (0, 1))',
+      defaultValue: const i1.CustomExpression('0'),
+    );
+i1.GeneratedColumn<int> _column_86(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'enabled_by_default',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.int,
+      $customConstraints:
+          'NOT NULL DEFAULT 1 CHECK (enabled_by_default IN (0, 1))',
+      defaultValue: const i1.CustomExpression('1'),
+    );
+
+class Shape10 extends i0.VersionedTable {
+  Shape10({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get id =>
+      columnsByName['id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get contractId =>
+      columnsByName['contract_id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get position =>
+      columnsByName['position']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get title =>
+      columnsByName['title']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get body =>
+      columnsByName['body']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get enabled =>
+      columnsByName['enabled']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get optional =>
+      columnsByName['optional']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get fromLibraryClauseId =>
+      columnsByName['from_library_clause_id']! as i1.GeneratedColumn<String>;
+}
+
+i1.GeneratedColumn<String> _column_87(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'contract_id',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL REFERENCES contracts(id)ON DELETE CASCADE',
+    );
+i1.GeneratedColumn<int> _column_88(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'enabled',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NOT NULL DEFAULT 1 CHECK (enabled IN (0, 1))',
+      defaultValue: const i1.CustomExpression('1'),
+    );
+i1.GeneratedColumn<String> _column_89(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'from_library_clause_id',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NULL',
+    );
+
+class Shape11 extends i0.VersionedTable {
+  Shape11({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get id =>
+      columnsByName['id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get contractId =>
+      columnsByName['contract_id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get position =>
+      columnsByName['position']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get phase =>
+      columnsByName['phase']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get item =>
+      columnsByName['item']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get description =>
+      columnsByName['description']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get acceptance =>
+      columnsByName['acceptance']! as i1.GeneratedColumn<String>;
+}
+
+i1.GeneratedColumn<String> _column_90(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'phase',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'\'',
+      defaultValue: const i1.CustomExpression('\'\''),
+    );
+i1.GeneratedColumn<String> _column_91(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'item',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'\'',
+      defaultValue: const i1.CustomExpression('\'\''),
+    );
+i1.GeneratedColumn<String> _column_92(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'acceptance',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'\'',
+      defaultValue: const i1.CustomExpression('\'\''),
+    );
+
+class Shape12 extends i0.VersionedTable {
+  Shape12({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get id =>
+      columnsByName['id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get contractId =>
+      columnsByName['contract_id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get position =>
+      columnsByName['position']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get label =>
+      columnsByName['label']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get percentBp =>
+      columnsByName['percent_bp']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get amountMinor =>
+      columnsByName['amount_minor']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get trigger =>
+      columnsByName['trigger']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get dueDate =>
+      columnsByName['due_date']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get invoiceId =>
+      columnsByName['invoice_id']! as i1.GeneratedColumn<String>;
+}
+
+i1.GeneratedColumn<String> _column_93(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'label',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'\'',
+      defaultValue: const i1.CustomExpression('\'\''),
+    );
+i1.GeneratedColumn<int> _column_94(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'percent_bp',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NULL CHECK (percent_bp BETWEEN 0 AND 10000)',
+    );
+i1.GeneratedColumn<int> _column_95(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'amount_minor',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NULL CHECK (amount_minor >= 0)',
+    );
+i1.GeneratedColumn<String> _column_96(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'trigger',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'\'',
+      defaultValue: const i1.CustomExpression('\'\''),
+    );
+i1.GeneratedColumn<String> _column_97(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'due_date',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NULL',
+    );
+i1.GeneratedColumn<String> _column_98(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'invoice_id',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NULL REFERENCES invoices(id)ON DELETE SET NULL',
+    );
 i0.MigrationStepWithVersion migrationSteps({
   required Future<void> Function(i1.Migrator m, Schema2 schema) from1To2,
+  required Future<void> Function(i1.Migrator m, Schema3 schema) from2To3,
 }) {
   return (currentVersion, database) async {
     switch (currentVersion) {
@@ -773,6 +1830,11 @@ i0.MigrationStepWithVersion migrationSteps({
         final migrator = i1.Migrator(database, schema);
         await from1To2(migrator, schema);
         return 2;
+      case 2:
+        final schema = Schema3(database: database);
+        final migrator = i1.Migrator(database, schema);
+        await from2To3(migrator, schema);
+        return 3;
       default:
         throw ArgumentError.value('Unknown migration from $currentVersion');
     }
@@ -781,6 +1843,7 @@ i0.MigrationStepWithVersion migrationSteps({
 
 i1.OnUpgrade stepByStep({
   required Future<void> Function(i1.Migrator m, Schema2 schema) from1To2,
+  required Future<void> Function(i1.Migrator m, Schema3 schema) from2To3,
 }) => i0.VersionedSchema.stepByStepHelper(
-  step: migrationSteps(from1To2: from1To2),
+  step: migrationSteps(from1To2: from1To2, from2To3: from2To3),
 );

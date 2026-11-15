@@ -50,6 +50,13 @@ class Settings {
     this.notesAr = '',
     this.backupDir,
     this.lastBackupAt,
+    this.legalName = '',
+    this.nationalIdOrRegistry = '',
+    this.address = '',
+    this.contractPrefix = 'CT',
+    this.quotePrefix = 'QT',
+    this.defaultJurisdiction = 'المحكمة الاقتصادية المختصة',
+    this.contractWesternDigits = false,
   });
 
   final String name;
@@ -70,6 +77,16 @@ class Settings {
   /// UTC epoch milliseconds.
   final int? lastBackupAt;
 
+  final String legalName;
+  final String nationalIdOrRegistry;
+  final String address;
+  final String contractPrefix;
+  final String quotePrefix;
+  final String defaultJurisdiction;
+
+  /// Sub-item numbers in contract PDFs: `1.` instead of `١.`.
+  final bool contractWesternDigits;
+
   bool get hasProfile => name.trim().isNotEmpty;
 
   Settings copyWith({
@@ -88,6 +105,13 @@ class Settings {
     String? notesAr,
     String? backupDir,
     int? lastBackupAt,
+    String? legalName,
+    String? nationalIdOrRegistry,
+    String? address,
+    String? contractPrefix,
+    String? quotePrefix,
+    String? defaultJurisdiction,
+    bool? contractWesternDigits,
   }) => Settings(
     name: name ?? this.name,
     role: role ?? this.role,
@@ -104,6 +128,13 @@ class Settings {
     notesAr: notesAr ?? this.notesAr,
     backupDir: backupDir ?? this.backupDir,
     lastBackupAt: lastBackupAt ?? this.lastBackupAt,
+    legalName: legalName ?? this.legalName,
+    nationalIdOrRegistry: nationalIdOrRegistry ?? this.nationalIdOrRegistry,
+    address: address ?? this.address,
+    contractPrefix: contractPrefix ?? this.contractPrefix,
+    quotePrefix: quotePrefix ?? this.quotePrefix,
+    defaultJurisdiction: defaultJurisdiction ?? this.defaultJurisdiction,
+    contractWesternDigits: contractWesternDigits ?? this.contractWesternDigits,
   );
 }
 
@@ -117,6 +148,11 @@ class Client {
     this.phone = '',
     this.email = '',
     this.archived = false,
+    this.legalName = '',
+    this.registryNo = '',
+    this.address = '',
+    this.representative = '',
+    this.representativeTitle = '',
   });
 
   final String id;
@@ -127,6 +163,15 @@ class Client {
   final String email;
   final bool archived;
 
+  /// Legal details used in contracts.
+  final String legalName;
+
+  /// سجل تجاري / رقم قومي.
+  final String registryNo;
+  final String address;
+  final String representative;
+  final String representativeTitle;
+
   Client copyWith({
     String? name,
     String? contact,
@@ -134,6 +179,11 @@ class Client {
     String? phone,
     String? email,
     bool? archived,
+    String? legalName,
+    String? registryNo,
+    String? address,
+    String? representative,
+    String? representativeTitle,
   }) => Client(
     id: id,
     name: name ?? this.name,
@@ -142,6 +192,11 @@ class Client {
     phone: phone ?? this.phone,
     email: email ?? this.email,
     archived: archived ?? this.archived,
+    legalName: legalName ?? this.legalName,
+    registryNo: registryNo ?? this.registryNo,
+    address: address ?? this.address,
+    representative: representative ?? this.representative,
+    representativeTitle: representativeTitle ?? this.representativeTitle,
   );
 
   @override
@@ -153,11 +208,28 @@ class Client {
       other.city == city &&
       other.phone == phone &&
       other.email == email &&
-      other.archived == archived;
+      other.archived == archived &&
+      other.legalName == legalName &&
+      other.registryNo == registryNo &&
+      other.address == address &&
+      other.representative == representative &&
+      other.representativeTitle == representativeTitle;
 
   @override
-  int get hashCode =>
-      Object.hash(id, name, contact, city, phone, email, archived);
+  int get hashCode => Object.hash(
+    id,
+    name,
+    contact,
+    city,
+    phone,
+    email,
+    archived,
+    legalName,
+    registryNo,
+    address,
+    representative,
+    representativeTitle,
+  );
 }
 
 @immutable

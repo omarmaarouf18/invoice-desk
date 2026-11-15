@@ -6,7 +6,7 @@ import 'package:invoice_desk/domain/models.dart';
 
 part 'clients_dao.g.dart';
 
-@DriftAccessor(tables: [Clients, Invoices])
+@DriftAccessor(tables: [Clients, Invoices, Contracts])
 class ClientsDao extends DatabaseAccessor<AppDatabase> with _$ClientsDaoMixin {
   ClientsDao(super.attachedDatabase);
 
@@ -31,7 +31,16 @@ class ClientsDao extends DatabaseAccessor<AppDatabase> with _$ClientsDaoMixin {
     return (await q.getSingle()).read(c)!;
   }
 
-  /// Soft-deletes a client that has no live invoices. The DB trigger
+  /// Number of live contracts (amendments included) for [id].
+  Future<int> countLiveContracts(String id) async {
+    final c = contracts.id.count();
+    final q = selectOnly(contracts)
+      ..addColumns([c])
+      ..where(contracts.clientId.equals(id) & contracts.deletedAt.isNull());
+    return (await q.getSingle()).read(c)!;
+  }
+
+  /// Soft-deletes a client that has no live invoices or contracts. The DB trigger
   /// `clients_soft_delete_guard` aborts otherwise.
   Future<void> softDelete(String id) => transaction(() async {
     await (update(clients)..where((c) => c.id.equals(id))).write(
@@ -45,23 +54,27 @@ class ClientsDao extends DatabaseAccessor<AppDatabase> with _$ClientsDaoMixin {
     );
   });
 
-  /// Soft-deletes the client and every live invoice of theirs in one
-  /// transaction, all with the same timestamp. Returns that timestamp, which
-  /// [undoDeleteWithInvoices] needs to restore exactly this batch.
-  Future<int> softDeleteWithInvoices(String id) => transaction(() async {
+  /// Soft-deletes the client and every live invoice and contract of theirs
+  /// in one transaction, all with the same timestamp. Returns that
+  /// timestamp, which [undoDeleteWithDocuments] needs to restore exactly
+  /// this batch.
+  Future<int> softDeleteWithDocuments(String id) => transaction(() async {
     final stamp = _now();
     await (update(invoices)
           ..where((i) => i.clientId.equals(id) & i.deletedAt.isNull()))
         .write(InvoicesCompanion(deletedAt: Value(stamp)));
+    await (update(contracts)
+          ..where((c) => c.clientId.equals(id) & c.deletedAt.isNull()))
+        .write(ContractsCompanion(deletedAt: Value(stamp)));
     await (update(clients)..where((c) => c.id.equals(id))).write(
       ClientsCompanion(deletedAt: Value(stamp)),
     );
     return stamp;
   });
 
-  /// Restores the client, then the invoices deleted with it (not ones that
-  /// were deleted separately before).
-  Future<void> undoDeleteWithInvoices(String id, int stamp) =>
+  /// Restores the client, then the invoices and contracts deleted with it
+  /// (not ones that were deleted separately before).
+  Future<void> undoDeleteWithDocuments(String id, int stamp) =>
       transaction(() async {
         await (update(clients)..where((c) => c.id.equals(id))).write(
           const ClientsCompanion(deletedAt: Value(null)),
@@ -70,10 +83,14 @@ class ClientsDao extends DatabaseAccessor<AppDatabase> with _$ClientsDaoMixin {
               (i) => i.clientId.equals(id) & i.deletedAt.equals(stamp),
             ))
             .write(const InvoicesCompanion(deletedAt: Value(null)));
+        await (update(contracts)..where(
+              (c) => c.clientId.equals(id) & c.deletedAt.equals(stamp),
+            ))
+            .write(const ContractsCompanion(deletedAt: Value(null)));
       });
 
   /// Hard-deletes clients soft-deleted more than [age] ago once no invoice
-  /// rows reference them (run after the invoice purge).
+  /// or contract rows reference them (run after those purges).
   Future<int> purgeDeleted({Duration age = const Duration(days: 30)}) =>
       transaction(() async {
         final cutoff = _now() - age.inMilliseconds;
@@ -101,6 +118,11 @@ class ClientsDao extends DatabaseAccessor<AppDatabase> with _$ClientsDaoMixin {
         phone: Value(c.phone.trim()),
         email: Value(c.email.trim()),
         archived: Value(c.archived),
+        legalName: Value(c.legalName.trim()),
+        registryNo: Value(c.registryNo.trim()),
+        address: Value(c.address.trim()),
+        representative: Value(c.representative.trim()),
+        representativeTitle: Value(c.representativeTitle.trim()),
         createdAt: existing?.createdAt ?? now,
         updatedAt: now,
       ),
@@ -125,5 +147,10 @@ class ClientsDao extends DatabaseAccessor<AppDatabase> with _$ClientsDaoMixin {
     phone: r.phone,
     email: r.email,
     archived: r.archived,
+    legalName: r.legalName,
+    registryNo: r.registryNo,
+    address: r.address,
+    representative: r.representative,
+    representativeTitle: r.representativeTitle,
   );
 }

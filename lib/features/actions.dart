@@ -169,7 +169,7 @@ class AppActions {
         }
         final int stamp;
         try {
-          stamp = await dao.softDeleteWithInvoices(c.id);
+          stamp = await dao.softDeleteWithDocuments(c.id);
         } on Object catch (e) {
           debugPrint('client delete failed: $e');
           return showSnack(l.clientDeleteFailed);
@@ -180,7 +180,7 @@ class AppActions {
           actions: [
             (
               l.undo,
-              () => unawaited(dao.undoDeleteWithInvoices(c.id, stamp)),
+              () => unawaited(dao.undoDeleteWithDocuments(c.id, stamp)),
             ),
           ],
         );

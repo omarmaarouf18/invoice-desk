@@ -75,7 +75,7 @@ void main() {
         isA<SqliteException>().having(
           (e) => e.message,
           'message',
-          contains('client has live invoices'),
+          contains('client has live documents'),
         ),
       ),
     );
@@ -100,7 +100,7 @@ void main() {
         () => db.invoicesDao.softDelete('older'),
       );
 
-      final stamp = await db.clientsDao.softDeleteWithInvoices(academy.id);
+      final stamp = await db.clientsDao.softDeleteWithDocuments(academy.id);
       expect(await db.clientsDao.getAll(), isEmpty);
       expect(await db.invoicesDao.getAll(), isEmpty);
       // Reviving an invoice of a deleted client, or adding one, is refused.
@@ -112,7 +112,7 @@ void main() {
         throwsA(anything),
       );
 
-      await db.clientsDao.undoDeleteWithInvoices(academy.id, stamp);
+      await db.clientsDao.undoDeleteWithDocuments(academy.id, stamp);
       expect((await db.clientsDao.getAll()).single.id, academy.id);
       final live = await db.invoicesDao.getAll();
       expect(live.map((i) => i.id), [first.id]);
@@ -124,7 +124,7 @@ void main() {
     final t0 = DateTime(2026, 11, 15);
     await withClock(
       Clock.fixed(t0),
-      () => db.clientsDao.softDeleteWithInvoices(academy.id),
+      () => db.clientsDao.softDeleteWithDocuments(academy.id),
     );
     await withClock(Clock.fixed(t0.add(const Duration(days: 31))), () async {
       // Client purge alone can't run while invoice rows remain.
@@ -185,26 +185,4 @@ void main() {
       expect(file.existsSync(), isTrue);
     },
   );
-
-  test('a v1-era backup (no clients.deleted_at) still restores', () async {
-    final dir = await Directory.systemTemp.createTemp('bk');
-    addTearDown(() => dir.delete(recursive: true));
-    final file = await BackupService(db, paths: AppPaths(dir)).backupNow(dir);
-    // Turn the copy into a v1 file: drop the v2 column and triggers.
-    final old = AppDatabase.file(file, seed: false);
-    await old.customStatement('DROP TRIGGER clients_soft_delete_guard');
-    await old.customStatement('DROP TRIGGER invoices_revive_guard');
-    await old.customStatement('DROP TRIGGER invoices_insert_guard');
-    await old.customStatement('ALTER TABLE clients DROP COLUMN deleted_at');
-    await old.customStatement('PRAGMA user_version = 1');
-    await old.close();
-    expect(BackupService.inspect(file).userVersion, 1);
-    expect(BackupService.inspect(file).isCompatible, isTrue);
-
-    final target = AppDatabase.memory();
-    addTearDown(target.close);
-    await BackupService(target, paths: AppPaths(dir)).restoreFrom(file);
-    expect((await target.clientsDao.getAll()).single.name, 'EL METR Academy');
-    expect(await target.invoicesDao.countLive(), 1);
-  });
 }

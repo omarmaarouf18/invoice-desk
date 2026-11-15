@@ -1,15 +1,19 @@
 import 'tables.dart';
 
--- A client can only be soft-deleted when none of its invoices are live.
--- Deleting a client with invoices goes through the app, which soft-deletes
--- the invoices first in the same transaction.
+-- A client can only be soft-deleted when none of its invoices or contracts
+-- are live. Deleting a client with documents goes through the app, which
+-- soft-deletes them first in the same transaction. (v3 adds contracts.)
 CREATE TRIGGER clients_soft_delete_guard
 BEFORE UPDATE OF deleted_at ON clients
-WHEN NEW.deleted_at IS NOT NULL AND EXISTS (
-  SELECT 1 FROM invoices WHERE client_id = NEW.id AND deleted_at IS NULL
+WHEN NEW.deleted_at IS NOT NULL AND (
+  EXISTS (
+    SELECT 1 FROM invoices WHERE client_id = NEW.id AND deleted_at IS NULL
+  ) OR EXISTS (
+    SELECT 1 FROM contracts WHERE client_id = NEW.id AND deleted_at IS NULL
+  )
 )
 BEGIN
-  SELECT RAISE(ABORT, 'client has live invoices');
+  SELECT RAISE(ABORT, 'client has live documents');
 END;
 
 -- A live invoice must belong to a live client: no reviving, and no new
@@ -25,6 +29,25 @@ END;
 
 CREATE TRIGGER invoices_insert_guard
 BEFORE INSERT ON invoices
+WHEN NEW.deleted_at IS NULL AND EXISTS (
+  SELECT 1 FROM clients WHERE id = NEW.client_id AND deleted_at IS NOT NULL
+)
+BEGIN
+  SELECT RAISE(ABORT, 'client is deleted');
+END;
+
+-- v3: the same rule for contracts.
+CREATE TRIGGER contracts_revive_guard
+BEFORE UPDATE OF deleted_at ON contracts
+WHEN NEW.deleted_at IS NULL AND EXISTS (
+  SELECT 1 FROM clients WHERE id = NEW.client_id AND deleted_at IS NOT NULL
+)
+BEGIN
+  SELECT RAISE(ABORT, 'client is deleted');
+END;
+
+CREATE TRIGGER contracts_insert_guard
+BEFORE INSERT ON contracts
 WHEN NEW.deleted_at IS NULL AND EXISTS (
   SELECT 1 FROM clients WHERE id = NEW.client_id AND deleted_at IS NOT NULL
 )

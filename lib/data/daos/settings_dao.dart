@@ -37,6 +37,13 @@ class SettingsDao extends DatabaseAccessor<AppDatabase>
         notesAr: Value(s.notesAr),
         backupDir: Value(s.backupDir),
         lastBackupAt: Value(s.lastBackupAt),
+        legalName: Value(s.legalName),
+        nationalIdOrRegistry: Value(s.nationalIdOrRegistry),
+        address: Value(s.address),
+        contractPrefix: Value(s.contractPrefix),
+        quotePrefix: Value(s.quotePrefix),
+        defaultJurisdiction: Value(s.defaultJurisdiction),
+        contractWesternDigits: Value(s.contractWesternDigits),
       ),
     );
   });
@@ -59,5 +66,12 @@ class SettingsDao extends DatabaseAccessor<AppDatabase>
           notesAr: r.notesAr,
           backupDir: r.backupDir,
           lastBackupAt: r.lastBackupAt,
+          legalName: r.legalName,
+          nationalIdOrRegistry: r.nationalIdOrRegistry,
+          address: r.address,
+          contractPrefix: r.contractPrefix,
+          quotePrefix: r.quotePrefix,
+          defaultJurisdiction: r.defaultJurisdiction,
+          contractWesternDigits: r.contractWesternDigits,
         );
 }
