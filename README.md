@@ -13,13 +13,45 @@ flutter run -d linux
 
 Release build: `flutter build linux --release` → `build/linux/x64/release/bundle/invoice_desk`.
 
+## Install (Linux x86_64)
+
+Download from the release page, check the file against `SHA256SUMS.txt`
+(`sha256sum -c SHA256SUMS.txt --ignore-missing`), then pick one:
+
+**Fedora / RHEL (RPM)** — system-wide, in `/opt/invoice-desk`:
+
+```bash
+sudo dnf install ./invoice-desk-0.1.0-1.x86_64.rpm
+sudo dnf remove invoice-desk   # removes the app only; your data and backups stay
+```
+
+**Any distro (tarball)** — per user, no root, in `~/.local/opt/invoice-desk`:
+
+```bash
+tar xzf invoice-desk-0.1.0-linux-x64.tar.gz
+./invoice-desk-0.1.0-linux-x64/install.sh     # later: ./uninstall.sh
+```
+
+**Any distro (AppImage)** — single file, nothing installed:
+
+```bash
+chmod +x InvoiceDesk-0.1.0-x86_64.AppImage && ./InvoiceDesk-0.1.0-x86_64.AppImage
+```
+
+All three need GTK 3 (present on every mainstream desktop). Uninstalling never
+touches your invoices: they live in your data folder (see below).
+
+Build the same packages locally: `./scripts/package_linux.sh` → `dist/`
+(needs `rpmbuild` for the RPM; the AppImage step downloads `appimagetool`).
+
 ## Where data lives
 
 | What | Where |
 |---|---|
 | Database | app support dir, `invoice_desk.sqlite` (Linux: `~/.local/share/me.omarmaarouf.invoice_desk/`) |
 | Window size, last invoice, theme, last export folder | `ui_state.json` next to the database |
-| Daily backups (`VACUUM INTO`, last 30 kept) | `~/Documents/Invoice Desk Backups` unless changed in بياناتي |
+| Daily backups (`VACUUM INTO`, last 30 kept) | `backups/` inside the data folder, unless changed in بياناتي |
+| Override everything above | set `INVOICE_DESK_DATA_DIR=/some/folder` |
 
 First launch seeds Omar's profile, the EL METR Academy client and invoice
 OM-2026-0001.
