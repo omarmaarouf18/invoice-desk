@@ -4,7 +4,9 @@ import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/domain/invoice_logic.dart';
 import 'package:invoice_desk/domain/models.dart';
 
-enum SidebarFilter { all, unpaid, overdue, paid, drafts }
+/// [archived] shows only archived clients (and all their invoices); every
+/// other filter hides them.
+enum SidebarFilter { all, unpaid, overdue, paid, drafts, archived }
 
 class ClientGroup {
   const ClientGroup({
@@ -43,6 +45,7 @@ bool matchesFilter(Invoice i, SidebarFilter f, CalendarDate today) =>
       SidebarFilter.overdue => i.isOverdue(today),
       SidebarFilter.paid => i.status == InvoiceStatus.paid,
       SidebarFilter.drafts => i.status == InvoiceStatus.draft,
+      SidebarFilter.archived => true,
     };
 
 /// Arabic-aware A→Z ordering key.
@@ -58,14 +61,22 @@ SidebarData buildSidebar({
   String? keepClientId,
 }) {
   final q = foldForSearch(query.trim());
+  final archivedIds = {
+    for (final c in clients)
+      if (c.archived) c.id,
+  };
   final byClient = <String, List<Invoice>>{};
   final unpaid = MoneyBag();
   var overdue = 0;
   for (final i in invoices) {
     (byClient[i.clientId] ??= []).add(i);
+    // The summary covers what the list can show outside the archive.
+    if (archivedIds.contains(i.clientId)) continue;
     if (i.isUnpaid) unpaid.addBag(i.totals.total);
     if (i.isOverdue(today)) overdue++;
   }
+  final browsing =
+      filter == SidebarFilter.all || filter == SidebarFilter.archived;
 
   bool hit(String s) => q.isNotEmpty && foldForSearch(s).contains(q);
 
@@ -73,7 +84,12 @@ SidebarData buildSidebar({
   final sorted = [...clients]..sort((a, b) => compareNames(a.name, b.name));
   for (final c in sorted) {
     final all = byClient[c.id] ?? const <Invoice>[];
-    if (c.archived && all.isEmpty && c.id != keepClientId) continue;
+    final inArchive = filter == SidebarFilter.archived;
+    // Archived clients only appear under the archive filter (or while one
+    // of their invoices is open).
+    if (inArchive ? !c.archived : c.archived && c.id != keepClientId) {
+      continue;
+    }
     final clientHit =
         q.isEmpty || hit(c.name) || hit(c.contact) || hit(c.phone);
     final shown =
@@ -87,8 +103,7 @@ SidebarData buildSidebar({
           return d != 0 ? d : b.seq.compareTo(a.seq);
         });
     final include =
-        filter == SidebarFilter.all && q.isEmpty ||
-        (shown.isNotEmpty || (filter == SidebarFilter.all && clientHit));
+        browsing && q.isEmpty || (shown.isNotEmpty || (browsing && clientHit));
     if (!include) continue;
     groups.add(
       ClientGroup(

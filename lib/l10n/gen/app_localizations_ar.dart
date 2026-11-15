@@ -568,4 +568,54 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get notTaxInvoice => 'ليست فاتورة ضريبية إلكترونية رسمية.';
+
+  @override
+  String get menuDeleteClient => 'حذف العميل';
+
+  @override
+  String clientDeleted(String name) {
+    return 'اتحذف العميل $name';
+  }
+
+  @override
+  String clientArchivedSnack(String name) {
+    return 'اتأرشف $name وفواتيره';
+  }
+
+  @override
+  String clientHasInvoicesTitle(String name) {
+    return '$name عنده فواتير';
+  }
+
+  @override
+  String clientHasInvoicesBody(String invoices, String unpaid) {
+    return 'عنده $invoices، والمبلغ غير المدفوع: $unpaid.\nالأرشفة بتخفي العميل وفواتيره من القائمة والبحث من غير ما تمسح حاجة، وتقدر ترجّعه من فلتر «مؤرشف».';
+  }
+
+  @override
+  String get archiveRecommended => 'أرشفة (مُستحسن)';
+
+  @override
+  String get deleteClientAndInvoices => 'حذف العميل وكل فواتيره';
+
+  @override
+  String confirmDeleteAllTitle(String name) {
+    return 'حذف $name وكل فواتيره؟';
+  }
+
+  @override
+  String confirmDeleteAllBody(String invoices) {
+    return 'هيتحذف $invoices، منها المدفوع والمُرسل. هنعمل نسخة احتياطية الأول، وتقدر تتراجع لمدة ٨ ثواني.\nاكتب اسم العميل للتأكيد:';
+  }
+
+  @override
+  String clientDeletedWithInvoices(String name, String invoices) {
+    return 'اتحذف $name و$invoices';
+  }
+
+  @override
+  String get deleteBackupFailed => 'فشلت النسخة الاحتياطية، فما اتحذفش حاجة';
+
+  @override
+  String get clientDeleteFailed => 'ماقدرناش نحذف العميل';
 }

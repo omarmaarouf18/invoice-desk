@@ -5,6 +5,7 @@ import 'package:drift/native.dart';
 import 'package:invoice_desk/data/daos/clients_dao.dart';
 import 'package:invoice_desk/data/daos/invoices_dao.dart';
 import 'package:invoice_desk/data/daos/settings_dao.dart';
+import 'package:invoice_desk/data/db.steps.dart';
 import 'package:invoice_desk/data/seed.dart';
 import 'package:invoice_desk/data/tables.dart';
 
@@ -13,6 +14,7 @@ part 'db.g.dart';
 @DriftDatabase(
   tables: [AppSettings, Clients, Invoices, Sections, Items],
   daos: [SettingsDao, ClientsDao, InvoicesDao],
+  include: {'triggers.drift'},
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e, {this.seedOnCreate = true});
@@ -31,7 +33,7 @@ class AppDatabase extends _$AppDatabase {
 
   final bool seedOnCreate;
 
-  static const currentSchemaVersion = 1;
+  static const currentSchemaVersion = 2;
 
   @override
   int get schemaVersion => currentSchemaVersion;
@@ -39,16 +41,28 @@ class AppDatabase extends _$AppDatabase {
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) => m.createAll(),
-    // Future versions: add `stepByStep(from1To2: ...)` from the
-    // generated schema_versions.dart (see drift_schemas/).
     onUpgrade: (m, from, to) async {
-      throw StateError('No migration from v$from to v$to');
+      await _upgrade(m, from, to);
+      final broken = await customSelect('PRAGMA foreign_key_check').get();
+      if (broken.isNotEmpty) {
+        throw StateError('Migration left ${broken.length} broken FK rows');
+      }
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
       if (details.wasCreated && seedOnCreate) {
         await seedDatabase(this);
       }
+    },
+  );
+
+  static final OnUpgrade _upgrade = stepByStep(
+    // v2: client soft delete + guards against orphaned live invoices.
+    from1To2: (m, schema) async {
+      await m.addColumn(schema.clients, schema.clients.deletedAt);
+      await m.create(schema.clientsSoftDeleteGuard);
+      await m.create(schema.invoicesReviveGuard);
+      await m.create(schema.invoicesInsertGuard);
     },
   );
 

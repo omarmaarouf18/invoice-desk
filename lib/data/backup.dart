@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:clock/clock.dart';
+import 'package:drift/drift.dart' show Variable;
 import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/data/app_paths.dart';
 import 'package:invoice_desk/data/db.dart';
@@ -23,7 +24,10 @@ class BackupInfo {
   final int clientCount;
   final DateTime modified;
 
-  bool get isCompatible => userVersion == AppDatabase.currentSchemaVersion;
+  /// Backups from this or an older schema can be restored; columns added
+  /// since then take their defaults.
+  bool get isCompatible =>
+      userVersion >= 1 && userVersion <= AppDatabase.currentSchemaVersion;
 }
 
 class BackupException implements Exception {
@@ -47,9 +51,32 @@ class BackupService {
   Future<File> backupNow(Directory dir, {int keep = 30}) async {
     await dir.create(recursive: true);
     final today = CalendarDate.fromDateTime(clock.now());
-    final target = File(
-      p.join(dir.path, 'invoice-desk-${today.toIso()}.sqlite'),
+    final target = await _writeVerified(
+      File(p.join(dir.path, 'invoice-desk-${today.toIso()}.sqlite')),
     );
+    await prune(dir, keep: keep);
+    return target;
+  }
+
+  /// One-off backup before a destructive action, written to the configured
+  /// backup folder as `before-<label>-<timestamp>.sqlite`. Not pruned.
+  Future<File> backupBefore(String label) async {
+    final s = await _db.settingsDao.get();
+    final dir = paths.backupDirFor(s.backupDir);
+    await dir.create(recursive: true);
+    final now = clock.now();
+    String two(int v) => v.toString().padLeft(2, '0');
+    final stamp =
+        '${CalendarDate.fromDateTime(now).toIso()}'
+        '-${two(now.hour)}${two(now.minute)}${two(now.second)}';
+    return _writeVerified(
+      File(p.join(dir.path, 'before-$label-$stamp.sqlite')),
+    );
+  }
+
+  /// Checkpoints the WAL, `VACUUM INTO`s a temp file, checks it reopens with
+  /// every invoice, then moves it to [target].
+  Future<File> _writeVerified(File target) async {
     // VACUUM INTO refuses to overwrite; write to a temp name then swap.
     final tmp = File('${target.path}.tmp');
     if (tmp.existsSync()) await tmp.delete();
@@ -64,7 +91,6 @@ class BackupService {
     }
     if (target.existsSync()) await target.delete();
     await tmp.rename(target.path);
-    await prune(dir, keep: keep);
     return target;
   }
 
@@ -146,7 +172,20 @@ class BackupService {
           await _db.customStatement('DELETE FROM main.$t');
         }
         for (final t in tables) {
-          await _db.customStatement('INSERT INTO main.$t SELECT * FROM bk.$t');
+          // Named columns, so an older backup (fewer columns) still loads.
+          final cols = [
+            for (final r
+                in await _db
+                    .customSelect(
+                      'SELECT name FROM pragma_table_info(?, ?)',
+                      variables: [Variable(t), const Variable('bk')],
+                    )
+                    .get())
+              '"${r.read<String>('name')}"',
+          ].join(', ');
+          await _db.customStatement(
+            'INSERT INTO main.$t ($cols) SELECT $cols FROM bk.$t',
+          );
         }
       });
     } finally {
@@ -159,5 +198,6 @@ class BackupService {
 /// Start-up housekeeping: purge old soft-deletes, then the daily backup.
 Future<File?> startupHousekeeping(AppDatabase db, AppPaths paths) async {
   await db.invoicesDao.purgeDeleted();
+  await db.clientsDao.purgeDeleted();
   return BackupService(db, paths: paths).backupIfDue();
 }

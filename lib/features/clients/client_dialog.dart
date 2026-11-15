@@ -5,15 +5,21 @@ import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
 
 /// Create or edit a client. Returns the edited client, or null on cancel.
-Future<Client?> showClientDialog(BuildContext context, {Client? client}) =>
-    showDialog<Client>(
-      context: context,
-      builder: (_) => _ClientDialog(client: client),
-    );
+/// When editing, [onDelete] adds a "حذف العميل" button; it closes the dialog
+/// and then runs.
+Future<Client?> showClientDialog(
+  BuildContext context, {
+  Client? client,
+  VoidCallback? onDelete,
+}) => showDialog<Client>(
+  context: context,
+  builder: (_) => _ClientDialog(client: client, onDelete: onDelete),
+);
 
 class _ClientDialog extends StatefulWidget {
-  const _ClientDialog({this.client});
+  const _ClientDialog({this.client, this.onDelete});
   final Client? client;
+  final VoidCallback? onDelete;
 
   @override
   State<_ClientDialog> createState() => _ClientDialogState();
@@ -120,6 +126,19 @@ class _ClientDialogState extends State<_ClientDialog> {
         ),
       ),
       actions: [
+        if (widget.client != null && widget.onDelete != null)
+          TextButton.icon(
+            key: const ValueKey('client-dialog-delete'),
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+              widget.onDelete!();
+            },
+            icon: const Icon(Icons.delete_outline, size: 18),
+            label: Text(l.menuDeleteClient),
+          ),
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
           child: Text(l.cancel),

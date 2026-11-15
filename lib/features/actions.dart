@@ -9,6 +9,7 @@ import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/domain/invoice_logic.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/clients/client_dialog.dart';
+import 'package:invoice_desk/features/clients/client_removal_dialogs.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/pdf/invoice_pdf.dart';
@@ -78,15 +79,113 @@ class AppActions {
   }
 
   Future<void> editClient(Client c) async {
-    final updated = await showClientDialog(context, client: c);
+    final updated = await showClientDialog(
+      context,
+      client: c,
+      onDelete: () => unawaited(deleteClient(c)),
+    );
     if (updated == null) return;
     await ref.read(databaseProvider).clientsDao.upsert(updated);
   }
 
-  Future<void> setArchived(Client c, {required bool archived}) => ref
-      .read(databaseProvider)
-      .clientsDao
-      .setArchived(c.id, archived: archived);
+  Future<void> setArchived(Client c, {required bool archived}) => archived
+      ? archiveClient(c)
+      : ref
+            .read(databaseProvider)
+            .clientsDao
+            .setArchived(c.id, archived: false);
+
+  /// Hides the client and their invoices from the list and search.
+  Future<void> archiveClient(Client c) async {
+    // Read everything up front: the tile this runs from goes away.
+    final l = this.l;
+    final dao = ref.read(databaseProvider).clientsDao;
+    await editor.closeIfClient(c.id);
+    await dao.setArchived(c.id, archived: true);
+    showSnack(
+      l.clientArchivedSnack(c.name),
+      duration: const Duration(seconds: 8),
+      actions: [
+        (l.undo, () => unawaited(dao.setArchived(c.id, archived: false))),
+      ],
+    );
+  }
+
+  /// No live invoices: soft delete with Undo. Otherwise ask: archive
+  /// (default) or, after typing the name and a backup, delete everything.
+  Future<void> deleteClient(Client c) async {
+    final l = this.l;
+    final db = ref.read(databaseProvider);
+    final dao = db.clientsDao;
+    final ed = editor;
+    final backups = ref.read(backupServiceProvider);
+    final count = await dao.countLiveInvoices(c.id);
+
+    if (count == 0) {
+      await ed.closeIfClient(c.id);
+      try {
+        await dao.softDelete(c.id);
+      } on Object catch (e) {
+        debugPrint('client delete failed: $e');
+        return showSnack(l.clientDeleteFailed);
+      }
+      return showSnack(
+        l.clientDeleted(c.name),
+        duration: const Duration(seconds: 8),
+        actions: [(l.undo, () => unawaited(dao.undoDelete(c.id)))],
+      );
+    }
+
+    final unpaid = MoneyBag();
+    for (final i in await db.invoicesDao.getAll()) {
+      if (i.clientId == c.id && i.isUnpaid) unpaid.addBag(i.totals.total);
+    }
+    if (!context.mounted) return;
+    final choice = await showClientHasInvoicesDialog(
+      context,
+      client: c,
+      invoiceCount: count,
+      unpaid: unpaid,
+    );
+    switch (choice) {
+      case null:
+        return;
+      case ClientRemoval.archive:
+        return archiveClient(c);
+      case ClientRemoval.deleteAll:
+        if (!context.mounted) return;
+        final confirmed = await showConfirmDeleteAllDialog(
+          context,
+          client: c,
+          invoiceCount: count,
+        );
+        if (!confirmed) return;
+        await ed.closeIfClient(c.id);
+        try {
+          await backups.backupBefore('delete-client');
+        } on Object catch (e) {
+          debugPrint('pre-delete backup failed: $e');
+          return showSnack(l.deleteBackupFailed);
+        }
+        final int stamp;
+        try {
+          stamp = await dao.softDeleteWithInvoices(c.id);
+        } on Object catch (e) {
+          debugPrint('client delete failed: $e');
+          return showSnack(l.clientDeleteFailed);
+        }
+        showSnack(
+          l.clientDeletedWithInvoices(c.name, l.invoiceCount(count)),
+          duration: const Duration(seconds: 8),
+          actions: [
+            (
+              l.undo,
+              () => unawaited(dao.undoDeleteWithInvoices(c.id, stamp)),
+            ),
+          ],
+        );
+    }
+  }
 
   void save() => unawaited(editor.flush());
 
@@ -126,6 +225,8 @@ class AppActions {
   Future<void> delete([String? id]) async {
     final target = id ?? currentId;
     if (target == null) return;
+    final l = this.l;
+    final editor = this.editor;
     final number = await editor.delete(target);
     if (number == null) return;
     showSnack(

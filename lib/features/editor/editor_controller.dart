@@ -392,6 +392,14 @@ class EditorController extends Notifier<EditorState> {
     return inv?.number;
   }
 
+  /// Saves and closes the open invoice when it belongs to [clientId], before
+  /// that client is archived or deleted. An unsaved new invoice is dropped.
+  Future<void> closeIfClient(String clientId) async {
+    if (state.invoice?.clientId != clientId) return;
+    if (!state.isNew) await flush();
+    close();
+  }
+
   Future<void> undoDelete(String id) async {
     await ref.read(databaseProvider).invoicesDao.undoDelete(id);
     await open(id);

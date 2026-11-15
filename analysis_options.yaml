@@ -3,6 +3,7 @@ analyzer:
   exclude:
     - lib/l10n/gen/**
     - "**/*.g.dart"
+    - test/drift/app_db/generated/**
 linter:
   rules:
     public_member_api_docs: false

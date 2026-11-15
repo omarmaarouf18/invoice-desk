@@ -286,5 +286,72 @@
         "type": "String"
       }
     }
-  }
+  },
+  "menuDeleteClient": "حذف العميل",
+  "clientDeleted": "اتحذف العميل {name}",
+  "@clientDeleted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "clientArchivedSnack": "اتأرشف {name} وفواتيره",
+  "@clientArchivedSnack": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "clientHasInvoicesTitle": "{name} عنده فواتير",
+  "@clientHasInvoicesTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "clientHasInvoicesBody": "عنده {invoices}، والمبلغ غير المدفوع: {unpaid}.\nالأرشفة بتخفي العميل وفواتيره من القائمة والبحث من غير ما تمسح حاجة، وتقدر ترجّعه من فلتر «مؤرشف».",
+  "@clientHasInvoicesBody": {
+    "placeholders": {
+      "invoices": {
+        "type": "String"
+      },
+      "unpaid": {
+        "type": "String"
+      }
+    }
+  },
+  "archiveRecommended": "أرشفة (مُستحسن)",
+  "deleteClientAndInvoices": "حذف العميل وكل فواتيره",
+  "confirmDeleteAllTitle": "حذف {name} وكل فواتيره؟",
+  "@confirmDeleteAllTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmDeleteAllBody": "هيتحذف {invoices}، منها المدفوع والمُرسل. هنعمل نسخة احتياطية الأول، وتقدر تتراجع لمدة ٨ ثواني.\nاكتب اسم العميل للتأكيد:",
+  "@confirmDeleteAllBody": {
+    "placeholders": {
+      "invoices": {
+        "type": "String"
+      }
+    }
+  },
+  "clientDeletedWithInvoices": "اتحذف {name} و{invoices}",
+  "@clientDeletedWithInvoices": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "invoices": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteBackupFailed": "فشلت النسخة الاحتياطية، فما اتحذفش حاجة",
+  "clientDeleteFailed": "ماقدرناش نحذف العميل"
 }

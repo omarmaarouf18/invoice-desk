@@ -3,873 +3,6 @@
 part of 'db.dart';
 
 // ignore_for_file: type=lint
-class $AppSettingsTable extends AppSettings
-    with TableInfo<$AppSettingsTable, SettingsRow> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $AppSettingsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-    'id',
-    aliasedName,
-    false,
-    check: () => id.equals(1),
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _nameMeta = const VerificationMeta('name');
-  @override
-  late final GeneratedColumn<String> name = GeneratedColumn<String>(
-    'name',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(''),
-  );
-  static const VerificationMeta _roleMeta = const VerificationMeta('role');
-  @override
-  late final GeneratedColumn<String> role = GeneratedColumn<String>(
-    'role',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(''),
-  );
-  static const VerificationMeta _cityMeta = const VerificationMeta('city');
-  @override
-  late final GeneratedColumn<String> city = GeneratedColumn<String>(
-    'city',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(''),
-  );
-  static const VerificationMeta _emailMeta = const VerificationMeta('email');
-  @override
-  late final GeneratedColumn<String> email = GeneratedColumn<String>(
-    'email',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(''),
-  );
-  static const VerificationMeta _phoneMeta = const VerificationMeta('phone');
-  @override
-  late final GeneratedColumn<String> phone = GeneratedColumn<String>(
-    'phone',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(''),
-  );
-  static const VerificationMeta _websiteMeta = const VerificationMeta(
-    'website',
-  );
-  @override
-  late final GeneratedColumn<String> website = GeneratedColumn<String>(
-    'website',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(''),
-  );
-  static const VerificationMeta _invoicePrefixMeta = const VerificationMeta(
-    'invoicePrefix',
-  );
-  @override
-  late final GeneratedColumn<String> invoicePrefix = GeneratedColumn<String>(
-    'invoice_prefix',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('OM'),
-  );
-  static const VerificationMeta _defaultDueDaysMeta = const VerificationMeta(
-    'defaultDueDays',
-  );
-  @override
-  late final GeneratedColumn<int> defaultDueDays = GeneratedColumn<int>(
-    'default_due_days',
-    aliasedName,
-    false,
-    check: () => ComparableExpr(defaultDueDays).isBetweenValues(0, 3650),
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(30),
-  );
-  static const VerificationMeta _instapayMeta = const VerificationMeta(
-    'instapay',
-  );
-  @override
-  late final GeneratedColumn<String> instapay = GeneratedColumn<String>(
-    'instapay',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(''),
-  );
-  static const VerificationMeta _walletMeta = const VerificationMeta('wallet');
-  @override
-  late final GeneratedColumn<String> wallet = GeneratedColumn<String>(
-    'wallet',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(''),
-  );
-  static const VerificationMeta _bankIbanMeta = const VerificationMeta(
-    'bankIban',
-  );
-  @override
-  late final GeneratedColumn<String> bankIban = GeneratedColumn<String>(
-    'bank_iban',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(''),
-  );
-  static const VerificationMeta _notesEnMeta = const VerificationMeta(
-    'notesEn',
-  );
-  @override
-  late final GeneratedColumn<String> notesEn = GeneratedColumn<String>(
-    'notes_en',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(''),
-  );
-  static const VerificationMeta _notesArMeta = const VerificationMeta(
-    'notesAr',
-  );
-  @override
-  late final GeneratedColumn<String> notesAr = GeneratedColumn<String>(
-    'notes_ar',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(''),
-  );
-  static const VerificationMeta _backupDirMeta = const VerificationMeta(
-    'backupDir',
-  );
-  @override
-  late final GeneratedColumn<String> backupDir = GeneratedColumn<String>(
-    'backup_dir',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _lastBackupAtMeta = const VerificationMeta(
-    'lastBackupAt',
-  );
-  @override
-  late final GeneratedColumn<int> lastBackupAt = GeneratedColumn<int>(
-    'last_backup_at',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-  );
-  @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    name,
-    role,
-    city,
-    email,
-    phone,
-    website,
-    invoicePrefix,
-    defaultDueDays,
-    instapay,
-    wallet,
-    bankIban,
-    notesEn,
-    notesAr,
-    backupDir,
-    lastBackupAt,
-  ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'settings';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<SettingsRow> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('name')) {
-      context.handle(
-        _nameMeta,
-        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
-      );
-    }
-    if (data.containsKey('role')) {
-      context.handle(
-        _roleMeta,
-        role.isAcceptableOrUnknown(data['role']!, _roleMeta),
-      );
-    }
-    if (data.containsKey('city')) {
-      context.handle(
-        _cityMeta,
-        city.isAcceptableOrUnknown(data['city']!, _cityMeta),
-      );
-    }
-    if (data.containsKey('email')) {
-      context.handle(
-        _emailMeta,
-        email.isAcceptableOrUnknown(data['email']!, _emailMeta),
-      );
-    }
-    if (data.containsKey('phone')) {
-      context.handle(
-        _phoneMeta,
-        phone.isAcceptableOrUnknown(data['phone']!, _phoneMeta),
-      );
-    }
-    if (data.containsKey('website')) {
-      context.handle(
-        _websiteMeta,
-        website.isAcceptableOrUnknown(data['website']!, _websiteMeta),
-      );
-    }
-    if (data.containsKey('invoice_prefix')) {
-      context.handle(
-        _invoicePrefixMeta,
-        invoicePrefix.isAcceptableOrUnknown(
-          data['invoice_prefix']!,
-          _invoicePrefixMeta,
-        ),
-      );
-    }
-    if (data.containsKey('default_due_days')) {
-      context.handle(
-        _defaultDueDaysMeta,
-        defaultDueDays.isAcceptableOrUnknown(
-          data['default_due_days']!,
-          _defaultDueDaysMeta,
-        ),
-      );
-    }
-    if (data.containsKey('instapay')) {
-      context.handle(
-        _instapayMeta,
-        instapay.isAcceptableOrUnknown(data['instapay']!, _instapayMeta),
-      );
-    }
-    if (data.containsKey('wallet')) {
-      context.handle(
-        _walletMeta,
-        wallet.isAcceptableOrUnknown(data['wallet']!, _walletMeta),
-      );
-    }
-    if (data.containsKey('bank_iban')) {
-      context.handle(
-        _bankIbanMeta,
-        bankIban.isAcceptableOrUnknown(data['bank_iban']!, _bankIbanMeta),
-      );
-    }
-    if (data.containsKey('notes_en')) {
-      context.handle(
-        _notesEnMeta,
-        notesEn.isAcceptableOrUnknown(data['notes_en']!, _notesEnMeta),
-      );
-    }
-    if (data.containsKey('notes_ar')) {
-      context.handle(
-        _notesArMeta,
-        notesAr.isAcceptableOrUnknown(data['notes_ar']!, _notesArMeta),
-      );
-    }
-    if (data.containsKey('backup_dir')) {
-      context.handle(
-        _backupDirMeta,
-        backupDir.isAcceptableOrUnknown(data['backup_dir']!, _backupDirMeta),
-      );
-    }
-    if (data.containsKey('last_backup_at')) {
-      context.handle(
-        _lastBackupAtMeta,
-        lastBackupAt.isAcceptableOrUnknown(
-          data['last_backup_at']!,
-          _lastBackupAtMeta,
-        ),
-      );
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  SettingsRow map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return SettingsRow(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}id'],
-      )!,
-      name: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}name'],
-      )!,
-      role: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}role'],
-      )!,
-      city: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}city'],
-      )!,
-      email: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}email'],
-      )!,
-      phone: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}phone'],
-      )!,
-      website: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}website'],
-      )!,
-      invoicePrefix: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}invoice_prefix'],
-      )!,
-      defaultDueDays: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}default_due_days'],
-      )!,
-      instapay: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}instapay'],
-      )!,
-      wallet: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}wallet'],
-      )!,
-      bankIban: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}bank_iban'],
-      )!,
-      notesEn: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}notes_en'],
-      )!,
-      notesAr: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}notes_ar'],
-      )!,
-      backupDir: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}backup_dir'],
-      ),
-      lastBackupAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}last_backup_at'],
-      ),
-    );
-  }
-
-  @override
-  $AppSettingsTable createAlias(String alias) {
-    return $AppSettingsTable(attachedDatabase, alias);
-  }
-
-  @override
-  bool get isStrict => true;
-}
-
-class SettingsRow extends DataClass implements Insertable<SettingsRow> {
-  final int id;
-  final String name;
-  final String role;
-  final String city;
-  final String email;
-  final String phone;
-  final String website;
-  final String invoicePrefix;
-  final int defaultDueDays;
-  final String instapay;
-  final String wallet;
-  final String bankIban;
-  final String notesEn;
-  final String notesAr;
-  final String? backupDir;
-  final int? lastBackupAt;
-  const SettingsRow({
-    required this.id,
-    required this.name,
-    required this.role,
-    required this.city,
-    required this.email,
-    required this.phone,
-    required this.website,
-    required this.invoicePrefix,
-    required this.defaultDueDays,
-    required this.instapay,
-    required this.wallet,
-    required this.bankIban,
-    required this.notesEn,
-    required this.notesAr,
-    this.backupDir,
-    this.lastBackupAt,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['name'] = Variable<String>(name);
-    map['role'] = Variable<String>(role);
-    map['city'] = Variable<String>(city);
-    map['email'] = Variable<String>(email);
-    map['phone'] = Variable<String>(phone);
-    map['website'] = Variable<String>(website);
-    map['invoice_prefix'] = Variable<String>(invoicePrefix);
-    map['default_due_days'] = Variable<int>(defaultDueDays);
-    map['instapay'] = Variable<String>(instapay);
-    map['wallet'] = Variable<String>(wallet);
-    map['bank_iban'] = Variable<String>(bankIban);
-    map['notes_en'] = Variable<String>(notesEn);
-    map['notes_ar'] = Variable<String>(notesAr);
-    if (!nullToAbsent || backupDir != null) {
-      map['backup_dir'] = Variable<String>(backupDir);
-    }
-    if (!nullToAbsent || lastBackupAt != null) {
-      map['last_backup_at'] = Variable<int>(lastBackupAt);
-    }
-    return map;
-  }
-
-  AppSettingsCompanion toCompanion(bool nullToAbsent) {
-    return AppSettingsCompanion(
-      id: Value(id),
-      name: Value(name),
-      role: Value(role),
-      city: Value(city),
-      email: Value(email),
-      phone: Value(phone),
-      website: Value(website),
-      invoicePrefix: Value(invoicePrefix),
-      defaultDueDays: Value(defaultDueDays),
-      instapay: Value(instapay),
-      wallet: Value(wallet),
-      bankIban: Value(bankIban),
-      notesEn: Value(notesEn),
-      notesAr: Value(notesAr),
-      backupDir: backupDir == null && nullToAbsent
-          ? const Value.absent()
-          : Value(backupDir),
-      lastBackupAt: lastBackupAt == null && nullToAbsent
-          ? const Value.absent()
-          : Value(lastBackupAt),
-    );
-  }
-
-  factory SettingsRow.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return SettingsRow(
-      id: serializer.fromJson<int>(json['id']),
-      name: serializer.fromJson<String>(json['name']),
-      role: serializer.fromJson<String>(json['role']),
-      city: serializer.fromJson<String>(json['city']),
-      email: serializer.fromJson<String>(json['email']),
-      phone: serializer.fromJson<String>(json['phone']),
-      website: serializer.fromJson<String>(json['website']),
-      invoicePrefix: serializer.fromJson<String>(json['invoicePrefix']),
-      defaultDueDays: serializer.fromJson<int>(json['defaultDueDays']),
-      instapay: serializer.fromJson<String>(json['instapay']),
-      wallet: serializer.fromJson<String>(json['wallet']),
-      bankIban: serializer.fromJson<String>(json['bankIban']),
-      notesEn: serializer.fromJson<String>(json['notesEn']),
-      notesAr: serializer.fromJson<String>(json['notesAr']),
-      backupDir: serializer.fromJson<String?>(json['backupDir']),
-      lastBackupAt: serializer.fromJson<int?>(json['lastBackupAt']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'name': serializer.toJson<String>(name),
-      'role': serializer.toJson<String>(role),
-      'city': serializer.toJson<String>(city),
-      'email': serializer.toJson<String>(email),
-      'phone': serializer.toJson<String>(phone),
-      'website': serializer.toJson<String>(website),
-      'invoicePrefix': serializer.toJson<String>(invoicePrefix),
-      'defaultDueDays': serializer.toJson<int>(defaultDueDays),
-      'instapay': serializer.toJson<String>(instapay),
-      'wallet': serializer.toJson<String>(wallet),
-      'bankIban': serializer.toJson<String>(bankIban),
-      'notesEn': serializer.toJson<String>(notesEn),
-      'notesAr': serializer.toJson<String>(notesAr),
-      'backupDir': serializer.toJson<String?>(backupDir),
-      'lastBackupAt': serializer.toJson<int?>(lastBackupAt),
-    };
-  }
-
-  SettingsRow copyWith({
-    int? id,
-    String? name,
-    String? role,
-    String? city,
-    String? email,
-    String? phone,
-    String? website,
-    String? invoicePrefix,
-    int? defaultDueDays,
-    String? instapay,
-    String? wallet,
-    String? bankIban,
-    String? notesEn,
-    String? notesAr,
-    Value<String?> backupDir = const Value.absent(),
-    Value<int?> lastBackupAt = const Value.absent(),
-  }) => SettingsRow(
-    id: id ?? this.id,
-    name: name ?? this.name,
-    role: role ?? this.role,
-    city: city ?? this.city,
-    email: email ?? this.email,
-    phone: phone ?? this.phone,
-    website: website ?? this.website,
-    invoicePrefix: invoicePrefix ?? this.invoicePrefix,
-    defaultDueDays: defaultDueDays ?? this.defaultDueDays,
-    instapay: instapay ?? this.instapay,
-    wallet: wallet ?? this.wallet,
-    bankIban: bankIban ?? this.bankIban,
-    notesEn: notesEn ?? this.notesEn,
-    notesAr: notesAr ?? this.notesAr,
-    backupDir: backupDir.present ? backupDir.value : this.backupDir,
-    lastBackupAt: lastBackupAt.present ? lastBackupAt.value : this.lastBackupAt,
-  );
-  SettingsRow copyWithCompanion(AppSettingsCompanion data) {
-    return SettingsRow(
-      id: data.id.present ? data.id.value : this.id,
-      name: data.name.present ? data.name.value : this.name,
-      role: data.role.present ? data.role.value : this.role,
-      city: data.city.present ? data.city.value : this.city,
-      email: data.email.present ? data.email.value : this.email,
-      phone: data.phone.present ? data.phone.value : this.phone,
-      website: data.website.present ? data.website.value : this.website,
-      invoicePrefix: data.invoicePrefix.present
-          ? data.invoicePrefix.value
-          : this.invoicePrefix,
-      defaultDueDays: data.defaultDueDays.present
-          ? data.defaultDueDays.value
-          : this.defaultDueDays,
-      instapay: data.instapay.present ? data.instapay.value : this.instapay,
-      wallet: data.wallet.present ? data.wallet.value : this.wallet,
-      bankIban: data.bankIban.present ? data.bankIban.value : this.bankIban,
-      notesEn: data.notesEn.present ? data.notesEn.value : this.notesEn,
-      notesAr: data.notesAr.present ? data.notesAr.value : this.notesAr,
-      backupDir: data.backupDir.present ? data.backupDir.value : this.backupDir,
-      lastBackupAt: data.lastBackupAt.present
-          ? data.lastBackupAt.value
-          : this.lastBackupAt,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('SettingsRow(')
-          ..write('id: $id, ')
-          ..write('name: $name, ')
-          ..write('role: $role, ')
-          ..write('city: $city, ')
-          ..write('email: $email, ')
-          ..write('phone: $phone, ')
-          ..write('website: $website, ')
-          ..write('invoicePrefix: $invoicePrefix, ')
-          ..write('defaultDueDays: $defaultDueDays, ')
-          ..write('instapay: $instapay, ')
-          ..write('wallet: $wallet, ')
-          ..write('bankIban: $bankIban, ')
-          ..write('notesEn: $notesEn, ')
-          ..write('notesAr: $notesAr, ')
-          ..write('backupDir: $backupDir, ')
-          ..write('lastBackupAt: $lastBackupAt')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(
-    id,
-    name,
-    role,
-    city,
-    email,
-    phone,
-    website,
-    invoicePrefix,
-    defaultDueDays,
-    instapay,
-    wallet,
-    bankIban,
-    notesEn,
-    notesAr,
-    backupDir,
-    lastBackupAt,
-  );
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is SettingsRow &&
-          other.id == this.id &&
-          other.name == this.name &&
-          other.role == this.role &&
-          other.city == this.city &&
-          other.email == this.email &&
-          other.phone == this.phone &&
-          other.website == this.website &&
-          other.invoicePrefix == this.invoicePrefix &&
-          other.defaultDueDays == this.defaultDueDays &&
-          other.instapay == this.instapay &&
-          other.wallet == this.wallet &&
-          other.bankIban == this.bankIban &&
-          other.notesEn == this.notesEn &&
-          other.notesAr == this.notesAr &&
-          other.backupDir == this.backupDir &&
-          other.lastBackupAt == this.lastBackupAt);
-}
-
-class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
-  final Value<int> id;
-  final Value<String> name;
-  final Value<String> role;
-  final Value<String> city;
-  final Value<String> email;
-  final Value<String> phone;
-  final Value<String> website;
-  final Value<String> invoicePrefix;
-  final Value<int> defaultDueDays;
-  final Value<String> instapay;
-  final Value<String> wallet;
-  final Value<String> bankIban;
-  final Value<String> notesEn;
-  final Value<String> notesAr;
-  final Value<String?> backupDir;
-  final Value<int?> lastBackupAt;
-  const AppSettingsCompanion({
-    this.id = const Value.absent(),
-    this.name = const Value.absent(),
-    this.role = const Value.absent(),
-    this.city = const Value.absent(),
-    this.email = const Value.absent(),
-    this.phone = const Value.absent(),
-    this.website = const Value.absent(),
-    this.invoicePrefix = const Value.absent(),
-    this.defaultDueDays = const Value.absent(),
-    this.instapay = const Value.absent(),
-    this.wallet = const Value.absent(),
-    this.bankIban = const Value.absent(),
-    this.notesEn = const Value.absent(),
-    this.notesAr = const Value.absent(),
-    this.backupDir = const Value.absent(),
-    this.lastBackupAt = const Value.absent(),
-  });
-  AppSettingsCompanion.insert({
-    this.id = const Value.absent(),
-    this.name = const Value.absent(),
-    this.role = const Value.absent(),
-    this.city = const Value.absent(),
-    this.email = const Value.absent(),
-    this.phone = const Value.absent(),
-    this.website = const Value.absent(),
-    this.invoicePrefix = const Value.absent(),
-    this.defaultDueDays = const Value.absent(),
-    this.instapay = const Value.absent(),
-    this.wallet = const Value.absent(),
-    this.bankIban = const Value.absent(),
-    this.notesEn = const Value.absent(),
-    this.notesAr = const Value.absent(),
-    this.backupDir = const Value.absent(),
-    this.lastBackupAt = const Value.absent(),
-  });
-  static Insertable<SettingsRow> custom({
-    Expression<int>? id,
-    Expression<String>? name,
-    Expression<String>? role,
-    Expression<String>? city,
-    Expression<String>? email,
-    Expression<String>? phone,
-    Expression<String>? website,
-    Expression<String>? invoicePrefix,
-    Expression<int>? defaultDueDays,
-    Expression<String>? instapay,
-    Expression<String>? wallet,
-    Expression<String>? bankIban,
-    Expression<String>? notesEn,
-    Expression<String>? notesAr,
-    Expression<String>? backupDir,
-    Expression<int>? lastBackupAt,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (name != null) 'name': name,
-      if (role != null) 'role': role,
-      if (city != null) 'city': city,
-      if (email != null) 'email': email,
-      if (phone != null) 'phone': phone,
-      if (website != null) 'website': website,
-      if (invoicePrefix != null) 'invoice_prefix': invoicePrefix,
-      if (defaultDueDays != null) 'default_due_days': defaultDueDays,
-      if (instapay != null) 'instapay': instapay,
-      if (wallet != null) 'wallet': wallet,
-      if (bankIban != null) 'bank_iban': bankIban,
-      if (notesEn != null) 'notes_en': notesEn,
-      if (notesAr != null) 'notes_ar': notesAr,
-      if (backupDir != null) 'backup_dir': backupDir,
-      if (lastBackupAt != null) 'last_backup_at': lastBackupAt,
-    });
-  }
-
-  AppSettingsCompanion copyWith({
-    Value<int>? id,
-    Value<String>? name,
-    Value<String>? role,
-    Value<String>? city,
-    Value<String>? email,
-    Value<String>? phone,
-    Value<String>? website,
-    Value<String>? invoicePrefix,
-    Value<int>? defaultDueDays,
-    Value<String>? instapay,
-    Value<String>? wallet,
-    Value<String>? bankIban,
-    Value<String>? notesEn,
-    Value<String>? notesAr,
-    Value<String?>? backupDir,
-    Value<int?>? lastBackupAt,
-  }) {
-    return AppSettingsCompanion(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      role: role ?? this.role,
-      city: city ?? this.city,
-      email: email ?? this.email,
-      phone: phone ?? this.phone,
-      website: website ?? this.website,
-      invoicePrefix: invoicePrefix ?? this.invoicePrefix,
-      defaultDueDays: defaultDueDays ?? this.defaultDueDays,
-      instapay: instapay ?? this.instapay,
-      wallet: wallet ?? this.wallet,
-      bankIban: bankIban ?? this.bankIban,
-      notesEn: notesEn ?? this.notesEn,
-      notesAr: notesAr ?? this.notesAr,
-      backupDir: backupDir ?? this.backupDir,
-      lastBackupAt: lastBackupAt ?? this.lastBackupAt,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
-    if (name.present) {
-      map['name'] = Variable<String>(name.value);
-    }
-    if (role.present) {
-      map['role'] = Variable<String>(role.value);
-    }
-    if (city.present) {
-      map['city'] = Variable<String>(city.value);
-    }
-    if (email.present) {
-      map['email'] = Variable<String>(email.value);
-    }
-    if (phone.present) {
-      map['phone'] = Variable<String>(phone.value);
-    }
-    if (website.present) {
-      map['website'] = Variable<String>(website.value);
-    }
-    if (invoicePrefix.present) {
-      map['invoice_prefix'] = Variable<String>(invoicePrefix.value);
-    }
-    if (defaultDueDays.present) {
-      map['default_due_days'] = Variable<int>(defaultDueDays.value);
-    }
-    if (instapay.present) {
-      map['instapay'] = Variable<String>(instapay.value);
-    }
-    if (wallet.present) {
-      map['wallet'] = Variable<String>(wallet.value);
-    }
-    if (bankIban.present) {
-      map['bank_iban'] = Variable<String>(bankIban.value);
-    }
-    if (notesEn.present) {
-      map['notes_en'] = Variable<String>(notesEn.value);
-    }
-    if (notesAr.present) {
-      map['notes_ar'] = Variable<String>(notesAr.value);
-    }
-    if (backupDir.present) {
-      map['backup_dir'] = Variable<String>(backupDir.value);
-    }
-    if (lastBackupAt.present) {
-      map['last_backup_at'] = Variable<int>(lastBackupAt.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('AppSettingsCompanion(')
-          ..write('id: $id, ')
-          ..write('name: $name, ')
-          ..write('role: $role, ')
-          ..write('city: $city, ')
-          ..write('email: $email, ')
-          ..write('phone: $phone, ')
-          ..write('website: $website, ')
-          ..write('invoicePrefix: $invoicePrefix, ')
-          ..write('defaultDueDays: $defaultDueDays, ')
-          ..write('instapay: $instapay, ')
-          ..write('wallet: $wallet, ')
-          ..write('bankIban: $bankIban, ')
-          ..write('notesEn: $notesEn, ')
-          ..write('notesAr: $notesAr, ')
-          ..write('backupDir: $backupDir, ')
-          ..write('lastBackupAt: $lastBackupAt')
-          ..write(')'))
-        .toString();
-  }
-}
-
 class $ClientsTable extends Clients with TableInfo<$ClientsTable, ClientRow> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -975,6 +108,17 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, ClientRow> {
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -986,6 +130,7 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, ClientRow> {
     createdAt,
     updatedAt,
     archived,
+    deletedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1058,6 +203,12 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, ClientRow> {
         archived.isAcceptableOrUnknown(data['archived']!, _archivedMeta),
       );
     }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -1103,6 +254,10 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, ClientRow> {
         DriftSqlType.bool,
         data['${effectivePrefix}archived'],
       )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
     );
   }
 
@@ -1125,6 +280,10 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
   final int createdAt;
   final int updatedAt;
   final bool archived;
+
+  /// Soft delete (schema v2). Purged after 30 days once no invoice rows
+  /// reference the client. See `triggers.drift` for the guards.
+  final int? deletedAt;
   const ClientRow({
     required this.id,
     required this.name,
@@ -1135,6 +294,7 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
     required this.createdAt,
     required this.updatedAt,
     required this.archived,
+    this.deletedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1148,6 +308,9 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
     map['created_at'] = Variable<int>(createdAt);
     map['updated_at'] = Variable<int>(updatedAt);
     map['archived'] = Variable<bool>(archived);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
     return map;
   }
 
@@ -1162,6 +325,9 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
       archived: Value(archived),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
     );
   }
 
@@ -1180,6 +346,7 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
       createdAt: serializer.fromJson<int>(json['createdAt']),
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       archived: serializer.fromJson<bool>(json['archived']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
     );
   }
   @override
@@ -1195,6 +362,7 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
       'createdAt': serializer.toJson<int>(createdAt),
       'updatedAt': serializer.toJson<int>(updatedAt),
       'archived': serializer.toJson<bool>(archived),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
     };
   }
 
@@ -1208,6 +376,7 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
     int? createdAt,
     int? updatedAt,
     bool? archived,
+    Value<int?> deletedAt = const Value.absent(),
   }) => ClientRow(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -1218,6 +387,7 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
     archived: archived ?? this.archived,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   ClientRow copyWithCompanion(ClientsCompanion data) {
     return ClientRow(
@@ -1230,6 +400,7 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       archived: data.archived.present ? data.archived.value : this.archived,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
   }
 
@@ -1244,7 +415,8 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
           ..write('email: $email, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
-          ..write('archived: $archived')
+          ..write('archived: $archived, ')
+          ..write('deletedAt: $deletedAt')
           ..write(')'))
         .toString();
   }
@@ -1260,6 +432,7 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
     createdAt,
     updatedAt,
     archived,
+    deletedAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -1273,7 +446,8 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
           other.email == this.email &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
-          other.archived == this.archived);
+          other.archived == this.archived &&
+          other.deletedAt == this.deletedAt);
 }
 
 class ClientsCompanion extends UpdateCompanion<ClientRow> {
@@ -1286,6 +460,7 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
   final Value<int> createdAt;
   final Value<int> updatedAt;
   final Value<bool> archived;
+  final Value<int?> deletedAt;
   final Value<int> rowid;
   const ClientsCompanion({
     this.id = const Value.absent(),
@@ -1297,6 +472,7 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.archived = const Value.absent(),
+    this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ClientsCompanion.insert({
@@ -1309,6 +485,7 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
     required int createdAt,
     required int updatedAt,
     this.archived = const Value.absent(),
+    this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        name = Value(name),
@@ -1324,6 +501,7 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
     Expression<int>? createdAt,
     Expression<int>? updatedAt,
     Expression<bool>? archived,
+    Expression<int>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1336,6 +514,7 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (archived != null) 'archived': archived,
+      if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1350,6 +529,7 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
     Value<int>? createdAt,
     Value<int>? updatedAt,
     Value<bool>? archived,
+    Value<int?>? deletedAt,
     Value<int>? rowid,
   }) {
     return ClientsCompanion(
@@ -1362,6 +542,7 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       archived: archived ?? this.archived,
+      deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1396,6 +577,9 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
     if (archived.present) {
       map['archived'] = Variable<bool>(archived.value);
     }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1414,6 +598,7 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('archived: $archived, ')
+          ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2664,6 +1849,873 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
   }
 }
 
+class $AppSettingsTable extends AppSettings
+    with TableInfo<$AppSettingsTable, SettingsRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AppSettingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    check: () => id.equals(1),
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _roleMeta = const VerificationMeta('role');
+  @override
+  late final GeneratedColumn<String> role = GeneratedColumn<String>(
+    'role',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _cityMeta = const VerificationMeta('city');
+  @override
+  late final GeneratedColumn<String> city = GeneratedColumn<String>(
+    'city',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _emailMeta = const VerificationMeta('email');
+  @override
+  late final GeneratedColumn<String> email = GeneratedColumn<String>(
+    'email',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _phoneMeta = const VerificationMeta('phone');
+  @override
+  late final GeneratedColumn<String> phone = GeneratedColumn<String>(
+    'phone',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _websiteMeta = const VerificationMeta(
+    'website',
+  );
+  @override
+  late final GeneratedColumn<String> website = GeneratedColumn<String>(
+    'website',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _invoicePrefixMeta = const VerificationMeta(
+    'invoicePrefix',
+  );
+  @override
+  late final GeneratedColumn<String> invoicePrefix = GeneratedColumn<String>(
+    'invoice_prefix',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('OM'),
+  );
+  static const VerificationMeta _defaultDueDaysMeta = const VerificationMeta(
+    'defaultDueDays',
+  );
+  @override
+  late final GeneratedColumn<int> defaultDueDays = GeneratedColumn<int>(
+    'default_due_days',
+    aliasedName,
+    false,
+    check: () => ComparableExpr(defaultDueDays).isBetweenValues(0, 3650),
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(30),
+  );
+  static const VerificationMeta _instapayMeta = const VerificationMeta(
+    'instapay',
+  );
+  @override
+  late final GeneratedColumn<String> instapay = GeneratedColumn<String>(
+    'instapay',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _walletMeta = const VerificationMeta('wallet');
+  @override
+  late final GeneratedColumn<String> wallet = GeneratedColumn<String>(
+    'wallet',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _bankIbanMeta = const VerificationMeta(
+    'bankIban',
+  );
+  @override
+  late final GeneratedColumn<String> bankIban = GeneratedColumn<String>(
+    'bank_iban',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _notesEnMeta = const VerificationMeta(
+    'notesEn',
+  );
+  @override
+  late final GeneratedColumn<String> notesEn = GeneratedColumn<String>(
+    'notes_en',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _notesArMeta = const VerificationMeta(
+    'notesAr',
+  );
+  @override
+  late final GeneratedColumn<String> notesAr = GeneratedColumn<String>(
+    'notes_ar',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _backupDirMeta = const VerificationMeta(
+    'backupDir',
+  );
+  @override
+  late final GeneratedColumn<String> backupDir = GeneratedColumn<String>(
+    'backup_dir',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastBackupAtMeta = const VerificationMeta(
+    'lastBackupAt',
+  );
+  @override
+  late final GeneratedColumn<int> lastBackupAt = GeneratedColumn<int>(
+    'last_backup_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    role,
+    city,
+    email,
+    phone,
+    website,
+    invoicePrefix,
+    defaultDueDays,
+    instapay,
+    wallet,
+    bankIban,
+    notesEn,
+    notesAr,
+    backupDir,
+    lastBackupAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'settings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SettingsRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    }
+    if (data.containsKey('role')) {
+      context.handle(
+        _roleMeta,
+        role.isAcceptableOrUnknown(data['role']!, _roleMeta),
+      );
+    }
+    if (data.containsKey('city')) {
+      context.handle(
+        _cityMeta,
+        city.isAcceptableOrUnknown(data['city']!, _cityMeta),
+      );
+    }
+    if (data.containsKey('email')) {
+      context.handle(
+        _emailMeta,
+        email.isAcceptableOrUnknown(data['email']!, _emailMeta),
+      );
+    }
+    if (data.containsKey('phone')) {
+      context.handle(
+        _phoneMeta,
+        phone.isAcceptableOrUnknown(data['phone']!, _phoneMeta),
+      );
+    }
+    if (data.containsKey('website')) {
+      context.handle(
+        _websiteMeta,
+        website.isAcceptableOrUnknown(data['website']!, _websiteMeta),
+      );
+    }
+    if (data.containsKey('invoice_prefix')) {
+      context.handle(
+        _invoicePrefixMeta,
+        invoicePrefix.isAcceptableOrUnknown(
+          data['invoice_prefix']!,
+          _invoicePrefixMeta,
+        ),
+      );
+    }
+    if (data.containsKey('default_due_days')) {
+      context.handle(
+        _defaultDueDaysMeta,
+        defaultDueDays.isAcceptableOrUnknown(
+          data['default_due_days']!,
+          _defaultDueDaysMeta,
+        ),
+      );
+    }
+    if (data.containsKey('instapay')) {
+      context.handle(
+        _instapayMeta,
+        instapay.isAcceptableOrUnknown(data['instapay']!, _instapayMeta),
+      );
+    }
+    if (data.containsKey('wallet')) {
+      context.handle(
+        _walletMeta,
+        wallet.isAcceptableOrUnknown(data['wallet']!, _walletMeta),
+      );
+    }
+    if (data.containsKey('bank_iban')) {
+      context.handle(
+        _bankIbanMeta,
+        bankIban.isAcceptableOrUnknown(data['bank_iban']!, _bankIbanMeta),
+      );
+    }
+    if (data.containsKey('notes_en')) {
+      context.handle(
+        _notesEnMeta,
+        notesEn.isAcceptableOrUnknown(data['notes_en']!, _notesEnMeta),
+      );
+    }
+    if (data.containsKey('notes_ar')) {
+      context.handle(
+        _notesArMeta,
+        notesAr.isAcceptableOrUnknown(data['notes_ar']!, _notesArMeta),
+      );
+    }
+    if (data.containsKey('backup_dir')) {
+      context.handle(
+        _backupDirMeta,
+        backupDir.isAcceptableOrUnknown(data['backup_dir']!, _backupDirMeta),
+      );
+    }
+    if (data.containsKey('last_backup_at')) {
+      context.handle(
+        _lastBackupAtMeta,
+        lastBackupAt.isAcceptableOrUnknown(
+          data['last_backup_at']!,
+          _lastBackupAtMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  SettingsRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SettingsRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      role: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}role'],
+      )!,
+      city: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}city'],
+      )!,
+      email: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}email'],
+      )!,
+      phone: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}phone'],
+      )!,
+      website: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}website'],
+      )!,
+      invoicePrefix: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}invoice_prefix'],
+      )!,
+      defaultDueDays: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}default_due_days'],
+      )!,
+      instapay: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}instapay'],
+      )!,
+      wallet: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}wallet'],
+      )!,
+      bankIban: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}bank_iban'],
+      )!,
+      notesEn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes_en'],
+      )!,
+      notesAr: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes_ar'],
+      )!,
+      backupDir: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}backup_dir'],
+      ),
+      lastBackupAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}last_backup_at'],
+      ),
+    );
+  }
+
+  @override
+  $AppSettingsTable createAlias(String alias) {
+    return $AppSettingsTable(attachedDatabase, alias);
+  }
+
+  @override
+  bool get isStrict => true;
+}
+
+class SettingsRow extends DataClass implements Insertable<SettingsRow> {
+  final int id;
+  final String name;
+  final String role;
+  final String city;
+  final String email;
+  final String phone;
+  final String website;
+  final String invoicePrefix;
+  final int defaultDueDays;
+  final String instapay;
+  final String wallet;
+  final String bankIban;
+  final String notesEn;
+  final String notesAr;
+  final String? backupDir;
+  final int? lastBackupAt;
+  const SettingsRow({
+    required this.id,
+    required this.name,
+    required this.role,
+    required this.city,
+    required this.email,
+    required this.phone,
+    required this.website,
+    required this.invoicePrefix,
+    required this.defaultDueDays,
+    required this.instapay,
+    required this.wallet,
+    required this.bankIban,
+    required this.notesEn,
+    required this.notesAr,
+    this.backupDir,
+    this.lastBackupAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    map['role'] = Variable<String>(role);
+    map['city'] = Variable<String>(city);
+    map['email'] = Variable<String>(email);
+    map['phone'] = Variable<String>(phone);
+    map['website'] = Variable<String>(website);
+    map['invoice_prefix'] = Variable<String>(invoicePrefix);
+    map['default_due_days'] = Variable<int>(defaultDueDays);
+    map['instapay'] = Variable<String>(instapay);
+    map['wallet'] = Variable<String>(wallet);
+    map['bank_iban'] = Variable<String>(bankIban);
+    map['notes_en'] = Variable<String>(notesEn);
+    map['notes_ar'] = Variable<String>(notesAr);
+    if (!nullToAbsent || backupDir != null) {
+      map['backup_dir'] = Variable<String>(backupDir);
+    }
+    if (!nullToAbsent || lastBackupAt != null) {
+      map['last_backup_at'] = Variable<int>(lastBackupAt);
+    }
+    return map;
+  }
+
+  AppSettingsCompanion toCompanion(bool nullToAbsent) {
+    return AppSettingsCompanion(
+      id: Value(id),
+      name: Value(name),
+      role: Value(role),
+      city: Value(city),
+      email: Value(email),
+      phone: Value(phone),
+      website: Value(website),
+      invoicePrefix: Value(invoicePrefix),
+      defaultDueDays: Value(defaultDueDays),
+      instapay: Value(instapay),
+      wallet: Value(wallet),
+      bankIban: Value(bankIban),
+      notesEn: Value(notesEn),
+      notesAr: Value(notesAr),
+      backupDir: backupDir == null && nullToAbsent
+          ? const Value.absent()
+          : Value(backupDir),
+      lastBackupAt: lastBackupAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastBackupAt),
+    );
+  }
+
+  factory SettingsRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SettingsRow(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      role: serializer.fromJson<String>(json['role']),
+      city: serializer.fromJson<String>(json['city']),
+      email: serializer.fromJson<String>(json['email']),
+      phone: serializer.fromJson<String>(json['phone']),
+      website: serializer.fromJson<String>(json['website']),
+      invoicePrefix: serializer.fromJson<String>(json['invoicePrefix']),
+      defaultDueDays: serializer.fromJson<int>(json['defaultDueDays']),
+      instapay: serializer.fromJson<String>(json['instapay']),
+      wallet: serializer.fromJson<String>(json['wallet']),
+      bankIban: serializer.fromJson<String>(json['bankIban']),
+      notesEn: serializer.fromJson<String>(json['notesEn']),
+      notesAr: serializer.fromJson<String>(json['notesAr']),
+      backupDir: serializer.fromJson<String?>(json['backupDir']),
+      lastBackupAt: serializer.fromJson<int?>(json['lastBackupAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'role': serializer.toJson<String>(role),
+      'city': serializer.toJson<String>(city),
+      'email': serializer.toJson<String>(email),
+      'phone': serializer.toJson<String>(phone),
+      'website': serializer.toJson<String>(website),
+      'invoicePrefix': serializer.toJson<String>(invoicePrefix),
+      'defaultDueDays': serializer.toJson<int>(defaultDueDays),
+      'instapay': serializer.toJson<String>(instapay),
+      'wallet': serializer.toJson<String>(wallet),
+      'bankIban': serializer.toJson<String>(bankIban),
+      'notesEn': serializer.toJson<String>(notesEn),
+      'notesAr': serializer.toJson<String>(notesAr),
+      'backupDir': serializer.toJson<String?>(backupDir),
+      'lastBackupAt': serializer.toJson<int?>(lastBackupAt),
+    };
+  }
+
+  SettingsRow copyWith({
+    int? id,
+    String? name,
+    String? role,
+    String? city,
+    String? email,
+    String? phone,
+    String? website,
+    String? invoicePrefix,
+    int? defaultDueDays,
+    String? instapay,
+    String? wallet,
+    String? bankIban,
+    String? notesEn,
+    String? notesAr,
+    Value<String?> backupDir = const Value.absent(),
+    Value<int?> lastBackupAt = const Value.absent(),
+  }) => SettingsRow(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    role: role ?? this.role,
+    city: city ?? this.city,
+    email: email ?? this.email,
+    phone: phone ?? this.phone,
+    website: website ?? this.website,
+    invoicePrefix: invoicePrefix ?? this.invoicePrefix,
+    defaultDueDays: defaultDueDays ?? this.defaultDueDays,
+    instapay: instapay ?? this.instapay,
+    wallet: wallet ?? this.wallet,
+    bankIban: bankIban ?? this.bankIban,
+    notesEn: notesEn ?? this.notesEn,
+    notesAr: notesAr ?? this.notesAr,
+    backupDir: backupDir.present ? backupDir.value : this.backupDir,
+    lastBackupAt: lastBackupAt.present ? lastBackupAt.value : this.lastBackupAt,
+  );
+  SettingsRow copyWithCompanion(AppSettingsCompanion data) {
+    return SettingsRow(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      role: data.role.present ? data.role.value : this.role,
+      city: data.city.present ? data.city.value : this.city,
+      email: data.email.present ? data.email.value : this.email,
+      phone: data.phone.present ? data.phone.value : this.phone,
+      website: data.website.present ? data.website.value : this.website,
+      invoicePrefix: data.invoicePrefix.present
+          ? data.invoicePrefix.value
+          : this.invoicePrefix,
+      defaultDueDays: data.defaultDueDays.present
+          ? data.defaultDueDays.value
+          : this.defaultDueDays,
+      instapay: data.instapay.present ? data.instapay.value : this.instapay,
+      wallet: data.wallet.present ? data.wallet.value : this.wallet,
+      bankIban: data.bankIban.present ? data.bankIban.value : this.bankIban,
+      notesEn: data.notesEn.present ? data.notesEn.value : this.notesEn,
+      notesAr: data.notesAr.present ? data.notesAr.value : this.notesAr,
+      backupDir: data.backupDir.present ? data.backupDir.value : this.backupDir,
+      lastBackupAt: data.lastBackupAt.present
+          ? data.lastBackupAt.value
+          : this.lastBackupAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SettingsRow(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('role: $role, ')
+          ..write('city: $city, ')
+          ..write('email: $email, ')
+          ..write('phone: $phone, ')
+          ..write('website: $website, ')
+          ..write('invoicePrefix: $invoicePrefix, ')
+          ..write('defaultDueDays: $defaultDueDays, ')
+          ..write('instapay: $instapay, ')
+          ..write('wallet: $wallet, ')
+          ..write('bankIban: $bankIban, ')
+          ..write('notesEn: $notesEn, ')
+          ..write('notesAr: $notesAr, ')
+          ..write('backupDir: $backupDir, ')
+          ..write('lastBackupAt: $lastBackupAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    name,
+    role,
+    city,
+    email,
+    phone,
+    website,
+    invoicePrefix,
+    defaultDueDays,
+    instapay,
+    wallet,
+    bankIban,
+    notesEn,
+    notesAr,
+    backupDir,
+    lastBackupAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SettingsRow &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.role == this.role &&
+          other.city == this.city &&
+          other.email == this.email &&
+          other.phone == this.phone &&
+          other.website == this.website &&
+          other.invoicePrefix == this.invoicePrefix &&
+          other.defaultDueDays == this.defaultDueDays &&
+          other.instapay == this.instapay &&
+          other.wallet == this.wallet &&
+          other.bankIban == this.bankIban &&
+          other.notesEn == this.notesEn &&
+          other.notesAr == this.notesAr &&
+          other.backupDir == this.backupDir &&
+          other.lastBackupAt == this.lastBackupAt);
+}
+
+class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<String> role;
+  final Value<String> city;
+  final Value<String> email;
+  final Value<String> phone;
+  final Value<String> website;
+  final Value<String> invoicePrefix;
+  final Value<int> defaultDueDays;
+  final Value<String> instapay;
+  final Value<String> wallet;
+  final Value<String> bankIban;
+  final Value<String> notesEn;
+  final Value<String> notesAr;
+  final Value<String?> backupDir;
+  final Value<int?> lastBackupAt;
+  const AppSettingsCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.role = const Value.absent(),
+    this.city = const Value.absent(),
+    this.email = const Value.absent(),
+    this.phone = const Value.absent(),
+    this.website = const Value.absent(),
+    this.invoicePrefix = const Value.absent(),
+    this.defaultDueDays = const Value.absent(),
+    this.instapay = const Value.absent(),
+    this.wallet = const Value.absent(),
+    this.bankIban = const Value.absent(),
+    this.notesEn = const Value.absent(),
+    this.notesAr = const Value.absent(),
+    this.backupDir = const Value.absent(),
+    this.lastBackupAt = const Value.absent(),
+  });
+  AppSettingsCompanion.insert({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.role = const Value.absent(),
+    this.city = const Value.absent(),
+    this.email = const Value.absent(),
+    this.phone = const Value.absent(),
+    this.website = const Value.absent(),
+    this.invoicePrefix = const Value.absent(),
+    this.defaultDueDays = const Value.absent(),
+    this.instapay = const Value.absent(),
+    this.wallet = const Value.absent(),
+    this.bankIban = const Value.absent(),
+    this.notesEn = const Value.absent(),
+    this.notesAr = const Value.absent(),
+    this.backupDir = const Value.absent(),
+    this.lastBackupAt = const Value.absent(),
+  });
+  static Insertable<SettingsRow> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<String>? role,
+    Expression<String>? city,
+    Expression<String>? email,
+    Expression<String>? phone,
+    Expression<String>? website,
+    Expression<String>? invoicePrefix,
+    Expression<int>? defaultDueDays,
+    Expression<String>? instapay,
+    Expression<String>? wallet,
+    Expression<String>? bankIban,
+    Expression<String>? notesEn,
+    Expression<String>? notesAr,
+    Expression<String>? backupDir,
+    Expression<int>? lastBackupAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (role != null) 'role': role,
+      if (city != null) 'city': city,
+      if (email != null) 'email': email,
+      if (phone != null) 'phone': phone,
+      if (website != null) 'website': website,
+      if (invoicePrefix != null) 'invoice_prefix': invoicePrefix,
+      if (defaultDueDays != null) 'default_due_days': defaultDueDays,
+      if (instapay != null) 'instapay': instapay,
+      if (wallet != null) 'wallet': wallet,
+      if (bankIban != null) 'bank_iban': bankIban,
+      if (notesEn != null) 'notes_en': notesEn,
+      if (notesAr != null) 'notes_ar': notesAr,
+      if (backupDir != null) 'backup_dir': backupDir,
+      if (lastBackupAt != null) 'last_backup_at': lastBackupAt,
+    });
+  }
+
+  AppSettingsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? name,
+    Value<String>? role,
+    Value<String>? city,
+    Value<String>? email,
+    Value<String>? phone,
+    Value<String>? website,
+    Value<String>? invoicePrefix,
+    Value<int>? defaultDueDays,
+    Value<String>? instapay,
+    Value<String>? wallet,
+    Value<String>? bankIban,
+    Value<String>? notesEn,
+    Value<String>? notesAr,
+    Value<String?>? backupDir,
+    Value<int?>? lastBackupAt,
+  }) {
+    return AppSettingsCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      role: role ?? this.role,
+      city: city ?? this.city,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      website: website ?? this.website,
+      invoicePrefix: invoicePrefix ?? this.invoicePrefix,
+      defaultDueDays: defaultDueDays ?? this.defaultDueDays,
+      instapay: instapay ?? this.instapay,
+      wallet: wallet ?? this.wallet,
+      bankIban: bankIban ?? this.bankIban,
+      notesEn: notesEn ?? this.notesEn,
+      notesAr: notesAr ?? this.notesAr,
+      backupDir: backupDir ?? this.backupDir,
+      lastBackupAt: lastBackupAt ?? this.lastBackupAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (role.present) {
+      map['role'] = Variable<String>(role.value);
+    }
+    if (city.present) {
+      map['city'] = Variable<String>(city.value);
+    }
+    if (email.present) {
+      map['email'] = Variable<String>(email.value);
+    }
+    if (phone.present) {
+      map['phone'] = Variable<String>(phone.value);
+    }
+    if (website.present) {
+      map['website'] = Variable<String>(website.value);
+    }
+    if (invoicePrefix.present) {
+      map['invoice_prefix'] = Variable<String>(invoicePrefix.value);
+    }
+    if (defaultDueDays.present) {
+      map['default_due_days'] = Variable<int>(defaultDueDays.value);
+    }
+    if (instapay.present) {
+      map['instapay'] = Variable<String>(instapay.value);
+    }
+    if (wallet.present) {
+      map['wallet'] = Variable<String>(wallet.value);
+    }
+    if (bankIban.present) {
+      map['bank_iban'] = Variable<String>(bankIban.value);
+    }
+    if (notesEn.present) {
+      map['notes_en'] = Variable<String>(notesEn.value);
+    }
+    if (notesAr.present) {
+      map['notes_ar'] = Variable<String>(notesAr.value);
+    }
+    if (backupDir.present) {
+      map['backup_dir'] = Variable<String>(backupDir.value);
+    }
+    if (lastBackupAt.present) {
+      map['last_backup_at'] = Variable<int>(lastBackupAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AppSettingsCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('role: $role, ')
+          ..write('city: $city, ')
+          ..write('email: $email, ')
+          ..write('phone: $phone, ')
+          ..write('website: $website, ')
+          ..write('invoicePrefix: $invoicePrefix, ')
+          ..write('defaultDueDays: $defaultDueDays, ')
+          ..write('instapay: $instapay, ')
+          ..write('wallet: $wallet, ')
+          ..write('bankIban: $bankIban, ')
+          ..write('notesEn: $notesEn, ')
+          ..write('notesAr: $notesAr, ')
+          ..write('backupDir: $backupDir, ')
+          ..write('lastBackupAt: $lastBackupAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $SectionsTable extends Sections
     with TableInfo<$SectionsTable, SectionRow> {
   @override
@@ -3602,9 +3654,21 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
-  late final $AppSettingsTable appSettings = $AppSettingsTable(this);
   late final $ClientsTable clients = $ClientsTable(this);
   late final $InvoicesTable invoices = $InvoicesTable(this);
+  late final Trigger clientsSoftDeleteGuard = Trigger(
+    'CREATE TRIGGER clients_soft_delete_guard BEFORE UPDATE OF deleted_at ON clients WHEN NEW.deleted_at IS NOT NULL AND EXISTS (SELECT 1 FROM invoices WHERE client_id = NEW.id AND deleted_at IS NULL) BEGIN SELECT RAISE (ABORT, \'client has live invoices\');END',
+    'clients_soft_delete_guard',
+  );
+  late final Trigger invoicesReviveGuard = Trigger(
+    'CREATE TRIGGER invoices_revive_guard BEFORE UPDATE OF deleted_at ON invoices WHEN NEW.deleted_at IS NULL AND EXISTS (SELECT 1 FROM clients WHERE id = NEW.client_id AND deleted_at IS NOT NULL) BEGIN SELECT RAISE (ABORT, \'client is deleted\');END',
+    'invoices_revive_guard',
+  );
+  late final Trigger invoicesInsertGuard = Trigger(
+    'CREATE TRIGGER invoices_insert_guard BEFORE INSERT ON invoices WHEN NEW.deleted_at IS NULL AND EXISTS (SELECT 1 FROM clients WHERE id = NEW.client_id AND deleted_at IS NOT NULL) BEGIN SELECT RAISE (ABORT, \'client is deleted\');END',
+    'invoices_insert_guard',
+  );
+  late final $AppSettingsTable appSettings = $AppSettingsTable(this);
   late final $SectionsTable sections = $SectionsTable(this);
   late final $ItemsTable items = $ItemsTable(this);
   late final Index invoicesClient = Index(
@@ -3627,9 +3691,12 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
-    appSettings,
     clients,
     invoices,
+    clientsSoftDeleteGuard,
+    invoicesReviveGuard,
+    invoicesInsertGuard,
+    appSettings,
     sections,
     items,
     invoicesClient,
@@ -3638,6 +3705,27 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'clients',
+        limitUpdateKind: UpdateKind.update,
+      ),
+      result: [],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'invoices',
+        limitUpdateKind: UpdateKind.update,
+      ),
+      result: [],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'invoices',
+        limitUpdateKind: UpdateKind.insert,
+      ),
+      result: [],
+    ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
         'invoices',
@@ -3655,424 +3743,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   ]);
 }
 
-typedef $$AppSettingsTableCreateCompanionBuilder =
-    AppSettingsCompanion Function({
-      Value<int> id,
-      Value<String> name,
-      Value<String> role,
-      Value<String> city,
-      Value<String> email,
-      Value<String> phone,
-      Value<String> website,
-      Value<String> invoicePrefix,
-      Value<int> defaultDueDays,
-      Value<String> instapay,
-      Value<String> wallet,
-      Value<String> bankIban,
-      Value<String> notesEn,
-      Value<String> notesAr,
-      Value<String?> backupDir,
-      Value<int?> lastBackupAt,
-    });
-typedef $$AppSettingsTableUpdateCompanionBuilder =
-    AppSettingsCompanion Function({
-      Value<int> id,
-      Value<String> name,
-      Value<String> role,
-      Value<String> city,
-      Value<String> email,
-      Value<String> phone,
-      Value<String> website,
-      Value<String> invoicePrefix,
-      Value<int> defaultDueDays,
-      Value<String> instapay,
-      Value<String> wallet,
-      Value<String> bankIban,
-      Value<String> notesEn,
-      Value<String> notesAr,
-      Value<String?> backupDir,
-      Value<int?> lastBackupAt,
-    });
-
-class $$AppSettingsTableFilterComposer
-    extends Composer<_$AppDatabase, $AppSettingsTable> {
-  $$AppSettingsTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get name => $composableBuilder(
-    column: $table.name,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get role => $composableBuilder(
-    column: $table.role,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get city => $composableBuilder(
-    column: $table.city,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get email => $composableBuilder(
-    column: $table.email,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get phone => $composableBuilder(
-    column: $table.phone,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get website => $composableBuilder(
-    column: $table.website,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get invoicePrefix => $composableBuilder(
-    column: $table.invoicePrefix,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get defaultDueDays => $composableBuilder(
-    column: $table.defaultDueDays,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get instapay => $composableBuilder(
-    column: $table.instapay,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get wallet => $composableBuilder(
-    column: $table.wallet,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get bankIban => $composableBuilder(
-    column: $table.bankIban,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get notesEn => $composableBuilder(
-    column: $table.notesEn,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get notesAr => $composableBuilder(
-    column: $table.notesAr,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get backupDir => $composableBuilder(
-    column: $table.backupDir,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get lastBackupAt => $composableBuilder(
-    column: $table.lastBackupAt,
-    builder: (column) => ColumnFilters(column),
-  );
-}
-
-class $$AppSettingsTableOrderingComposer
-    extends Composer<_$AppDatabase, $AppSettingsTable> {
-  $$AppSettingsTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get name => $composableBuilder(
-    column: $table.name,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get role => $composableBuilder(
-    column: $table.role,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get city => $composableBuilder(
-    column: $table.city,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get email => $composableBuilder(
-    column: $table.email,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get phone => $composableBuilder(
-    column: $table.phone,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get website => $composableBuilder(
-    column: $table.website,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get invoicePrefix => $composableBuilder(
-    column: $table.invoicePrefix,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get defaultDueDays => $composableBuilder(
-    column: $table.defaultDueDays,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get instapay => $composableBuilder(
-    column: $table.instapay,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get wallet => $composableBuilder(
-    column: $table.wallet,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get bankIban => $composableBuilder(
-    column: $table.bankIban,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get notesEn => $composableBuilder(
-    column: $table.notesEn,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get notesAr => $composableBuilder(
-    column: $table.notesAr,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get backupDir => $composableBuilder(
-    column: $table.backupDir,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get lastBackupAt => $composableBuilder(
-    column: $table.lastBackupAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-}
-
-class $$AppSettingsTableAnnotationComposer
-    extends Composer<_$AppDatabase, $AppSettingsTable> {
-  $$AppSettingsTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<int> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get name =>
-      $composableBuilder(column: $table.name, builder: (column) => column);
-
-  GeneratedColumn<String> get role =>
-      $composableBuilder(column: $table.role, builder: (column) => column);
-
-  GeneratedColumn<String> get city =>
-      $composableBuilder(column: $table.city, builder: (column) => column);
-
-  GeneratedColumn<String> get email =>
-      $composableBuilder(column: $table.email, builder: (column) => column);
-
-  GeneratedColumn<String> get phone =>
-      $composableBuilder(column: $table.phone, builder: (column) => column);
-
-  GeneratedColumn<String> get website =>
-      $composableBuilder(column: $table.website, builder: (column) => column);
-
-  GeneratedColumn<String> get invoicePrefix => $composableBuilder(
-    column: $table.invoicePrefix,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<int> get defaultDueDays => $composableBuilder(
-    column: $table.defaultDueDays,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get instapay =>
-      $composableBuilder(column: $table.instapay, builder: (column) => column);
-
-  GeneratedColumn<String> get wallet =>
-      $composableBuilder(column: $table.wallet, builder: (column) => column);
-
-  GeneratedColumn<String> get bankIban =>
-      $composableBuilder(column: $table.bankIban, builder: (column) => column);
-
-  GeneratedColumn<String> get notesEn =>
-      $composableBuilder(column: $table.notesEn, builder: (column) => column);
-
-  GeneratedColumn<String> get notesAr =>
-      $composableBuilder(column: $table.notesAr, builder: (column) => column);
-
-  GeneratedColumn<String> get backupDir =>
-      $composableBuilder(column: $table.backupDir, builder: (column) => column);
-
-  GeneratedColumn<int> get lastBackupAt => $composableBuilder(
-    column: $table.lastBackupAt,
-    builder: (column) => column,
-  );
-}
-
-class $$AppSettingsTableTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          $AppSettingsTable,
-          SettingsRow,
-          $$AppSettingsTableFilterComposer,
-          $$AppSettingsTableOrderingComposer,
-          $$AppSettingsTableAnnotationComposer,
-          $$AppSettingsTableCreateCompanionBuilder,
-          $$AppSettingsTableUpdateCompanionBuilder,
-          (
-            SettingsRow,
-            BaseReferences<_$AppDatabase, $AppSettingsTable, SettingsRow>,
-          ),
-          SettingsRow,
-          PrefetchHooks Function()
-        > {
-  $$AppSettingsTableTableManager(_$AppDatabase db, $AppSettingsTable table)
-    : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$AppSettingsTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$AppSettingsTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $$AppSettingsTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback:
-              ({
-                Value<int> id = const Value.absent(),
-                Value<String> name = const Value.absent(),
-                Value<String> role = const Value.absent(),
-                Value<String> city = const Value.absent(),
-                Value<String> email = const Value.absent(),
-                Value<String> phone = const Value.absent(),
-                Value<String> website = const Value.absent(),
-                Value<String> invoicePrefix = const Value.absent(),
-                Value<int> defaultDueDays = const Value.absent(),
-                Value<String> instapay = const Value.absent(),
-                Value<String> wallet = const Value.absent(),
-                Value<String> bankIban = const Value.absent(),
-                Value<String> notesEn = const Value.absent(),
-                Value<String> notesAr = const Value.absent(),
-                Value<String?> backupDir = const Value.absent(),
-                Value<int?> lastBackupAt = const Value.absent(),
-              }) => AppSettingsCompanion(
-                id: id,
-                name: name,
-                role: role,
-                city: city,
-                email: email,
-                phone: phone,
-                website: website,
-                invoicePrefix: invoicePrefix,
-                defaultDueDays: defaultDueDays,
-                instapay: instapay,
-                wallet: wallet,
-                bankIban: bankIban,
-                notesEn: notesEn,
-                notesAr: notesAr,
-                backupDir: backupDir,
-                lastBackupAt: lastBackupAt,
-              ),
-          createCompanionCallback:
-              ({
-                Value<int> id = const Value.absent(),
-                Value<String> name = const Value.absent(),
-                Value<String> role = const Value.absent(),
-                Value<String> city = const Value.absent(),
-                Value<String> email = const Value.absent(),
-                Value<String> phone = const Value.absent(),
-                Value<String> website = const Value.absent(),
-                Value<String> invoicePrefix = const Value.absent(),
-                Value<int> defaultDueDays = const Value.absent(),
-                Value<String> instapay = const Value.absent(),
-                Value<String> wallet = const Value.absent(),
-                Value<String> bankIban = const Value.absent(),
-                Value<String> notesEn = const Value.absent(),
-                Value<String> notesAr = const Value.absent(),
-                Value<String?> backupDir = const Value.absent(),
-                Value<int?> lastBackupAt = const Value.absent(),
-              }) => AppSettingsCompanion.insert(
-                id: id,
-                name: name,
-                role: role,
-                city: city,
-                email: email,
-                phone: phone,
-                website: website,
-                invoicePrefix: invoicePrefix,
-                defaultDueDays: defaultDueDays,
-                instapay: instapay,
-                wallet: wallet,
-                bankIban: bankIban,
-                notesEn: notesEn,
-                notesAr: notesAr,
-                backupDir: backupDir,
-                lastBackupAt: lastBackupAt,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map(
-                (e) => (
-                  e.readTable<$AppSettingsTable, SettingsRow>(table),
-                  BaseReferences<_$AppDatabase, $AppSettingsTable, SettingsRow>(
-                    db,
-                    table,
-                    e,
-                  ),
-                ),
-              )
-              .toList(),
-          prefetchHooksCallback: null,
-        ),
-      );
-}
-
-typedef $$AppSettingsTableProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      $AppSettingsTable,
-      SettingsRow,
-      $$AppSettingsTableFilterComposer,
-      $$AppSettingsTableOrderingComposer,
-      $$AppSettingsTableAnnotationComposer,
-      $$AppSettingsTableCreateCompanionBuilder,
-      $$AppSettingsTableUpdateCompanionBuilder,
-      (
-        SettingsRow,
-        BaseReferences<_$AppDatabase, $AppSettingsTable, SettingsRow>,
-      ),
-      SettingsRow,
-      PrefetchHooks Function()
-    >;
 typedef $$ClientsTableCreateCompanionBuilder =
     ClientsCompanion Function({
       required String id,
@@ -4084,6 +3754,7 @@ typedef $$ClientsTableCreateCompanionBuilder =
       required int createdAt,
       required int updatedAt,
       Value<bool> archived,
+      Value<int?> deletedAt,
       Value<int> rowid,
     });
 typedef $$ClientsTableUpdateCompanionBuilder =
@@ -4097,6 +3768,7 @@ typedef $$ClientsTableUpdateCompanionBuilder =
       Value<int> createdAt,
       Value<int> updatedAt,
       Value<bool> archived,
+      Value<int?> deletedAt,
       Value<int> rowid,
     });
 
@@ -4174,6 +3846,11 @@ class $$ClientsTableFilterComposer
 
   ColumnFilters<bool> get archived => $composableBuilder(
     column: $table.archived,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4256,6 +3933,11 @@ class $$ClientsTableOrderingComposer
     column: $table.archived,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ClientsTableAnnotationComposer
@@ -4293,6 +3975,9 @@ class $$ClientsTableAnnotationComposer
 
   GeneratedColumn<bool> get archived =>
       $composableBuilder(column: $table.archived, builder: (column) => column);
+
+  GeneratedColumn<int> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
 
   Expression<T> invoicesRefs<T extends Object>(
     Expression<T> Function($$InvoicesTableAnnotationComposer a) f,
@@ -4357,6 +4042,7 @@ class $$ClientsTableTableManager
                 Value<int> createdAt = const Value.absent(),
                 Value<int> updatedAt = const Value.absent(),
                 Value<bool> archived = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ClientsCompanion(
                 id: id,
@@ -4368,6 +4054,7 @@ class $$ClientsTableTableManager
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 archived: archived,
+                deletedAt: deletedAt,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -4381,6 +4068,7 @@ class $$ClientsTableTableManager
                 required int createdAt,
                 required int updatedAt,
                 Value<bool> archived = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ClientsCompanion.insert(
                 id: id,
@@ -4392,6 +4080,7 @@ class $$ClientsTableTableManager
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 archived: archived,
+                deletedAt: deletedAt,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -5201,6 +4890,424 @@ typedef $$InvoicesTableProcessedTableManager =
       InvoiceRow,
       PrefetchHooks Function({bool clientId, bool sectionsRefs})
     >;
+typedef $$AppSettingsTableCreateCompanionBuilder =
+    AppSettingsCompanion Function({
+      Value<int> id,
+      Value<String> name,
+      Value<String> role,
+      Value<String> city,
+      Value<String> email,
+      Value<String> phone,
+      Value<String> website,
+      Value<String> invoicePrefix,
+      Value<int> defaultDueDays,
+      Value<String> instapay,
+      Value<String> wallet,
+      Value<String> bankIban,
+      Value<String> notesEn,
+      Value<String> notesAr,
+      Value<String?> backupDir,
+      Value<int?> lastBackupAt,
+    });
+typedef $$AppSettingsTableUpdateCompanionBuilder =
+    AppSettingsCompanion Function({
+      Value<int> id,
+      Value<String> name,
+      Value<String> role,
+      Value<String> city,
+      Value<String> email,
+      Value<String> phone,
+      Value<String> website,
+      Value<String> invoicePrefix,
+      Value<int> defaultDueDays,
+      Value<String> instapay,
+      Value<String> wallet,
+      Value<String> bankIban,
+      Value<String> notesEn,
+      Value<String> notesAr,
+      Value<String?> backupDir,
+      Value<int?> lastBackupAt,
+    });
+
+class $$AppSettingsTableFilterComposer
+    extends Composer<_$AppDatabase, $AppSettingsTable> {
+  $$AppSettingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get role => $composableBuilder(
+    column: $table.role,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get city => $composableBuilder(
+    column: $table.city,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get email => $composableBuilder(
+    column: $table.email,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get phone => $composableBuilder(
+    column: $table.phone,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get website => $composableBuilder(
+    column: $table.website,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get invoicePrefix => $composableBuilder(
+    column: $table.invoicePrefix,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get defaultDueDays => $composableBuilder(
+    column: $table.defaultDueDays,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get instapay => $composableBuilder(
+    column: $table.instapay,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get wallet => $composableBuilder(
+    column: $table.wallet,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get bankIban => $composableBuilder(
+    column: $table.bankIban,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notesEn => $composableBuilder(
+    column: $table.notesEn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notesAr => $composableBuilder(
+    column: $table.notesAr,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get backupDir => $composableBuilder(
+    column: $table.backupDir,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get lastBackupAt => $composableBuilder(
+    column: $table.lastBackupAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$AppSettingsTableOrderingComposer
+    extends Composer<_$AppDatabase, $AppSettingsTable> {
+  $$AppSettingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get role => $composableBuilder(
+    column: $table.role,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get city => $composableBuilder(
+    column: $table.city,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get email => $composableBuilder(
+    column: $table.email,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get phone => $composableBuilder(
+    column: $table.phone,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get website => $composableBuilder(
+    column: $table.website,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get invoicePrefix => $composableBuilder(
+    column: $table.invoicePrefix,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get defaultDueDays => $composableBuilder(
+    column: $table.defaultDueDays,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get instapay => $composableBuilder(
+    column: $table.instapay,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get wallet => $composableBuilder(
+    column: $table.wallet,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get bankIban => $composableBuilder(
+    column: $table.bankIban,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notesEn => $composableBuilder(
+    column: $table.notesEn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notesAr => $composableBuilder(
+    column: $table.notesAr,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get backupDir => $composableBuilder(
+    column: $table.backupDir,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get lastBackupAt => $composableBuilder(
+    column: $table.lastBackupAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$AppSettingsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AppSettingsTable> {
+  $$AppSettingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get role =>
+      $composableBuilder(column: $table.role, builder: (column) => column);
+
+  GeneratedColumn<String> get city =>
+      $composableBuilder(column: $table.city, builder: (column) => column);
+
+  GeneratedColumn<String> get email =>
+      $composableBuilder(column: $table.email, builder: (column) => column);
+
+  GeneratedColumn<String> get phone =>
+      $composableBuilder(column: $table.phone, builder: (column) => column);
+
+  GeneratedColumn<String> get website =>
+      $composableBuilder(column: $table.website, builder: (column) => column);
+
+  GeneratedColumn<String> get invoicePrefix => $composableBuilder(
+    column: $table.invoicePrefix,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get defaultDueDays => $composableBuilder(
+    column: $table.defaultDueDays,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get instapay =>
+      $composableBuilder(column: $table.instapay, builder: (column) => column);
+
+  GeneratedColumn<String> get wallet =>
+      $composableBuilder(column: $table.wallet, builder: (column) => column);
+
+  GeneratedColumn<String> get bankIban =>
+      $composableBuilder(column: $table.bankIban, builder: (column) => column);
+
+  GeneratedColumn<String> get notesEn =>
+      $composableBuilder(column: $table.notesEn, builder: (column) => column);
+
+  GeneratedColumn<String> get notesAr =>
+      $composableBuilder(column: $table.notesAr, builder: (column) => column);
+
+  GeneratedColumn<String> get backupDir =>
+      $composableBuilder(column: $table.backupDir, builder: (column) => column);
+
+  GeneratedColumn<int> get lastBackupAt => $composableBuilder(
+    column: $table.lastBackupAt,
+    builder: (column) => column,
+  );
+}
+
+class $$AppSettingsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AppSettingsTable,
+          SettingsRow,
+          $$AppSettingsTableFilterComposer,
+          $$AppSettingsTableOrderingComposer,
+          $$AppSettingsTableAnnotationComposer,
+          $$AppSettingsTableCreateCompanionBuilder,
+          $$AppSettingsTableUpdateCompanionBuilder,
+          (
+            SettingsRow,
+            BaseReferences<_$AppDatabase, $AppSettingsTable, SettingsRow>,
+          ),
+          SettingsRow,
+          PrefetchHooks Function()
+        > {
+  $$AppSettingsTableTableManager(_$AppDatabase db, $AppSettingsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AppSettingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AppSettingsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AppSettingsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> role = const Value.absent(),
+                Value<String> city = const Value.absent(),
+                Value<String> email = const Value.absent(),
+                Value<String> phone = const Value.absent(),
+                Value<String> website = const Value.absent(),
+                Value<String> invoicePrefix = const Value.absent(),
+                Value<int> defaultDueDays = const Value.absent(),
+                Value<String> instapay = const Value.absent(),
+                Value<String> wallet = const Value.absent(),
+                Value<String> bankIban = const Value.absent(),
+                Value<String> notesEn = const Value.absent(),
+                Value<String> notesAr = const Value.absent(),
+                Value<String?> backupDir = const Value.absent(),
+                Value<int?> lastBackupAt = const Value.absent(),
+              }) => AppSettingsCompanion(
+                id: id,
+                name: name,
+                role: role,
+                city: city,
+                email: email,
+                phone: phone,
+                website: website,
+                invoicePrefix: invoicePrefix,
+                defaultDueDays: defaultDueDays,
+                instapay: instapay,
+                wallet: wallet,
+                bankIban: bankIban,
+                notesEn: notesEn,
+                notesAr: notesAr,
+                backupDir: backupDir,
+                lastBackupAt: lastBackupAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> role = const Value.absent(),
+                Value<String> city = const Value.absent(),
+                Value<String> email = const Value.absent(),
+                Value<String> phone = const Value.absent(),
+                Value<String> website = const Value.absent(),
+                Value<String> invoicePrefix = const Value.absent(),
+                Value<int> defaultDueDays = const Value.absent(),
+                Value<String> instapay = const Value.absent(),
+                Value<String> wallet = const Value.absent(),
+                Value<String> bankIban = const Value.absent(),
+                Value<String> notesEn = const Value.absent(),
+                Value<String> notesAr = const Value.absent(),
+                Value<String?> backupDir = const Value.absent(),
+                Value<int?> lastBackupAt = const Value.absent(),
+              }) => AppSettingsCompanion.insert(
+                id: id,
+                name: name,
+                role: role,
+                city: city,
+                email: email,
+                phone: phone,
+                website: website,
+                invoicePrefix: invoicePrefix,
+                defaultDueDays: defaultDueDays,
+                instapay: instapay,
+                wallet: wallet,
+                bankIban: bankIban,
+                notesEn: notesEn,
+                notesAr: notesAr,
+                backupDir: backupDir,
+                lastBackupAt: lastBackupAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$AppSettingsTable, SettingsRow>(table),
+                  BaseReferences<_$AppDatabase, $AppSettingsTable, SettingsRow>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$AppSettingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AppSettingsTable,
+      SettingsRow,
+      $$AppSettingsTableFilterComposer,
+      $$AppSettingsTableOrderingComposer,
+      $$AppSettingsTableAnnotationComposer,
+      $$AppSettingsTableCreateCompanionBuilder,
+      $$AppSettingsTableUpdateCompanionBuilder,
+      (
+        SettingsRow,
+        BaseReferences<_$AppDatabase, $AppSettingsTable, SettingsRow>,
+      ),
+      SettingsRow,
+      PrefetchHooks Function()
+    >;
 typedef $$SectionsTableCreateCompanionBuilder =
     SectionsCompanion Function({
       required String id,
@@ -6004,12 +6111,12 @@ typedef $$ItemsTableProcessedTableManager =
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
-  $$AppSettingsTableTableManager get appSettings =>
-      $$AppSettingsTableTableManager(_db, _db.appSettings);
   $$ClientsTableTableManager get clients =>
       $$ClientsTableTableManager(_db, _db.clients);
   $$InvoicesTableTableManager get invoices =>
       $$InvoicesTableTableManager(_db, _db.invoices);
+  $$AppSettingsTableTableManager get appSettings =>
+      $$AppSettingsTableTableManager(_db, _db.appSettings);
   $$SectionsTableTableManager get sections =>
       $$SectionsTableTableManager(_db, _db.sections);
   $$ItemsTableTableManager get items =>

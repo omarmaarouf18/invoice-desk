@@ -9,7 +9,7 @@
 %global __provides_exclude_from ^/opt/invoice-desk/.*$
 
 # Passed by scripts/package_linux.sh from pubspec.yaml.
-%{!?pkgversion: %global pkgversion 0.1.0}
+%{!?pkgversion: %global pkgversion 0.1.1}
 
 Name:           invoice-desk
 Version:        %{pkgversion}
@@ -67,5 +67,9 @@ fi
 %{_datadir}/icons/hicolor/256x256/apps/invoice-desk.png
 
 %changelog
+* Sun Nov 15 2026 Omar Maarouf <omarmaarouf18@users.noreply.github.com> - 0.1.1-1
+- Client deletion with Undo, archiving, and a backup before deleting a
+  client together with their invoices (database schema v2)
+
 * Sun Nov 15 2026 Omar Maarouf <omarmaarouf18@users.noreply.github.com> - 0.1.0-1
 - First RPM of Invoice Desk.

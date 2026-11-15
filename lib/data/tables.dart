@@ -45,6 +45,10 @@ class Clients extends Table {
   IntColumn get updatedAt => integer()();
   BoolColumn get archived => boolean().withDefault(const Constant(false))();
 
+  /// Soft delete (schema v2). Purged after 30 days once no invoice rows
+  /// reference the client. See `triggers.drift` for the guards.
+  IntColumn get deletedAt => integer().nullable()();
+
   @override
   Set<Column<Object>> get primaryKey => {id};
 

@@ -1150,6 +1150,78 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'ليست فاتورة ضريبية إلكترونية رسمية.'**
   String get notTaxInvoice;
+
+  /// No description provided for @menuDeleteClient.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف العميل'**
+  String get menuDeleteClient;
+
+  /// No description provided for @clientDeleted.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتحذف العميل {name}'**
+  String clientDeleted(String name);
+
+  /// No description provided for @clientArchivedSnack.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتأرشف {name} وفواتيره'**
+  String clientArchivedSnack(String name);
+
+  /// No description provided for @clientHasInvoicesTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'{name} عنده فواتير'**
+  String clientHasInvoicesTitle(String name);
+
+  /// No description provided for @clientHasInvoicesBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'عنده {invoices}، والمبلغ غير المدفوع: {unpaid}.\nالأرشفة بتخفي العميل وفواتيره من القائمة والبحث من غير ما تمسح حاجة، وتقدر ترجّعه من فلتر «مؤرشف».'**
+  String clientHasInvoicesBody(String invoices, String unpaid);
+
+  /// No description provided for @archiveRecommended.
+  ///
+  /// In ar, this message translates to:
+  /// **'أرشفة (مُستحسن)'**
+  String get archiveRecommended;
+
+  /// No description provided for @deleteClientAndInvoices.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف العميل وكل فواتيره'**
+  String get deleteClientAndInvoices;
+
+  /// No description provided for @confirmDeleteAllTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف {name} وكل فواتيره؟'**
+  String confirmDeleteAllTitle(String name);
+
+  /// No description provided for @confirmDeleteAllBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'هيتحذف {invoices}، منها المدفوع والمُرسل. هنعمل نسخة احتياطية الأول، وتقدر تتراجع لمدة ٨ ثواني.\nاكتب اسم العميل للتأكيد:'**
+  String confirmDeleteAllBody(String invoices);
+
+  /// No description provided for @clientDeletedWithInvoices.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتحذف {name} و{invoices}'**
+  String clientDeletedWithInvoices(String name, String invoices);
+
+  /// No description provided for @deleteBackupFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشلت النسخة الاحتياطية، فما اتحذفش حاجة'**
+  String get deleteBackupFailed;
+
+  /// No description provided for @clientDeleteFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'ماقدرناش نحذف العميل'**
+  String get clientDeleteFailed;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

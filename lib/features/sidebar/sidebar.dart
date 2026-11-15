@@ -224,30 +224,33 @@ class _FilterChips extends ConsumerWidget {
       SidebarFilter.overdue: l.filterOverdue,
       SidebarFilter.paid: l.filterPaid,
       SidebarFilter.drafts: l.filterDrafts,
+      SidebarFilter.archived: l.archived,
     };
-    return SizedBox(
-      height: 32,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsetsDirectional.symmetric(horizontal: Space.m),
+    // Wraps rather than scrolls, so every filter (the archive included)
+    // is visible at the sidebar's width.
+    return Padding(
+      padding: const EdgeInsetsDirectional.symmetric(horizontal: Space.m),
+      child: Wrap(
+        spacing: Space.xs,
+        runSpacing: Space.xs,
         children: [
           for (final e in labels.entries)
-            Padding(
-              padding: const EdgeInsetsDirectional.only(end: Space.xs),
-              child: ChoiceChip(
-                label: Text(e.value),
-                selected: current == e.key,
-                visualDensity: const VisualDensity(
-                  horizontal: -4,
-                  vertical: -4,
-                ),
-                labelPadding: const EdgeInsetsDirectional.symmetric(
-                  horizontal: 6,
-                ),
-                padding: const EdgeInsetsDirectional.symmetric(horizontal: 2),
-                onSelected: (_) =>
-                    ref.read(sidebarFilterProvider.notifier).set(e.key),
+            ChoiceChip(
+              label: Text(e.value),
+              avatar: e.key == SidebarFilter.archived
+                  ? const Icon(Icons.archive_outlined, size: 16)
+                  : null,
+              selected: current == e.key,
+              visualDensity: const VisualDensity(
+                horizontal: -4,
+                vertical: -4,
               ),
+              labelPadding: const EdgeInsetsDirectional.symmetric(
+                horizontal: 6,
+              ),
+              padding: const EdgeInsetsDirectional.symmetric(horizontal: 2),
+              onSelected: (_) =>
+                  ref.read(sidebarFilterProvider.notifier).set(e.key),
             ),
         ],
       ),
@@ -518,6 +521,11 @@ class _ClientGroupTile extends ConsumerWidget {
                       Icons.archive_outlined,
                       () => unawaited(actions.setArchived(c, archived: true)),
                     ),
+                  (
+                    l.menuDeleteClient,
+                    Icons.person_remove_outlined,
+                    () => unawaited(actions.deleteClient(c)),
+                  ),
                 ]),
               ),
               child: Padding(
