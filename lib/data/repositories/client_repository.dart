@@ -6,6 +6,7 @@ import 'package:invoice_desk/domain/models.dart';
 /// Clients: live list, archive, and the soft-delete rules (a client with
 /// live documents can only go together with them, as one batch).
 class ClientRepository with ClockedRepository {
+  /// Wraps [_db]; writes are stamped with [clock].
   ClientRepository(this._db, {this.clock = const Clock()});
   final AppDatabase _db;
   @override
@@ -14,20 +15,26 @@ class ClientRepository with ClockedRepository {
   /// Live clients (archived included), re-emitting on change.
   Stream<List<Client>> watchAll() => _db.clientsDao.watchAll();
 
+  /// Live clients, archived included, unordered.
   Future<List<Client>> getAll() => _db.clientsDao.getAll();
 
+  /// The live client with [id]; null when unknown or deleted.
   Future<Client?> getById(String id) async =>
       (await getAll()).where((c) => c.id == id).firstOrNull;
 
   /// Inserts or updates; trims text fields and keeps `createdAt`.
   Future<void> save(Client c) => at(() => _db.clientsDao.upsert(c));
 
+  /// Archived clients and their documents leave the sidebar, search and
+  /// summary; nothing is deleted.
   Future<void> setArchived(String id, {required bool archived}) =>
       at(() => _db.clientsDao.setArchived(id, archived: archived));
 
+  /// Invoices of [id] that are not in the trash.
   Future<int> countLiveInvoices(String id) =>
       _db.clientsDao.countLiveInvoices(id);
 
+  /// Contracts (amendments included) of [id] that are not in the trash.
   Future<int> countLiveContracts(String id) =>
       _db.clientsDao.countLiveContracts(id);
 
@@ -35,6 +42,7 @@ class ClientRepository with ClockedRepository {
   /// otherwise (trigger `clients_soft_delete_guard`).
   Future<void> softDelete(String id) => at(() => _db.clientsDao.softDelete(id));
 
+  /// Brings back a client deleted on its own (no documents).
   Future<void> undoDelete(String id) => at(() => _db.clientsDao.undoDelete(id));
 
   /// Client plus every live invoice and contract, one transaction, one
@@ -42,6 +50,9 @@ class ClientRepository with ClockedRepository {
   Future<int> softDeleteWithDocuments(String id) =>
       at(() => _db.clientsDao.softDeleteWithDocuments(id));
 
+  /// Restores the client and exactly the documents deleted with it
+  /// ([stamp] from [softDeleteWithDocuments]); earlier separate deletions
+  /// stay in the trash.
   Future<void> undoDeleteWithDocuments(String id, int stamp) =>
       at(() => _db.clientsDao.undoDeleteWithDocuments(id, stamp));
 }

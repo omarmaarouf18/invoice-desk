@@ -4,6 +4,7 @@ import 'package:clock/clock.dart';
 /// so timestamps written by the data layer (createdAt, updatedAt,
 /// deletedAt, purge cut-offs) follow the same clock as the UI and tests.
 mixin ClockedRepository {
+  /// The clock writes are stamped with; tests pass a fixed one.
   Clock get clock;
 
   /// Runs [body] with [clock] as the zone's clock.

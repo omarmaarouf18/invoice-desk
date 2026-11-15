@@ -9,6 +9,7 @@ import 'package:invoice_desk/domain/trash.dart';
 /// them within the database guards, and deletes them for good (after a
 /// `before-purge-…` backup).
 class TrashRepository {
+  /// [_backups] writes the `before-purge-…` file before any hard delete.
   TrashRepository(this._db, this._backups);
   final AppDatabase _db;
   final BackupService _backups;
@@ -23,6 +24,7 @@ class TrashRepository {
       .watch()
       .asyncMap((_) => entries());
 
+  /// Every trash entry, newest deletion first.
   Future<List<TrashEntry>> entries() async {
     final clients = await _db.select(_db.clients).get();
     final byId = {for (final c in clients) c.id: c};

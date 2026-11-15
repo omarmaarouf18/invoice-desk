@@ -8,6 +8,7 @@ import 'package:invoice_desk/domain/results.dart';
 /// Contracts with clauses, scope items and milestones, saved as one
 /// aggregate.
 class ContractRepository with ClockedRepository {
+  /// Wraps [_db]; writes are stamped with [clock].
   ContractRepository(this._db, {this.clock = const Clock()});
   final AppDatabase _db;
   @override
@@ -15,10 +16,13 @@ class ContractRepository with ClockedRepository {
 
   ContractsDao get _dao => _db.contractsDao;
 
+  /// Live contracts, fully loaded, re-emitting on any related change.
   Stream<List<Contract>> watchAll() => _dao.watchAll();
 
+  /// Live contracts, fully loaded, unordered.
   Future<List<Contract>> getAll() => _dao.getAll();
 
+  /// The contract with [id], deleted or not; null when unknown or purged.
   Future<Contract?> getById(String id) => _dao.getById(id);
 
   /// Next sequence of a numbering series in [year]; amendments don't count.
@@ -29,9 +33,13 @@ class ContractRepository with ClockedRepository {
   Future<int> nextAmendmentNo(String parentId) =>
       _dao.nextAmendmentNo(parentId);
 
+  /// Whether another contract (deleted ones included, since numbers are
+  /// never reused) already has [number].
   Future<bool> numberTaken(String number, {String? exceptId}) =>
       _dao.numberTaken(number, exceptId: exceptId);
 
+  /// Saves the aggregate atomically (clauses, scope, milestones replaced);
+  /// [DuplicateNumber] when the number or series/year/seq is taken.
   Future<SaveResult> save(Contract c) => at(() async {
     try {
       await _dao.saveContract(c);
@@ -41,6 +49,8 @@ class ContractRepository with ClockedRepository {
     }
   });
 
+  /// Points milestone [milestoneId] at invoice [invoiceId]; purging that
+  /// invoice later clears the link (ON DELETE SET NULL).
   Future<void> linkMilestone(String milestoneId, String invoiceId) =>
       at(() => _dao.linkMilestone(milestoneId, invoiceId));
 
@@ -55,6 +65,7 @@ class ContractRepository with ClockedRepository {
     }
   });
 
+  /// Restores the contract and the amendments deleted with it ([stamp]).
   Future<void> undoDelete(String id, int stamp) =>
       at(() => _dao.undoDelete(id, stamp));
 }

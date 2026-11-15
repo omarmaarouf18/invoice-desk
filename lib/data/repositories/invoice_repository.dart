@@ -8,6 +8,7 @@ import 'package:invoice_desk/domain/results.dart';
 
 /// Invoices with their sections and items, saved as one aggregate.
 class InvoiceRepository with ClockedRepository {
+  /// Wraps [_db]; writes are stamped with [clock].
   InvoiceRepository(this._db, {this.clock = const Clock()});
   final AppDatabase _db;
   @override
@@ -18,14 +19,18 @@ class InvoiceRepository with ClockedRepository {
   /// Live invoices, fully loaded, re-emitting on any related change.
   Stream<List<Invoice>> watchAll() => _dao.watchAll();
 
+  /// Invoices with sections and items; trashed ones only with
+  /// [includeDeleted].
   Future<List<Invoice>> getAll({bool includeDeleted = false}) =>
       _dao.getAll(includeDeleted: includeDeleted);
 
+  /// The invoice with [id], deleted or not; null when unknown or purged.
   Future<Invoice?> getById(String id) => _dao.getById(id);
 
   /// Next free sequence in [year]; deleted invoices keep their numbers.
   Future<int> nextSeqFor(int year) => _dao.nextSeqFor(year);
 
+  /// Whether another invoice (deleted ones included) already has [number].
   Future<bool> numberTaken(String number, {String? exceptId}) =>
       _dao.numberTaken(number, exceptId: exceptId);
 
@@ -40,12 +45,17 @@ class InvoiceRepository with ClockedRepository {
     }
   });
 
+  /// Moves the invoice to the trash (purged after 30 days).
   Future<void> softDelete(String id) => at(() => _dao.softDelete(id));
 
+  /// Takes the invoice out of the trash; refused by the database while its
+  /// client is deleted.
   Future<void> undoDelete(String id) => at(() => _dao.undoDelete(id));
 
+  /// Status paid with [date] as the paid date.
   Future<void> markPaid(String id, CalendarDate date) =>
       at(() => _dao.markPaid(id, date));
 
+  /// Invoices not in the trash.
   Future<int> countLive() => _dao.countLive();
 }

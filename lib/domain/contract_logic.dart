@@ -35,6 +35,8 @@ const builtInVariables = <String>[
   'jurisdiction',
 ];
 
+/// True for names filled from settings, the client, the contract or
+/// annex 2; everything else is a per-contract variable.
 bool isBuiltInVariable(String name) => builtInVariables.contains(name);
 
 /// Variable names in [text], in order of first appearance.
@@ -88,14 +90,22 @@ String formatContractMoney(int minor, Currency c) =>
 /// Resolves variable names against one contract. Empty values count as
 /// missing. Never stored: the stored text keeps its `{{…}}`.
 class VariableResolver {
+  /// Resolves against [contract], its [client] (null if missing) and the
+  /// provider [settings].
   VariableResolver({
     required this.contract,
     required this.client,
     required this.settings,
   });
 
+  /// Source of `contract.*`, `project.*`, `total`, `currency`,
+  /// `jurisdiction` and the custom variables.
   final Contract contract;
+
+  /// Source of `client.*`; null resolves all of them as missing.
   final Client? client;
+
+  /// Source of `provider.*`.
   final Settings settings;
 
   /// The value, or null when unknown or empty.
@@ -163,12 +173,19 @@ class VariableResolver {
   String resolveText(String text) => segments(text).map((s) => s.text).join();
 }
 
+/// A run of resolved text, for rendering with highlights.
 class TextSegment {
+  /// [text] is literal text, or a variable's value (its `{{name}}` when
+  /// [missing]).
   const TextSegment(this.text, {this.variable, this.missing = false});
+
+  /// What to print.
   final String text;
 
   /// Set when this segment came from `{{variable}}`.
   final String? variable;
+
+  /// The variable had no value; render highlighted.
   final bool missing;
 }
 
@@ -180,18 +197,28 @@ sealed class BodyBlock {
   const BodyBlock();
 }
 
+/// Consecutive non-bullet lines, joined with spaces.
 class ParagraphBlock extends BodyBlock {
+  /// A paragraph of [text].
   const ParagraphBlock(this.text);
+
+  /// The paragraph, still with its `{{variables}}`.
   final String text;
 }
 
+/// Consecutive `- ` lines, numbered from 1 in the PDF.
 class SubItemsBlock extends BodyBlock {
+  /// Sub-items without their `- ` markers.
   const SubItemsBlock(this.items);
+
+  /// One entry per sub-item, in order.
   final List<String> items;
 }
 
 final _bullet = RegExp(r'^\s*[-–•]\s+');
 
+/// Splits a clause body into paragraphs and sub-item runs; blank lines
+/// end either.
 List<BodyBlock> parseBody(String body) {
   final out = <BodyBlock>[];
   final para = <String>[];
@@ -315,6 +342,7 @@ List<int> milestoneAmounts(int totalMinor, List<PaymentMilestone> ms) {
 
 /// What the payments card warns about.
 class MilestoneCheck {
+  /// Built by [checkMilestones].
   const MilestoneCheck({
     required this.amounts,
     required this.sum,
@@ -322,17 +350,26 @@ class MilestoneCheck {
     required this.percentSumBp,
   });
 
+  /// Per milestone, in minor units, same order as the contract's.
   final List<int> amounts;
+
+  /// Sum of [amounts].
   final int sum;
+
+  /// The contract total, in minor units.
   final int total;
 
   /// Σ percentages of the percentage milestones only.
   final int percentSumBp;
 
+  /// What the milestones are short of the total (negative when over).
   int get difference => total - sum;
+
+  /// Milestones add up to the total exactly.
   bool get balanced => sum == total;
 }
 
+/// Amounts and sums for the payment annex's live check.
 MilestoneCheck checkMilestones(Contract c) {
   final amounts = milestoneAmounts(c.totalMinor, c.milestones);
   return MilestoneCheck(
@@ -347,8 +384,20 @@ MilestoneCheck checkMilestones(Contract c) {
 
 // ── Validation ────────────────────────────────────────────────────────────
 
-enum ContractIssue { missingClient, emptyNumber, duplicateNumber }
+/// Why a contract can't be saved yet.
+enum ContractIssue {
+  /// No client picked.
+  missingClient,
 
+  /// The number is blank.
+  emptyNumber,
+
+  /// Another contract (deleted included) has this number.
+  duplicateNumber,
+}
+
+/// Problems that block saving: no client, no number, or a number another
+/// contract already uses ([numberTaken], looked up by the caller).
 Set<ContractIssue> validateContract(
   Contract c, {
   required bool numberTaken,
@@ -362,7 +411,17 @@ Set<ContractIssue> validateContract(
 
 // ── Diff (restore from library) ──────────────────────────────────────────
 
-enum DiffOp { same, removed, added }
+/// A line's fate in [lineDiff].
+enum DiffOp {
+  /// In both texts.
+  same,
+
+  /// Only in the old text.
+  removed,
+
+  /// Only in the new text.
+  added,
+}
 
 /// Line-level diff (LCS), for the "restore from library" dialog.
 List<(DiffOp, String)> lineDiff(String before, String after) {

@@ -14,6 +14,7 @@ class SettingsRepository with ClockedRepository {
   /// Emits on every change; defaults until the row exists.
   Stream<Settings> watch() => _db.settingsDao.watch();
 
+  /// The settings row, or defaults when it doesn't exist yet.
   Future<Settings> get() => _db.settingsDao.get();
 
   /// Saves everything except backup bookkeeping, which the backup service

@@ -6,6 +6,7 @@ import 'package:invoice_desk/domain/models.dart';
 class InvoiceTotals {
   InvoiceTotals._(this.subtotal, this.vat, this.total);
 
+  /// Sums the sections per currency, then VAT per currency (half-up).
   factory InvoiceTotals.of(Invoice invoice) {
     final subtotal = MoneyBag();
     for (final s in invoice.sections) {
@@ -23,19 +24,29 @@ class InvoiceTotals {
     return InvoiceTotals._(subtotal, vat, total);
   }
 
+  /// Before VAT, per currency.
   final MoneyBag subtotal;
+
+  /// VAT per currency; empty when VAT is off.
   final MoneyBag vat;
+
+  /// Subtotal plus VAT, per currency; currencies are never added together.
   final MoneyBag total;
 }
 
+/// Values derived from an invoice; never stored.
 extension InvoiceDerived on Invoice {
+  /// Recomputed on every call; cheap for invoice-sized data.
   InvoiceTotals get totals => InvoiceTotals.of(this);
 
+  /// Sent and due before [today]; due today is not overdue yet.
   bool isOverdue(CalendarDate today) =>
       status == InvoiceStatus.sent && dueDate.isBefore(today);
 
+  /// Sent and not paid: counts towards "غير مدفوع".
   bool get isUnpaid => status == InvoiceStatus.sent;
 
+  /// The chip shown for this invoice on [today].
   DisplayStatus displayStatus(CalendarDate today) => switch (status) {
     InvoiceStatus.draft => DisplayStatus.draft,
     InvoiceStatus.paid => DisplayStatus.paid,
@@ -96,8 +107,23 @@ List<InvoiceSection> cloneSections(
 ];
 
 /// Validation problems the editor shows inline.
-enum InvoiceIssue { missingClient, emptyNumber, duplicateNumber, badNumber }
+/// Validation problems the editor shows inline.
+enum InvoiceIssue {
+  /// No client picked.
+  missingClient,
 
+  /// The number is blank.
+  emptyNumber,
+
+  /// Another invoice (deleted included) has this number.
+  duplicateNumber,
+
+  /// Reserved for malformed numbers; free-form numbers are accepted today.
+  badNumber,
+}
+
+/// Problems that block saving; [numberTaken] is asked for the trimmed
+/// number and this invoice's id.
 Set<InvoiceIssue> validateInvoice(
   Invoice invoice, {
   required bool Function(String number, String exceptId) numberTaken,

@@ -5,7 +5,16 @@ import 'package:meta/meta.dart';
 const trashRetention = Duration(days: 30);
 
 /// What kind of row a trash entry is.
-enum TrashKind { client, invoice, contract }
+enum TrashKind {
+  /// A client (restoring it restores its batch).
+  client,
+
+  /// An invoice with its sections and items.
+  invoice,
+
+  /// A contract with its parts and the amendments deleted with it.
+  contract,
+}
 
 /// One soft-deleted row, as "المحذوفات" lists it.
 @immutable
@@ -21,7 +30,10 @@ class TrashEntry {
     this.clientDeleted = false,
   });
 
+  /// Which table the row is in.
   final TrashKind kind;
+
+  /// The row's id.
   final String id;
 
   /// Client name, or the invoice/contract number; also what the user types
@@ -34,6 +46,8 @@ class TrashEntry {
 
   /// Owner of an invoice or contract; null for clients.
   final String? clientId;
+
+  /// Owner's display name, for "لـ …"; empty for clients.
   final String clientName;
 
   /// The owner is in the trash too: restoring this row needs the client
@@ -63,17 +77,24 @@ sealed class RestoreResult {
 
 /// Restored; [count] rows came back (a client's batch counts every row).
 class Restored extends RestoreResult {
+  /// [count] rows came back.
   const Restored(this.count);
+
+  /// Including the client when it was restored too.
   final int count;
 }
 
 /// The document's client is deleted; ask, then restore with the client.
 class NeedsClient extends RestoreResult {
+  /// [clientName] is the deleted owner.
   const NeedsClient(this.clientName);
+
+  /// Shown in the confirmation.
   final String clientName;
 }
 
 /// Nothing to restore (already restored or purged).
 class NotInTrash extends RestoreResult {
+  /// Nothing happened.
   const NotInTrash();
 }

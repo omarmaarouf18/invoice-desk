@@ -1,91 +1,122 @@
 # Invoice Desk
 
-Offline desktop invoicing for a solo freelancer. Arabic RTL shell, bilingual
-invoices, vector PDF export. Flutter (Material 3) · Riverpod 3 · drift/SQLite ·
-`pdf` + `printing`.
+**English.** Invoice Desk is an offline desktop app for freelancers who invoice in Arabic and English. You keep clients, invoices and contracts in one place, edit them with a live preview of the real PDF, and export clean, vector A4 documents. Everything stays on your computer in a single SQLite file, with automatic daily backups. There is no account and no cloud, and the app works fully without a network.
 
-## Run
+**العربية.** «سجل الفواتير» برنامج مكتبي يعمل بدون إنترنت للمستقلين الذين يصدرون فواتيرهم بالعربية والإنجليزية. تحفظ فيه العملاء والفواتير والعقود في مكان واحد، وتعدّلها مع معاينة حيّة لملف الـ PDF الحقيقي، ثم تصدّر مستندات A4 واضحة. كل البيانات تبقى على جهازك في ملف SQLite واحد مع نسخ احتياطية يومية تلقائية، بلا حساب ولا سحابة.
 
-```bash
-flutter pub get
-flutter run -d linux
-```
+![Invoice Desk: a signed contract open in the editor, with the client list on the right](docs/screenshot.png)
 
-Release build: `flutter build linux --release` → `build/linux/x64/release/bundle/invoice_desk`.
+> **Not an official tax e-invoice.** Invoice Desk produces commercial invoices as PDF. It does not connect to the Egyptian Tax Authority's e-invoicing system (or any other) and does not produce signed e-invoices. Where the law requires those, use the official system.
+
+## Features
+
+- **Invoices.** Bilingual (Arabic/English) and multi-currency (EGP, USD, SAR, AED, EUR).
+  - Sections each have their own currency, and lines are one-time, monthly or annual.
+  - Optional VAT, plus an optional scope/handover page.
+  - Duplicate, renewal (recurring lines only) and mark as paid.
+- **Contracts and quotes** from a clause library you maintain (Settings → مكتبة البنود).
+  - `{{variables}}` are filled from your profile, the client and the contract. Missing ones are highlighted and block sending.
+  - Annex 1 is the scope of work; annex 2 is payments, split by percentage or fixed amount.
+  - One click turns a payment milestone into an invoice.
+  - Signed contracts are locked; changes go through a numbered amendment (`CT-2026-0003-A1`).
+- **Live PDF preview** beside the editor on wide windows, with tabs on narrow ones. PDFs are A4 with vector text in IBM Plex Sans Arabic.
+- **Search** across clients, phone numbers, invoice and contract numbers, and contract titles. Filters: unpaid, overdue, paid, drafts, contracts in force, archived, and "المحذوفات" (trash).
+- **Safe deletes.**
+  - Everything goes to "المحذوفات" for 30 days with Undo.
+  - Clients with documents are archived rather than deleted, unless you type their name.
+  - Permanent deletes write a backup first.
+- **Backups.** A daily `VACUUM INTO` copy (the last 30 are kept), plus manual backup and restore in Settings. Backups from older versions restore too.
+- **CSV export** for your accountant: one row per invoice, with totals per currency.
+- **Light and dark themes.** The interface is right-to-left throughout, in Arabic.
 
 ## Install (Linux x86_64)
 
-Download from the release page, check the file against `SHA256SUMS.txt`
-(`sha256sum -c SHA256SUMS.txt --ignore-missing`), then pick one:
-
-**Fedora / RHEL (RPM)** — system-wide, in `/opt/invoice-desk`:
+Download the files from the release page and check them against `SHA256SUMS.txt`:
 
 ```bash
-sudo dnf install ./invoice-desk-0.2.0-1.x86_64.rpm
+sha256sum -c SHA256SUMS.txt --ignore-missing
+```
+
+**Fedora / RHEL (RPM).** Installs system-wide in `/opt/invoice-desk`, with a menu entry and the `invoice-desk` command:
+
+```bash
+sudo dnf install ./invoice-desk-0.3.0-1.x86_64.rpm
+```
+
+```bash
 sudo dnf remove invoice-desk   # removes the app only; your data and backups stay
 ```
 
-**Any distro (tarball)** — per user, no root, in `~/.local/opt/invoice-desk`:
+**Any distro (tarball).** Installs for your user only, in `~/.local/opt/invoice-desk`, without root:
 
 ```bash
-tar xzf invoice-desk-0.2.0-linux-x64.tar.gz
-./invoice-desk-0.2.0-linux-x64/install.sh     # later: ./uninstall.sh
+tar xzf invoice-desk-0.3.0-linux-x64.tar.gz && ./invoice-desk-0.3.0-linux-x64/install.sh
 ```
 
-**Any distro (AppImage)** — single file, nothing installed:
+To remove it later, run `./uninstall.sh` from the same folder.
+
+**Any distro (AppImage).** A single file; nothing is installed:
 
 ```bash
-chmod +x InvoiceDesk-0.2.0-x86_64.AppImage && ./InvoiceDesk-0.2.0-x86_64.AppImage
+chmod +x InvoiceDesk-0.3.0-x86_64.AppImage && ./InvoiceDesk-0.3.0-x86_64.AppImage
 ```
 
-All three need GTK 3 (present on every mainstream desktop). Uninstalling never
-touches your invoices: they live in your data folder (see below).
+All three need GTK 3, which every mainstream desktop has. Uninstalling never touches your data.
 
-Build the same packages locally: `./scripts/package_linux.sh` → `dist/`
-(needs `rpmbuild` for the RPM; the AppImage step downloads `appimagetool`).
+## Build from source
 
-## Where data lives
+You need Flutter 3.44 (Dart 3.12) and the Linux desktop toolchain (`clang`, `cmake`, `ninja-build`, `pkg-config`, `libgtk-3-dev`).
+
+```bash
+flutter pub get
+```
+
+```bash
+flutter run -d linux
+```
+
+```bash
+flutter build linux --release
+```
+
+The release build lands in `build/linux/x64/release/bundle/`. `./scripts/package_linux.sh` builds the tarball, AppImage, RPM and checksums into `dist/`; it needs `patchelf` and `rpmbuild`. `./scripts/ci_local.sh` runs every CI gate locally. See [docs/RELEASING.md](docs/RELEASING.md) and [docs/TESTING.md](docs/TESTING.md).
+
+## Data and backups
 
 | What | Where |
 |---|---|
-| Database | app support dir, `invoice_desk.sqlite` (Linux: `~/.local/share/me.omarmaarouf.invoice_desk/`) |
-| Window size, last invoice, theme, last export folder | `ui_state.json` next to the database |
-| Daily backups (`VACUUM INTO`, last 30 kept) | `backups/` inside the data folder, unless changed in بياناتي |
-| Override everything above | set `INVOICE_DESK_DATA_DIR=/some/folder` |
+| Database | `invoice_desk.sqlite` in the app-support folder (Linux: `~/.local/share/me.omarmaarouf.invoice_desk/`) |
+| Window size, theme, last open document, last export folder | `ui_state.json` next to the database |
+| Daily backups (last 30 kept), `before-delete-…` and `before-purge-…` copies | `backups/` in the data folder, unless changed in Settings |
 
-First launch seeds Omar's profile, the EL METR Academy client and invoice
-OM-2026-0001.
-
-## Keyboard
-
-Ctrl+N new invoice · Ctrl+Shift+N new client · Ctrl+K / Ctrl+F search ·
-Ctrl+S save · Ctrl+E export PDF · Ctrl+D duplicate · Ctrl+R renewal ·
-Ctrl+1 / Ctrl+2 edit / preview · Esc clears search / closes dialogs.
-In the items table Tab moves across cells and Enter in the last price cell adds a row.
-
-## Layout
-
-```
-lib/
-  main.dart, bootstrap.dart      window, DB open, ProviderScope, DB-error screen
-  core/                          Money/MoneyBag (integer minor units), CalendarDate, digit folding
-  domain/                        immutable models + pure rules (totals, numbering, renewal, overdue)
-  data/                          drift tables, DAOs, seed, backup/restore (only layer importing drift)
-  features/sidebar|editor|preview|settings|clients
-  pdf/invoice_pdf.dart           pure (invoice, client, settings) → PDF bytes
-  theme/                         tokens, light/dark ThemeData
-  l10n/arb/app_ar.arb            all UI strings (Arabic; keys ready for English)
-drift_schemas/                   committed schema snapshots for migrations
-```
-
-## Development
+Set `INVOICE_DESK_DATA_DIR=/some/folder` to move everything above, backups included. It's useful for trying things without touching your real data:
 
 ```bash
-dart run build_runner build          # after changing drift tables
-dart run drift_dev make-migrations   # after bumping schemaVersion
-flutter gen-l10n                     # after editing the ARB file
-flutter test                         # unit, DAO, PDF, flow and golden tests
-flutter test --update-goldens        # refresh goldens after intended UI changes
+INVOICE_DESK_DATA_DIR=$(mktemp -d) invoice-desk
 ```
 
-Fonts: IBM Plex Sans Arabic (SIL OFL, `assets/fonts/OFL.txt`).
+A new data folder starts with sample data: a profile, one client and one invoice. Edit or delete them as you like.
+
+## Keyboard shortcuts
+
+| Keys | Action |
+|---|---|
+| Ctrl+N | New invoice |
+| Ctrl+Shift+K | New contract |
+| Ctrl+Shift+N | New client |
+| Ctrl+K / Ctrl+F | Search |
+| Ctrl+S | Save now (everything also autosaves) |
+| Ctrl+E | Export PDF |
+| Ctrl+D | Duplicate |
+| Ctrl+R | Renewal invoice (recurring lines only) |
+| Ctrl+1 / Ctrl+2 | Edit / preview tab on narrow windows |
+| Esc | Clear search, close dialogs |
+
+In the items table, Tab moves across cells, and Enter in the last price cell adds a row.
+
+## Documentation
+
+- [Architecture](docs/ARCHITECTURE.md): layers, state, data flow, PDFs, and where sync will plug in
+- [Data model](docs/DATA_MODEL.md): every table, constraint and trigger, and the migration history
+- [Decisions](docs/adr/): ADRs
+- [Testing](docs/TESTING.md) · [Releasing](docs/RELEASING.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Changelog](CHANGELOG.md)

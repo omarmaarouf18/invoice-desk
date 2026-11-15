@@ -4,8 +4,10 @@ import 'package:meta/meta.dart';
 @immutable
 /// A local calendar day with no time or zone. Stored as `YYYY-MM-DD`.
 class CalendarDate implements Comparable<CalendarDate> {
+  /// Creates a date; [month] is 1–12. Not validated: use [tryParse] for input.
   const CalendarDate(this.year, this.month, this.day);
 
+  /// The local calendar day of [dt]; the time and zone are dropped.
   factory CalendarDate.fromDateTime(DateTime dt) =>
       CalendarDate(dt.year, dt.month, dt.day);
 
@@ -16,6 +18,8 @@ class CalendarDate implements Comparable<CalendarDate> {
     return d;
   }
 
+  /// Parses `YYYY-MM-DD` (Arabic-Indic digits allowed); null for anything
+  /// else, including impossible days such as `2026-02-30`.
   static CalendarDate? tryParse(String? iso) {
     if (iso == null) return null;
     final m = RegExp(
@@ -31,24 +35,35 @@ class CalendarDate implements Comparable<CalendarDate> {
     return CalendarDate(y, mo, d);
   }
 
+  /// Four-digit year.
   final int year;
+
+  /// 1 = January.
   final int month;
+
+  /// Day of the month, from 1.
   final int day;
 
+  /// Local midnight of this day, for date pickers.
   DateTime toDateTime() => DateTime(year, month, day);
 
+  /// This day moved by [days] (negative goes back); month and year roll
+  /// over, computed in UTC so daylight saving never shifts it.
   CalendarDate addDays(int days) =>
       CalendarDate.fromDateTime(DateTime.utc(year, month, day + days));
 
+  /// Whole days from this day to [other]; negative when [other] is earlier.
   int daysUntil(CalendarDate other) => DateTime.utc(
     other.year,
     other.month,
     other.day,
   ).difference(DateTime.utc(year, month, day)).inDays;
 
+  /// `YYYY-MM-DD`, the storage format (sorts as text).
   String toIso() =>
       '${year.toString().padLeft(4, '0')}-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}';
 
+  /// Strictly earlier than [other]; the same day is not before.
   bool isBefore(CalendarDate other) => compareTo(other) < 0;
 
   @override
