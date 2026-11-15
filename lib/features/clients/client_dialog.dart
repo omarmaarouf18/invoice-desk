@@ -81,29 +81,27 @@ class _ClientDialogState extends State<_ClientDialog> {
     );
   }
 
+  _Field field(
+    TextEditingController c,
+    String label, {
+    bool autofocus = false,
+    String? error,
+    TextDirection? dir,
+    TextInputType? type,
+  }) => _Field(
+    controller: c,
+    label: label,
+    autofocus: autofocus,
+    error: error,
+    dir: dir,
+    type: type,
+    onSubmitted: _submit,
+    onChanged: error == null ? null : () => setState(() => _showError = false),
+  );
+
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    _Field field(
-      TextEditingController c,
-      String label, {
-      bool autofocus = false,
-      String? error,
-      TextDirection? dir,
-      TextInputType? type,
-    }) => _Field(
-      controller: c,
-      label: label,
-      autofocus: autofocus,
-      error: error,
-      dir: dir,
-      type: type,
-      onSubmitted: _submit,
-      onChanged: error == null
-          ? null
-          : () => setState(() => _showError = false),
-    );
-
     return AlertDialog(
       title: Text(
         widget.client == null ? l.clientDialogNew : l.clientDialogEdit,

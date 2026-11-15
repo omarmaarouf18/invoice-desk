@@ -18,6 +18,7 @@ import 'package:invoice_desk/widgets/common.dart';
 part 'settings/appearance_card.dart';
 part 'settings/backup_card.dart';
 part 'settings/about_card.dart';
+part 'settings/form_cards.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -88,36 +89,7 @@ class _SettingsFormState extends ConsumerState<_SettingsForm> {
 
   @override
   Widget build(BuildContext context) {
-    final l = context.l10n;
-    final theme = Theme.of(context);
     final s = _draft;
-    Widget f(
-      String label,
-      String value,
-      Settings Function(Settings s, String v) set, {
-      TextDirection? dir,
-      int minLines = 1,
-      int maxLines = 1,
-      String? hint,
-    }) => SyncedTextField(
-      label: label,
-      hint: hint,
-      value: value,
-      textDirection: dir,
-      minLines: minLines,
-      maxLines: maxLines,
-      keyboardType: maxLines > 1 ? TextInputType.multiline : null,
-      onChanged: (v) => _update((x) => set(x, v)),
-    );
-    Widget pair(Widget a, Widget b) => Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(child: a),
-        const SizedBox(width: Space.m - 4),
-        Expanded(child: b),
-      ],
-    );
-    const gap = SizedBox(height: Space.m - 4);
     const cardGap = SizedBox(height: Space.m);
 
     return Scrollbar(
@@ -134,230 +106,17 @@ class _SettingsFormState extends ConsumerState<_SettingsForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            l.settingsTitle,
-                            style: theme.textTheme.headlineSmall,
-                          ),
-                          Text(
-                            l.settingsSubtitle,
-                            style: theme.textTheme.bodySmall,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Text(
-                      _dirty ? l.saving : l.saved,
-                      style: theme.textTheme.bodySmall,
-                    ),
-                    const SizedBox(width: Space.m),
-                    OutlinedButton.icon(
-                      onPressed: () => ref
-                          .read(workspaceProvider.notifier)
-                          .show(Workspace.invoice),
-                      icon: const Icon(Icons.arrow_forward, size: 18),
-                      label: Text(l.back),
-                    ),
-                  ],
-                ),
+                _SettingsHeader(dirty: _dirty),
                 const SizedBox(height: Space.l),
-                PanelCard(
-                  title: l.profile,
-                  icon: Icons.person_outline,
-                  child: Column(
-                    children: [
-                      pair(
-                        f(l.name, s.name, (x, v) => x.copyWith(name: v)),
-                        f(l.role, s.role, (x, v) => x.copyWith(role: v)),
-                      ),
-                      gap,
-                      pair(
-                        f(l.city, s.city, (x, v) => x.copyWith(city: v)),
-                        f(
-                          l.website,
-                          s.website,
-                          (x, v) => x.copyWith(website: v),
-                          dir: TextDirection.ltr,
-                        ),
-                      ),
-                      gap,
-                      pair(
-                        f(
-                          l.email,
-                          s.email,
-                          (x, v) => x.copyWith(email: v),
-                          dir: TextDirection.ltr,
-                        ),
-                        f(
-                          l.phone,
-                          s.phone,
-                          (x, v) => x.copyWith(phone: v),
-                          dir: TextDirection.ltr,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                _ProfileCard(s: s, update: _update),
                 cardGap,
-                PanelCard(
-                  title: l.invoicing,
-                  icon: Icons.tag,
-                  child: pair(
-                    f(
-                      l.invoicePrefix,
-                      s.invoicePrefix,
-                      (x, v) => x.copyWith(
-                        invoicePrefix: v.trim().isEmpty
-                            ? x.invoicePrefix
-                            : v.trim(),
-                      ),
-                      dir: TextDirection.ltr,
-                      hint: l.prefixHint,
-                    ),
-                    f(
-                      l.defaultDueDays,
-                      '${s.defaultDueDays}',
-                      (x, v) {
-                        final d = parseIntInput(v);
-                        return d == null || d > 3650
-                            ? x
-                            : x.copyWith(defaultDueDays: d);
-                      },
-                      dir: TextDirection.ltr,
-                    ),
-                  ),
-                ),
+                _InvoicingCard(s: s, update: _update),
                 cardGap,
-                PanelCard(
-                  title: l.contractsSettings,
-                  icon: Icons.gavel_outlined,
-                  trailing: FilledButton.tonalIcon(
-                    key: const ValueKey('open-library'),
-                    onPressed: () => ref
-                        .read(workspaceProvider.notifier)
-                        .show(Workspace.library),
-                    icon: const Icon(Icons.library_books_outlined, size: 18),
-                    label: Text(l.openLibrary),
-                  ),
-                  child: Column(
-                    children: [
-                      pair(
-                        f(
-                          l.legalName,
-                          s.legalName,
-                          (x, v) => x.copyWith(legalName: v),
-                        ),
-                        f(
-                          l.nationalIdOrRegistry,
-                          s.nationalIdOrRegistry,
-                          (x, v) => x.copyWith(nationalIdOrRegistry: v),
-                        ),
-                      ),
-                      gap,
-                      f(
-                        l.address,
-                        s.address,
-                        (x, v) => x.copyWith(address: v),
-                      ),
-                      gap,
-                      pair(
-                        f(
-                          l.contractPrefix,
-                          s.contractPrefix,
-                          (x, v) => x.copyWith(
-                            contractPrefix: v.trim().isEmpty
-                                ? x.contractPrefix
-                                : v.trim(),
-                          ),
-                          dir: TextDirection.ltr,
-                        ),
-                        f(
-                          l.quotePrefix,
-                          s.quotePrefix,
-                          (x, v) => x.copyWith(
-                            quotePrefix: v.trim().isEmpty
-                                ? x.quotePrefix
-                                : v.trim(),
-                          ),
-                          dir: TextDirection.ltr,
-                        ),
-                      ),
-                      gap,
-                      f(
-                        l.defaultJurisdiction,
-                        s.defaultJurisdiction,
-                        (x, v) => x.copyWith(defaultJurisdiction: v),
-                      ),
-                      gap,
-                      SwitchListTile(
-                        contentPadding: EdgeInsets.zero,
-                        value: s.contractWesternDigits,
-                        title: Text(l.westernDigits),
-                        onChanged: (v) => _update(
-                          (x) => x.copyWith(contractWesternDigits: v),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                _ContractsSettingsCard(s: s, update: _update),
                 cardGap,
-                PanelCard(
-                  title: l.payment,
-                  icon: Icons.account_balance_outlined,
-                  child: Column(
-                    children: [
-                      pair(
-                        f(
-                          l.instapay,
-                          s.instapay,
-                          (x, v) => x.copyWith(instapay: v),
-                          dir: TextDirection.ltr,
-                        ),
-                        f(
-                          l.wallet,
-                          s.wallet,
-                          (x, v) => x.copyWith(wallet: v),
-                          dir: TextDirection.ltr,
-                        ),
-                      ),
-                      gap,
-                      f(
-                        l.bankIban,
-                        s.bankIban,
-                        (x, v) => x.copyWith(bankIban: v),
-                        dir: TextDirection.ltr,
-                      ),
-                    ],
-                  ),
-                ),
+                _PaymentCard(s: s, update: _update),
                 cardGap,
-                PanelCard(
-                  title: l.defaultNotes,
-                  icon: Icons.notes_outlined,
-                  child: pair(
-                    f(
-                      l.notesEn,
-                      s.notesEn,
-                      (x, v) => x.copyWith(notesEn: v),
-                      dir: TextDirection.ltr,
-                      minLines: 4,
-                      maxLines: 10,
-                    ),
-                    f(
-                      l.notesAr,
-                      s.notesAr,
-                      (x, v) => x.copyWith(notesAr: v),
-                      dir: TextDirection.rtl,
-                      minLines: 4,
-                      maxLines: 10,
-                    ),
-                  ),
-                ),
+                _NotesCard(s: s, update: _update),
                 cardGap,
                 const _AppearanceCard(),
                 cardGap,

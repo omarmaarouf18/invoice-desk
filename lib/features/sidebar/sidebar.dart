@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/core/dates.dart';
+import 'package:invoice_desk/domain/contract_models.dart';
 import 'package:invoice_desk/domain/invoice_logic.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/actions.dart';
@@ -38,108 +39,131 @@ class Sidebar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = context.l10n;
     final theme = Theme.of(context);
-    final actions = AppActions(ref, context);
-    final onSettings = ref.watch(workspaceProvider) == Workspace.settings;
     return ColoredBox(
       color: theme.colorScheme.surface,
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          _SidebarHeader(),
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(
-              Space.m,
-              Space.m,
-              Space.s,
-              Space.s,
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.receipt_long_outlined,
-                  color: theme.colorScheme.primary,
-                  size: 22,
-                ),
-                const SizedBox(width: Space.s),
-                Expanded(
-                  child: Semantics(
-                    header: true,
-                    child: Text(
-                      l.sidebarTitle,
-                      style: theme.textTheme.titleLarge,
-                    ),
-                  ),
-                ),
-                IconButton(
-                  tooltip: '${l.newClient} (Ctrl+Shift+N)',
-                  onPressed: () => unawaited(actions.newClient()),
-                  icon: const Icon(Icons.person_add_alt, size: 20),
-                ),
-                Tooltip(
-                  message: l.myProfile,
-                  child: TextButton.icon(
-                    style: onSettings
-                        ? TextButton.styleFrom(
-                            backgroundColor: theme.colorScheme.primaryContainer,
-                          )
-                        : null,
-                    onPressed: () => ref
-                        .read(workspaceProvider.notifier)
-                        .show(
-                          onSettings ? Workspace.invoice : Workspace.settings,
-                        ),
-                    icon: const Icon(Icons.person_outline, size: 18),
-                    label: Text(l.myProfile),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Padding(
             padding: EdgeInsetsDirectional.symmetric(horizontal: Space.m),
             child: _SearchField(),
           ),
-          const SizedBox(height: Space.s + 4),
-          Padding(
-            padding: const EdgeInsetsDirectional.symmetric(horizontal: Space.m),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Tooltip(
-                    message: '${l.newInvoice} (Ctrl+N)',
-                    child: FilledButton.icon(
-                      style: _compact,
-                      onPressed: actions.newInvoice,
-                      icon: const Icon(Icons.add, size: 18),
-                      label: Text(l.newInvoice),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: Space.s),
-                Expanded(
-                  child: Tooltip(
-                    message: '${l.newContract} (Ctrl+Shift+K)',
-                    child: FilledButton.tonalIcon(
-                      key: const ValueKey('sidebar-new-contract'),
-                      style: _compact,
-                      onPressed: () => unawaited(
-                        ContractActions(ref, context).newContract(),
-                      ),
-                      icon: const Icon(Icons.gavel_outlined, size: 18),
-                      label: Text(l.newContract),
-                    ),
-                  ),
-                ),
-              ],
+          SizedBox(height: Space.s + 4),
+          _NewDocumentButtons(),
+          SizedBox(height: Space.s + 4),
+          _FilterChips(),
+          SizedBox(height: Space.s),
+          _SummaryStrip(),
+          Divider(),
+          Expanded(child: _ClientList()),
+        ],
+      ),
+    );
+  }
+}
+
+/// App title, new client, and the profile (settings) toggle.
+class _SidebarHeader extends ConsumerWidget {
+  const _SidebarHeader();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final actions = AppActions(ref, context);
+    final onSettings = ref.watch(workspaceProvider) == Workspace.settings;
+    final l = context.l10n;
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(
+        Space.m,
+        Space.m,
+        Space.s,
+        Space.s,
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.receipt_long_outlined,
+            color: theme.colorScheme.primary,
+            size: 22,
+          ),
+          const SizedBox(width: Space.s),
+          Expanded(
+            child: Semantics(
+              header: true,
+              child: Text(
+                l.sidebarTitle,
+                style: theme.textTheme.titleLarge,
+              ),
             ),
           ),
-          const SizedBox(height: Space.s + 4),
-          const _FilterChips(),
-          const SizedBox(height: Space.s),
-          const _SummaryStrip(),
-          const Divider(),
-          const Expanded(child: _ClientList()),
+          IconButton(
+            tooltip: '${l.newClient} (Ctrl+Shift+N)',
+            onPressed: () => unawaited(actions.newClient()),
+            icon: const Icon(Icons.person_add_alt, size: 20),
+          ),
+          Tooltip(
+            message: l.myProfile,
+            child: TextButton.icon(
+              style: onSettings
+                  ? TextButton.styleFrom(
+                      backgroundColor: theme.colorScheme.primaryContainer,
+                    )
+                  : null,
+              onPressed: () => ref
+                  .read(workspaceProvider.notifier)
+                  .show(
+                    onSettings ? Workspace.invoice : Workspace.settings,
+                  ),
+              icon: const Icon(Icons.person_outline, size: 18),
+              label: Text(l.myProfile),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// "فاتورة جديدة" and "عقد جديد".
+class _NewDocumentButtons extends ConsumerWidget {
+  const _NewDocumentButtons();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final actions = AppActions(ref, context);
+    final l = context.l10n;
+    return Padding(
+      padding: const EdgeInsetsDirectional.symmetric(horizontal: Space.m),
+      child: Row(
+        children: [
+          Expanded(
+            child: Tooltip(
+              message: '${l.newInvoice} (Ctrl+N)',
+              child: FilledButton.icon(
+                style: _compact,
+                onPressed: actions.newInvoice,
+                icon: const Icon(Icons.add, size: 18),
+                label: Text(l.newInvoice),
+              ),
+            ),
+          ),
+          const SizedBox(width: Space.s),
+          Expanded(
+            child: Tooltip(
+              message: '${l.newContract} (Ctrl+Shift+K)',
+              child: FilledButton.tonalIcon(
+                key: const ValueKey('sidebar-new-contract'),
+                style: _compact,
+                onPressed: () => unawaited(
+                  ContractActions(ref, context).newContract(),
+                ),
+                icon: const Icon(Icons.gavel_outlined, size: 18),
+                label: Text(l.newContract),
+              ),
+            ),
+          ),
         ],
       ),
     );

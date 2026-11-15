@@ -7,7 +7,6 @@ class _InvoiceRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = context.l10n;
     final theme = Theme.of(context);
     final selected =
         ref.watch(workspaceProvider) == Workspace.invoice &&
@@ -37,74 +36,12 @@ class _InvoiceRow extends ConsumerWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(Space.radiusSmall),
           onTap: () => unawaited(actions.open(invoice.id)),
-          onSecondaryTapUp: (d) => unawaited(
-            _menu(context, d.globalPosition, [
-              (
-                l.menuOpen,
-                Icons.open_in_new,
-                () => unawaited(actions.open(invoice.id)),
-              ),
-              (
-                l.menuDuplicate,
-                Icons.copy_outlined,
-                () => unawaited(actions.duplicate(invoice.id)),
-              ),
-              (
-                l.menuRenew,
-                Icons.autorenew,
-                () => unawaited(actions.renew(invoice.id)),
-              ),
-              if (invoice.status != InvoiceStatus.paid)
-                (
-                  l.menuMarkPaid,
-                  Icons.check_circle_outline,
-                  () => unawaited(actions.markPaid(invoice.id)),
-                ),
-              (
-                l.menuDelete,
-                Icons.delete_outline,
-                () => unawaited(actions.delete(invoice.id)),
-              ),
-            ]),
-          ),
-          child: Padding(
-            padding: const EdgeInsetsDirectional.symmetric(
-              horizontal: Space.s + 2,
-              vertical: Space.s - 1,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  children: [
-                    HighlightText(
-                      invoice.number,
-                      query: query,
-                      textDirection: TextDirection.ltr,
-                      style: theme.textTheme.labelLarge,
-                    ),
-                    const SizedBox(width: Space.s),
-                    StatusChip(status, dense: true),
-                    const Spacer(),
-                    Text(
-                      formatArabicDayMonth(invoice.issueDate),
-                      style: theme.textTheme.bodySmall,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  invoice.totals.total.format(empty: '—'),
-                  textDirection: TextDirection.ltr,
-                  textAlign: TextAlign.right,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface,
-                  ),
-                ),
-              ],
-            ),
+          onSecondaryTapUp: (d) =>
+              unawaited(_invoiceMenu(context, ref, invoice, d.globalPosition)),
+          child: _InvoiceRowContent(
+            invoice: invoice,
+            query: query,
+            status: status,
           ),
         ),
       ),
@@ -119,7 +56,6 @@ class _ContractRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = context.l10n;
     final theme = Theme.of(context);
     final c = entry.contract;
     final selected =
@@ -149,77 +85,196 @@ class _ContractRow extends ConsumerWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(Space.radiusSmall),
           onTap: () => unawaited(a.open(c.id)),
-          onSecondaryTapUp: (d) => unawaited(
-            _menu(context, d.globalPosition, [
-              (l.menuOpen, Icons.open_in_new, () => unawaited(a.open(c.id))),
-              if (!c.isAmendment)
-                (
-                  l.duplicateContract,
-                  Icons.copy_outlined,
-                  () => unawaited(a.duplicate(c.id)),
-                ),
-              (
-                l.createAmendment,
-                Icons.note_add_outlined,
-                () => unawaited(a.amendment(c.id)),
-              ),
-              (
-                l.menuDelete,
-                Icons.delete_outline,
-                () => unawaited(a.delete(c.id)),
-              ),
-            ]),
-          ),
-          child: Padding(
-            padding: const EdgeInsetsDirectional.symmetric(
-              horizontal: Space.s + 2,
-              vertical: Space.s - 1,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  children: [
-                    if (entry.depth > 0) ...[
-                      Icon(
-                        Icons.subdirectory_arrow_left,
-                        size: 14,
-                        color: context.colors.muted,
-                      ),
-                      const SizedBox(width: 2),
-                    ],
-                    Flexible(
-                      child: HighlightText(
-                        c.number,
-                        query: query,
-                        textDirection: TextDirection.ltr,
-                        style: theme.textTheme.labelLarge,
-                      ),
-                    ),
-                    const SizedBox(width: Space.s),
-                    ContractStatusChip(c.status, dense: true),
-                  ],
-                ),
-                if (c.title.trim().isNotEmpty || c.projectName.isNotEmpty)
-                  HighlightText(
-                    c.title.trim().isNotEmpty ? c.title : c.projectName,
-                    query: query,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface,
-                    ),
-                  ),
-                if (c.totalMinor > 0)
-                  Text(
-                    c.total.format(),
-                    textDirection: TextDirection.ltr,
-                    textAlign: TextAlign.right,
-                    style: theme.textTheme.bodySmall,
-                  ),
-              ],
-            ),
+          onSecondaryTapUp: (d) =>
+              unawaited(_contractMenu(context, ref, c, d.globalPosition)),
+          child: _ContractRowContent(
+            entry: entry,
+            query: query,
           ),
         ),
       ),
     );
   }
+}
+
+class _InvoiceRowContent extends StatelessWidget {
+  const _InvoiceRowContent({
+    required this.invoice,
+    required this.query,
+    required this.status,
+  });
+  final Invoice invoice;
+  final String query;
+  final DisplayStatus status;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsetsDirectional.symmetric(
+        horizontal: Space.s + 2,
+        vertical: Space.s - 1,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              HighlightText(
+                invoice.number,
+                query: query,
+                textDirection: TextDirection.ltr,
+                style: theme.textTheme.labelLarge,
+              ),
+              const SizedBox(width: Space.s),
+              StatusChip(status, dense: true),
+              const Spacer(),
+              Text(
+                formatArabicDayMonth(invoice.issueDate),
+                style: theme.textTheme.bodySmall,
+              ),
+            ],
+          ),
+          const SizedBox(height: 2),
+          Text(
+            invoice.totals.total.format(empty: '—'),
+            textDirection: TextDirection.ltr,
+            textAlign: TextAlign.right,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurface,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ContractRowContent extends StatelessWidget {
+  const _ContractRowContent({required this.entry, required this.query});
+  final ContractEntry entry;
+  final String query;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = entry.contract;
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsetsDirectional.symmetric(
+        horizontal: Space.s + 2,
+        vertical: Space.s - 1,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              if (entry.depth > 0) ...[
+                Icon(
+                  Icons.subdirectory_arrow_left,
+                  size: 14,
+                  color: context.colors.muted,
+                ),
+                const SizedBox(width: 2),
+              ],
+              Flexible(
+                child: HighlightText(
+                  c.number,
+                  query: query,
+                  textDirection: TextDirection.ltr,
+                  style: theme.textTheme.labelLarge,
+                ),
+              ),
+              const SizedBox(width: Space.s),
+              ContractStatusChip(c.status, dense: true),
+            ],
+          ),
+          if (c.title.trim().isNotEmpty || c.projectName.isNotEmpty)
+            HighlightText(
+              c.title.trim().isNotEmpty ? c.title : c.projectName,
+              query: query,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+          if (c.totalMinor > 0)
+            Text(
+              c.total.format(),
+              textDirection: TextDirection.ltr,
+              textAlign: TextAlign.right,
+              style: theme.textTheme.bodySmall,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+Future<void> _invoiceMenu(
+  BuildContext context,
+  WidgetRef ref,
+  Invoice invoice,
+  Offset at,
+) {
+  final l = context.l10n;
+  final actions = AppActions(ref, context);
+  return _menu(context, at, [
+    (
+      l.menuOpen,
+      Icons.open_in_new,
+      () => unawaited(actions.open(invoice.id)),
+    ),
+    (
+      l.menuDuplicate,
+      Icons.copy_outlined,
+      () => unawaited(actions.duplicate(invoice.id)),
+    ),
+    (
+      l.menuRenew,
+      Icons.autorenew,
+      () => unawaited(actions.renew(invoice.id)),
+    ),
+    if (invoice.status != InvoiceStatus.paid)
+      (
+        l.menuMarkPaid,
+        Icons.check_circle_outline,
+        () => unawaited(actions.markPaid(invoice.id)),
+      ),
+    (
+      l.menuDelete,
+      Icons.delete_outline,
+      () => unawaited(actions.delete(invoice.id)),
+    ),
+  ]);
+}
+
+Future<void> _contractMenu(
+  BuildContext context,
+  WidgetRef ref,
+  Contract c,
+  Offset at,
+) {
+  final l = context.l10n;
+  final a = ContractActions(ref, context);
+  return _menu(context, at, [
+    (l.menuOpen, Icons.open_in_new, () => unawaited(a.open(c.id))),
+    if (!c.isAmendment)
+      (
+        l.duplicateContract,
+        Icons.copy_outlined,
+        () => unawaited(a.duplicate(c.id)),
+      ),
+    (
+      l.createAmendment,
+      Icons.note_add_outlined,
+      () => unawaited(a.amendment(c.id)),
+    ),
+    (
+      l.menuDelete,
+      Icons.delete_outline,
+      () => unawaited(a.delete(c.id)),
+    ),
+  ]);
 }
