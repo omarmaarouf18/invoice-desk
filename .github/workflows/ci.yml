@@ -1,10 +1,13 @@
 name: CI
 
+# Required on main (ruleset "protect-main"): quality, tests, build-linux.
 on:
   push:
-    branches: [main]
+    branches: [main, release-packaging]
   pull_request:
-    branches: [main]
+
+permissions:
+  contents: read
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -14,53 +17,220 @@ env:
   FLUTTER_VERSION: "3.44.6"
 
 jobs:
-  analyze-test-build:
-    name: analyze-test-build
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Linux build dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
-
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: stable
-          cache: true
-
-      - run: flutter pub get
-      - name: Format
-        run: dart format --set-exit-if-changed --output=none lib test
-      - name: Analyze
-        run: flutter analyze --fatal-infos
-      - name: Test (goldens run in their own job)
-        run: flutter test --exclude-tags golden
-      - name: Build Linux release
-        run: flutter build linux --release
-
-  goldens:
-    name: goldens
+  quality:
+    name: quality
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
       - run: flutter pub get
-      # Never --update-goldens in CI. Failures upload the diff images.
+      - name: Format
+        run: dart format --set-exit-if-changed --output=none lib test tool
+      - name: Analyze
+        run: flutter analyze --fatal-infos
+      - name: Layering
+        run: flutter test test/architecture
+      - name: File and build-method sizes
+        run: dart run tool/check_sizes.dart
+
+  codegen:
+    name: codegen freshness
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: build_runner
+        run: dart run build_runner build
+      - name: gen-l10n
+        run: flutter gen-l10n
+      - name: Data model doc
+        run: dart run tool/gen_data_model.dart --check
+      - name: Nothing changed
+        run: |
+          git status --porcelain
+          test -z "$(git status --porcelain)" || { echo "::error::generated files are stale; run build_runner / gen-l10n and commit"; git diff --stat; exit 1; }
+
+  schema:
+    name: schema guard
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Dump schema and migration helpers
+        run: dart run drift_dev make-migrations
+      - name: Snapshot matches the code
+        run: |
+          # A changed schema without a version bump rewrites the current
+          # snapshot; a bump without committing creates a new one. Either
+          # way the tree is dirty.
+          test -z "$(git status --porcelain drift_schemas lib/data/db.steps.dart test/drift)" || {
+            echo "::error::schema changed without a committed snapshot/migration test (run dart run drift_dev make-migrations)"
+            git status --porcelain drift_schemas lib/data/db.steps.dart test/drift
+            exit 1
+          }
+
+  tests:
+    name: tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Tests with coverage (goldens run separately)
+        run: flutter test --exclude-tags golden --coverage
+      - name: Coverage by layer + gates (core, domain, money, numbering, migrations ≥ 90%)
+        run: dart run tool/coverage_report.dart coverage/lcov.info
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: lcov
+          path: coverage/lcov.info
+          retention-days: 14
+
+  goldens:
+    name: goldens
+    # Pinned image: font rendering differs between runner images.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      # App fonts are bundled (assets/fonts); Material icons come from the
+      # pinned Flutter SDK. Never --update-goldens in CI.
       - name: Golden tests
         run: flutter test --tags golden
-      - name: Upload golden failures
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: failure()
-        uses: actions/upload-artifact@v4
         with:
           name: golden-failures
           path: test/**/failures/
-          if-no-files-found: ignore
+          retention-days: 14
+
+  security:
+    name: security
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+      - name: gitleaks (secrets in the diff)
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: false
+      - name: osv-scanner (pubspec.lock)
+        run: |
+          curl -sSfL -o osv-scanner https://github.com/google/osv-scanner/releases/download/v2.0.2/osv-scanner_linux_amd64
+          echo "3abcfd7126c453a00421487e721b296e0cb68085bd431d6cef60872774170fc8  osv-scanner" | sha256sum -c -
+          chmod +x osv-scanner
+          ./osv-scanner scan --lockfile pubspec.lock
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Licences of shipped dependencies (fail on GPL/AGPL)
+        run: dart run tool/check_licenses.dart --markdown
+
+  build-linux:
+    name: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Linux build and packaging dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev \
+            liblzma-dev patchelf rpm rpmlint xvfb file desktop-file-utils
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Build and package (tarball, AppImage, RPM; RUNPATH guard inside)
+        env:
+          APPIMAGE_EXTRACT_AND_RUN: "1"
+        run: ./scripts/package_linux.sh
+      - name: rpmlint (report only; known categories are accepted, see ADR 0006/0007)
+        run: rpmlint dist/*.rpm | tee rpmlint.txt || true
+      - name: Smoke run (10 s, temp data dir, fail on Dart exceptions)
+        run: |
+          T=$(mktemp -d)
+          INVOICE_DESK_DATA_DIR=$T timeout 10 xvfb-run -a build/linux/x64/release/bundle/invoice_desk > smoke.log 2>&1 || true
+          cat smoke.log
+          test -f "$T/invoice_desk.sqlite" || { echo "::error::database was not created"; exit 1; }
+          if grep -E "Unhandled Exception|\[ERROR:flutter|Exception caught by" smoke.log; then
+            echo "::error::Dart exception during smoke run"; exit 1
+          fi
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: linux-packages
+          path: |
+            dist/*.tar.gz
+            dist/*.AppImage
+            dist/*.rpm
+            dist/SHA256SUMS.txt
+            rpmlint.txt
+          retention-days: 7
+
+  build-windows:
+    name: build (windows)
+    runs-on: windows-2022
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter build windows --release
+
+  build-macos:
+    name: build (macos)
+    runs-on: macos-14
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter build macos --release
