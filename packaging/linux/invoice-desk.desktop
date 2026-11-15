@@ -1,0 +1,16 @@
+[Desktop Entry]
+Type=Application
+Version=1.5
+Name=Invoice Desk
+Name[ar]=سجل الفواتير
+GenericName=Invoicing
+GenericName[ar]=الفواتير
+Comment=Bilingual (Arabic/English) invoicing for freelancers
+Comment[ar]=فواتير ثنائية اللغة للعمل الحر
+Exec=invoice-desk
+Icon=invoice-desk
+Terminal=false
+Categories=Office;Finance;
+Keywords=invoice;billing;finance;فاتورة;فواتير;
+StartupNotify=true
+StartupWMClass=me.omarmaarouf.invoice_desk
