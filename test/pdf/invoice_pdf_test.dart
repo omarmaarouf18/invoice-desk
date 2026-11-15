@@ -1,0 +1,91 @@
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:drift/drift.dart' show driftRuntimeOptions;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:invoice_desk/data/db.dart';
+import 'package:invoice_desk/pdf/invoice_pdf.dart';
+
+ByteData _font(String w) => ByteData.sublistView(
+  File('assets/fonts/IBMPlexSansArabic-$w.ttf').readAsBytesSync(),
+);
+
+void main() {
+  driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
+  late InvoicePdfData data;
+  final fonts = PdfFonts.fromBytes(
+    regular: _font('Regular'),
+    semiBold: _font('SemiBold'),
+    bold: _font('Bold'),
+  );
+
+  setUpAll(() async {
+    final db = AppDatabase.memory(seed: true);
+    final inv = (await db.invoicesDao.getAll()).single;
+    data = InvoicePdfData(
+      invoice: inv,
+      client: (await db.clientsDao.getAll()).single,
+      settings: await db.settingsDao.get(),
+    );
+    await db.close();
+  });
+
+  Future<(Uint8List, int)> render(InvoicePdfData d) async {
+    final doc = buildInvoiceDocument(d, fonts);
+    final bytes = await doc.save();
+    return (bytes, doc.document.pdfPageList.pages.length);
+  }
+
+  test('seed invoice renders to one page', () async {
+    final (bytes, pages) = await render(data);
+    const out = String.fromEnvironment('PDF_OUT');
+    if (out.isNotEmpty) File('$out/seed.pdf').writeAsBytesSync(bytes);
+    expect(bytes.length, greaterThan(10000));
+    expect(String.fromCharCodes(bytes.take(5)), '%PDF-');
+    expect(pages, 1);
+  });
+
+  test('scope page adds a second page', () async {
+    final inv = data.invoice;
+    final withScope = InvoicePdfData(
+      invoice: inv.copyWith(
+        scope: inv.scope.copyWith(
+          enabled: true,
+          title: 'تطبيق المعلم الواحد',
+          overview: 'تطبيق تعليمي متكامل مع لوحة تحكم.',
+          done: 'تصميم الواجهات\nتطوير التطبيق',
+          delivered: 'الكود المصدري\nحسابات المتاجر',
+          warranty: 'ضمان 3 أشهر.',
+        ),
+      ),
+      client: data.client,
+      settings: data.settings,
+    );
+    final (bytes, pages) = await render(withScope);
+    const out = String.fromEnvironment('PDF_OUT');
+    if (out.isNotEmpty) File('$out/scope.pdf').writeAsBytesSync(bytes);
+    expect(pages, 2);
+  });
+
+  test('long tables break across pages', () async {
+    final inv = data.invoice;
+    final sec = inv.sections[1];
+    final many = [
+      for (var i = 0; i < 80; i++)
+        sec.items[i % sec.items.length].copyWith(id: 'x$i'),
+    ];
+    final (_, pages) = await render(
+      InvoicePdfData(
+        invoice: inv.copyWith(
+          sections: [
+            inv.sections[0],
+            sec.copyWith(items: many),
+          ],
+        ),
+        client: data.client,
+        settings: data.settings,
+      ),
+    );
+    expect(pages, greaterThan(1));
+  });
+}
