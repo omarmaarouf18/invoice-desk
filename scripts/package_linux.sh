@@ -39,6 +39,49 @@ rm -rf "${dist}"
 mkdir -p "${dist}"
 assets=()
 
+# ── RUNPATHs ───────────────────────────────────────────────────────────
+# Flutter's plugin builds leave absolute build-machine paths in RUNPATH.
+# Package a patched copy: main binary → $ORIGIN/lib, lib/*.so → $ORIGIN.
+command -v patchelf >/dev/null 2>&1 || {
+  echo "patchelf is required (Fedora: sudo dnf install patchelf; Debian/Ubuntu: sudo apt install patchelf)" >&2
+  exit 1
+}
+is_elf() { [[ "$(head -c 4 "$1" | od -An -c | tr -d ' \n')" == '177ELF' ]]; }
+runpath_of() { readelf -d "$1" 2>/dev/null | sed -n 's/.*(\(RUNPATH\|RPATH\)).*\[\(.*\)\]/\2/p'; }
+
+patched="${dist}/stage/bundle"
+mkdir -p "${patched}"
+cp -a "${bundle}/." "${patched}/"
+while IFS= read -r -d '' f; do
+  is_elf "${f}" || continue
+  [[ -n "$(runpath_of "${f}")" ]] || continue   # no RUNPATH: leave untouched
+  rel="${f#"${patched}/"}"
+  case "${rel}" in
+    invoice_desk) want='$ORIGIN/lib' ;;
+    lib/*)        want='$ORIGIN' ;;
+    *) echo "unexpected ELF with RUNPATH: ${rel}" >&2; exit 1 ;;
+  esac
+  patchelf --set-rpath "${want}" "${f}"
+done < <(find "${patched}" -type f -print0)
+
+# Fail if any RUNPATH/RPATH entry is anything other than $ORIGIN-relative.
+bad=0
+while IFS= read -r -d '' f; do
+  is_elf "${f}" || continue
+  rp="$(runpath_of "${f}")"
+  [[ -z "${rp}" ]] && continue
+  IFS=':' read -r -a entries <<< "${rp}"
+  for e in "${entries[@]}"; do
+    if [[ "${e}" != '$ORIGIN' && "${e}" != '$ORIGIN/'* ]]; then
+      echo "RUNPATH not relative in ${f#"${patched}/"}: ${rp}" >&2
+      bad=1
+    fi
+  done
+done < <(find "${patched}" -type f -print0)
+[[ ${bad} -eq 0 ]] || { echo "absolute RUNPATH remains; refusing to package" >&2; exit 1; }
+echo "==> RUNPATHs rewritten to \$ORIGIN"
+bundle="${patched}"
+
 # ── tarball ────────────────────────────────────────────────────────────
 name="invoice-desk-${VERSION}-linux-x64"
 stage="${dist}/stage/${name}"
@@ -104,6 +147,6 @@ fi
 
 # ── checksums ──────────────────────────────────────────────────────────
 (cd "${dist}" && sha256sum "${assets[@]}" > SHA256SUMS.txt)
-rm -rf "${dist}/stage/${name}" "${dist}/stage/InvoiceDesk.AppDir" "${dist}/stage/rpmbuild"
+rm -rf "${dist}/stage/${name}" "${dist}/stage/InvoiceDesk.AppDir" "${dist}/stage/rpmbuild" "${dist}/stage/bundle"
 echo "==> dist/SHA256SUMS.txt"
 (cd "${dist}" && ls -lh "${assets[@]}" SHA256SUMS.txt)
