@@ -2086,6 +2086,162 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'{a} و{b}'**
   String andJoin(String a, String b);
+
+  /// No description provided for @trash.
+  ///
+  /// In ar, this message translates to:
+  /// **'المحذوفات'**
+  String get trash;
+
+  /// No description provided for @trashEmptyState.
+  ///
+  /// In ar, this message translates to:
+  /// **'المحذوفات فاضية.'**
+  String get trashEmptyState;
+
+  /// No description provided for @trashDeletedOn.
+  ///
+  /// In ar, this message translates to:
+  /// **'حُذف في {date}'**
+  String trashDeletedOn(String date);
+
+  /// No description provided for @trashPurgeIn.
+  ///
+  /// In ar, this message translates to:
+  /// **'{days, plural, =0{يُحذف نهائيًا اليوم} =1{يُحذف نهائيًا خلال يوم} =2{يُحذف نهائيًا خلال يومين} few{يُحذف نهائيًا خلال {days} أيام} other{يُحذف نهائيًا خلال {days} يوم}}'**
+  String trashPurgeIn(int days);
+
+  /// No description provided for @trashRestore.
+  ///
+  /// In ar, this message translates to:
+  /// **'استعادة'**
+  String get trashRestore;
+
+  /// No description provided for @trashPurge.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف نهائي'**
+  String get trashPurge;
+
+  /// No description provided for @trashEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'إفراغ المحذوفات'**
+  String get trashEmpty;
+
+  /// No description provided for @trashOfClient.
+  ///
+  /// In ar, this message translates to:
+  /// **'لـ {name}'**
+  String trashOfClient(String name);
+
+  /// No description provided for @trashClientDeleted.
+  ///
+  /// In ar, this message translates to:
+  /// **'العميل محذوف'**
+  String get trashClientDeleted;
+
+  /// No description provided for @trashRestored.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتسترجع {label}'**
+  String trashRestored(String label);
+
+  /// No description provided for @trashRestoredCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =1{اتسترجع عنصر واحد} =2{اتسترجع عنصران} few{اتسترجع {count} عناصر} other{اتسترجع {count} عنصر}}'**
+  String trashRestoredCount(int count);
+
+  /// No description provided for @trashNeedsClientTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'العميل {name} في المحذوفات'**
+  String trashNeedsClientTitle(String name);
+
+  /// No description provided for @trashNeedsClientBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يمكن استعادة {label} وعميله محذوف. استعادة العميل معه؟ (العميل وحده، من غير باقي مستنداته المحذوفة)'**
+  String trashNeedsClientBody(String label);
+
+  /// No description provided for @trashRestoreBoth.
+  ///
+  /// In ar, this message translates to:
+  /// **'استعادة الاثنين'**
+  String get trashRestoreBoth;
+
+  /// No description provided for @trashPurgeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف {label} نهائيًا؟'**
+  String trashPurgeTitle(String label);
+
+  /// No description provided for @trashPurgeBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يمكن التراجع عن الحذف النهائي من داخل البرنامج. سنكتب نسخة احتياطية قبل الحذف.\nاكتب «{label}» للتأكيد:'**
+  String trashPurgeBody(String label);
+
+  /// No description provided for @trashPurgeClientBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيُحذف العميل {label} نهائيًا مع كل فواتيره وعقوده المحذوفة. سنكتب نسخة احتياطية قبل الحذف.\nاكتب اسم العميل للتأكيد:'**
+  String trashPurgeClientBody(String label);
+
+  /// No description provided for @trashEmptyTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إفراغ المحذوفات؟'**
+  String get trashEmptyTitle;
+
+  /// No description provided for @trashEmptyBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيُحذف {count} نهائيًا. سنكتب نسخة احتياطية قبل الحذف.\nاكتب «إفراغ» للتأكيد:'**
+  String trashEmptyBody(String count);
+
+  /// No description provided for @trashEmptyWord.
+  ///
+  /// In ar, this message translates to:
+  /// **'إفراغ'**
+  String get trashEmptyWord;
+
+  /// No description provided for @trashItems.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =1{عنصر واحد} =2{عنصران} few{{count} عناصر} other{{count} عنصر}}'**
+  String trashItems(int count);
+
+  /// No description provided for @trashPurged.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتحذف نهائيًا. النسخة الاحتياطية: {file}'**
+  String trashPurged(String file);
+
+  /// No description provided for @trashPurgeFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'ماقدرناش نحذف نهائيًا'**
+  String get trashPurgeFailed;
+
+  /// No description provided for @undoOrTrash.
+  ///
+  /// In ar, this message translates to:
+  /// **'{message} — تراجع، أو من المحذوفات'**
+  String undoOrTrash(String message);
+
+  /// No description provided for @kindClientLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'عميل'**
+  String get kindClientLabel;
+
+  /// No description provided for @kindInvoiceLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'فاتورة'**
+  String get kindInvoiceLabel;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

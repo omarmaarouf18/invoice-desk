@@ -46,7 +46,10 @@ void main() {
     await menu(tester, 'Empty Co', 'حذف العميل');
 
     expect(find.text('Empty Co'), findsNothing);
-    expect(find.text('اتحذف العميل Empty Co'), findsOneWidget);
+    expect(
+      find.text('اتحذف العميل Empty Co — تراجع، أو من المحذوفات'),
+      findsOneWidget,
+    );
     expect(await drive(tester, db.clientsDao.getAll), hasLength(1));
 
     await tapAndSettle(tester, find.text('تراجع'));
@@ -61,7 +64,10 @@ void main() {
       tester,
       find.byKey(const ValueKey('client-dialog-delete')),
     );
-    expect(find.text('اتحذف العميل Empty Co'), findsOneWidget);
+    expect(
+      find.text('اتحذف العميل Empty Co — تراجع، أو من المحذوفات'),
+      findsOneWidget,
+    );
     expect(await drive(tester, db.clientsDao.getAll), hasLength(1));
   });
 
@@ -144,7 +150,10 @@ void main() {
       expect(await drive(tester, db.clientsDao.getAll), hasLength(1));
       expect(await drive(tester, db.invoicesDao.countLive), 0);
       expect(find.text('EL METR Academy'), findsNothing);
-      expect(find.text('اتحذف EL METR Academy و1 فاتورة'), findsOneWidget);
+      expect(
+        find.text('اتحذف EL METR Academy و1 فاتورة — تراجع، أو من المحذوفات'),
+        findsOneWidget,
+      );
 
       await tapAndSettle(tester, find.text('تراجع'));
       expect(await drive(tester, db.clientsDao.getAll), hasLength(2));

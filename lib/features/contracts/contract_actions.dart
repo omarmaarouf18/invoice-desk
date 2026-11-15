@@ -108,7 +108,7 @@ class ContractActions {
       final r = await ctl.delete(target);
       if (r == null) return;
       showSnack(
-        l.contractDeleted(r.number),
+        l.undoOrTrash(l.contractDeleted(r.number)),
         duration: const Duration(seconds: 8),
         actions: [(l.undo, () => unawaited(ctl.undoDelete(target, r.stamp)))],
       );

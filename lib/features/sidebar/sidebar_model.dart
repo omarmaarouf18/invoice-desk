@@ -16,6 +16,9 @@ enum SidebarFilter {
   drafts,
   contractsInForce,
   archived,
+
+  /// "المحذوفات": the sidebar shows the trash list instead of clients.
+  trash,
 }
 
 /// A contract row; amendments sit under their original ([depth] 1).
@@ -70,7 +73,7 @@ bool matchesFilter(Invoice i, SidebarFilter f, CalendarDate today) =>
       SidebarFilter.paid => i.status == InvoiceStatus.paid,
       SidebarFilter.drafts => i.status == InvoiceStatus.draft,
       SidebarFilter.archived => true,
-      SidebarFilter.contractsInForce => false,
+      SidebarFilter.contractsInForce || SidebarFilter.trash => false,
     };
 
 bool _contractMatches(Contract c, SidebarFilter f, Contract? parent) =>

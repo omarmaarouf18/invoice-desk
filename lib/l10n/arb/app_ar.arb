@@ -699,5 +699,129 @@
         "type": "String"
       }
     }
-  }
+  },
+  "trash": "المحذوفات",
+  "trashEmptyState": "المحذوفات فاضية.",
+  "trashDeletedOn": "حُذف في {date}",
+  "@trashDeletedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "trashPurgeIn": "{days, plural, =0{يُحذف نهائيًا اليوم} =1{يُحذف نهائيًا خلال يوم} =2{يُحذف نهائيًا خلال يومين} few{يُحذف نهائيًا خلال {days} أيام} other{يُحذف نهائيًا خلال {days} يوم}}",
+  "@trashPurgeIn": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "trashRestore": "استعادة",
+  "trashPurge": "حذف نهائي",
+  "trashEmpty": "إفراغ المحذوفات",
+  "trashOfClient": "لـ {name}",
+  "@trashOfClient": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "trashClientDeleted": "العميل محذوف",
+  "trashRestored": "اتسترجع {label}",
+  "@trashRestored": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "trashRestoredCount": "{count, plural, =1{اتسترجع عنصر واحد} =2{اتسترجع عنصران} few{اتسترجع {count} عناصر} other{اتسترجع {count} عنصر}}",
+  "@trashRestoredCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "trashNeedsClientTitle": "العميل {name} في المحذوفات",
+  "@trashNeedsClientTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "trashNeedsClientBody": "لا يمكن استعادة {label} وعميله محذوف. استعادة العميل معه؟ (العميل وحده، من غير باقي مستنداته المحذوفة)",
+  "@trashNeedsClientBody": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "trashRestoreBoth": "استعادة الاثنين",
+  "trashPurgeTitle": "حذف {label} نهائيًا؟",
+  "@trashPurgeTitle": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "trashPurgeBody": "لا يمكن التراجع عن الحذف النهائي من داخل البرنامج. سنكتب نسخة احتياطية قبل الحذف.\nاكتب «{label}» للتأكيد:",
+  "@trashPurgeBody": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "trashPurgeClientBody": "سيُحذف العميل {label} نهائيًا مع كل فواتيره وعقوده المحذوفة. سنكتب نسخة احتياطية قبل الحذف.\nاكتب اسم العميل للتأكيد:",
+  "@trashPurgeClientBody": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "trashEmptyTitle": "إفراغ المحذوفات؟",
+  "trashEmptyBody": "سيُحذف {count} نهائيًا. سنكتب نسخة احتياطية قبل الحذف.\nاكتب «إفراغ» للتأكيد:",
+  "@trashEmptyBody": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "trashEmptyWord": "إفراغ",
+  "trashItems": "{count, plural, =1{عنصر واحد} =2{عنصران} few{{count} عناصر} other{{count} عنصر}}",
+  "@trashItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "trashPurged": "اتحذف نهائيًا. النسخة الاحتياطية: {file}",
+  "@trashPurged": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "trashPurgeFailed": "ماقدرناش نحذف نهائيًا",
+  "undoOrTrash": "{message} — تراجع، أو من المحذوفات",
+  "@undoOrTrash": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "kindClientLabel": "عميل",
+  "kindInvoiceLabel": "فاتورة"
 }

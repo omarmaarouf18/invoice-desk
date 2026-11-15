@@ -7,8 +7,10 @@ import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/data/app_paths.dart';
 import 'package:invoice_desk/data/backup.dart';
 import 'package:invoice_desk/data/db.dart';
+import 'package:invoice_desk/data/repositories/trash_repository.dart';
 import 'package:invoice_desk/domain/contract_models.dart';
 import 'package:invoice_desk/domain/models.dart';
+import 'package:invoice_desk/domain/trash.dart';
 import 'package:invoice_desk/pdf/invoice_pdf.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -37,6 +39,18 @@ final backupServiceProvider = Provider<BackupService>(
     ref.watch(databaseProvider),
     paths: ref.watch(appPathsProvider),
   ),
+);
+
+final trashRepositoryProvider = Provider<TrashRepository>(
+  (ref) => TrashRepository(
+    ref.watch(databaseProvider),
+    ref.watch(backupServiceProvider),
+  ),
+);
+
+/// "المحذوفات", newest deletion first.
+final trashProvider = StreamProvider<List<TrashEntry>>(
+  (ref) => ref.watch(trashRepositoryProvider).watch(),
 );
 
 final settingsProvider = StreamProvider<Settings>(

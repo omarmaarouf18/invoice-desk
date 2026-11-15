@@ -135,7 +135,7 @@ class AppActions {
         return showSnack(l.clientDeleteFailed);
       }
       return showSnack(
-        l.clientDeleted(c.name),
+        l.undoOrTrash(l.clientDeleted(c.name)),
         duration: const Duration(seconds: 8),
         actions: [(l.undo, () => unawaited(dao.undoDelete(c.id)))],
       );
@@ -183,12 +183,17 @@ class AppActions {
           return showSnack(l.clientDeleteFailed);
         }
         showSnack(
-          contracts == 0
-              ? l.clientDeletedWithInvoices(c.name, l.invoiceCount(count))
-              : l.clientDeletedWithDocuments(
-                  c.name,
-                  l.andJoin(l.invoiceCount(count), l.contractCount(contracts)),
-                ),
+          l.undoOrTrash(
+            contracts == 0
+                ? l.clientDeletedWithInvoices(c.name, l.invoiceCount(count))
+                : l.clientDeletedWithDocuments(
+                    c.name,
+                    l.andJoin(
+                      l.invoiceCount(count),
+                      l.contractCount(contracts),
+                    ),
+                  ),
+          ),
           duration: const Duration(seconds: 8),
           actions: [
             (
@@ -243,7 +248,7 @@ class AppActions {
     final number = await editor.delete(target);
     if (number == null) return;
     showSnack(
-      l.deleted(number),
+      l.undoOrTrash(l.deleted(number)),
       duration: const Duration(seconds: 8),
       actions: [(l.undo, () => unawaited(editor.undoDelete(target)))],
     );

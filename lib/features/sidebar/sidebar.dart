@@ -14,6 +14,7 @@ import 'package:invoice_desk/features/contracts/contract_widgets.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart';
 import 'package:invoice_desk/features/sidebar/sidebar_model.dart';
 import 'package:invoice_desk/features/sidebar/sidebar_providers.dart';
+import 'package:invoice_desk/features/trash/trash_view.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
 import 'package:invoice_desk/widgets/common.dart';
@@ -247,6 +248,7 @@ class _FilterChips extends ConsumerWidget {
       SidebarFilter.drafts: l.filterDrafts,
       SidebarFilter.contractsInForce: l.filterContractsInForce,
       SidebarFilter.archived: l.archived,
+      SidebarFilter.trash: l.trash,
     };
     // Wraps rather than scrolls, so every filter (the archive included)
     // is visible at the sidebar's width.
@@ -266,6 +268,10 @@ class _FilterChips extends ConsumerWidget {
                 ),
                 SidebarFilter.contractsInForce => const Icon(
                   Icons.gavel_outlined,
+                  size: 16,
+                ),
+                SidebarFilter.trash => const Icon(
+                  Icons.delete_outline,
                   size: 16,
                 ),
                 _ => null,
@@ -368,6 +374,9 @@ class _ClientList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
+    if (ref.watch(sidebarFilterProvider) == SidebarFilter.trash) {
+      return const TrashList();
+    }
     final data = ref.watch(sidebarDataProvider);
     final query = ref.watch(searchQueryProvider);
     return switch (data) {

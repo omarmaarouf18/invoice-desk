@@ -1108,4 +1108,135 @@ class AppLocalizationsAr extends AppLocalizations {
   String andJoin(String a, String b) {
     return '$a و$b';
   }
+
+  @override
+  String get trash => 'المحذوفات';
+
+  @override
+  String get trashEmptyState => 'المحذوفات فاضية.';
+
+  @override
+  String trashDeletedOn(String date) {
+    return 'حُذف في $date';
+  }
+
+  @override
+  String trashPurgeIn(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'يُحذف نهائيًا خلال $days يوم',
+      few: 'يُحذف نهائيًا خلال $days أيام',
+      two: 'يُحذف نهائيًا خلال يومين',
+      one: 'يُحذف نهائيًا خلال يوم',
+      zero: 'يُحذف نهائيًا اليوم',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get trashRestore => 'استعادة';
+
+  @override
+  String get trashPurge => 'حذف نهائي';
+
+  @override
+  String get trashEmpty => 'إفراغ المحذوفات';
+
+  @override
+  String trashOfClient(String name) {
+    return 'لـ $name';
+  }
+
+  @override
+  String get trashClientDeleted => 'العميل محذوف';
+
+  @override
+  String trashRestored(String label) {
+    return 'اتسترجع $label';
+  }
+
+  @override
+  String trashRestoredCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'اتسترجع $count عنصر',
+      few: 'اتسترجع $count عناصر',
+      two: 'اتسترجع عنصران',
+      one: 'اتسترجع عنصر واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String trashNeedsClientTitle(String name) {
+    return 'العميل $name في المحذوفات';
+  }
+
+  @override
+  String trashNeedsClientBody(String label) {
+    return 'لا يمكن استعادة $label وعميله محذوف. استعادة العميل معه؟ (العميل وحده، من غير باقي مستنداته المحذوفة)';
+  }
+
+  @override
+  String get trashRestoreBoth => 'استعادة الاثنين';
+
+  @override
+  String trashPurgeTitle(String label) {
+    return 'حذف $label نهائيًا؟';
+  }
+
+  @override
+  String trashPurgeBody(String label) {
+    return 'لا يمكن التراجع عن الحذف النهائي من داخل البرنامج. سنكتب نسخة احتياطية قبل الحذف.\nاكتب «$label» للتأكيد:';
+  }
+
+  @override
+  String trashPurgeClientBody(String label) {
+    return 'سيُحذف العميل $label نهائيًا مع كل فواتيره وعقوده المحذوفة. سنكتب نسخة احتياطية قبل الحذف.\nاكتب اسم العميل للتأكيد:';
+  }
+
+  @override
+  String get trashEmptyTitle => 'إفراغ المحذوفات؟';
+
+  @override
+  String trashEmptyBody(String count) {
+    return 'سيُحذف $count نهائيًا. سنكتب نسخة احتياطية قبل الحذف.\nاكتب «إفراغ» للتأكيد:';
+  }
+
+  @override
+  String get trashEmptyWord => 'إفراغ';
+
+  @override
+  String trashItems(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count عنصر',
+      few: '$count عناصر',
+      two: 'عنصران',
+      one: 'عنصر واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String trashPurged(String file) {
+    return 'اتحذف نهائيًا. النسخة الاحتياطية: $file';
+  }
+
+  @override
+  String get trashPurgeFailed => 'ماقدرناش نحذف نهائيًا';
+
+  @override
+  String undoOrTrash(String message) {
+    return '$message — تراجع، أو من المحذوفات';
+  }
+
+  @override
+  String get kindClientLabel => 'عميل';
+
+  @override
+  String get kindInvoiceLabel => 'فاتورة';
 }
