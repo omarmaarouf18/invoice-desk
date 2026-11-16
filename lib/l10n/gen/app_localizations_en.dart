@@ -55,12 +55,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String invoiceCount(int count) {
-    return '$count invoices';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count invoices',
+      few: '$count invoices',
+      two: '2 invoices',
+      one: '1 invoice',
+    );
+    return '$_temp0';
   }
 
   @override
   String unpaidCount(int count) {
-    return '$count unpaid';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count unpaid',
+      few: '$count unpaid',
+      two: '2 unpaid',
+      one: '1 unpaid',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -490,7 +506,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String restoreConfirmBody(String date, int count, int clients) {
-    return 'The backup from $date holds $count invoices and $clients clients.\nAll current data is replaced by it, and a copy of your current data is saved first.';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count invoices',
+      few: '$count invoices',
+      two: '2 invoices',
+      one: '1 invoice',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      clients,
+      locale: localeName,
+      other: '$count clients',
+      few: '$count clients',
+      two: '2 clients',
+      one: '1 client',
+    );
+    return 'The backup from $date holds $_temp0 and $_temp1.\nAll current data is replaced by it, and a copy of your current data is saved first.';
   }
 
   @override
@@ -624,12 +656,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String groupContracts(int count) {
-    return 'Contracts ($count)';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count',
+      one: '1',
+    );
+    return 'Contracts ($_temp0)';
   }
 
   @override
   String groupInvoices(int count) {
-    return 'Invoices ($count)';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count',
+      one: '1',
+    );
+    return 'Invoices ($_temp0)';
   }
 
   @override
@@ -637,7 +681,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String contractCount(int count) {
-    return '$count contracts';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count contracts',
+      few: '$count contracts',
+      two: '2 contracts',
+      one: '1 contract',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -675,7 +727,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String clauseCount(int count) {
-    return '$count clauses';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count clauses',
+      few: '$count clauses',
+      two: '2 clauses',
+      one: '1 clause',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1320,17 +1380,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String daysOverdue(int days) {
-    return '$days days overdue';
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days overdue',
+      few: '$days days overdue',
+      two: '2 days overdue',
+      one: '1 day overdue',
+    );
+    return '$_temp0';
   }
 
   @override
   String overdueRollup(int count) {
-    return '$count overdue';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count overdue',
+      few: '$count overdue',
+      two: '2 overdue',
+      one: '1 overdue',
+    );
+    return '$_temp0';
   }
 
   @override
   String moreEvents(int count) {
-    return '+$count';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count',
+      one: '1',
+    );
+    return '+$_temp0';
   }
 
   @override
@@ -1465,12 +1547,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String icsExported(int count) {
-    return '$count events exported';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events exported',
+      few: '$count events exported',
+      two: '2 events exported',
+      one: '1 event exported',
+    );
+    return '$_temp0';
   }
 
   @override
   String todayBanner(int due, int overdue) {
-    return 'Today: $due due · $overdue overdue';
+    String _temp0 = intl.Intl.pluralLogic(
+      due,
+      locale: localeName,
+      other: '$due due',
+      few: '$due due',
+      two: '2 due',
+      one: '1 due',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      overdue,
+      locale: localeName,
+      other: '$overdue overdue',
+      few: '$overdue overdue',
+      two: '2 overdue',
+      one: '1 overdue',
+    );
+    return 'Today: $_temp0 · $_temp1';
   }
 
   @override
@@ -1511,7 +1617,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String demoRemoved(int count) {
-    return 'Demo data removed ($count rows)';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count rows',
+      few: '$count rows',
+      two: '2 rows',
+      one: '1 row',
+    );
+    return 'Demo data removed ($_temp0)';
   }
 
   @override

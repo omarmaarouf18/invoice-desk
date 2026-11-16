@@ -287,7 +287,7 @@ void main() {
     await tester.tap(find.text('حذف العميل').last);
     await settle(tester);
     expect(find.text('Beta Co عنده فواتير'), findsOneWidget);
-    expect(find.textContaining('1 عقد'), findsWidgets);
+    expect(find.textContaining('عقد واحد'), findsWidgets);
     await tap(tester, find.byKey(const ValueKey('archive-client')));
     expect(
       find.descendant(of: find.byType(Sidebar), matching: find.text('Beta Co')),

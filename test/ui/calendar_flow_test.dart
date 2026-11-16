@@ -54,7 +54,7 @@ void main() {
   ) async {
     final c = await pumpShell(tester, db);
     expect(find.byKey(const Key('today-banner')), findsOneWidget);
-    expect(find.text('اليوم: 1 مستحق · 1 متأخر'), findsOneWidget);
+    expect(find.text('اليوم: مستحق واحد · متأخر واحد'), findsOneWidget);
     await openCalendar(tester);
     expect(c.read(calendarModeProvider), isTrue);
     expect(c.read(uiPrefsProvider).calendarMode, isTrue);

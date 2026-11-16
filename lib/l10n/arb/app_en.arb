@@ -14,8 +14,8 @@
   "summaryUnpaid": "Unpaid",
   "summaryOverdue": "Overdue",
   "summaryNothingDue": "Nothing outstanding",
-  "invoiceCount": "{count} invoices",
-  "unpaidCount": "{count} unpaid",
+  "invoiceCount": "{count, plural, =1{1 invoice} =2{2 invoices} few{{count} invoices} other{{count} invoices}}",
+  "unpaidCount": "{count, plural, =1{1 unpaid} =2{2 unpaid} few{{count} unpaid} other{{count} unpaid}}",
   "noResults": "No results for “{query}”",
   "clearSearch": "Clear search",
   "noInvoicesForClient": "No matching invoices",
@@ -151,7 +151,7 @@
   "backupDone": "Backup saved",
   "backupFailed": "Could not take the backup",
   "restoreConfirmTitle": "Restore this backup?",
-  "restoreConfirmBody": "The backup from {date} holds {count} invoices and {clients} clients.\nAll current data is replaced by it, and a copy of your current data is saved first.",
+  "restoreConfirmBody": "The backup from {date} holds {count, plural, =1{1 invoice} =2{2 invoices} few{{count} invoices} other{{count} invoices}} and {clients, plural, =1{1 client} =2{2 clients} few{{count} clients} other{{count} clients}}.\nAll current data is replaced by it, and a copy of your current data is saved first.",
   "restoreAction": "Restore",
   "restoreDone": "Restored",
   "restoreBad": "This file is not a valid Invoice Desk backup",
@@ -355,7 +355,7 @@
   "deleteBackupFailed": "The backup failed, so nothing was deleted",
   "clientDeleteFailed": "The client could not be deleted",
   "newContract": "New contract",
-  "groupContracts": "Contracts ({count})",
+  "groupContracts": "Contracts ({count, plural, =1{1} other{{count}}})",
   "@groupContracts": {
     "placeholders": {
       "count": {
@@ -363,7 +363,7 @@
       }
     }
   },
-  "groupInvoices": "Invoices ({count})",
+  "groupInvoices": "Invoices ({count, plural, =1{1} other{{count}}})",
   "@groupInvoices": {
     "placeholders": {
       "count": {
@@ -372,7 +372,7 @@
     }
   },
   "filterContractsInForce": "Contracts in force",
-  "contractCount": "{count} contracts",
+  "contractCount": "{count, plural, =1{1 contract} =2{2 contracts} few{{count} contracts} other{{count} contracts}}",
   "@contractCount": {
     "placeholders": {
       "count": {
@@ -391,7 +391,7 @@
   "kindAmendment": "Amendment",
   "newContractTitle": "New contract",
   "chooseTemplate": "Choose a template",
-  "clauseCount": "{count} clauses",
+  "clauseCount": "{count, plural, =1{1 clause} =2{2 clauses} few{{count} clauses} other{{count} clauses}}",
   "@clauseCount": {
     "placeholders": {
       "count": {
@@ -850,7 +850,7 @@
   "evContractEnd": "Contract ends",
   "evWarrantyEnd": "Warranty ends",
   "evReminder": "Reminder",
-  "daysOverdue": "{days} days overdue",
+  "daysOverdue": "{days, plural, =1{1 day overdue} =2{2 days overdue} few{{days} days overdue} other{{days} days overdue}}",
   "@daysOverdue": {
     "placeholders": {
       "days": {
@@ -858,7 +858,7 @@
       }
     }
   },
-  "overdueRollup": "{count} overdue",
+  "overdueRollup": "{count, plural, =1{1 overdue} =2{2 overdue} few{{count} overdue} other{{count} overdue}}",
   "@overdueRollup": {
     "placeholders": {
       "count": {
@@ -866,7 +866,7 @@
       }
     }
   },
-  "moreEvents": "+{count}",
+  "moreEvents": "+{count, plural, =1{1} other{{count}}}",
   "@moreEvents": {
     "placeholders": {
       "count": {
@@ -933,7 +933,7 @@
   "exportIcs": "Export to the calendar (.ics)",
   "exportIcsVisible": "The visible range",
   "exportIcsFuture": "All upcoming events",
-  "icsExported": "{count} events exported",
+  "icsExported": "{count, plural, =1{1 event exported} =2{2 events exported} few{{count} events exported} other{{count} events exported}}",
   "@icsExported": {
     "placeholders": {
       "count": {
@@ -941,7 +941,7 @@
       }
     }
   },
-  "todayBanner": "Today: {due} due · {overdue} overdue",
+  "todayBanner": "Today: {due, plural, =1{1 due} =2{2 due} few{{due} due} other{{due} due}} · {overdue, plural, =1{1 overdue} =2{2 overdue} few{{overdue} overdue} other{{overdue} overdue}}",
   "@todayBanner": {
     "placeholders": {
       "due": {
@@ -964,7 +964,7 @@
   "demoRemoveTitle": "Remove the demo data?",
   "demoRemoveBody": "Only the demo rows are deleted permanently, after a backup. Your data is not touched.",
   "demoAdded": "Demo data added",
-  "demoRemoved": "Demo data removed ({count} rows)",
+  "demoRemoved": "Demo data removed ({count, plural, =1{1 row} =2{2 rows} few{{count} rows} other{{count} rows}})",
   "@demoRemoved": {
     "placeholders": {
       "count": {

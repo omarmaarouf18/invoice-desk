@@ -14,8 +14,8 @@
   "summaryUnpaid": "غير مدفوع",
   "summaryOverdue": "متأخرة",
   "summaryNothingDue": "لا مستحقات مفتوحة",
-  "invoiceCount": "{count} فاتورة",
-  "unpaidCount": "{count} غير مدفوعة",
+  "invoiceCount": "{count, plural, =1{فاتورة واحدة} =2{فاتورتان} few{{count} فواتير} other{{count} فاتورة}}",
+  "unpaidCount": "{count, plural, =1{غير مدفوعة واحدة} =2{غير مدفوعتان} few{{count} غير مدفوعة} other{{count} غير مدفوعة}}",
   "noResults": "لا نتائج لـ «{query}»",
   "clearSearch": "مسح البحث",
   "noInvoicesForClient": "لا فواتير مطابقة",
@@ -151,7 +151,7 @@
   "backupDone": "تم حفظ النسخة الاحتياطية",
   "backupFailed": "تعذّر أخذ النسخة الاحتياطية",
   "restoreConfirmTitle": "استعادة هذه النسخة؟",
-  "restoreConfirmBody": "نسخة بتاريخ {date} تحتوي على {count} فاتورة و{clients} عميل.\nستُستبدل كل البيانات الحالية بها، وتُحفظ نسخة من بياناتك الحالية أولًا.",
+  "restoreConfirmBody": "نسخة بتاريخ {date} تحتوي على {count, plural, =1{فاتورة واحدة} =2{فاتورتان} few{{count} فواتير} other{{count} فاتورة}} و{clients, plural, =1{عميل واحد} =2{عميلان} few{{count} عملاء} other{{count} عميلًا}}.\nستُستبدل كل البيانات الحالية بها، وتُحفظ نسخة من بياناتك الحالية أولًا.",
   "restoreAction": "استعادة",
   "restoreDone": "تمت الاستعادة",
   "restoreBad": "الملف ليس نسخة صالحة من Invoice Desk",
@@ -355,7 +355,7 @@
   "deleteBackupFailed": "فشلت النسخة الاحتياطية، فما اتحذفش حاجة",
   "clientDeleteFailed": "ماقدرناش نحذف العميل",
   "newContract": "عقد جديد",
-  "groupContracts": "العقود ({count})",
+  "groupContracts": "العقود ({count, plural, =1{1} other{{count}}})",
   "@groupContracts": {
     "placeholders": {
       "count": {
@@ -363,7 +363,7 @@
       }
     }
   },
-  "groupInvoices": "الفواتير ({count})",
+  "groupInvoices": "الفواتير ({count, plural, =1{1} other{{count}}})",
   "@groupInvoices": {
     "placeholders": {
       "count": {
@@ -372,7 +372,7 @@
     }
   },
   "filterContractsInForce": "عقود سارية",
-  "contractCount": "{count} عقد",
+  "contractCount": "{count, plural, =1{عقد واحد} =2{عقدان} few{{count} عقود} other{{count} عقدًا}}",
   "@contractCount": {
     "placeholders": {
       "count": {
@@ -391,7 +391,7 @@
   "kindAmendment": "ملحق تعديل",
   "newContractTitle": "عقد جديد",
   "chooseTemplate": "اختر القالب",
-  "clauseCount": "{count} بند",
+  "clauseCount": "{count, plural, =1{بند واحد} =2{بندان} few{{count} بنود} other{{count} بندًا}}",
   "@clauseCount": {
     "placeholders": {
       "count": {
@@ -850,7 +850,7 @@
   "evContractEnd": "نهاية عقد",
   "evWarrantyEnd": "نهاية الضمان",
   "evReminder": "تذكير",
-  "daysOverdue": "متأخرة {days} يوم",
+  "daysOverdue": "{days, plural, =1{يوم واحد متأخر} =2{يومان متأخران} few{{days} أيام متأخرة} other{{days} يومًا متأخرًا}}",
   "@daysOverdue": {
     "placeholders": {
       "days": {
@@ -858,7 +858,7 @@
       }
     }
   },
-  "overdueRollup": "{count} متأخرة",
+  "overdueRollup": "{count, plural, =1{متأخرة واحدة} =2{متأخرتان} few{{count} متأخرة} other{{count} متأخرًا}}",
   "@overdueRollup": {
     "placeholders": {
       "count": {
@@ -866,7 +866,7 @@
       }
     }
   },
-  "moreEvents": "+{count}",
+  "moreEvents": "+{count, plural, =1{1} other{{count}}}",
   "@moreEvents": {
     "placeholders": {
       "count": {
@@ -933,7 +933,7 @@
   "exportIcs": "تصدير إلى التقويم (.ics)",
   "exportIcsVisible": "النطاق الظاهر",
   "exportIcsFuture": "كل الأحداث القادمة",
-  "icsExported": "صُدّر {count} حدثًا",
+  "icsExported": "{count, plural, =1{صُدّر حدث واحد} =2{صُدّر حدثان} few{{count} أحداث} other{{count} حدثًا}}",
   "@icsExported": {
     "placeholders": {
       "count": {
@@ -941,7 +941,7 @@
       }
     }
   },
-  "todayBanner": "اليوم: {due} مستحق · {overdue} متأخر",
+  "todayBanner": "اليوم: {due, plural, =1{مستحق واحد} =2{مستحقان} few{{due} مستحقة} other{{due} مستحق}} · {overdue, plural, =1{متأخر واحد} =2{متأخران} few{{overdue} متأخرة} other{{overdue} متأخر}}",
   "@todayBanner": {
     "placeholders": {
       "due": {
@@ -964,7 +964,7 @@
   "demoRemoveTitle": "حذف البيانات التجريبية؟",
   "demoRemoveBody": "تُحذف نهائيًا الصفوف التجريبية فقط، بعد نسخة احتياطية. بياناتك لا تُمس.",
   "demoAdded": "أُضيفت البيانات التجريبية",
-  "demoRemoved": "حُذفت البيانات التجريبية ({count} صف)",
+  "demoRemoved": "حُذفت البيانات التجريبية ({count, plural, =1{صف واحد} =2{صفان} few{{count} صفوف} other{{count} صفًا}})",
   "@demoRemoved": {
     "placeholders": {
       "count": {

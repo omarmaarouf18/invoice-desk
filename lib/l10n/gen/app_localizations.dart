@@ -184,13 +184,13 @@ abstract class AppLocalizations {
   /// No description provided for @invoiceCount.
   ///
   /// In ar, this message translates to:
-  /// **'{count} فاتورة'**
+  /// **'{count, plural, =1{فاتورة واحدة} =2{فاتورتان} few{{count} فواتير} other{{count} فاتورة}}'**
   String invoiceCount(int count);
 
   /// No description provided for @unpaidCount.
   ///
   /// In ar, this message translates to:
-  /// **'{count} غير مدفوعة'**
+  /// **'{count, plural, =1{غير مدفوعة واحدة} =2{غير مدفوعتان} few{{count} غير مدفوعة} other{{count} غير مدفوعة}}'**
   String unpaidCount(int count);
 
   /// No description provided for @noResults.
@@ -1006,7 +1006,7 @@ abstract class AppLocalizations {
   /// No description provided for @restoreConfirmBody.
   ///
   /// In ar, this message translates to:
-  /// **'نسخة بتاريخ {date} تحتوي على {count} فاتورة و{clients} عميل.\nستُستبدل كل البيانات الحالية بها، وتُحفظ نسخة من بياناتك الحالية أولًا.'**
+  /// **'نسخة بتاريخ {date} تحتوي على {count, plural, =1{فاتورة واحدة} =2{فاتورتان} few{{count} فواتير} other{{count} فاتورة}} و{clients, plural, =1{عميل واحد} =2{عميلان} few{{count} عملاء} other{{count} عميلًا}}.\nستُستبدل كل البيانات الحالية بها، وتُحفظ نسخة من بياناتك الحالية أولًا.'**
   String restoreConfirmBody(String date, int count, int clients);
 
   /// No description provided for @restoreAction.
@@ -1234,13 +1234,13 @@ abstract class AppLocalizations {
   /// No description provided for @groupContracts.
   ///
   /// In ar, this message translates to:
-  /// **'العقود ({count})'**
+  /// **'العقود ({count, plural, =1{1} other{{count}}})'**
   String groupContracts(int count);
 
   /// No description provided for @groupInvoices.
   ///
   /// In ar, this message translates to:
-  /// **'الفواتير ({count})'**
+  /// **'الفواتير ({count, plural, =1{1} other{{count}}})'**
   String groupInvoices(int count);
 
   /// No description provided for @filterContractsInForce.
@@ -1252,7 +1252,7 @@ abstract class AppLocalizations {
   /// No description provided for @contractCount.
   ///
   /// In ar, this message translates to:
-  /// **'{count} عقد'**
+  /// **'{count, plural, =1{عقد واحد} =2{عقدان} few{{count} عقود} other{{count} عقدًا}}'**
   String contractCount(int count);
 
   /// No description provided for @cStatusDraft.
@@ -1324,7 +1324,7 @@ abstract class AppLocalizations {
   /// No description provided for @clauseCount.
   ///
   /// In ar, this message translates to:
-  /// **'{count} بند'**
+  /// **'{count, plural, =1{بند واحد} =2{بندان} few{{count} بنود} other{{count} بندًا}}'**
   String clauseCount(int count);
 
   /// No description provided for @contractTitle.
@@ -2404,19 +2404,19 @@ abstract class AppLocalizations {
   /// No description provided for @daysOverdue.
   ///
   /// In ar, this message translates to:
-  /// **'متأخرة {days} يوم'**
+  /// **'{days, plural, =1{يوم واحد متأخر} =2{يومان متأخران} few{{days} أيام متأخرة} other{{days} يومًا متأخرًا}}'**
   String daysOverdue(int days);
 
   /// No description provided for @overdueRollup.
   ///
   /// In ar, this message translates to:
-  /// **'{count} متأخرة'**
+  /// **'{count, plural, =1{متأخرة واحدة} =2{متأخرتان} few{{count} متأخرة} other{{count} متأخرًا}}'**
   String overdueRollup(int count);
 
   /// No description provided for @moreEvents.
   ///
   /// In ar, this message translates to:
-  /// **'+{count}'**
+  /// **'+{count, plural, =1{1} other{{count}}}'**
   String moreEvents(int count);
 
   /// No description provided for @filterClient.
@@ -2674,13 +2674,13 @@ abstract class AppLocalizations {
   /// No description provided for @icsExported.
   ///
   /// In ar, this message translates to:
-  /// **'صُدّر {count} حدثًا'**
+  /// **'{count, plural, =1{صُدّر حدث واحد} =2{صُدّر حدثان} few{{count} أحداث} other{{count} حدثًا}}'**
   String icsExported(int count);
 
   /// No description provided for @todayBanner.
   ///
   /// In ar, this message translates to:
-  /// **'اليوم: {due} مستحق · {overdue} متأخر'**
+  /// **'اليوم: {due, plural, =1{مستحق واحد} =2{مستحقان} few{{due} مستحقة} other{{due} مستحق}} · {overdue, plural, =1{متأخر واحد} =2{متأخران} few{{overdue} متأخرة} other{{overdue} متأخر}}'**
   String todayBanner(int due, int overdue);
 
   /// No description provided for @showInCalendar.
@@ -2758,7 +2758,7 @@ abstract class AppLocalizations {
   /// No description provided for @demoRemoved.
   ///
   /// In ar, this message translates to:
-  /// **'حُذفت البيانات التجريبية ({count} صف)'**
+  /// **'حُذفت البيانات التجريبية ({count, plural, =1{صف واحد} =2{صفان} few{{count} صفوف} other{{count} صفًا}})'**
   String demoRemoved(int count);
 
   /// No description provided for @weekStart.

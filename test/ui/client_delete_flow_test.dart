@@ -80,7 +80,7 @@ void main() {
       await start(tester);
       await menu(tester, 'Sample Academy', 'حذف العميل');
       expect(find.text('Sample Academy عنده فواتير'), findsOneWidget);
-      expect(find.textContaining('1 فاتورة'), findsWidgets);
+      expect(find.textContaining('فاتورة واحدة'), findsWidgets);
       expect(
         find.textContaining(r'غير المدفوع: 22,000 EGP + $255.50'),
         findsOneWidget,
@@ -152,7 +152,9 @@ void main() {
       expect(await drive(tester, db.invoicesDao.countLive), 0);
       expect(find.text('Sample Academy'), findsNothing);
       expect(
-        find.text('اتحذف Sample Academy و1 فاتورة — تراجع، أو من المحذوفات'),
+        find.text(
+          'اتحذف Sample Academy وفاتورة واحدة — تراجع، أو من المحذوفات',
+        ),
         findsOneWidget,
       );
 

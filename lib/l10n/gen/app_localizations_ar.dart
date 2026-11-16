@@ -55,12 +55,28 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String invoiceCount(int count) {
-    return '$count فاتورة';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count فاتورة',
+      few: '$count فواتير',
+      two: 'فاتورتان',
+      one: 'فاتورة واحدة',
+    );
+    return '$_temp0';
   }
 
   @override
   String unpaidCount(int count) {
-    return '$count غير مدفوعة';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count غير مدفوعة',
+      few: '$count غير مدفوعة',
+      two: 'غير مدفوعتان',
+      one: 'غير مدفوعة واحدة',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -490,7 +506,23 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String restoreConfirmBody(String date, int count, int clients) {
-    return 'نسخة بتاريخ $date تحتوي على $count فاتورة و$clients عميل.\nستُستبدل كل البيانات الحالية بها، وتُحفظ نسخة من بياناتك الحالية أولًا.';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count فاتورة',
+      few: '$count فواتير',
+      two: 'فاتورتان',
+      one: 'فاتورة واحدة',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      clients,
+      locale: localeName,
+      other: '$count عميلًا',
+      few: '$count عملاء',
+      two: 'عميلان',
+      one: 'عميل واحد',
+    );
+    return 'نسخة بتاريخ $date تحتوي على $_temp0 و$_temp1.\nستُستبدل كل البيانات الحالية بها، وتُحفظ نسخة من بياناتك الحالية أولًا.';
   }
 
   @override
@@ -624,12 +656,24 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String groupContracts(int count) {
-    return 'العقود ($count)';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count',
+      one: '1',
+    );
+    return 'العقود ($_temp0)';
   }
 
   @override
   String groupInvoices(int count) {
-    return 'الفواتير ($count)';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count',
+      one: '1',
+    );
+    return 'الفواتير ($_temp0)';
   }
 
   @override
@@ -637,7 +681,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String contractCount(int count) {
-    return '$count عقد';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count عقدًا',
+      few: '$count عقود',
+      two: 'عقدان',
+      one: 'عقد واحد',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -675,7 +727,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String clauseCount(int count) {
-    return '$count بند';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count بندًا',
+      few: '$count بنود',
+      two: 'بندان',
+      one: 'بند واحد',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1320,17 +1380,39 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String daysOverdue(int days) {
-    return 'متأخرة $days يوم';
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days يومًا متأخرًا',
+      few: '$days أيام متأخرة',
+      two: 'يومان متأخران',
+      one: 'يوم واحد متأخر',
+    );
+    return '$_temp0';
   }
 
   @override
   String overdueRollup(int count) {
-    return '$count متأخرة';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count متأخرًا',
+      few: '$count متأخرة',
+      two: 'متأخرتان',
+      one: 'متأخرة واحدة',
+    );
+    return '$_temp0';
   }
 
   @override
   String moreEvents(int count) {
-    return '+$count';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count',
+      one: '1',
+    );
+    return '+$_temp0';
   }
 
   @override
@@ -1465,12 +1547,36 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String icsExported(int count) {
-    return 'صُدّر $count حدثًا';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count حدثًا',
+      few: '$count أحداث',
+      two: 'صُدّر حدثان',
+      one: 'صُدّر حدث واحد',
+    );
+    return '$_temp0';
   }
 
   @override
   String todayBanner(int due, int overdue) {
-    return 'اليوم: $due مستحق · $overdue متأخر';
+    String _temp0 = intl.Intl.pluralLogic(
+      due,
+      locale: localeName,
+      other: '$due مستحق',
+      few: '$due مستحقة',
+      two: 'مستحقان',
+      one: 'مستحق واحد',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      overdue,
+      locale: localeName,
+      other: '$overdue متأخر',
+      few: '$overdue متأخرة',
+      two: 'متأخران',
+      one: 'متأخر واحد',
+    );
+    return 'اليوم: $_temp0 · $_temp1';
   }
 
   @override
@@ -1511,7 +1617,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String demoRemoved(int count) {
-    return 'حُذفت البيانات التجريبية ($count صف)';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count صفًا',
+      few: '$count صفوف',
+      two: 'صفان',
+      one: 'صف واحد',
+    );
+    return 'حُذفت البيانات التجريبية ($_temp0)';
   }
 
   @override

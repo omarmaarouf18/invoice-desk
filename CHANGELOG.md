@@ -11,6 +11,7 @@ All notable changes to Invoice Desk. The format follows [Keep a Changelog](https
   - The interface language is independent of the language of a document: an Arabic invoice can be edited in an English app (ADR-0011).
 
 ### Fixed
+- **"1 invoices" in the English interface.** Every count is now written with its plural form: the sidebar says "1 invoice · 1 unpaid" instead of "1 invoices · 1 unpaid". The Arabic counts got the same treatment («فاتورة واحدة» instead of «1 فاتورة»), and a test fails the build when a count is written as a bare number.
 - **The calendar's month arrows point the wrong way.** "Previous" and "next" now follow the reading direction, so they are the right way round in Arabic and in English.
 - **A row of the interface can overflow with large text.** The billing-cycle and currency drop-downs, the sidebar rows, the card headers and the calendar toolbar now give way instead of spilling out of the screen at the largest text scale.
 - **Arabic words no longer run together in PDFs** (for example «وتطويرالتطبيق», «يجوزسداد»). The `pdf` package placed right-to-left words by their ink width, so words ending in ر or ز ate the following space. It is now vendored with a one-line fix (`third_party/pdf`, ADR-0013). Word spacing is back to the font's normal width, so English text in PDFs is no longer double-spaced either. Only re-exported documents change.
