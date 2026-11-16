@@ -125,15 +125,18 @@ class _PanelEvent extends ConsumerWidget {
   final CalendarDate day;
   final bool selected;
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  /// The inline actions of the event, keyed `<event id>:<action>`.
+  List<(String, String, VoidCallback)> _buttons(
+    BuildContext context,
+    WidgetRef ref,
+  ) {
     final a = CalendarActions(ref, context);
     final l = context.l10n;
     final e = event;
     void go(Future<void> Function() f) => unawaited(f());
     final t = e.type;
     final onInvoice = e.milestoneId == null && e.invoiceId != null;
-    final buttons = <(String, String, VoidCallback)>[
+    return <(String, String, VoidCallback)>[
       if ((t == CalendarEventType.due ||
               t == CalendarEventType.overdue ||
               t == CalendarEventType.postponed) &&
@@ -178,6 +181,12 @@ class _PanelEvent extends ConsumerWidget {
       else if (e.invoiceId != null)
         ('actOpen', l.actOpen, () => go(() => a.openInvoice(e.invoiceId!))),
     ];
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final e = event;
+    final buttons = _buttons(context, ref);
     return Padding(
       padding: const EdgeInsets.only(bottom: Space.s),
       child: Column(
