@@ -16,7 +16,7 @@ void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   final verifier = SchemaVerifier(GeneratedHelper());
 
-  for (final version in [1, 2, 3, 4]) {
+  for (final version in [1, 2, 3, 4, 5]) {
     test('a v$version backup restores into the current schema', () async {
       final dir = await Directory.systemTemp.createTemp('bk');
       addTearDown(() => dir.delete(recursive: true));

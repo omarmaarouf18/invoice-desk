@@ -2,6 +2,7 @@ import 'package:clock/clock.dart';
 import 'package:drift/drift.dart';
 import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/data/tables.dart';
+import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:invoice_desk/domain/models.dart';
 
 part 'clients_dao.g.dart';
@@ -143,6 +144,7 @@ class ClientsDao extends DatabaseAccessor<AppDatabase> with _$ClientsDaoMixin {
         address: Value(c.address.trim()),
         representative: Value(c.representative.trim()),
         representativeTitle: Value(c.representativeTitle.trim()),
+        preferredLanguage: Value(c.preferredLanguage?.code),
         isDemo: Value(c.isDemo),
         createdAt: existing?.createdAt ?? now,
         updatedAt: now,
@@ -173,6 +175,9 @@ class ClientsDao extends DatabaseAccessor<AppDatabase> with _$ClientsDaoMixin {
     address: r.address,
     representative: r.representative,
     representativeTitle: r.representativeTitle,
+    preferredLanguage: r.preferredLanguage == null
+        ? null
+        : DocLanguage.fromCode(r.preferredLanguage),
     isDemo: r.isDemo,
   );
 }

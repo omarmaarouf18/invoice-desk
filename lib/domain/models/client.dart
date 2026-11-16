@@ -17,6 +17,7 @@ class Client {
     this.address = '',
     this.representative = '',
     this.representativeTitle = '',
+    this.preferredLanguage,
     this.isDemo = false,
   });
 
@@ -56,6 +57,10 @@ class Client {
   /// Their title; `{{client.representativeTitle}}`.
   final String representativeTitle;
 
+  /// The language their documents are written in, when they have a
+  /// preference; null means "follow the global default" (D7).
+  final DocLanguage? preferredLanguage;
+
   /// Part of the demo set (cleared when the user saves the client).
   final bool isDemo;
 
@@ -72,6 +77,7 @@ class Client {
     String? address,
     String? representative,
     String? representativeTitle,
+    DocLanguage? preferredLanguage,
     bool? isDemo,
   }) => Client(
     id: id,
@@ -86,6 +92,7 @@ class Client {
     address: address ?? this.address,
     representative: representative ?? this.representative,
     representativeTitle: representativeTitle ?? this.representativeTitle,
+    preferredLanguage: preferredLanguage ?? this.preferredLanguage,
     isDemo: isDemo ?? this.isDemo,
   );
 
@@ -104,6 +111,7 @@ class Client {
       other.address == address &&
       other.representative == representative &&
       other.representativeTitle == representativeTitle &&
+      other.preferredLanguage == preferredLanguage &&
       other.isDemo == isDemo;
 
   @override
@@ -120,6 +128,7 @@ class Client {
     address,
     representative,
     representativeTitle,
+    preferredLanguage,
     isDemo,
   );
 }

@@ -9,6 +9,7 @@ import 'package:invoice_desk/data/app_paths.dart';
 import 'package:invoice_desk/data/backup.dart';
 import 'package:invoice_desk/data/daos/invoices_dao.dart';
 import 'package:invoice_desk/data/db.dart';
+import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/sidebar/sidebar_model.dart';
 import '../helpers/legacy_seed.dart';
@@ -29,6 +30,45 @@ void main() {
     expect(await db.invoicesDao.nextSeqFor(2026), 2);
     expect(await db.invoicesDao.nextSeqFor(2027), 1);
   });
+
+  test('the document language is stored with the invoice', () async {
+    final inv = (await db.invoicesDao.getAll()).single;
+    // The invoices that existed keep the bilingual look.
+    expect(inv.language, DocLanguage.bilingual);
+    await db.invoicesDao.saveInvoice(inv.copyWith(language: DocLanguage.ar));
+    expect((await db.invoicesDao.getAll()).single.language, DocLanguage.ar);
+    await db.invoicesDao.saveInvoice(inv.copyWith(language: DocLanguage.en));
+    expect((await db.invoicesDao.getAll()).single.language, DocLanguage.en);
+  });
+
+  test(
+    'the client keeps a language preference, and the settings a default',
+    () async {
+      final client = (await db.clientsDao.getAll()).single;
+      expect(client.preferredLanguage, null);
+      await db.clientsDao.upsert(
+        client.copyWith(preferredLanguage: DocLanguage.en),
+      );
+      expect(
+        (await db.clientsDao.getAll()).single.preferredLanguage,
+        DocLanguage.en,
+      );
+
+      final settings = await db.settingsDao.get();
+      expect(settings.defaultDocLanguage, DocLanguage.ar);
+      await db.settingsDao.save(
+        settings.copyWith(
+          defaultDocLanguage: DocLanguage.bilingual,
+          docDigitStyle: DigitStyle.arabicIndic,
+        ),
+      );
+      final after = await db.settingsDao.get();
+      expect(after.defaultDocLanguage, DocLanguage.bilingual);
+      expect(after.docDigitStyle, DigitStyle.arabicIndic);
+      // The old contract switch follows the digit style.
+      expect(after.contractWesternDigits, isFalse);
+    },
+  );
 
   test('save is atomic: a failing item rolls back the whole invoice', () async {
     final inv = (await db.invoicesDao.getAll()).single;

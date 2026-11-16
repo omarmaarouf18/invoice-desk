@@ -12,6 +12,7 @@ import 'package:invoice_desk/data/daos/settings_dao.dart';
 import 'package:invoice_desk/data/db.steps.dart';
 import 'package:invoice_desk/data/seed.dart';
 import 'package:invoice_desk/data/tables.dart';
+import 'package:invoice_desk/data/tables_calendar.dart';
 import 'package:uuid/uuid.dart';
 
 part 'db.g.dart';
@@ -71,7 +72,7 @@ class AppDatabase extends _$AppDatabase {
   /// What [seedOnCreate] runs.
   final Seeder seeder;
 
-  static const currentSchemaVersion = 5;
+  static const currentSchemaVersion = 6;
 
   @override
   int get schemaVersion => currentSchemaVersion;
@@ -290,6 +291,21 @@ class AppDatabase extends _$AppDatabase {
       ]) {
         await m.create(t);
       }
+    },
+    // v6: the document language. Every invoice gets `bilingual`, so the
+    // invoices that exist keep the look they have today; new ones get the
+    // language they are created in (D7).
+    from5To6: (m, schema) async {
+      await m.addColumn(schema.invoices, schema.invoices.language);
+      await m.addColumn(schema.clients, schema.clients.preferredLanguage);
+      await m.addColumn(schema.settings, schema.settings.defaultDocLanguage);
+      await m.addColumn(schema.settings, schema.settings.docDigitStyle);
+      // The per-contract digit switch becomes the document digit style, so
+      // the contracts that exist keep their digits.
+      await customStatement(
+        'UPDATE settings SET doc_digit_style = ? WHERE contract_western_digits = ?',
+        ['arabic_indic', 0],
+      );
     },
   );
 

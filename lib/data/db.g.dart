@@ -283,6 +283,30 @@ class $AppSettingsTable extends AppSettings
         ),
         defaultValue: const Constant(false),
       );
+  static const VerificationMeta _defaultDocLanguageMeta =
+      const VerificationMeta('defaultDocLanguage');
+  @override
+  late final GeneratedColumn<String> defaultDocLanguage =
+      GeneratedColumn<String>(
+        'default_doc_language',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant('ar'),
+      );
+  static const VerificationMeta _docDigitStyleMeta = const VerificationMeta(
+    'docDigitStyle',
+  );
+  @override
+  late final GeneratedColumn<String> docDigitStyle = GeneratedColumn<String>(
+    'doc_digit_style',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('western'),
+  );
   static const VerificationMeta _deviceIdMeta = const VerificationMeta(
     'deviceId',
   );
@@ -333,6 +357,8 @@ class $AppSettingsTable extends AppSettings
     quotePrefix,
     defaultJurisdiction,
     contractWesternDigits,
+    defaultDocLanguage,
+    docDigitStyle,
     deviceId,
     updatedAt,
   ];
@@ -513,6 +539,24 @@ class $AppSettingsTable extends AppSettings
         ),
       );
     }
+    if (data.containsKey('default_doc_language')) {
+      context.handle(
+        _defaultDocLanguageMeta,
+        defaultDocLanguage.isAcceptableOrUnknown(
+          data['default_doc_language']!,
+          _defaultDocLanguageMeta,
+        ),
+      );
+    }
+    if (data.containsKey('doc_digit_style')) {
+      context.handle(
+        _docDigitStyleMeta,
+        docDigitStyle.isAcceptableOrUnknown(
+          data['doc_digit_style']!,
+          _docDigitStyleMeta,
+        ),
+      );
+    }
     if (data.containsKey('device_id')) {
       context.handle(
         _deviceIdMeta,
@@ -630,6 +674,14 @@ class $AppSettingsTable extends AppSettings
         DriftSqlType.bool,
         data['${effectivePrefix}contract_western_digits'],
       )!,
+      defaultDocLanguage: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}default_doc_language'],
+      )!,
+      docDigitStyle: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}doc_digit_style'],
+      )!,
       deviceId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}device_id'],
@@ -678,6 +730,13 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
   /// Sub-item numbers in contracts: Western (1.) instead of Arabic (١.).
   final bool contractWesternDigits;
 
+  /// The language a new document starts in (D7): `ar`, `en` or `bilingual`.
+  final String defaultDocLanguage;
+
+  /// How digits are printed in Arabic document text (D6): `western` or
+  /// `arabic_indic`. It takes over `contractWesternDigits`.
+  final String docDigitStyle;
+
   /// Random UUID of this installation, generated once.
   final String deviceId;
   final int updatedAt;
@@ -706,6 +765,8 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
     required this.quotePrefix,
     required this.defaultJurisdiction,
     required this.contractWesternDigits,
+    required this.defaultDocLanguage,
+    required this.docDigitStyle,
     required this.deviceId,
     required this.updatedAt,
   });
@@ -740,6 +801,8 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
     map['quote_prefix'] = Variable<String>(quotePrefix);
     map['default_jurisdiction'] = Variable<String>(defaultJurisdiction);
     map['contract_western_digits'] = Variable<bool>(contractWesternDigits);
+    map['default_doc_language'] = Variable<String>(defaultDocLanguage);
+    map['doc_digit_style'] = Variable<String>(docDigitStyle);
     map['device_id'] = Variable<String>(deviceId);
     map['updated_at'] = Variable<int>(updatedAt);
     return map;
@@ -775,6 +838,8 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
       quotePrefix: Value(quotePrefix),
       defaultJurisdiction: Value(defaultJurisdiction),
       contractWesternDigits: Value(contractWesternDigits),
+      defaultDocLanguage: Value(defaultDocLanguage),
+      docDigitStyle: Value(docDigitStyle),
       deviceId: Value(deviceId),
       updatedAt: Value(updatedAt),
     );
@@ -816,6 +881,10 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
       contractWesternDigits: serializer.fromJson<bool>(
         json['contractWesternDigits'],
       ),
+      defaultDocLanguage: serializer.fromJson<String>(
+        json['defaultDocLanguage'],
+      ),
+      docDigitStyle: serializer.fromJson<String>(json['docDigitStyle']),
       deviceId: serializer.fromJson<String>(json['deviceId']),
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
     );
@@ -848,6 +917,8 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
       'quotePrefix': serializer.toJson<String>(quotePrefix),
       'defaultJurisdiction': serializer.toJson<String>(defaultJurisdiction),
       'contractWesternDigits': serializer.toJson<bool>(contractWesternDigits),
+      'defaultDocLanguage': serializer.toJson<String>(defaultDocLanguage),
+      'docDigitStyle': serializer.toJson<String>(docDigitStyle),
       'deviceId': serializer.toJson<String>(deviceId),
       'updatedAt': serializer.toJson<int>(updatedAt),
     };
@@ -878,6 +949,8 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
     String? quotePrefix,
     String? defaultJurisdiction,
     bool? contractWesternDigits,
+    String? defaultDocLanguage,
+    String? docDigitStyle,
     String? deviceId,
     int? updatedAt,
   }) => SettingsRow(
@@ -905,6 +978,8 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
     quotePrefix: quotePrefix ?? this.quotePrefix,
     defaultJurisdiction: defaultJurisdiction ?? this.defaultJurisdiction,
     contractWesternDigits: contractWesternDigits ?? this.contractWesternDigits,
+    defaultDocLanguage: defaultDocLanguage ?? this.defaultDocLanguage,
+    docDigitStyle: docDigitStyle ?? this.docDigitStyle,
     deviceId: deviceId ?? this.deviceId,
     updatedAt: updatedAt ?? this.updatedAt,
   );
@@ -950,6 +1025,12 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
       contractWesternDigits: data.contractWesternDigits.present
           ? data.contractWesternDigits.value
           : this.contractWesternDigits,
+      defaultDocLanguage: data.defaultDocLanguage.present
+          ? data.defaultDocLanguage.value
+          : this.defaultDocLanguage,
+      docDigitStyle: data.docDigitStyle.present
+          ? data.docDigitStyle.value
+          : this.docDigitStyle,
       deviceId: data.deviceId.present ? data.deviceId.value : this.deviceId,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -982,6 +1063,8 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
           ..write('quotePrefix: $quotePrefix, ')
           ..write('defaultJurisdiction: $defaultJurisdiction, ')
           ..write('contractWesternDigits: $contractWesternDigits, ')
+          ..write('defaultDocLanguage: $defaultDocLanguage, ')
+          ..write('docDigitStyle: $docDigitStyle, ')
           ..write('deviceId: $deviceId, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -1014,6 +1097,8 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
     quotePrefix,
     defaultJurisdiction,
     contractWesternDigits,
+    defaultDocLanguage,
+    docDigitStyle,
     deviceId,
     updatedAt,
   ]);
@@ -1045,6 +1130,8 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
           other.quotePrefix == this.quotePrefix &&
           other.defaultJurisdiction == this.defaultJurisdiction &&
           other.contractWesternDigits == this.contractWesternDigits &&
+          other.defaultDocLanguage == this.defaultDocLanguage &&
+          other.docDigitStyle == this.docDigitStyle &&
           other.deviceId == this.deviceId &&
           other.updatedAt == this.updatedAt);
 }
@@ -1074,6 +1161,8 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
   final Value<String> quotePrefix;
   final Value<String> defaultJurisdiction;
   final Value<bool> contractWesternDigits;
+  final Value<String> defaultDocLanguage;
+  final Value<String> docDigitStyle;
   final Value<String> deviceId;
   final Value<int> updatedAt;
   const AppSettingsCompanion({
@@ -1101,6 +1190,8 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
     this.quotePrefix = const Value.absent(),
     this.defaultJurisdiction = const Value.absent(),
     this.contractWesternDigits = const Value.absent(),
+    this.defaultDocLanguage = const Value.absent(),
+    this.docDigitStyle = const Value.absent(),
     this.deviceId = const Value.absent(),
     this.updatedAt = const Value.absent(),
   });
@@ -1129,6 +1220,8 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
     this.quotePrefix = const Value.absent(),
     this.defaultJurisdiction = const Value.absent(),
     this.contractWesternDigits = const Value.absent(),
+    this.defaultDocLanguage = const Value.absent(),
+    this.docDigitStyle = const Value.absent(),
     this.deviceId = const Value.absent(),
     this.updatedAt = const Value.absent(),
   });
@@ -1157,6 +1250,8 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
     Expression<String>? quotePrefix,
     Expression<String>? defaultJurisdiction,
     Expression<bool>? contractWesternDigits,
+    Expression<String>? defaultDocLanguage,
+    Expression<String>? docDigitStyle,
     Expression<String>? deviceId,
     Expression<int>? updatedAt,
   }) {
@@ -1188,6 +1283,9 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
         'default_jurisdiction': defaultJurisdiction,
       if (contractWesternDigits != null)
         'contract_western_digits': contractWesternDigits,
+      if (defaultDocLanguage != null)
+        'default_doc_language': defaultDocLanguage,
+      if (docDigitStyle != null) 'doc_digit_style': docDigitStyle,
       if (deviceId != null) 'device_id': deviceId,
       if (updatedAt != null) 'updated_at': updatedAt,
     });
@@ -1218,6 +1316,8 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
     Value<String>? quotePrefix,
     Value<String>? defaultJurisdiction,
     Value<bool>? contractWesternDigits,
+    Value<String>? defaultDocLanguage,
+    Value<String>? docDigitStyle,
     Value<String>? deviceId,
     Value<int>? updatedAt,
   }) {
@@ -1247,6 +1347,8 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
       defaultJurisdiction: defaultJurisdiction ?? this.defaultJurisdiction,
       contractWesternDigits:
           contractWesternDigits ?? this.contractWesternDigits,
+      defaultDocLanguage: defaultDocLanguage ?? this.defaultDocLanguage,
+      docDigitStyle: docDigitStyle ?? this.docDigitStyle,
       deviceId: deviceId ?? this.deviceId,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -1331,6 +1433,12 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
         contractWesternDigits.value,
       );
     }
+    if (defaultDocLanguage.present) {
+      map['default_doc_language'] = Variable<String>(defaultDocLanguage.value);
+    }
+    if (docDigitStyle.present) {
+      map['doc_digit_style'] = Variable<String>(docDigitStyle.value);
+    }
     if (deviceId.present) {
       map['device_id'] = Variable<String>(deviceId.value);
     }
@@ -1367,6 +1475,8 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
           ..write('quotePrefix: $quotePrefix, ')
           ..write('defaultJurisdiction: $defaultJurisdiction, ')
           ..write('contractWesternDigits: $contractWesternDigits, ')
+          ..write('defaultDocLanguage: $defaultDocLanguage, ')
+          ..write('docDigitStyle: $docDigitStyle, ')
           ..write('deviceId: $deviceId, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -1927,6 +2037,18 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, ClientRow> {
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _preferredLanguageMeta = const VerificationMeta(
+    'preferredLanguage',
+  );
+  @override
+  late final GeneratedColumn<String> preferredLanguage =
+      GeneratedColumn<String>(
+        'preferred_language',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
   @override
   List<GeneratedColumn> get $columns => [
     rev,
@@ -1946,6 +2068,7 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, ClientRow> {
     representative,
     representativeTitle,
     isDemo,
+    preferredLanguage,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2072,6 +2195,15 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, ClientRow> {
         isDemo.isAcceptableOrUnknown(data['is_demo']!, _isDemoMeta),
       );
     }
+    if (data.containsKey('preferred_language')) {
+      context.handle(
+        _preferredLanguageMeta,
+        preferredLanguage.isAcceptableOrUnknown(
+          data['preferred_language']!,
+          _preferredLanguageMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -2149,6 +2281,10 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, ClientRow> {
         DriftSqlType.bool,
         data['${effectivePrefix}is_demo'],
       )!,
+      preferredLanguage: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}preferred_language'],
+      ),
     );
   }
 
@@ -2184,6 +2320,10 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
 
   /// v5: demo row (removed with the demo set; cleared on user edits).
   final bool isDemo;
+
+  /// v6: the language their documents are written in; null means "follow
+  /// the global default" (D7).
+  final String? preferredLanguage;
   const ClientRow({
     required this.rev,
     required this.id,
@@ -2202,6 +2342,7 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
     required this.representative,
     required this.representativeTitle,
     required this.isDemo,
+    this.preferredLanguage,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2225,6 +2366,9 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
     map['representative'] = Variable<String>(representative);
     map['representative_title'] = Variable<String>(representativeTitle);
     map['is_demo'] = Variable<bool>(isDemo);
+    if (!nullToAbsent || preferredLanguage != null) {
+      map['preferred_language'] = Variable<String>(preferredLanguage);
+    }
     return map;
   }
 
@@ -2249,6 +2393,9 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
       representative: Value(representative),
       representativeTitle: Value(representativeTitle),
       isDemo: Value(isDemo),
+      preferredLanguage: preferredLanguage == null && nullToAbsent
+          ? const Value.absent()
+          : Value(preferredLanguage),
     );
   }
 
@@ -2277,6 +2424,9 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
         json['representativeTitle'],
       ),
       isDemo: serializer.fromJson<bool>(json['isDemo']),
+      preferredLanguage: serializer.fromJson<String?>(
+        json['preferredLanguage'],
+      ),
     );
   }
   @override
@@ -2300,6 +2450,7 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
       'representative': serializer.toJson<String>(representative),
       'representativeTitle': serializer.toJson<String>(representativeTitle),
       'isDemo': serializer.toJson<bool>(isDemo),
+      'preferredLanguage': serializer.toJson<String?>(preferredLanguage),
     };
   }
 
@@ -2321,6 +2472,7 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
     String? representative,
     String? representativeTitle,
     bool? isDemo,
+    Value<String?> preferredLanguage = const Value.absent(),
   }) => ClientRow(
     rev: rev ?? this.rev,
     id: id ?? this.id,
@@ -2339,6 +2491,9 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
     representative: representative ?? this.representative,
     representativeTitle: representativeTitle ?? this.representativeTitle,
     isDemo: isDemo ?? this.isDemo,
+    preferredLanguage: preferredLanguage.present
+        ? preferredLanguage.value
+        : this.preferredLanguage,
   );
   ClientRow copyWithCompanion(ClientsCompanion data) {
     return ClientRow(
@@ -2365,6 +2520,9 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
           ? data.representativeTitle.value
           : this.representativeTitle,
       isDemo: data.isDemo.present ? data.isDemo.value : this.isDemo,
+      preferredLanguage: data.preferredLanguage.present
+          ? data.preferredLanguage.value
+          : this.preferredLanguage,
     );
   }
 
@@ -2387,7 +2545,8 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
           ..write('address: $address, ')
           ..write('representative: $representative, ')
           ..write('representativeTitle: $representativeTitle, ')
-          ..write('isDemo: $isDemo')
+          ..write('isDemo: $isDemo, ')
+          ..write('preferredLanguage: $preferredLanguage')
           ..write(')'))
         .toString();
   }
@@ -2411,6 +2570,7 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
     representative,
     representativeTitle,
     isDemo,
+    preferredLanguage,
   );
   @override
   bool operator ==(Object other) =>
@@ -2432,7 +2592,8 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
           other.address == this.address &&
           other.representative == this.representative &&
           other.representativeTitle == this.representativeTitle &&
-          other.isDemo == this.isDemo);
+          other.isDemo == this.isDemo &&
+          other.preferredLanguage == this.preferredLanguage);
 }
 
 class ClientsCompanion extends UpdateCompanion<ClientRow> {
@@ -2453,6 +2614,7 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
   final Value<String> representative;
   final Value<String> representativeTitle;
   final Value<bool> isDemo;
+  final Value<String?> preferredLanguage;
   final Value<int> rowid;
   const ClientsCompanion({
     this.rev = const Value.absent(),
@@ -2472,6 +2634,7 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
     this.representative = const Value.absent(),
     this.representativeTitle = const Value.absent(),
     this.isDemo = const Value.absent(),
+    this.preferredLanguage = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ClientsCompanion.insert({
@@ -2492,6 +2655,7 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
     this.representative = const Value.absent(),
     this.representativeTitle = const Value.absent(),
     this.isDemo = const Value.absent(),
+    this.preferredLanguage = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        name = Value(name),
@@ -2515,6 +2679,7 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
     Expression<String>? representative,
     Expression<String>? representativeTitle,
     Expression<bool>? isDemo,
+    Expression<String>? preferredLanguage,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -2536,6 +2701,7 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
       if (representativeTitle != null)
         'representative_title': representativeTitle,
       if (isDemo != null) 'is_demo': isDemo,
+      if (preferredLanguage != null) 'preferred_language': preferredLanguage,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -2558,6 +2724,7 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
     Value<String>? representative,
     Value<String>? representativeTitle,
     Value<bool>? isDemo,
+    Value<String?>? preferredLanguage,
     Value<int>? rowid,
   }) {
     return ClientsCompanion(
@@ -2578,6 +2745,7 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
       representative: representative ?? this.representative,
       representativeTitle: representativeTitle ?? this.representativeTitle,
       isDemo: isDemo ?? this.isDemo,
+      preferredLanguage: preferredLanguage ?? this.preferredLanguage,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2636,6 +2804,9 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
     if (isDemo.present) {
       map['is_demo'] = Variable<bool>(isDemo.value);
     }
+    if (preferredLanguage.present) {
+      map['preferred_language'] = Variable<String>(preferredLanguage.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -2662,6 +2833,7 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
           ..write('representative: $representative, ')
           ..write('representativeTitle: $representativeTitle, ')
           ..write('isDemo: $isDemo, ')
+          ..write('preferredLanguage: $preferredLanguage, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2927,6 +3099,18 @@ class $InvoicesTable extends Invoices
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _languageMeta = const VerificationMeta(
+    'language',
+  );
+  @override
+  late final GeneratedColumn<String> language = GeneratedColumn<String>(
+    'language',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('bilingual'),
+  );
   static const VerificationMeta _isDemoMeta = const VerificationMeta('isDemo');
   @override
   late final GeneratedColumn<bool> isDemo = GeneratedColumn<bool>(
@@ -2986,6 +3170,7 @@ class $InvoicesTable extends Invoices
     scopeDelivered,
     scopeWarranty,
     deletedAt,
+    language,
     isDemo,
     createdAt,
     updatedAt,
@@ -3159,6 +3344,12 @@ class $InvoicesTable extends Invoices
         deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
       );
     }
+    if (data.containsKey('language')) {
+      context.handle(
+        _languageMeta,
+        language.isAcceptableOrUnknown(data['language']!, _languageMeta),
+      );
+    }
     if (data.containsKey('is_demo')) {
       context.handle(
         _isDemoMeta,
@@ -3282,6 +3473,10 @@ class $InvoicesTable extends Invoices
         DriftSqlType.int,
         data['${effectivePrefix}deleted_at'],
       ),
+      language: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}language'],
+      )!,
       isDemo: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}is_demo'],
@@ -3330,6 +3525,11 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
   final String scopeWarranty;
   final int? deletedAt;
 
+  /// v6: the language the document is written in: `ar`, `en` or
+  /// `bilingual`. Existing invoices get `bilingual`, so they keep their
+  /// look (ADR-0011).
+  final String language;
+
   /// v5: demo row (removed with the demo set; cleared on user edits).
   final bool isDemo;
   final int createdAt;
@@ -3357,6 +3557,7 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
     required this.scopeDelivered,
     required this.scopeWarranty,
     this.deletedAt,
+    required this.language,
     required this.isDemo,
     required this.createdAt,
     required this.updatedAt,
@@ -3390,6 +3591,7 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<int>(deletedAt);
     }
+    map['language'] = Variable<String>(language);
     map['is_demo'] = Variable<bool>(isDemo);
     map['created_at'] = Variable<int>(createdAt);
     map['updated_at'] = Variable<int>(updatedAt);
@@ -3424,6 +3626,7 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(deletedAt),
+      language: Value(language),
       isDemo: Value(isDemo),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
@@ -3458,6 +3661,7 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
       scopeDelivered: serializer.fromJson<String>(json['scopeDelivered']),
       scopeWarranty: serializer.fromJson<String>(json['scopeWarranty']),
       deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+      language: serializer.fromJson<String>(json['language']),
       isDemo: serializer.fromJson<bool>(json['isDemo']),
       createdAt: serializer.fromJson<int>(json['createdAt']),
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
@@ -3489,6 +3693,7 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
       'scopeDelivered': serializer.toJson<String>(scopeDelivered),
       'scopeWarranty': serializer.toJson<String>(scopeWarranty),
       'deletedAt': serializer.toJson<int?>(deletedAt),
+      'language': serializer.toJson<String>(language),
       'isDemo': serializer.toJson<bool>(isDemo),
       'createdAt': serializer.toJson<int>(createdAt),
       'updatedAt': serializer.toJson<int>(updatedAt),
@@ -3518,6 +3723,7 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
     String? scopeDelivered,
     String? scopeWarranty,
     Value<int?> deletedAt = const Value.absent(),
+    String? language,
     bool? isDemo,
     int? createdAt,
     int? updatedAt,
@@ -3544,6 +3750,7 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
     scopeDelivered: scopeDelivered ?? this.scopeDelivered,
     scopeWarranty: scopeWarranty ?? this.scopeWarranty,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    language: language ?? this.language,
     isDemo: isDemo ?? this.isDemo,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
@@ -3582,6 +3789,7 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
           ? data.scopeWarranty.value
           : this.scopeWarranty,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      language: data.language.present ? data.language.value : this.language,
       isDemo: data.isDemo.present ? data.isDemo.value : this.isDemo,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
@@ -3613,6 +3821,7 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
           ..write('scopeDelivered: $scopeDelivered, ')
           ..write('scopeWarranty: $scopeWarranty, ')
           ..write('deletedAt: $deletedAt, ')
+          ..write('language: $language, ')
           ..write('isDemo: $isDemo, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
@@ -3644,6 +3853,7 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
     scopeDelivered,
     scopeWarranty,
     deletedAt,
+    language,
     isDemo,
     createdAt,
     updatedAt,
@@ -3674,6 +3884,7 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
           other.scopeDelivered == this.scopeDelivered &&
           other.scopeWarranty == this.scopeWarranty &&
           other.deletedAt == this.deletedAt &&
+          other.language == this.language &&
           other.isDemo == this.isDemo &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
@@ -3702,6 +3913,7 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
   final Value<String> scopeDelivered;
   final Value<String> scopeWarranty;
   final Value<int?> deletedAt;
+  final Value<String> language;
   final Value<bool> isDemo;
   final Value<int> createdAt;
   final Value<int> updatedAt;
@@ -3729,6 +3941,7 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
     this.scopeDelivered = const Value.absent(),
     this.scopeWarranty = const Value.absent(),
     this.deletedAt = const Value.absent(),
+    this.language = const Value.absent(),
     this.isDemo = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -3757,6 +3970,7 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
     this.scopeDelivered = const Value.absent(),
     this.scopeWarranty = const Value.absent(),
     this.deletedAt = const Value.absent(),
+    this.language = const Value.absent(),
     this.isDemo = const Value.absent(),
     required int createdAt,
     required int updatedAt,
@@ -3794,6 +4008,7 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
     Expression<String>? scopeDelivered,
     Expression<String>? scopeWarranty,
     Expression<int>? deletedAt,
+    Expression<String>? language,
     Expression<bool>? isDemo,
     Expression<int>? createdAt,
     Expression<int>? updatedAt,
@@ -3822,6 +4037,7 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
       if (scopeDelivered != null) 'scope_delivered': scopeDelivered,
       if (scopeWarranty != null) 'scope_warranty': scopeWarranty,
       if (deletedAt != null) 'deleted_at': deletedAt,
+      if (language != null) 'language': language,
       if (isDemo != null) 'is_demo': isDemo,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
@@ -3852,6 +4068,7 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
     Value<String>? scopeDelivered,
     Value<String>? scopeWarranty,
     Value<int?>? deletedAt,
+    Value<String>? language,
     Value<bool>? isDemo,
     Value<int>? createdAt,
     Value<int>? updatedAt,
@@ -3880,6 +4097,7 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
       scopeDelivered: scopeDelivered ?? this.scopeDelivered,
       scopeWarranty: scopeWarranty ?? this.scopeWarranty,
       deletedAt: deletedAt ?? this.deletedAt,
+      language: language ?? this.language,
       isDemo: isDemo ?? this.isDemo,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -3956,6 +4174,9 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
     if (deletedAt.present) {
       map['deleted_at'] = Variable<int>(deletedAt.value);
     }
+    if (language.present) {
+      map['language'] = Variable<String>(language.value);
+    }
     if (isDemo.present) {
       map['is_demo'] = Variable<bool>(isDemo.value);
     }
@@ -3996,6 +4217,7 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
           ..write('scopeDelivered: $scopeDelivered, ')
           ..write('scopeWarranty: $scopeWarranty, ')
           ..write('deletedAt: $deletedAt, ')
+          ..write('language: $language, ')
           ..write('isDemo: $isDemo, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
@@ -11807,6 +12029,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     'CREATE TRIGGER reminders_sync_update AFTER UPDATE ON reminders WHEN NEW.rev = OLD.rev BEGIN UPDATE reminders SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'reminders\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'reminders\', NEW.id, OLD.rev + 1, NEW.updated_at);END',
     'reminders_sync_update',
   );
+  late final Index postponementsEntity = Index(
+    'postponements_entity',
+    'CREATE INDEX postponements_entity ON postponements (entity_id)',
+  );
+  late final Index remindersDate = Index(
+    'reminders_date',
+    'CREATE INDEX reminders_date ON reminders (date)',
+  );
   late final Index invoicesClient = Index(
     'invoices_client',
     'CREATE INDEX invoices_client ON invoices (client_id)',
@@ -11858,14 +12088,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final Index milestonesDue = Index(
     'milestones_due',
     'CREATE INDEX milestones_due ON payment_milestones (due_date)',
-  );
-  late final Index postponementsEntity = Index(
-    'postponements_entity',
-    'CREATE INDEX postponements_entity ON postponements (entity_id)',
-  );
-  late final Index remindersDate = Index(
-    'reminders_date',
-    'CREATE INDEX reminders_date ON reminders (date)',
   );
   late final Trigger clientsSoftDeleteGuard = Trigger(
     'CREATE TRIGGER clients_soft_delete_guard BEFORE UPDATE OF deleted_at ON clients WHEN NEW.deleted_at IS NOT NULL AND(EXISTS (SELECT 1 FROM invoices WHERE client_id = NEW.id AND deleted_at IS NULL) OR EXISTS (SELECT 1 FROM contracts WHERE client_id = NEW.id AND deleted_at IS NULL))BEGIN SELECT RAISE (ABORT, \'client has live documents\');END',
@@ -11938,6 +12160,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     reminders,
     remindersSyncInsert,
     remindersSyncUpdate,
+    postponementsEntity,
+    remindersDate,
     invoicesClient,
     invoicesDue,
     invoicesPaid,
@@ -11951,8 +12175,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     milestonesContract,
     milestonesInvoice,
     milestonesDue,
-    postponementsEntity,
-    remindersDate,
     clientsSoftDeleteGuard,
     invoicesReviveGuard,
     invoicesInsertGuard,
@@ -12374,6 +12596,8 @@ typedef $$AppSettingsTableCreateCompanionBuilder =
       Value<String> quotePrefix,
       Value<String> defaultJurisdiction,
       Value<bool> contractWesternDigits,
+      Value<String> defaultDocLanguage,
+      Value<String> docDigitStyle,
       Value<String> deviceId,
       Value<int> updatedAt,
     });
@@ -12403,6 +12627,8 @@ typedef $$AppSettingsTableUpdateCompanionBuilder =
       Value<String> quotePrefix,
       Value<String> defaultJurisdiction,
       Value<bool> contractWesternDigits,
+      Value<String> defaultDocLanguage,
+      Value<String> docDigitStyle,
       Value<String> deviceId,
       Value<int> updatedAt,
     });
@@ -12533,6 +12759,16 @@ class $$AppSettingsTableFilterComposer
 
   ColumnFilters<bool> get contractWesternDigits => $composableBuilder(
     column: $table.contractWesternDigits,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get defaultDocLanguage => $composableBuilder(
+    column: $table.defaultDocLanguage,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get docDigitStyle => $composableBuilder(
+    column: $table.docDigitStyle,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -12676,6 +12912,16 @@ class $$AppSettingsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get defaultDocLanguage => $composableBuilder(
+    column: $table.defaultDocLanguage,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get docDigitStyle => $composableBuilder(
+    column: $table.docDigitStyle,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get deviceId => $composableBuilder(
     column: $table.deviceId,
     builder: (column) => ColumnOrderings(column),
@@ -12784,6 +13030,16 @@ class $$AppSettingsTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get defaultDocLanguage => $composableBuilder(
+    column: $table.defaultDocLanguage,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get docDigitStyle => $composableBuilder(
+    column: $table.docDigitStyle,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get deviceId =>
       $composableBuilder(column: $table.deviceId, builder: (column) => column);
 
@@ -12846,6 +13102,8 @@ class $$AppSettingsTableTableManager
                 Value<String> quotePrefix = const Value.absent(),
                 Value<String> defaultJurisdiction = const Value.absent(),
                 Value<bool> contractWesternDigits = const Value.absent(),
+                Value<String> defaultDocLanguage = const Value.absent(),
+                Value<String> docDigitStyle = const Value.absent(),
                 Value<String> deviceId = const Value.absent(),
                 Value<int> updatedAt = const Value.absent(),
               }) => AppSettingsCompanion(
@@ -12873,6 +13131,8 @@ class $$AppSettingsTableTableManager
                 quotePrefix: quotePrefix,
                 defaultJurisdiction: defaultJurisdiction,
                 contractWesternDigits: contractWesternDigits,
+                defaultDocLanguage: defaultDocLanguage,
+                docDigitStyle: docDigitStyle,
                 deviceId: deviceId,
                 updatedAt: updatedAt,
               ),
@@ -12902,6 +13162,8 @@ class $$AppSettingsTableTableManager
                 Value<String> quotePrefix = const Value.absent(),
                 Value<String> defaultJurisdiction = const Value.absent(),
                 Value<bool> contractWesternDigits = const Value.absent(),
+                Value<String> defaultDocLanguage = const Value.absent(),
+                Value<String> docDigitStyle = const Value.absent(),
                 Value<String> deviceId = const Value.absent(),
                 Value<int> updatedAt = const Value.absent(),
               }) => AppSettingsCompanion.insert(
@@ -12929,6 +13191,8 @@ class $$AppSettingsTableTableManager
                 quotePrefix: quotePrefix,
                 defaultJurisdiction: defaultJurisdiction,
                 contractWesternDigits: contractWesternDigits,
+                defaultDocLanguage: defaultDocLanguage,
+                docDigitStyle: docDigitStyle,
                 deviceId: deviceId,
                 updatedAt: updatedAt,
               ),
@@ -13182,6 +13446,7 @@ typedef $$ClientsTableCreateCompanionBuilder =
       Value<String> representative,
       Value<String> representativeTitle,
       Value<bool> isDemo,
+      Value<String?> preferredLanguage,
       Value<int> rowid,
     });
 typedef $$ClientsTableUpdateCompanionBuilder =
@@ -13203,6 +13468,7 @@ typedef $$ClientsTableUpdateCompanionBuilder =
       Value<String> representative,
       Value<String> representativeTitle,
       Value<bool> isDemo,
+      Value<String?> preferredLanguage,
       Value<int> rowid,
     });
 
@@ -13356,6 +13622,11 @@ class $$ClientsTableFilterComposer
 
   ColumnFilters<bool> get isDemo => $composableBuilder(
     column: $table.isDemo,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get preferredLanguage => $composableBuilder(
+    column: $table.preferredLanguage,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -13528,6 +13799,11 @@ class $$ClientsTableOrderingComposer
     column: $table.isDemo,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get preferredLanguage => $composableBuilder(
+    column: $table.preferredLanguage,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ClientsTableAnnotationComposer
@@ -13595,6 +13871,11 @@ class $$ClientsTableAnnotationComposer
 
   GeneratedColumn<bool> get isDemo =>
       $composableBuilder(column: $table.isDemo, builder: (column) => column);
+
+  GeneratedColumn<String> get preferredLanguage => $composableBuilder(
+    column: $table.preferredLanguage,
+    builder: (column) => column,
+  );
 
   Expression<T> invoicesRefs<T extends Object>(
     Expression<T> Function($$InvoicesTableAnnotationComposer a) f,
@@ -13721,6 +14002,7 @@ class $$ClientsTableTableManager
                 Value<String> representative = const Value.absent(),
                 Value<String> representativeTitle = const Value.absent(),
                 Value<bool> isDemo = const Value.absent(),
+                Value<String?> preferredLanguage = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ClientsCompanion(
                 rev: rev,
@@ -13740,6 +14022,7 @@ class $$ClientsTableTableManager
                 representative: representative,
                 representativeTitle: representativeTitle,
                 isDemo: isDemo,
+                preferredLanguage: preferredLanguage,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -13761,6 +14044,7 @@ class $$ClientsTableTableManager
                 Value<String> representative = const Value.absent(),
                 Value<String> representativeTitle = const Value.absent(),
                 Value<bool> isDemo = const Value.absent(),
+                Value<String?> preferredLanguage = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ClientsCompanion.insert(
                 rev: rev,
@@ -13780,6 +14064,7 @@ class $$ClientsTableTableManager
                 representative: representative,
                 representativeTitle: representativeTitle,
                 isDemo: isDemo,
+                preferredLanguage: preferredLanguage,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -13916,6 +14201,7 @@ typedef $$InvoicesTableCreateCompanionBuilder =
       Value<String> scopeDelivered,
       Value<String> scopeWarranty,
       Value<int?> deletedAt,
+      Value<String> language,
       Value<bool> isDemo,
       required int createdAt,
       required int updatedAt,
@@ -13945,6 +14231,7 @@ typedef $$InvoicesTableUpdateCompanionBuilder =
       Value<String> scopeDelivered,
       Value<String> scopeWarranty,
       Value<int?> deletedAt,
+      Value<String> language,
       Value<bool> isDemo,
       Value<int> createdAt,
       Value<int> updatedAt,
@@ -14123,6 +14410,11 @@ class $$InvoicesTableFilterComposer
 
   ColumnFilters<int> get deletedAt => $composableBuilder(
     column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get language => $composableBuilder(
+    column: $table.language,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -14329,6 +14621,11 @@ class $$InvoicesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get language => $composableBuilder(
+    column: $table.language,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<bool> get isDemo => $composableBuilder(
     column: $table.isDemo,
     builder: (column) => ColumnOrderings(column),
@@ -14449,6 +14746,9 @@ class $$InvoicesTableAnnotationComposer
 
   GeneratedColumn<int> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get language =>
+      $composableBuilder(column: $table.language, builder: (column) => column);
 
   GeneratedColumn<bool> get isDemo =>
       $composableBuilder(column: $table.isDemo, builder: (column) => column);
@@ -14588,6 +14888,7 @@ class $$InvoicesTableTableManager
                 Value<String> scopeDelivered = const Value.absent(),
                 Value<String> scopeWarranty = const Value.absent(),
                 Value<int?> deletedAt = const Value.absent(),
+                Value<String> language = const Value.absent(),
                 Value<bool> isDemo = const Value.absent(),
                 Value<int> createdAt = const Value.absent(),
                 Value<int> updatedAt = const Value.absent(),
@@ -14615,6 +14916,7 @@ class $$InvoicesTableTableManager
                 scopeDelivered: scopeDelivered,
                 scopeWarranty: scopeWarranty,
                 deletedAt: deletedAt,
+                language: language,
                 isDemo: isDemo,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
@@ -14644,6 +14946,7 @@ class $$InvoicesTableTableManager
                 Value<String> scopeDelivered = const Value.absent(),
                 Value<String> scopeWarranty = const Value.absent(),
                 Value<int?> deletedAt = const Value.absent(),
+                Value<String> language = const Value.absent(),
                 Value<bool> isDemo = const Value.absent(),
                 required int createdAt,
                 required int updatedAt,
@@ -14671,6 +14974,7 @@ class $$InvoicesTableTableManager
                 scopeDelivered: scopeDelivered,
                 scopeWarranty: scopeWarranty,
                 deletedAt: deletedAt,
+                language: language,
                 isDemo: isDemo,
                 createdAt: createdAt,
                 updatedAt: updatedAt,

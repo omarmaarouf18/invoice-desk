@@ -26,7 +26,8 @@ class Settings {
     this.contractPrefix = 'CT',
     this.quotePrefix = 'QT',
     this.defaultJurisdiction = 'المحكمة الاقتصادية المختصة',
-    this.contractWesternDigits = false,
+    this.defaultDocLanguage = DocLanguage.ar,
+    this.docDigitStyle = DigitStyle.western,
   });
 
   /// Printed on invoices; `{{provider.name}}`.
@@ -92,8 +93,17 @@ class Settings {
   /// Copied into each new contract's `{{jurisdiction}}`.
   final String defaultJurisdiction;
 
-  /// Sub-item numbers in contract PDFs: `1.` instead of `١.`.
-  final bool contractWesternDigits;
+  /// The language a new document starts in when neither the document nor
+  /// the client has a preference (D7).
+  final DocLanguage defaultDocLanguage;
+
+  /// How digits are printed in Arabic document text (D6). English text
+  /// always uses Western digits.
+  final DigitStyle docDigitStyle;
+
+  /// Sub-item numbers in contract PDFs: `1.` instead of `١.`. The document
+  /// digit style decides (schema v6).
+  bool get contractWesternDigits => docDigitStyle == DigitStyle.western;
 
   /// A name is set; the first-run checklist uses it.
   bool get hasProfile => name.trim().isNotEmpty;
@@ -121,6 +131,8 @@ class Settings {
     String? contractPrefix,
     String? quotePrefix,
     String? defaultJurisdiction,
+    DocLanguage? defaultDocLanguage,
+    DigitStyle? docDigitStyle,
     bool? contractWesternDigits,
   }) => Settings(
     name: name ?? this.name,
@@ -144,6 +156,15 @@ class Settings {
     contractPrefix: contractPrefix ?? this.contractPrefix,
     quotePrefix: quotePrefix ?? this.quotePrefix,
     defaultJurisdiction: defaultJurisdiction ?? this.defaultJurisdiction,
-    contractWesternDigits: contractWesternDigits ?? this.contractWesternDigits,
+    defaultDocLanguage: defaultDocLanguage ?? this.defaultDocLanguage,
+    // The old per-contract switch is the document digit style now: the
+    // first one given wins.
+    docDigitStyle:
+        docDigitStyle ??
+        (contractWesternDigits == null
+            ? this.docDigitStyle
+            : (contractWesternDigits
+                  ? DigitStyle.western
+                  : DigitStyle.arabicIndic)),
   );
 }

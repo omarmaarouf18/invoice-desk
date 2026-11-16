@@ -2,6 +2,7 @@ import 'package:clock/clock.dart';
 import 'package:drift/drift.dart';
 import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/data/tables.dart';
+import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:invoice_desk/domain/models.dart';
 
 part 'settings_dao.g.dart';
@@ -46,6 +47,8 @@ class SettingsDao extends DatabaseAccessor<AppDatabase>
         quotePrefix: Value(s.quotePrefix),
         defaultJurisdiction: Value(s.defaultJurisdiction),
         contractWesternDigits: Value(s.contractWesternDigits),
+        defaultDocLanguage: Value(s.defaultDocLanguage.code),
+        docDigitStyle: Value(s.docDigitStyle.code),
       ),
     );
   });
@@ -74,6 +77,7 @@ class SettingsDao extends DatabaseAccessor<AppDatabase>
           contractPrefix: r.contractPrefix,
           quotePrefix: r.quotePrefix,
           defaultJurisdiction: r.defaultJurisdiction,
-          contractWesternDigits: r.contractWesternDigits,
+          defaultDocLanguage: DocLanguage.fromCode(r.defaultDocLanguage),
+          docDigitStyle: DigitStyle.fromCode(r.docDigitStyle),
         );
 }

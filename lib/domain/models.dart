@@ -1,5 +1,6 @@
 import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/core/money.dart';
+import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:meta/meta.dart';
 
 part 'models/settings.dart';

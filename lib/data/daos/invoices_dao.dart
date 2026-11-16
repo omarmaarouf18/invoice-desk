@@ -5,7 +5,9 @@ import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/data/tables.dart';
+import 'package:invoice_desk/data/tables_calendar.dart';
 import 'package:invoice_desk/domain/calendar/models.dart';
+import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:invoice_desk/domain/invoice_logic.dart';
 import 'package:invoice_desk/domain/models.dart';
 
@@ -177,6 +179,7 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
         vatRateBp: Value(inv.vatRateBp),
         notesEn: Value(inv.notesEn),
         notesAr: Value(inv.notesAr),
+        language: Value(inv.language.code),
         scopeOn: Value(inv.scope.enabled),
         scopeTitle: Value(inv.scope.title),
         scopeOverview: Value(inv.scope.overview),
@@ -360,6 +363,10 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
     vatRateBp: r.vatRateBp,
     notesEn: r.notesEn,
     notesAr: r.notesAr,
+    language: DocLanguage.fromCode(
+      r.language,
+      fallback: DocLanguage.bilingual,
+    ),
     scope: ScopePage(
       enabled: r.scopeOn,
       title: r.scopeTitle,

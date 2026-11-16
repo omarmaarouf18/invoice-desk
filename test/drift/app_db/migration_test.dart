@@ -3,6 +3,7 @@ import 'package:drift_dev/api/migrations_native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/data/library_seed.dart';
+import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:sqlite3/sqlite3.dart' as sql;
 
 import 'generated/schema.dart';
@@ -202,10 +203,11 @@ void main() {
           reason: t,
         );
       }
-      // Backfilled rows start at rev 1; settings is at 2 because the device
-      // id was written right after the migration.
+      // Backfilled rows start at rev 1; settings is at 3 because the device
+      // id was written right after the migration and the digit style took
+      // over the old contract switch in v6.
       expect(await one('SELECT rev FROM invoices'), 1);
-      expect(await one('SELECT rev FROM settings'), 2);
+      expect(await one('SELECT rev FROM settings'), 3);
       expect(
         await one('SELECT COUNT(*) FROM sections WHERE updated_at = 0'),
         0,
@@ -314,4 +316,42 @@ void main() {
       expect((await db.contractsDao.getById('k1'))!.isDemo, isFalse);
     },
   );
+
+  test(
+    'v5 → v6: the invoices keep their look, the digits keep their style',
+    () async {
+      final schema = await verifier.schemaAt(5);
+      insertV1Data(schema.rawDatabase);
+      final db = AppDatabase(schema.newConnection());
+      addTearDown(db.close);
+      await verifier.migrateAndValidate(db, AppDatabase.currentSchemaVersion);
+
+      // The invoice that existed keeps the bilingual look (ADR-0011).
+      final inv = (await db.invoicesDao.getAll()).single;
+      expect(inv.language, DocLanguage.bilingual);
+      // The client has no preference yet.
+      expect((await db.clientsDao.getAll()).first.preferredLanguage, null);
+      // The default language is Arabic (D7) and the old contract switch
+      // (off) became Arabic-Indic digits, so the contracts keep theirs.
+      final s = await db.settingsDao.get();
+      expect(s.defaultDocLanguage, DocLanguage.ar);
+      expect(s.docDigitStyle, DigitStyle.arabicIndic);
+      expect(s.contractWesternDigits, isFalse);
+    },
+  );
+
+  test('v5 → v6: Western digits stay Western', () async {
+    final schema = await verifier.schemaAt(5);
+    insertV1Data(schema.rawDatabase);
+    schema.rawDatabase.execute(
+      'UPDATE settings SET contract_western_digits = 1',
+    );
+    final db = AppDatabase(schema.newConnection());
+    addTearDown(db.close);
+    await verifier.migrateAndValidate(db, AppDatabase.currentSchemaVersion);
+
+    final s = await db.settingsDao.get();
+    expect(s.docDigitStyle, DigitStyle.western);
+    expect(s.contractWesternDigits, isTrue);
+  });
 }

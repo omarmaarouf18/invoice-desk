@@ -40,6 +40,18 @@ class AppSettings extends Table with SyncRev {
   BoolColumn get contractWesternDigits =>
       boolean().withDefault(const Constant(false))();
 
+  // v6: document language.
+  /// The language a new document starts in (D7): `ar`, `en` or `bilingual`.
+  TextColumn get defaultDocLanguage => text().withDefault(
+    const Constant('ar'),
+  )();
+
+  /// How digits are printed in Arabic document text (D6): `western` or
+  /// `arabic_indic`. It takes over `contractWesternDigits`.
+  TextColumn get docDigitStyle => text().withDefault(
+    const Constant('western'),
+  )();
+
   // v4: sync.
   /// Random UUID of this installation, generated once.
   TextColumn get deviceId => text().withDefault(const Constant(''))();
@@ -80,6 +92,10 @@ class Clients extends Table with SyncRev {
   /// v5: demo row (removed with the demo set; cleared on user edits).
   BoolColumn get isDemo => boolean().withDefault(const Constant(false))();
 
+  /// v6: the language their documents are written in; null means "follow
+  /// the global default" (D7).
+  TextColumn get preferredLanguage => text().nullable()();
+
   @override
   Set<Column<Object>> get primaryKey => {id};
 
@@ -117,6 +133,11 @@ class Invoices extends Table with SyncRev {
   TextColumn get scopeDelivered => text().withDefault(const Constant(''))();
   TextColumn get scopeWarranty => text().withDefault(const Constant(''))();
   IntColumn get deletedAt => integer().nullable()();
+
+  /// v6: the language the document is written in: `ar`, `en` or
+  /// `bilingual`. Existing invoices get `bilingual`, so they keep their
+  /// look (ADR-0011).
+  TextColumn get language => text().withDefault(const Constant('bilingual'))();
 
   /// v5: demo row (removed with the demo set; cleared on user edits).
   BoolColumn get isDemo => boolean().withDefault(const Constant(false))();
@@ -386,66 +407,7 @@ class PaymentMilestones extends Table with SyncRev, ChildSync {
 }
 
 // ── v5: calendar ───────────────────────────────────────────────────────
-
-/// History of moved due dates (invoice or milestone); the latest row by
-/// createdAt is the effective date, the original is never overwritten.
-@DataClassName('PostponementRow')
-@TableIndex(name: 'postponements_entity', columns: {#entityId})
-class Postponements extends Table with SyncRev {
-  TextColumn get id => text()();
-  TextColumn get entityType =>
-      text().check(entityType.isIn(const ['invoice', 'milestone']))();
-
-  /// Not a foreign key: one column, two tables.
-  TextColumn get entityId => text()();
-  TextColumn get fromDate => text()();
-  TextColumn get toDate => text()();
-  TextColumn get reason => text().withDefault(const Constant(''))();
-  IntColumn get createdAt => integer()();
-  IntColumn get updatedAt => integer()();
-  IntColumn get deletedAt => integer().nullable()();
-
-  @override
-  Set<Column<Object>> get primaryKey => {id};
-
-  @override
-  bool get isStrict => true;
-}
-
-/// A manual calendar reminder (optional time, client and document).
-@DataClassName('ReminderRow')
-@TableIndex(name: 'reminders_date', columns: {#date})
-class Reminders extends Table with SyncRev {
-  TextColumn get id => text()();
-  TextColumn get date => text()();
-
-  /// `HH:MM`, 24-hour; null for an all-day reminder.
-  TextColumn get time => text().nullable()();
-  TextColumn get body =>
-      text().named('text').check(body.trim().length.isBiggerThanValue(0))();
-  TextColumn get clientId => text().nullable().references(
-    Clients,
-    #id,
-    onDelete: KeyAction.setNull,
-  )();
-
-  /// `invoice` or `contract`, with [entityId]; both null when unlinked.
-  TextColumn get entityType => text().nullable().check(
-    entityType.isIn(const ['invoice', 'contract']),
-  )();
-  TextColumn get entityId => text().nullable()();
-  IntColumn get doneAt => integer().nullable()();
-  IntColumn get deletedAt => integer().nullable()();
-  BoolColumn get isDemo => boolean().withDefault(const Constant(false))();
-  IntColumn get createdAt => integer()();
-  IntColumn get updatedAt => integer()();
-
-  @override
-  Set<Column<Object>> get primaryKey => {id};
-
-  @override
-  bool get isStrict => true;
-}
+// The calendar's own tables live in `tables_calendar.dart`.
 // ── v4: sync-ready rows ────────────────────────────────────────────────
 
 /// Every syncable table: a revision that triggers bump on each insert and

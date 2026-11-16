@@ -175,6 +175,7 @@ class Invoice {
     this.vatRateBp = 1400,
     this.notesEn = '',
     this.notesAr = '',
+    this.language = DocLanguage.bilingual,
     this.scope = const ScopePage(),
     this.sections = const [],
     this.createdAt = 0,
@@ -225,6 +226,11 @@ class Invoice {
   /// Arabic notes, one per line.
   final String notesAr;
 
+  /// The language the document is written in: the PDF follows it, and the
+  /// editor shows the fields that belong to it. Independent of the UI
+  /// language (ADR-0011).
+  final DocLanguage language;
+
   /// Optional scope page.
   final ScopePage scope;
 
@@ -264,6 +270,7 @@ class Invoice {
     int? vatRateBp,
     String? notesEn,
     String? notesAr,
+    DocLanguage? language,
     ScopePage? scope,
     List<InvoiceSection>? sections,
     int? createdAt,
@@ -285,6 +292,7 @@ class Invoice {
     vatRateBp: vatRateBp ?? this.vatRateBp,
     notesEn: notesEn ?? this.notesEn,
     notesAr: notesAr ?? this.notesAr,
+    language: language ?? this.language,
     scope: scope ?? this.scope,
     sections: sections ?? this.sections,
     createdAt: createdAt ?? this.createdAt,

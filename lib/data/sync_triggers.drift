@@ -1,4 +1,5 @@
 import 'tables.dart';
+import 'tables_calendar.dart';
 
 -- v4: every insert and update of a syncable row bumps its `rev` and records
 -- the change in `outbox` (one row per entity row, latest revision), in the

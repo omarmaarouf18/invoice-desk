@@ -2,7 +2,7 @@ import 'package:clock/clock.dart';
 import 'package:drift/drift.dart';
 import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/data/db.dart';
-import 'package:invoice_desk/data/tables.dart';
+import 'package:invoice_desk/data/tables_calendar.dart';
 import 'package:invoice_desk/domain/calendar/models.dart';
 
 part 'calendar_dao.g.dart';
