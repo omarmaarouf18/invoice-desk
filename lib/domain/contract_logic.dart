@@ -1,7 +1,12 @@
-import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/domain/contract_models.dart';
+import 'package:invoice_desk/domain/doc_format.dart';
+import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:invoice_desk/domain/models.dart';
+
+// Moved to doc_format.dart (language-aware); re-exported for callers.
+export 'package:invoice_desk/domain/doc_format.dart'
+    show arabicIndicDigits, arabicOrdinal, currencyNameAr, subItemLabel;
 
 // ── Variables ─────────────────────────────────────────────────────────────
 
@@ -74,18 +79,10 @@ List<String> usedVariables(Contract c) {
 List<String> customVariablesUsed(Contract c) =>
     usedVariables(c).where((v) => !isBuiltInVariable(v)).toList();
 
-/// Arabic currency names for `{{currency}}` and `{{total}}`.
-String currencyNameAr(Currency c) => switch (c) {
-  Currency.egp => 'جنيه مصري',
-  Currency.usd => 'دولار أمريكي',
-  Currency.sar => 'ريال سعودي',
-  Currency.aed => 'درهم إماراتي',
-  Currency.eur => 'يورو',
-};
-
-/// `180,000 جنيه مصري`.
+/// `180,000 جنيه مصري`: an amount and its Arabic currency name, as
+/// `{{total}}` resolves in an Arabic contract.
 String formatContractMoney(int minor, Currency c) =>
-    '${formatAmount(minor, c)} ${currencyNameAr(c)}';
+    formatDocMoney(minor, c, DocLanguage.ar);
 
 /// Resolves variable names against one contract. Empty values count as
 /// missing. Never stored: the stored text keeps its `{{…}}`.
@@ -96,7 +93,13 @@ class VariableResolver {
     required this.contract,
     required this.client,
     required this.settings,
+    this.language = DocLanguage.ar,
   });
+
+  /// The contract's language: how `contract.date`, `total` and `currency`
+  /// are written out (`15 نوفمبر 2026` / `15 Nov 2026`, `جنيه مصري` /
+  /// `Egyptian pounds`). Arabic until contracts get a language (phase 7).
+  final DocLanguage language;
 
   /// Source of `contract.*`, `project.*`, `total`, `currency`,
   /// `jurisdiction` and the custom variables.
@@ -130,13 +133,15 @@ class VariableResolver {
       'client.email' => cl?.email,
       'client.phone' => cl?.phone,
       'contract.number' => c.number,
-      'contract.date' => formatArabicDate(c.issueDate),
+      'contract.date' => formatDocDate(c.issueDate, language),
       'contract.title' => c.title,
       'project.name' => c.projectName,
       'project.summary' => c.projectSummary,
       'total' =>
-        c.totalMinor == 0 ? '' : formatContractMoney(c.totalMinor, c.currency),
-      'currency' => currencyNameAr(c.currency),
+        c.totalMinor == 0
+            ? ''
+            : formatDocMoney(c.totalMinor, c.currency, language),
+      'currency' => currencyName(c.currency, language),
       'jurisdiction' => c.jurisdiction,
       _ => c.vars[name],
     };
@@ -251,45 +256,7 @@ List<BodyBlock> parseBody(String body) {
   return out;
 }
 
-// ── Numbers and ordinals ─────────────────────────────────────────────────
-
-const _units = [
-  'الأول',
-  'الثاني',
-  'الثالث',
-  'الرابع',
-  'الخامس',
-  'السادس',
-  'السابع',
-  'الثامن',
-  'التاسع',
-];
-
-/// `الأول` … `الثلاثون` for clause headings; digits beyond 30.
-String arabicOrdinal(int n) {
-  if (n < 1) return '$n';
-  if (n <= 9) return _units[n - 1];
-  if (n == 10) return 'العاشر';
-  if (n == 11) return 'الحادي عشر';
-  if (n < 20) return '${_units[n - 11]} عشر';
-  if (n == 20) return 'العشرون';
-  if (n == 30) return 'الثلاثون';
-  if (n < 30) {
-    final unit = n - 20 == 1 ? 'الحادي' : _units[n - 21];
-    return '$unit والعشرون';
-  }
-  return '$n';
-}
-
-/// `12` → `١٢`.
-String arabicIndicDigits(String s) => s.replaceAllMapped(
-  RegExp('[0-9]'),
-  (m) => String.fromCharCode(0x0660 + int.parse(m.group(0)!)),
-);
-
-/// Sub-item label: `١.` or `1.`.
-String subItemLabel(int n, {required bool western}) =>
-    western ? '$n.' : '${arabicIndicDigits('$n')}.';
+// ── Numbering ─────────────────────────────────────────────────────────────
 
 /// `CT-2026-0003`, `CT-2026-0003-A1`.
 String formatContractNumber(

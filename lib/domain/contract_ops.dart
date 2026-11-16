@@ -1,50 +1,61 @@
 import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/domain/contract_logic.dart';
 import 'package:invoice_desk/domain/contract_models.dart';
+import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:invoice_desk/domain/invoice_logic.dart';
 import 'package:invoice_desk/domain/models.dart';
 
-/// Default payment schedule of a new contract (30/40/30) or quote (50/50).
-/// Percentages, so they follow the total as it changes.
+/// Default payment schedule of a new contract (30/40/30) or quote (50/50),
+/// labelled in [language] (Arabic unless given). Percentages, so they follow
+/// the total as it changes.
 List<PaymentMilestone> defaultMilestones(
   TemplateKind kind,
-  String Function() newId,
-) => switch (kind) {
-  TemplateKind.contract => [
-    PaymentMilestone(
-      id: newId(),
-      label: 'الدفعة المقدمة',
-      percentBp: 3000,
-      trigger: 'عند التوقيع',
-    ),
-    PaymentMilestone(
-      id: newId(),
-      label: 'الدفعة الثانية',
-      percentBp: 4000,
-      trigger: 'عند قبول المرحلة 1',
-    ),
-    PaymentMilestone(
-      id: newId(),
-      label: 'الدفعة الأخيرة',
-      percentBp: 3000,
-      trigger: 'عند التسليم النهائي',
-    ),
-  ],
-  TemplateKind.quote => [
-    PaymentMilestone(
-      id: newId(),
-      label: 'الدفعة المقدمة',
-      percentBp: 5000,
-      trigger: 'عند الموافقة على العرض',
-    ),
-    PaymentMilestone(
-      id: newId(),
-      label: 'الدفعة الأخيرة',
-      percentBp: 5000,
-      trigger: 'عند التسليم',
-    ),
-  ],
-};
+  String Function() newId, {
+  DocLanguage language = DocLanguage.ar,
+}) {
+  final ar = language == DocLanguage.ar;
+  PaymentMilestone m(
+    String labelAr,
+    String labelEn,
+    int bp,
+    String trAr,
+    String trEn,
+  ) => PaymentMilestone(
+    id: newId(),
+    label: ar ? labelAr : labelEn,
+    percentBp: bp,
+    trigger: ar ? trAr : trEn,
+  );
+  return switch (kind) {
+    TemplateKind.contract => [
+      m('الدفعة المقدمة', 'Advance payment', 3000, 'عند التوقيع', 'On signing'),
+      m(
+        'الدفعة الثانية',
+        'Second payment',
+        4000,
+        'عند قبول المرحلة 1',
+        'On acceptance of phase 1',
+      ),
+      m(
+        'الدفعة الأخيرة',
+        'Final payment',
+        3000,
+        'عند التسليم النهائي',
+        'On final delivery',
+      ),
+    ],
+    TemplateKind.quote => [
+      m(
+        'الدفعة المقدمة',
+        'Advance payment',
+        5000,
+        'عند الموافقة على العرض',
+        'On acceptance of the quote',
+      ),
+      m('الدفعة الأخيرة', 'Final payment', 5000, 'عند التسليم', 'On delivery'),
+    ],
+  };
+}
 
 /// Amendment number [no] of [root]: same series/year/seq, numbered
 /// `<root>-A<no>`, one blank clause titled [clauseTitle], empty annexes.
