@@ -6,7 +6,13 @@ import 'package:invoice_desk/domain/models.dart';
 
 // Moved to doc_format.dart (language-aware); re-exported for callers.
 export 'package:invoice_desk/domain/doc_format.dart'
-    show arabicIndicDigits, arabicOrdinal, currencyNameAr, subItemLabel;
+    show
+        arabicIndicDigits,
+        arabicOrdinal,
+        clauseHeading,
+        clauseHeadingWithTitle,
+        currencyNameAr,
+        subItemLabel;
 
 // ── Variables ─────────────────────────────────────────────────────────────
 

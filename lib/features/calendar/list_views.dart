@@ -6,6 +6,7 @@ import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/domain/calendar/models.dart';
 import 'package:invoice_desk/domain/calendar/summary.dart';
+import 'package:invoice_desk/domain/doc_format.dart';
 import 'package:invoice_desk/features/calendar/calendar_actions.dart';
 import 'package:invoice_desk/features/calendar/calendar_controller.dart';
 import 'package:invoice_desk/features/calendar/event_chip.dart';
@@ -136,7 +137,8 @@ class _AgendaDay extends ConsumerWidget {
           Row(
             children: [
               Text(
-                '${weekdayName(context, day.weekday)} ${formatArabicDate(day)}',
+                '${weekdayName(context, day.weekday)} '
+                '${formatDocDate(day, context.docLanguage)}',
                 style: theme.textTheme.titleSmall?.copyWith(
                   color: day == today ? theme.colorScheme.primary : null,
                 ),
@@ -207,12 +209,14 @@ class EventRow extends StatelessWidget {
               if (original != null) ...[
                 const TextSpan(text: ' · '),
                 TextSpan(
-                  text: shortDate(original),
+                  text: shortDate(context, original),
                   style: const TextStyle(
                     decoration: TextDecoration.lineThrough,
                   ),
                 ),
-                TextSpan(text: ' ← ${shortDate(event.date)}'),
+                TextSpan(
+                  text: ' ← ${shortDate(context, event.date)}',
+                ),
               ],
             ],
           ),

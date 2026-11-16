@@ -15,6 +15,7 @@ Run everything the way CI does:
 | `test/drift/app_db/` | Migration tests against the committed snapshots (generated helpers in `generated/`) |
 | `test/pdf/` | PDF smoke tests (page counts, footer on every page, amber highlights, watermark), content goldens in `test/pdf/goldens/`, and the RTL word-gap measurement |
 | `test/ui/` | Widget flows through the real shell (`pumpShell`) and goldens |
+| `test/l10n/` | The ARB parity test: the English template has every key, placeholder and plural branch of the Arabic one |
 | `test/architecture/` | The layering rule, and the guard for the vendored `pdf` package (`third_party/pdf`) |
 | `test/helpers/` | `harness.dart` (fonts, `pumpShell`, `drive`, `settle`), `contract_fixtures.dart` and `sample_documents.dart` (fake "Sample Studio" / "Acme Studio" data), `pdf_golden.dart` |
 
@@ -26,6 +27,20 @@ Widget tests run in a fake-async zone and drift does real I/O. Await database wo
 - `rtl`: the right-to-left PDF checks that guard the vendored `pdf` patch. Run them alone with `--tags rtl`.
 
 Run the suite without them with `--exclude-tags golden`, or only them with `--tags golden`.
+
+## Interface language
+
+The UI strings live in ARB files (`lib/l10n/arb/`): `app_ar.arb` is the template and `app_en.arb` follows it key for key. `test/l10n/arb_parity_test.dart` fails when a key, a placeholder or an ICU plural branch is missing in one of them, so a half-translated screen cannot slip through.
+
+The widget tests pin the interface language. The harness defaults to Arabic; `pumpShell(tester, db, language: UiLanguage.en)` and `pumpContractEditor(tester, db, language: UiLanguage.en)` run the same screens left-to-right.
+
+| Test | What it guards |
+|---|---|
+| `test/l10n/arb_parity_test.dart` | The two ARB files have the same keys, placeholders and plurals |
+| `test/ui/ltr_goldens_test.dart` | The English screens look right (sidebar and invoice editor, contract editor, calendar month view, settings) |
+| `test/ui/ltr_text_scale_test.dart` | Every English screen lays out without a `RenderFlex` overflow at the largest text scale (2.0) |
+
+A widget that only works in one direction shows up in one of the two: a row that overflows in English, an icon that points the wrong way, a date in the wrong format.
 
 ## Updating goldens on purpose
 

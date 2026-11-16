@@ -17,7 +17,7 @@ class ScopeAnnexCard extends ConsumerWidget {
     );
     return PanelCard(
       title: l.cardScopeAnnex,
-      icon: Icons.checklist_rtl,
+      icon: directionalIcon(context, Icons.checklist, Icons.checklist_rtl),
       trailing: locked
           ? null
           : OutlinedButton.icon(

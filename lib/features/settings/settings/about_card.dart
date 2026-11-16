@@ -17,7 +17,7 @@ class _AboutCard extends ConsumerWidget {
         children: [
           Row(
             children: [
-              Text('Invoice Desk', style: theme.textTheme.titleMedium),
+              Text(l.appTitle, style: theme.textTheme.titleMedium),
               const SizedBox(width: Space.s),
               Text(
                 l.aboutVersion(version),

@@ -986,5 +986,11 @@
   "wdThu": "الخميس",
   "wdFri": "الجمعة",
   "wdSat": "السبت",
-  "wdSun": "الأحد"
+  "wdSun": "الأحد",
+  "general": "عام",
+  "uiLanguage": "لغة الواجهة",
+  "uiLanguageSystem": "لغة النظام",
+  "uiLanguageAr": "العربية",
+  "uiLanguageEn": "English",
+  "uiLanguageHint": "يتبع البرنامج كل التطبيق هذه اللغة، بما في ذلك اتجاه القراءة."
 }

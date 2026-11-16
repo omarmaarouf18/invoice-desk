@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/domain/calendar/models.dart';
+import 'package:invoice_desk/domain/doc_format.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
@@ -126,7 +127,8 @@ String eventDetail(BuildContext context, CalendarEvent e) {
 }
 
 /// `14 نوفمبر`, for struck-through original dates.
-String shortDate(CalendarDate d) => formatArabicDayMonth(d);
+String shortDate(BuildContext context, CalendarDate d) =>
+    formatDocDayMonth(d, context.docLanguage);
 
 /// Weekday name for ISO weekday [w] (1 = Monday).
 String weekdayName(BuildContext context, int w) {

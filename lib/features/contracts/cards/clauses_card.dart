@@ -11,7 +11,11 @@ class ClausesCard extends ConsumerWidget {
     final a = ContractActions(ref, context);
     return PanelCard(
       title: l.cardClauses,
-      icon: Icons.format_list_numbered_rtl,
+      icon: directionalIcon(
+        context,
+        Icons.format_list_numbered,
+        Icons.format_list_numbered_rtl,
+      ),
       trailing: locked
           ? null
           : MenuAnchor(
@@ -147,7 +151,7 @@ class _ClauseHeader extends ConsumerWidget {
             SizedBox(
               width: 112,
               child: Text(
-                x.enabled ? 'البند ${arabicOrdinal(number)}' : '—',
+                x.enabled ? clauseHeading(number, context.docLanguage) : '—',
                 style: theme.textTheme.labelLarge?.copyWith(
                   color: x.enabled ? theme.colorScheme.primary : muted,
                 ),

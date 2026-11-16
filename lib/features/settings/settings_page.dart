@@ -4,12 +4,14 @@ import 'dart:io';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:invoice_desk/app/locale.dart';
 import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/data/backup.dart';
 import 'package:invoice_desk/data/repositories/settings_repository.dart';
 import 'package:invoice_desk/domain/calendar/models.dart';
+import 'package:invoice_desk/domain/doc_format.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/actions.dart';
 import 'package:invoice_desk/features/calendar/calendar_controller.dart';
@@ -24,6 +26,7 @@ part 'settings/appearance_card.dart';
 part 'settings/backup_card.dart';
 part 'settings/calendar_cards.dart';
 part 'settings/form_cards.dart';
+part 'settings/general_card.dart';
 part 'settings/sync_card.dart';
 
 class SettingsPage extends ConsumerWidget {
@@ -114,6 +117,8 @@ class _SettingsFormState extends ConsumerState<_SettingsForm> {
               children: [
                 _SettingsHeader(dirty: _dirty),
                 const SizedBox(height: Space.l),
+                const _GeneralCard(),
+                cardGap,
                 _ProfileCard(s: s, update: _update),
                 cardGap,
                 _InvoicingCard(s: s, update: _update),

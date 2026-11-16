@@ -56,14 +56,16 @@ class _VariablesCardState extends ConsumerState<VariablesCard> {
     return PanelCard(
       title: l.cardVariables,
       icon: Icons.data_object,
-      trailing: Text(
-        l.variablesHelp,
-        style: Theme.of(context).textTheme.bodySmall,
-        overflow: TextOverflow.ellipsis,
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // The help text lives in the card, not in its header: in
+          // English it is a full sentence and would not fit there.
+          Text(
+            l.variablesHelp,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const SizedBox(height: Space.s),
           if (custom.isEmpty)
             Text(
               l.noCustomVariables,

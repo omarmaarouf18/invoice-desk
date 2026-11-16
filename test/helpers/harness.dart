@@ -9,10 +9,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:invoice_desk/account/account.dart';
 import 'package:invoice_desk/app/app.dart';
+import 'package:invoice_desk/app/locale.dart';
 import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/app/ui_prefs.dart';
 import 'package:invoice_desk/data/app_paths.dart';
 import 'package:invoice_desk/data/db.dart';
+import 'package:invoice_desk/data/library_seed.dart';
+import 'package:invoice_desk/domain/contract_models.dart';
+import 'package:invoice_desk/features/contracts/contract_controller.dart';
 import 'package:invoice_desk/sync/sync.dart';
 
 final testNow = DateTime(2026, 11, 15, 10);
@@ -40,17 +44,24 @@ Future<void> loadAppFonts() async {
 }
 
 /// Pumps the full app shell over [db] at a desktop size.
+///
+/// The UI language is Arabic unless [language] says otherwise, so the
+/// Arabic screens keep their own tests; the English ones ask for
+/// [UiLanguage.en].
 Future<ProviderContainer> pumpShell(
   WidgetTester tester,
   AppDatabase db, {
   ThemeMode mode = ThemeMode.light,
   Size size = const Size(1440, 900),
+  UiLanguage language = UiLanguage.ar,
 }) async {
   tester.view
     ..physicalSize = size
     ..devicePixelRatio = 1;
   addTearDown(tester.view.reset);
-  final prefs = UiPrefs.memory()..themeMode = mode;
+  final prefs = UiPrefs.memory()
+    ..themeMode = mode
+    ..uiLanguage = language.name;
   final container = ProviderContainer(
     overrides: [
       databaseProvider.overrideWithValue(db),
@@ -58,6 +69,8 @@ Future<ProviderContainer> pumpShell(
       syncServiceProvider.overrideWithValue(const NoopSyncService()),
       uiPrefsProvider.overrideWithValue(prefs),
       clockProvider.overrideWithValue(Clock.fixed(testNow)),
+      // The real one reads the platform plugin, which is not there in a test.
+      appVersionProvider.overrideWith((ref) async => '0.4.0'),
       appPathsProvider.overrideWithValue(
         AppPaths(Directory.systemTemp.createTempSync('idesk')),
       ),
@@ -72,6 +85,68 @@ Future<ProviderContainer> pumpShell(
   );
   await settle(tester);
   return container;
+}
+
+/// Pumps the app with a contract open for the seeded client, with a
+/// milestone invoice and (when [complete]) a signed contract and an
+/// amendment.
+Future<ProviderContainer> pumpContractEditor(
+  WidgetTester tester,
+  AppDatabase db, {
+  required bool complete,
+  ThemeMode mode = ThemeMode.light,
+  UiLanguage language = UiLanguage.ar,
+}) async {
+  final client = (await tester.runAsync(db.clientsDao.getAll))!.single;
+  if (complete) {
+    await tester.runAsync(
+      () => db.clientsDao.upsert(
+        client.copyWith(
+          legalName: 'أكاديمية العينة للتعليم',
+          representative: 'أحمد علي',
+          representativeTitle: 'المدير التنفيذي',
+        ),
+      ),
+    );
+  }
+  final c = await pumpShell(tester, db, mode: mode, language: language);
+  final t = (await tester.runAsync(db.libraryDao.getAll))!.firstWhere(
+    (x) => x.name == developmentTemplateName,
+  );
+  final ctl = c.read(contractProvider.notifier);
+  await drive(
+    tester,
+    () => ctl.create(
+      NewContractRequest(
+        clientId: client.id,
+        template: t,
+        title: 'تطوير وتشغيل منصة تعليمية',
+        projectName: 'منصة العينة',
+      ),
+    ),
+  );
+  ctl.edit((k) => k.copyWith(totalMinor: 18000000));
+  await drive(tester, ctl.flush);
+  final first = c.read(contractProvider).contract!;
+  await drive(
+    tester,
+    () => ctl.createInvoiceFromMilestone(first.milestones.first.id),
+  );
+  if (complete) {
+    ctl.setStatus(ContractStatus.signed, missing: const []);
+    await drive(tester, ctl.flush);
+    await drive(
+      tester,
+      () => ctl.createAmendment(
+        first.id,
+        preamble: (n, d) => 'إلحاقًا بالعقد رقم $n المؤرخ في $d.',
+        clauseTitle: 'موضوع التعديل',
+      ),
+    );
+    await drive(tester, () => ctl.open(first.id));
+  }
+  await settle(tester);
+  return c;
 }
 
 /// Lets drift's async queries complete, then settles frames.

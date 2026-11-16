@@ -2,7 +2,7 @@ part of '../sections_editor.dart';
 
 const _wHandle = 28.0;
 
-const _wCycle = 112.0;
+const _wCycle = 124.0;
 
 const _wQty = 64.0;
 
@@ -248,6 +248,10 @@ class _CycleCell extends StatelessWidget {
       child: DropdownButtonFormField<BillingCycle>(
         key: ValueKey(item.cycle),
         initialValue: item.cycle,
+        // The label is longer in English ("One-time") than in Arabic, so
+        // the field takes the whole width and the text is clipped instead
+        // of spilling out of the row.
+        isExpanded: true,
         decoration: const InputDecoration(
           contentPadding: EdgeInsetsDirectional.symmetric(
             horizontal: 8,
@@ -258,7 +262,11 @@ class _CycleCell extends StatelessWidget {
           for (final c in BillingCycle.values)
             DropdownMenuItem(
               value: c,
-              child: Text(cycleLabel(context, c)),
+              child: Text(
+                cycleLabel(context, c),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
         ],
         onChanged: (c) {

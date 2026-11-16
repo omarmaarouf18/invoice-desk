@@ -135,9 +135,15 @@ class _TopBar extends ConsumerWidget {
           ContractStatusChip(c.status),
           if (parent != null) ...[
             const SizedBox(width: Space.s),
-            TextButton(
-              onPressed: () => unawaited(a.open(parent.id)),
-              child: Text(l.amendmentOf(parent.number)),
+            Flexible(
+              child: TextButton(
+                onPressed: () => unawaited(a.open(parent.id)),
+                child: Text(
+                  l.amendmentOf(parent.number),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ),
           ],
           const SizedBox(width: Space.m),

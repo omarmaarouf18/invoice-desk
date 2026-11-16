@@ -32,7 +32,8 @@
   - Permanent deletes write a backup first.
 - **Backups.** A daily `VACUUM INTO` copy (the last 30 are kept), plus manual backup and restore in Settings. Backups from older versions restore too.
 - **CSV export** for your accountant: one row per invoice, with totals per currency.
-- **Light and dark themes.** The interface is right-to-left throughout, in Arabic.
+- **Two interface languages.** Arabic and English, picked in Settings → General (or followed from the system). The whole app follows the choice, reading direction included: Arabic is right-to-left, English left-to-right.
+- **Light and dark themes.** The interface is right-to-left in Arabic and left-to-right in English.
 
 ## Install (Linux x86_64)
 

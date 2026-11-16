@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/core/dates.dart';
+import 'package:invoice_desk/domain/doc_format.dart';
 import 'package:invoice_desk/domain/trash.dart';
 import 'package:invoice_desk/features/actions.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
@@ -132,7 +133,7 @@ class TrashRow extends ConsumerWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   Text(
-                    '${l.trashDeletedOn(formatArabicDayMonth(deleted))} · '
+                    '${l.trashDeletedOn(formatDocDayMonth(deleted, context.docLanguage))} · '
                     '${l.trashPurgeIn(days)}',
                     style: theme.textTheme.bodySmall?.copyWith(color: muted),
                   ),

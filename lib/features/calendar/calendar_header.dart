@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invoice_desk/app/providers.dart';
-import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/domain/calendar/models.dart';
 import 'package:invoice_desk/domain/calendar/summary.dart';
+import 'package:invoice_desk/domain/doc_format.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/calendar/calendar_actions.dart';
 import 'package:invoice_desk/features/calendar/calendar_controller.dart';
@@ -25,27 +25,35 @@ class CalendarToolbar extends ConsumerWidget {
     final range = ref.watch(visibleRangeProvider);
     final ctl = ref.read(calendarProvider.notifier);
     final title = switch (s.view) {
-      CalendarView.month => formatArabicMonthYear(s.selected),
+      CalendarView.month => formatDocMonthYear(s.selected, context.docLanguage),
       CalendarView.week =>
-        '${formatArabicDayMonth(range.start)} – ${formatArabicDate(range.end)}',
+        '${formatDocDayMonth(range.start, context.docLanguage)} – '
+            '${formatDocDate(range.end, context.docLanguage)}',
       CalendarView.agenda => l.viewAgenda,
     };
     return Row(
       children: [
+        // The chevrons follow the reading direction, so "previous" points
+        // back in both Arabic (right-to-left) and English.
         IconButton(
           tooltip: l.previous,
-          icon: const Icon(Icons.chevron_right),
+          icon: const Icon(Icons.chevron_left),
           onPressed: () => ctl.page(-1),
         ),
         IconButton(
           tooltip: l.next,
-          icon: const Icon(Icons.chevron_left),
+          icon: const Icon(Icons.chevron_right),
           onPressed: () => ctl.page(1),
         ),
         TextButton(onPressed: ctl.goToday, child: Text('${l.today} (T)')),
         const SizedBox(width: Space.s),
         Expanded(
-          child: Text(title, style: Theme.of(context).textTheme.titleLarge),
+          child: Text(
+            title,
+            style: Theme.of(context).textTheme.titleLarge,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
         if (s.view == CalendarView.agenda)
           FilterChip(
@@ -90,11 +98,23 @@ class _ExportMenu extends ConsumerWidget {
           child: Text(l.exportIcsFuture),
         ),
       ],
-      builder: (context, c, _) => OutlinedButton.icon(
-        onPressed: () => c.isOpen ? c.close() : c.open(),
-        icon: const Icon(Icons.ios_share, size: 18),
-        label: Text(l.exportIcs),
-      ),
+      builder: (context, c, _) {
+        // With large text the toolbar no longer fits on one line, so the
+        // export button keeps only its icon (and its tooltip).
+        final large = MediaQuery.textScalerOf(context).scale(1) > 1.3;
+        if (large) {
+          return IconButton(
+            tooltip: l.exportIcs,
+            onPressed: () => c.isOpen ? c.close() : c.open(),
+            icon: const Icon(Icons.ios_share),
+          );
+        }
+        return OutlinedButton.icon(
+          onPressed: () => c.isOpen ? c.close() : c.open(),
+          icon: const Icon(Icons.ios_share, size: 18),
+          label: Text(l.exportIcs),
+        );
+      },
     );
   }
 }

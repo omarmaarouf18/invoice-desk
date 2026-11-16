@@ -196,7 +196,7 @@ class _HistoryList extends ConsumerWidget {
         const SizedBox(height: Space.xs),
         for (final e in history.reversed.take(6))
           Text(
-            '${formatArabicDate(CalendarDate.fromDateTime(eventTime(e)))} · '
+            '${formatDocDate(CalendarDate.fromDateTime(eventTime(e)), context.docLanguage)} · '
             '${_label(context, e)}',
             style: theme.textTheme.bodySmall,
           ),

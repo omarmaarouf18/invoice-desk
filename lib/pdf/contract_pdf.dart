@@ -4,7 +4,6 @@ import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/domain/contract_logic.dart';
 import 'package:invoice_desk/domain/contract_models.dart';
-import 'package:invoice_desk/domain/doc_format.dart';
 import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/pdf/invoice_pdf.dart' show PdfFonts;

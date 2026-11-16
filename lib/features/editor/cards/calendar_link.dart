@@ -37,8 +37,8 @@ class _CalendarStrip extends ConsumerWidget {
             child: Text(
               [
                 l.postponedFromTo(
-                  formatArabicDate(p.fromDate),
-                  formatArabicDate(p.toDate),
+                  formatDocDate(p.fromDate, context.docLanguage),
+                  formatDocDate(p.toDate, context.docLanguage),
                 ),
                 if (p.reason.isNotEmpty) p.reason,
               ].join(' — '),

@@ -45,8 +45,9 @@ class LockBanner extends ConsumerWidget {
             child: Text(
               unlocked
                   ? l.unlockedBanner(
-                      formatArabicDate(
+                      formatDocDate(
                         CalendarDate.fromDateTime(eventTime(lastUnlock)),
+                        context.docLanguage,
                       ),
                     )
                   : l.lockedBanner,

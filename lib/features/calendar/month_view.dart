@@ -134,7 +134,11 @@ class _CellBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final total = dueTotal(events);
-    final shown = events.take(MonthView.maxChips).toList();
+    // Three chips and a "+N" line do not fit in a cell when the text is
+    // large; one chip and the count of the rest do.
+    final scale = MediaQuery.textScalerOf(context).scale(1);
+    final maxChips = scale > 1.3 ? 1 : MonthView.maxChips;
+    final shown = events.take(maxChips).toList();
     final more = events.length - shown.length;
     final ctl = ref.read(calendarProvider.notifier);
     return Column(

@@ -45,7 +45,9 @@ class LinkedInvoicesCard extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    subtitle: Text(formatArabicDate(i.issueDate)),
+                    subtitle: Text(
+                      formatDocDate(i.issueDate, context.docLanguage),
+                    ),
                   ),
               ],
             ),

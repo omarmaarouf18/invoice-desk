@@ -4,14 +4,24 @@ All notable changes to Invoice Desk. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+### Added
+- **English interface.** The whole app can be read in English. Settings → General picks Arabic, English or the system language, and the choice takes effect at once — text, reading direction (right-to-left in Arabic, left-to-right in English), dates and icons. It is remembered per machine.
+  - A full English translation (`lib/l10n/arb/app_en.arb`), checked against the Arabic one by a parity test: a missing key, a changed placeholder or a missing plural branch fails the build.
+  - The English screens are locked by their own goldens (sidebar and invoice editor, contract editor, calendar month view, settings), and every screen is checked at the largest text scale so no row overflows.
+  - The interface language is independent of the language of a document: an Arabic invoice can be edited in an English app (ADR-0011).
+
 ### Fixed
+- **The calendar's month arrows point the wrong way.** "Previous" and "next" now follow the reading direction, so they are the right way round in Arabic and in English.
+- **A row of the interface can overflow with large text.** The billing-cycle and currency drop-downs, the sidebar rows, the card headers and the calendar toolbar now give way instead of spilling out of the screen at the largest text scale.
 - **Arabic words no longer run together in PDFs** (for example «وتطويرالتطبيق», «يجوزسداد»). The `pdf` package placed right-to-left words by their ink width, so words ending in ر or ز ate the following space. It is now vendored with a one-line fix (`third_party/pdf`, ADR-0013). Word spacing is back to the font's normal width, so English text in PDFs is no longer double-spaced either. Only re-exported documents change.
 - **A contract page no longer ends with a clause heading.** A heading is now kept with its first paragraph (or first sub-item); a long first block is left splittable so it still fits on a page. The page count of the sample contract is unchanged.
 
 ### Changed
 - The Arabic invoice labels are reworded: «لعناية: …», «يُرجى ذكر رقم الفاتورة عند الدفع: …», «المبالغ بالجنيه المصري», «التكرار», «المجموع الفرعي», «غير مطبَّقة», «محفظة إلكترونية» and «حساب بنكي (IBAN)». They are printed on Arabic documents, which arrive with the bilingual documents; the contract labels are unchanged.
+- The calendar's keyboard hint is translated, so it reads correctly in English; the app name stays «Invoice Desk» in every language.
+- Dates in the interface follow the interface language ("14 Nov 2026" in English), while the documents keep their own language.
 - The sample PDFs in `docs/` use fictional data (Sample Studio → Acme Studio).
-- Groundwork for bilingual documents and document styles. Nothing looks different yet (ADR-0011):
+- Groundwork for bilingual documents and document styles. The documents still look the same (ADR-0011):
   - a document language model (`ar` / `en` / `bilingual`) and a digit style;
   - language-aware dates, clause headings, currency names, default milestones and payment reminders;
   - one table of PDF labels in Arabic and English;

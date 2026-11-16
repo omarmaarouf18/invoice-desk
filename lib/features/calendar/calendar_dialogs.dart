@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/domain/calendar/models.dart';
+import 'package:invoice_desk/domain/doc_format.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
 
@@ -61,7 +62,8 @@ class _PostponeDialogState extends State<_PostponeDialog> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              '${l.dueDate}: ${formatArabicDate(widget.from)}',
+              '${l.dueDate}: '
+              '${formatDocDate(widget.from, context.docLanguage)}',
               style: TextStyle(color: context.colors.muted),
             ),
             const SizedBox(height: Space.m),
@@ -69,7 +71,10 @@ class _PostponeDialogState extends State<_PostponeDialog> {
               key: const Key('postpone-date'),
               onPressed: _pick,
               icon: const Icon(Icons.event, size: 18),
-              label: Text('${l.postponeNewDate}: ${formatArabicDate(_date)}'),
+              label: Text(
+                '${l.postponeNewDate}: '
+                '${formatDocDate(_date, context.docLanguage)}',
+              ),
             ),
             const SizedBox(height: Space.m),
             TextField(
@@ -191,7 +196,7 @@ class _ReminderDialogState extends State<_ReminderDialog> {
             OutlinedButton.icon(
               onPressed: _pick,
               icon: const Icon(Icons.event, size: 18),
-              label: Text(formatArabicDate(_date)),
+              label: Text(formatDocDate(_date, context.docLanguage)),
             ),
             const SizedBox(height: Space.m),
             TextField(

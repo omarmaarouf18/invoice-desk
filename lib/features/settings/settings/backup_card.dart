@@ -57,7 +57,10 @@ class _BackupCardState extends ConsumerState<_BackupCard> {
       showSnack(l.restoreBad);
       return;
     }
-    final date = formatArabicDate(CalendarDate.fromDateTime(info.modified));
+    final date = formatDocDate(
+      CalendarDate.fromDateTime(info.modified),
+      context.docLanguage,
+    );
     final ok = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -96,10 +99,11 @@ class _BackupCardState extends ConsumerState<_BackupCard> {
     final lastText = last == null
         ? l.never
         : l.lastBackup(
-            formatArabicDate(
+            formatDocDate(
               CalendarDate.fromDateTime(
                 DateTime.fromMillisecondsSinceEpoch(last),
               ),
+              context.docLanguage,
             ),
           );
     final actions = AppActions(ref, context);

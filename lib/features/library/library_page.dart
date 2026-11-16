@@ -180,7 +180,11 @@ class _TemplateEditorState extends ConsumerState<_TemplateEditor> {
         const SizedBox(height: Space.m),
         PanelCard(
           title: l.cardClauses,
-          icon: Icons.format_list_numbered_rtl,
+          icon: directionalIcon(
+            context,
+            Icons.format_list_numbered,
+            Icons.format_list_numbered_rtl,
+          ),
           trailing: OutlinedButton.icon(
             onPressed: () => _update(
               (t) => t.copyWith(

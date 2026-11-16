@@ -22,6 +22,16 @@ import 'package:invoice_desk/widgets/common.dart';
 
 const sidebarWidth = 320.0;
 
+/// The width of the sidebar for the text scale in effect.
+///
+/// A row in the sidebar holds an invoice number, a status chip and a date
+/// side by side, so the sidebar needs more room when the text is large;
+/// otherwise the number would have to be cut short.
+double sidebarWidthFor(BuildContext context) {
+  final scale = MediaQuery.textScalerOf(context).scale(1);
+  return sidebarWidth * (1 + (scale - 1) * 0.4);
+}
+
 /// RTL app shell: sidebar on the start (right) side, workspace beside it,
 /// and every global keyboard shortcut.
 class Shell extends ConsumerWidget {
@@ -83,7 +93,10 @@ class Shell extends ConsumerWidget {
               Expanded(
                 child: Row(
                   children: [
-                    const SizedBox(width: sidebarWidth, child: Sidebar()),
+                    SizedBox(
+                      width: sidebarWidthFor(context),
+                      child: const Sidebar(),
+                    ),
                     const VerticalDivider(width: 1),
                     Expanded(
                       child: FocusTraversalGroup(child: const _Workspace()),

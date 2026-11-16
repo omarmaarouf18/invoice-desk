@@ -22,7 +22,7 @@ class _LibraryHeader extends ConsumerWidget {
         OutlinedButton.icon(
           onPressed: () =>
               ref.read(workspaceProvider.notifier).show(Workspace.settings),
-          icon: const Icon(Icons.arrow_forward, size: 18),
+          icon: const Icon(Icons.arrow_back, size: 18),
           label: Text(l.back),
         ),
       ],

@@ -1,6 +1,6 @@
 # Architecture
 
-Invoice Desk is a Flutter desktop app, offline-first. It has one SQLite database, no network code, and a UI in Arabic (RTL) that produces bilingual PDFs. This page explains how the code is laid out and why. The decisions behind it are recorded in [docs/adr/](adr/).
+Invoice Desk is a Flutter desktop app, offline-first. It has one SQLite database, no network code, and a UI in Arabic (RTL) and English (LTR) that produces bilingual PDFs. This page explains how the code is laid out and why. The decisions behind it are recorded in [docs/adr/](adr/).
 
 ## Layers and the dependency rule
 
@@ -66,7 +66,7 @@ lib/
     settings/, clients/       settings page, client dialogs
   pdf/                        invoice_pdf + parts, contract_pdf + parts
   account/, sync/             future subscription and sync seams (local/no-op today)
-  widgets/, theme/, l10n/     shared widgets, tokens, Arabic strings (keys ready for English)
+  widgets/, theme/, l10n/     shared widgets, tokens, the Arabic and English strings (ARB)
 drift_schemas/                committed schema snapshots, one per version
 tool/                         check_sizes, gen_data_model (+ dev helpers)
 scripts/                      package_linux.sh, ci_local.sh
@@ -117,6 +117,16 @@ sequenceDiagram
 ```
 
 Switching documents, exporting and closing the window all flush the buffer first. Edits that arrive during a save stay dirty and get their own save.
+
+## Interface language
+
+The UI strings live in ARB files (`lib/l10n/arb/`): `app_ar.arb` is the template and `app_en.arb` follows it key for key. `test/l10n/arb_parity_test.dart` fails when a key, a placeholder or an ICU plural branch is missing in one of them, so a half-translated screen cannot slip through.
+
+- **The choice.** Settings → General picks Arabic, English or the system language; the choice is kept per machine in `uiPrefsProvider` (`uiLanguage`). `localeProvider` resolves it against the locales that actually have translations and falls back to Arabic.
+- **Live and whole-app.** The choice is a provider, so the locale, the reading direction and every string change at once, without a restart.
+- **Direction.** Widgets use `EdgeInsetsDirectional`, `AlignmentDirectional` and `TextDirection`-aware icons. Material mirrors its own directional icons (`chevron_left`, `arrow_back`); the few that exist in a left-to-right and a right-to-left variant are picked with `directionalIcon` (`lib/widgets/common.dart`).
+- **Dates.** The UI formats dates with the document formatter (`lib/domain/doc_format.dart`) and the UI language, so an English screen shows "14 Nov 2026" and an Arabic one "١٤ نوفمبر ٢٠٢٦".
+- **Documents are separate.** The language of a document is not the language of the UI ([ADR 0011](adr/0011-document-language-model.md)).
 
 ## Money
 

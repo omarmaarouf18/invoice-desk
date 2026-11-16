@@ -11,6 +11,7 @@ import 'package:invoice_desk/domain/calendar/events.dart';
 import 'package:invoice_desk/domain/calendar/ics.dart';
 import 'package:invoice_desk/domain/calendar/models.dart';
 import 'package:invoice_desk/domain/calendar/reminder_message.dart';
+import 'package:invoice_desk/domain/doc_format.dart';
 import 'package:invoice_desk/features/actions.dart';
 import 'package:invoice_desk/features/calendar/calendar_controller.dart';
 import 'package:invoice_desk/features/calendar/calendar_dialogs.dart';
@@ -59,6 +60,7 @@ class CalendarActions {
   /// Asks for a date and a reason, then appends a postponement (Undo
   /// removes it). [to] prefills the date (drag-and-drop).
   Future<void> postpone(CalendarEvent e, {CalendarDate? to}) async {
+    final lang = context.docLanguage;
     final type = e.milestoneId != null
         ? PostponedEntity.milestone
         : PostponedEntity.invoice;
@@ -80,7 +82,7 @@ class CalendarActions {
       reason: picked.reason,
     );
     showSnack(
-      l.postponed(formatArabicDate(picked.date)),
+      l.postponed(formatDocDate(picked.date, lang)),
       actions: [(l.undo, () => unawaited(repo.undoPostpone(id)))],
     );
   }
@@ -90,12 +92,13 @@ class CalendarActions {
   Future<void> dropOn(CalendarEvent e, CalendarDate day) async {
     if (day == e.date || !e.type.isMovable) return;
     if (e.type == CalendarEventType.reminder) {
+      final lang = context.docLanguage;
       final repo = ref.read(calendarRepositoryProvider);
       final r = await repo.reminderById(e.reminderId!);
       if (r == null) return;
       await repo.saveReminder(r.copyWith(date: day));
       showSnack(
-        l.postponed(formatArabicDate(day)),
+        l.postponed(formatDocDate(day, lang)),
         actions: [(l.undo, () => unawaited(repo.saveReminder(r)))],
       );
       return;

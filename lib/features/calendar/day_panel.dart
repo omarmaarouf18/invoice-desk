@@ -7,6 +7,7 @@ import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/domain/calendar/events.dart';
 import 'package:invoice_desk/domain/calendar/models.dart';
 import 'package:invoice_desk/domain/calendar/summary.dart';
+import 'package:invoice_desk/domain/doc_format.dart';
 import 'package:invoice_desk/features/calendar/calendar_actions.dart';
 import 'package:invoice_desk/features/calendar/calendar_controller.dart';
 import 'package:invoice_desk/features/calendar/event_style.dart';
@@ -62,7 +63,7 @@ class DayPanel extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     '${weekdayName(context, day.weekday)} '
-                    '${formatArabicDate(day)}',
+                    '${formatDocDate(day, context.docLanguage)}',
                     style: theme.textTheme.titleMedium,
                   ),
                 ),
@@ -197,7 +198,7 @@ class _PanelEvent extends ConsumerWidget {
             Padding(
               padding: const EdgeInsetsDirectional.only(start: 56),
               child: Text(
-                formatArabicDate(e.date),
+                formatDocDate(e.date, context.docLanguage),
                 style: Theme.of(context).textTheme.labelSmall,
               ),
             ),

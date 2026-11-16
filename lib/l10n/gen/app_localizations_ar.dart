@@ -1558,4 +1558,22 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get wdSun => 'الأحد';
+
+  @override
+  String get general => 'عام';
+
+  @override
+  String get uiLanguage => 'لغة الواجهة';
+
+  @override
+  String get uiLanguageSystem => 'لغة النظام';
+
+  @override
+  String get uiLanguageAr => 'العربية';
+
+  @override
+  String get uiLanguageEn => 'English';
+
+  @override
+  String get uiLanguageHint => 'يتبع البرنامج كل التطبيق هذه اللغة، بما في ذلك اتجاه القراءة.';
 }

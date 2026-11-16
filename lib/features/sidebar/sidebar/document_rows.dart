@@ -128,10 +128,18 @@ class _InvoiceRowContent extends StatelessWidget {
               ),
               const SizedBox(width: Space.s),
               StatusChip(status, dense: true),
-              const Spacer(),
-              Text(
-                formatArabicDayMonth(invoice.issueDate),
-                style: theme.textTheme.bodySmall,
+              // The date sits at the far end of the row; when the text is
+              // large it is shortened rather than pushing the row out.
+              Expanded(
+                child: Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: Text(
+                    formatDocDayMonth(invoice.issueDate, context.docLanguage),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodySmall,
+                  ),
+                ),
               ),
             ],
           ),
@@ -173,7 +181,11 @@ class _ContractRowContent extends StatelessWidget {
             children: [
               if (entry.depth > 0) ...[
                 Icon(
-                  Icons.subdirectory_arrow_left,
+                  directionalIcon(
+                    context,
+                    Icons.subdirectory_arrow_left,
+                    Icons.subdirectory_arrow_right,
+                  ),
                   size: 14,
                   color: context.colors.muted,
                 ),

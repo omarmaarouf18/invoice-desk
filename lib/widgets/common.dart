@@ -85,8 +85,10 @@ class PanelCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(
-              height: 36,
+            // The header keeps its height, but grows when the text is
+            // large so the title is not cut in half.
+            ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 36),
               child: Row(
                 children: [
                   if (icon != null) ...[
@@ -96,7 +98,12 @@ class PanelCard extends StatelessWidget {
                   Expanded(
                     child: Semantics(
                       header: true,
-                      child: Text(title, style: theme.textTheme.titleMedium),
+                      child: Text(
+                        title,
+                        style: theme.textTheme.titleMedium,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ),
                   ?trailing,
@@ -319,3 +326,14 @@ class Ltr extends StatelessWidget {
 /// Duration honouring the platform's reduce-motion setting.
 Duration motion(BuildContext context) =>
     MediaQuery.disableAnimationsOf(context) ? Duration.zero : Space.motion;
+
+/// The icon that follows the reading direction.
+///
+/// Material's mirrored icons (`chevron_left`, `arrow_back`, …) are mirrored
+/// by Flutter itself. Icons that exist in a left-to-right and a
+/// right-to-left variant are not, so they are picked here.
+IconData directionalIcon(
+  BuildContext context,
+  IconData ltr,
+  IconData rtl,
+) => Directionality.of(context) == TextDirection.rtl ? rtl : ltr;

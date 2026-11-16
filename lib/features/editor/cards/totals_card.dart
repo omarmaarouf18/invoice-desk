@@ -154,7 +154,7 @@ class _TotalDueBox extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  l.dueBy(formatArabicDate(due)),
+                  l.dueBy(formatDocDate(due, context.docLanguage)),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onInverseSurface.withValues(
                       alpha: 0.7,

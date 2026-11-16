@@ -172,7 +172,7 @@ class DateField extends StatelessWidget {
           labelText: label,
           suffixIcon: const Icon(Icons.calendar_today_outlined, size: 16),
         ),
-        child: Text(formatArabicDate(value)),
+        child: Text(formatDocDate(value, context.docLanguage)),
       ),
     );
   }

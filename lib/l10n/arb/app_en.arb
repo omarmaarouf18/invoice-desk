@@ -1,0 +1,996 @@
+{
+  "@@locale": "en",
+  "appTitle": "Invoice Desk",
+  "sidebarTitle": "Invoices",
+  "myProfile": "My details",
+  "searchHint": "Search by client or invoice number",
+  "newInvoice": "New invoice",
+  "newClient": "New client",
+  "filterAll": "All",
+  "filterUnpaid": "Unpaid",
+  "filterOverdue": "Overdue",
+  "filterPaid": "Paid",
+  "filterDrafts": "Drafts",
+  "summaryUnpaid": "Unpaid",
+  "summaryOverdue": "Overdue",
+  "summaryNothingDue": "Nothing outstanding",
+  "invoiceCount": "{count} invoices",
+  "unpaidCount": "{count} unpaid",
+  "noResults": "No results for “{query}”",
+  "clearSearch": "Clear search",
+  "noInvoicesForClient": "No matching invoices",
+  "noClientsYet": "No clients yet",
+  "statusDraft": "Draft",
+  "statusSent": "Sent",
+  "statusOverdue": "Overdue",
+  "statusPaid": "Paid",
+  "statusVoid": "Void",
+  "menuOpen": "Open",
+  "menuDuplicate": "Duplicate",
+  "menuRenew": "Renewal invoice",
+  "menuMarkPaid": "Mark as paid",
+  "menuDelete": "Delete",
+  "menuEdit": "Edit",
+  "menuArchive": "Archive",
+  "menuUnarchive": "Unarchive",
+  "archived": "Archived",
+  "tabEdit": "Edit",
+  "tabPreview": "Preview",
+  "save": "Save",
+  "exportPdf": "PDF",
+  "exportPdfLong": "Export PDF",
+  "more": "More",
+  "saved": "Saved",
+  "saving": "Saving…",
+  "unsaved": "Unsaved changes",
+  "notSavedFix": "Not saved — check the fields",
+  "saveFailed": "Could not save",
+  "cardDetails": "Invoice details",
+  "client": "Client",
+  "chooseClient": "Choose a client",
+  "invoiceNumber": "Invoice number",
+  "issueDate": "Issue date",
+  "dueDate": "Due date",
+  "contractRef": "Contract reference",
+  "status": "Status",
+  "paidDate": "Payment date",
+  "cardSections": "Sections and items",
+  "sectionTitleEn": "Section title (EN)",
+  "sectionTitleAr": "Section title (AR)",
+  "currency": "Currency",
+  "deleteSection": "Delete section",
+  "addSection": "Add section",
+  "addItem": "Add item",
+  "deleteItem": "Delete item",
+  "dragToReorder": "Drag to reorder",
+  "colService": "Service",
+  "colDescription": "Description",
+  "colCycle": "Cycle",
+  "colQty": "Qty",
+  "colUnitPrice": "Unit price",
+  "colLineTotal": "Total",
+  "cycleOneTime": "One-time",
+  "cycleMonthly": "Monthly",
+  "cycleAnnual": "Annual",
+  "subtotal": "Subtotal",
+  "sectionN": "Section {n}",
+  "cardTotals": "Totals and tax",
+  "vat": "VAT",
+  "vatRate": "Rate %",
+  "vatLine": "VAT",
+  "totalDue": "Total due",
+  "dueBy": "Due by {date}",
+  "cardNotes": "Notes",
+  "notesEn": "Notes in English — one per line",
+  "notesAr": "Notes in Arabic — one per line",
+  "cardScope": "Project scope page",
+  "scopeToggle": "Add a project scope page to the invoice",
+  "scopeTitle": "Project title",
+  "scopeOverview": "Overview",
+  "scopeDone": "What was done — one per line",
+  "scopeDelivered": "What the client receives — one per line",
+  "scopeWarranty": "Warranty and support",
+  "errMissingClient": "Choose a client",
+  "errEmptyNumber": "Enter an invoice number",
+  "errDuplicateNumber": "This number is used by another invoice",
+  "errAmount": "Invalid amount",
+  "errQty": "Invalid quantity",
+  "errRate": "Invalid rate",
+  "exportedPdf": "Saved {name}",
+  "openFile": "Open file",
+  "openFolder": "Open folder",
+  "exportFailed": "Could not save the file",
+  "deleted": "Deleted {number}",
+  "undo": "Undo",
+  "renewNone": "{number} has no monthly or annual items to renew",
+  "renewCreated": "New renewal invoice: {number}",
+  "duplicated": "New copy: {number}",
+  "markedPaid": "{number} marked as paid",
+  "nothingOpen": "Open an invoice first",
+  "clientDialogNew": "New client",
+  "clientDialogEdit": "Edit client",
+  "clientName": "Client name",
+  "clientContact": "Contact person",
+  "clientCity": "City",
+  "clientPhone": "Phone",
+  "clientEmail": "Email",
+  "cancel": "Cancel",
+  "errClientName": "Enter a client name",
+  "settingsTitle": "My details",
+  "settingsSubtitle": "These details appear on every invoice. They save automatically.",
+  "back": "Back",
+  "profile": "Profile",
+  "name": "Name",
+  "role": "Role",
+  "city": "City",
+  "email": "Email",
+  "phone": "Phone",
+  "website": "Website",
+  "invoicing": "Numbering and due dates",
+  "invoicePrefix": "Number prefix",
+  "prefixHint": "Applies to new invoices only",
+  "defaultDueDays": "Default due days",
+  "payment": "Payment details",
+  "instapay": "InstaPay",
+  "wallet": "Mobile wallet",
+  "bankIban": "Bank / IBAN",
+  "defaultNotes": "Default notes",
+  "appearance": "Appearance",
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "backup": "Backups and export",
+  "backupDir": "Backup folder",
+  "chooseFolder": "Choose folder…",
+  "backupNow": "Back up now",
+  "restore": "Restore from a backup",
+  "exportCsv": "Export CSV for your accountant",
+  "lastBackup": "Last backup: {date}",
+  "never": "No backup yet",
+  "backupAuto": "A backup is taken when you open the app if the last one is over a day old. The last 30 are kept.",
+  "backupDone": "Backup saved",
+  "backupFailed": "Could not take the backup",
+  "restoreConfirmTitle": "Restore this backup?",
+  "restoreConfirmBody": "The backup from {date} holds {count} invoices and {clients} clients.\nAll current data is replaced by it, and a copy of your current data is saved first.",
+  "restoreAction": "Restore",
+  "restoreDone": "Restored",
+  "restoreBad": "This file is not a valid Invoice Desk backup",
+  "csvDone": "Exported {name}",
+  "emptyTitle": "Welcome to Invoice Desk",
+  "emptyBody": "Two steps and your first invoice is ready.",
+  "stepProfile": "Add your details",
+  "stepProfileBody": "The name and payment details shown on your invoice.",
+  "stepClient": "Add your first client",
+  "stepClientBody": "A client name and a contact number.",
+  "stepInvoice": "Create your first invoice",
+  "done": "Done",
+  "pickInvoice": "Pick an invoice from the list",
+  "pickInvoiceBody": "Or create a new invoice to get started.",
+  "dbErrorTitle": "Could not open the database",
+  "dbErrorBody": "The file may be damaged or open in another copy of the app. You can restore it from the latest backup.",
+  "retry": "Try again",
+  "previewLoading": "Preparing the preview…",
+  "shortcutsHint": "Shortcuts: Ctrl+N invoice · Ctrl+K search · Ctrl+S save · Ctrl+E PDF",
+  "@invoiceCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@unpaidCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@noResults": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "@sectionN": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "@dueBy": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@exportedPdf": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@deleted": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "@renewNone": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "@renewCreated": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "@duplicated": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "@markedPaid": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "@lastBackup": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@restoreConfirmBody": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      },
+      "clients": {
+        "type": "int"
+      }
+    }
+  },
+  "@csvDone": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "about": "About",
+  "aboutVersion": "Version {version}",
+  "aboutBody": "An invoicing app that works offline. Your data stays on this machine.",
+  "aboutDataDir": "Data folder",
+  "notTaxInvoice": "Not an official electronic tax invoice.",
+  "@aboutVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "menuDeleteClient": "Delete client",
+  "clientDeleted": "Deleted {name}",
+  "@clientDeleted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "clientArchivedSnack": "Archived {name} and its invoices",
+  "@clientArchivedSnack": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "clientHasInvoicesTitle": "{name} has invoices",
+  "@clientHasInvoicesTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "clientHasInvoicesBody": "{invoices} are linked to it, unpaid total: {unpaid}.\nArchiving hides the client and its invoices from the list and search without deleting anything, and you can bring them back from the “Archived” filter.",
+  "@clientHasInvoicesBody": {
+    "placeholders": {
+      "invoices": {
+        "type": "String"
+      },
+      "unpaid": {
+        "type": "String"
+      }
+    }
+  },
+  "archiveRecommended": "Archive (recommended)",
+  "deleteClientAndInvoices": "Delete the client and all its invoices",
+  "confirmDeleteAllTitle": "Delete {name} and all its invoices?",
+  "@confirmDeleteAllTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmDeleteAllBody": "{invoices} will be deleted, paid and sent ones included. We take a backup first, and you can undo this for 8 seconds.\nType the client name to confirm:",
+  "@confirmDeleteAllBody": {
+    "placeholders": {
+      "invoices": {
+        "type": "String"
+      }
+    }
+  },
+  "clientDeletedWithInvoices": "Deleted {name} and {invoices}",
+  "@clientDeletedWithInvoices": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "invoices": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteBackupFailed": "The backup failed, so nothing was deleted",
+  "clientDeleteFailed": "The client could not be deleted",
+  "newContract": "New contract",
+  "groupContracts": "Contracts ({count})",
+  "@groupContracts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "groupInvoices": "Invoices ({count})",
+  "@groupInvoices": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "filterContractsInForce": "Contracts in force",
+  "contractCount": "{count} contracts",
+  "@contractCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cStatusDraft": "Draft",
+  "cStatusSent": "Sent",
+  "cStatusSigned": "Signed",
+  "cStatusActive": "Active",
+  "cStatusCompleted": "Completed",
+  "cStatusCancelled": "Cancelled",
+  "kindContract": "Contract",
+  "kindQuote": "Quotation",
+  "kindAmendment": "Amendment",
+  "newContractTitle": "New contract",
+  "chooseTemplate": "Choose a template",
+  "clauseCount": "{count} clauses",
+  "@clauseCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "contractTitle": "Contract title",
+  "contractTitleHint": "Example: Building and running a learning platform",
+  "projectName": "Project name",
+  "projectSummary": "Project summary",
+  "create": "Create",
+  "noTemplates": "No templates in the library. Add one in Settings → Clause library.",
+  "cardContractDetails": "Contract details",
+  "cardVariables": "Variables",
+  "cardClauses": "Clauses",
+  "cardScopeAnnex": "Annex (1): Scope of work",
+  "cardPaymentAnnex": "Annex (2): Fees and payments",
+  "cardLinkedInvoices": "Linked invoices",
+  "contractNumber": "Contract number",
+  "startDate": "Start date",
+  "endDate": "End date",
+  "signedDate": "Signature date",
+  "jurisdiction": "Jurisdiction",
+  "clearDate": "Clear date",
+  "preamble": "Preamble",
+  "closingLine": "Closing line",
+  "missingVariables": "{count, plural, =1{one variable is missing} =2{two variables are missing} few{{count} variables are missing} other{{count} variables are missing}}",
+  "@missingVariables": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "allVariablesFilled": "All variables are filled in",
+  "noCustomVariables": "The enabled clauses use no custom variables.",
+  "builtInMissing": "Missing from {source}",
+  "@builtInMissing": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "sourceClient": "the client",
+  "sourceSettings": "your details",
+  "sourceContract": "the contract",
+  "editClientData": "Edit client details",
+  "openSettings": "Open settings",
+  "variablesHelp": "Type double curly braces inside any clause to insert a variable. The values here apply to this contract only.",
+  "optionalTag": "Optional",
+  "clauseEnabled": "Enabled",
+  "clauseTitle": "Clause title",
+  "clauseBody": "Clause text",
+  "clauseBodyHelp": "Lines starting with “- ” become numbered sub-items.",
+  "addClause": "Clause",
+  "addBlankClause": "Blank clause",
+  "addFromLibrary": "From the library…",
+  "restoreFromLibrary": "Restore the text from the library",
+  "saveToLibrary": "Save to the library",
+  "duplicateClause": "Duplicate",
+  "deleteClause": "Delete clause",
+  "restoreTitle": "Restore the library text?",
+  "restoreBody": "This clause's text in the contract is replaced by the current library copy:",
+  "restoreConfirm": "Restore",
+  "restoreSame": "The clause text matches the library.",
+  "restoreMissing": "The original clause is no longer in the library.",
+  "saveToLibraryTitle": "Save this text in the library?",
+  "saveToLibraryBody": "The text of clause “{title}” in the library template is replaced. Existing contracts are not changed.",
+  "@saveToLibraryBody": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "savedToLibrary": "Text saved in the library",
+  "pickLibraryClause": "Add a clause from the library",
+  "searchClauses": "Search the clauses",
+  "scopePhase": "Phase",
+  "scopeItem": "Item",
+  "scopeDescription": "Description",
+  "scopeAcceptance": "Acceptance criteria",
+  "addScopeRow": "Row",
+  "outOfScope": "Out of scope",
+  "outOfScopeHint": "One per line",
+  "contractTotal": "Total fee",
+  "milestoneLabel": "Milestone",
+  "milestoneShare": "Share or amount",
+  "milestoneShareHint": "30% or 25000",
+  "milestoneTrigger": "Due on",
+  "milestoneTriggerHint": "On signature",
+  "milestoneDue": "Due date",
+  "milestoneAmount": "Amount",
+  "addMilestone": "Milestone",
+  "milestonesBalanced": "Milestones = total",
+  "milestonesOff": "Milestones {sum} do not add up to the total {total} (difference {diff})",
+  "@milestonesOff": {
+    "placeholders": {
+      "sum": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      },
+      "diff": {
+        "type": "String"
+      }
+    }
+  },
+  "milestonesPercentOff": "The shares add up to {pct}%, not 100%",
+  "@milestonesPercentOff": {
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
+  "createInvoice": "Create invoice",
+  "invoiceCreatedFromMilestone": "New invoice {number} from “{label}”",
+  "@invoiceCreatedFromMilestone": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      },
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "milestoneNeedsAmount": "Set the milestone amount first",
+  "noLinkedInvoices": "No linked invoices yet. Create an invoice from a milestone, or type the contract number in the invoice's “Contract reference”.",
+  "lockedBanner": "This contract is signed, so it is read-only. Create an amendment for any change.",
+  "unlockedBanner": "The signed contract was unlocked on {date}. Your edits now change the signed document.",
+  "@unlockedBanner": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "createAmendment": "Amendment",
+  "unlock": "Unlock",
+  "relock": "Lock again",
+  "unlockTitle": "Unlock a signed contract?",
+  "unlockBody": "Editing after the signature makes your copy differ from the signed one. The usual way is an amendment. The unlock date is recorded in the contract history.",
+  "statusBlocked": "The status cannot be set to “{status}”: {missing}",
+  "@statusBlocked": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      },
+      "missing": {
+        "type": "String"
+      }
+    }
+  },
+  "amendmentCreated": "New amendment: {number}",
+  "@amendmentCreated": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "amendmentOf": "Amendment to contract {number}",
+  "@amendmentOf": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "amendmentPreamble": "An amendment to contract No. {number} dated {date}, between the same parties, is agreed as follows. All other clauses and annexes of the contract remain in force and unchanged.",
+  "@amendmentPreamble": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "amendmentClauseTitle": "Subject of the amendment",
+  "contractDeleted": "Deleted {number}",
+  "@contractDeleted": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "contractHasInvoicesTitle": "{number} is linked to invoices",
+  "@contractHasInvoicesTitle": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "contractHasInvoicesBody": "{invoices} are linked to it, so it cannot be deleted without leaving the invoices without a reference. Cancel it instead, or archive the client.",
+  "@contractHasInvoicesBody": {
+    "placeholders": {
+      "invoices": {
+        "type": "String"
+      }
+    }
+  },
+  "cancelContract": "Set the status to “Cancelled”",
+  "duplicateContract": "Duplicate as a new contract",
+  "contractDuplicated": "New contract: {number}",
+  "@contractDuplicated": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "changeStatus": "Change the status",
+  "history": "Contract history",
+  "historyUnlock": "Unlock",
+  "historyRelock": "Lock again",
+  "historyStatus": "Status: {status}",
+  "@historyStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "libraryTitle": "Clause library",
+  "librarySubtitle": "The templates and clauses copied into every new contract. Editing them does not change existing contracts.",
+  "openLibrary": "Open the clause library",
+  "newTemplate": "New template",
+  "templateName": "Template name",
+  "templateKind": "Kind",
+  "templateDefaults": "Default variable values",
+  "templateDefaultsHint": "One variable per line: name=value",
+  "deleteTemplate": "Delete the template",
+  "deleteTemplateBody": "The template “{name}” and its clauses are deleted from the library. Contracts made from it are not changed.",
+  "@deleteTemplateBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "enabledByDefault": "Enabled by default",
+  "pickTemplateToEdit": "Pick a template to edit",
+  "draftNotLegalAdvice": "The wording is a draft, not legal advice. Have a lawyer review it.",
+  "contractsSettings": "Contracts",
+  "legalName": "Legal name",
+  "nationalIdOrRegistry": "National ID / commercial registry",
+  "address": "Address",
+  "contractPrefix": "Contract number prefix",
+  "quotePrefix": "Quotation number prefix",
+  "defaultJurisdiction": "Default jurisdiction",
+  "westernDigits": "Western digits for sub-items (1. instead of ١.)",
+  "clientLegal": "Legal details (for contracts)",
+  "clientRegistry": "Commercial registry / national ID",
+  "clientRepresentative": "Legal representative",
+  "clientRepresentativeTitle": "Their title",
+  "clientHasDocumentsBody": "{invoices} and {contracts} are linked to it, unpaid total: {unpaid}.\nArchiving hides the client, its invoices and its contracts from the list and search without deleting anything, and you can bring them back from the “Archived” filter.",
+  "@clientHasDocumentsBody": {
+    "placeholders": {
+      "invoices": {
+        "type": "String"
+      },
+      "contracts": {
+        "type": "String"
+      },
+      "unpaid": {
+        "type": "String"
+      }
+    }
+  },
+  "clientDeletedWithDocuments": "Deleted {name} and {documents}",
+  "@clientDeletedWithDocuments": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "documents": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmDeleteDocumentsBody": "{documents} will be deleted, paid, sent and signed ones included. We take a backup first, and you can undo this for 8 seconds.\nType the client name to confirm:",
+  "@confirmDeleteDocumentsBody": {
+    "placeholders": {
+      "documents": {
+        "type": "String"
+      }
+    }
+  },
+  "andJoin": "{a} and {b}",
+  "@andJoin": {
+    "placeholders": {
+      "a": {
+        "type": "String"
+      },
+      "b": {
+        "type": "String"
+      }
+    }
+  },
+  "trash": "Trash",
+  "trashEmptyState": "The trash is empty.",
+  "trashDeletedOn": "Deleted on {date}",
+  "@trashDeletedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "trashPurgeIn": "{days, plural, =0{purged today} =1{purged tomorrow} =2{purged in two days} few{purged in {days} days} other{purged in {days} days}}",
+  "@trashPurgeIn": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "trashRestore": "Restore",
+  "trashPurge": "Delete permanently",
+  "trashEmpty": "Empty the trash",
+  "trashOfClient": "of {name}",
+  "@trashOfClient": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "trashClientDeleted": "Client deleted",
+  "trashRestored": "Restored {label}",
+  "@trashRestored": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "trashRestoredCount": "{count, plural, =1{one item restored} =2{two items restored} few{{count} items restored} other{{count} items restored}}",
+  "@trashRestoredCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "trashNeedsClientTitle": "The client {name} is in the trash",
+  "@trashNeedsClientTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "trashNeedsClientBody": "{label} cannot be restored while its client is deleted. Restore the client with it? (the client only, without its other deleted documents)",
+  "@trashNeedsClientBody": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "trashRestoreBoth": "Restore both",
+  "trashPurgeTitle": "Delete {label} permanently?",
+  "@trashPurgeTitle": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "trashPurgeBody": "A permanent deletion cannot be undone from the app. We write a backup before deleting.\nType “{label}” to confirm:",
+  "@trashPurgeBody": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "trashPurgeClientBody": "The client {label} is deleted permanently with all its deleted invoices and contracts. We write a backup before deleting.\nType the client name to confirm:",
+  "@trashPurgeClientBody": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "trashEmptyTitle": "Empty the trash?",
+  "trashEmptyBody": "{count} are deleted permanently. We write a backup before deleting.\nType “Empty” to confirm:",
+  "@trashEmptyBody": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "trashEmptyWord": "Empty",
+  "trashItems": "{count, plural, =1{one item} =2{two items} few{{count} items} other{{count} items}}",
+  "@trashItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "trashPurged": "Deleted permanently. Backup: {file}",
+  "@trashPurged": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "trashPurgeFailed": "Could not delete permanently",
+  "undoOrTrash": "{message} — undo, or find it in the trash",
+  "@undoOrTrash": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "kindClientLabel": "client",
+  "kindInvoiceLabel": "invoice",
+  "cloudSync": "Cloud sync",
+  "cloudSyncOff": "Not available — coming soon",
+  "cloudSyncOn": "Enabled",
+  "cloudSyncBody": "An optional subscription later: end-to-end encrypted sync between your devices. The desktop app stays free and complete without it, and your data does not leave this machine today.",
+  "calendar": "Calendar",
+  "invoicesAndContracts": "Invoices and contracts",
+  "viewMonth": "Month",
+  "viewWeek": "Week",
+  "viewAgenda": "Agenda",
+  "today": "Today",
+  "previous": "Previous",
+  "next": "Next",
+  "summaryExpected": "Expected",
+  "summaryCollected": "Collected",
+  "summaryLate": "Overdue",
+  "evDue": "Due",
+  "evOverdue": "Overdue",
+  "evOverdueRollup": "Overdue",
+  "evPaid": "Paid",
+  "evPostponed": "Postponed",
+  "evMilestone": "Contract milestone due",
+  "evRenewal": "Renewal",
+  "evContractStart": "Contract starts",
+  "evContractEnd": "Contract ends",
+  "evWarrantyEnd": "Warranty ends",
+  "evReminder": "Reminder",
+  "daysOverdue": "{days} days overdue",
+  "@daysOverdue": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "overdueRollup": "{count} overdue",
+  "@overdueRollup": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "moreEvents": "+{count}",
+  "@moreEvents": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "filterClient": "Client",
+  "filterType": "Event type",
+  "filterCurrency": "Currency",
+  "allClients": "All clients",
+  "allTypes": "All types",
+  "allCurrencies": "All currencies",
+  "clearFilters": "Clear filters",
+  "showPast": "Show the past",
+  "agendaEmpty": "No matching events coming up",
+  "dayEmpty": "Nothing on this day",
+  "searchCalendar": "Search the calendar",
+  "actOpen": "Open",
+  "actMarkPaid": "Mark as paid",
+  "actPostpone": "Postpone",
+  "actCopyReminder": "Copy a reminder message",
+  "actCreateInvoice": "Create invoice",
+  "actOpenContract": "Open contract",
+  "actRenewInvoice": "Create renewal invoice",
+  "actEdit": "Edit",
+  "actMarkDone": "Done",
+  "actReopen": "Reopen",
+  "actDelete": "Delete",
+  "addReminder": "+ Reminder",
+  "postponeTitle": "Postpone the due date",
+  "postponeNewDate": "New date",
+  "postponeReason": "Reason",
+  "postponeReasonHint": "Example: the client asked for more time",
+  "postponed": "Postponed to {date}",
+  "@postponed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "postponedFromTo": "Postponed from {from} to {to}",
+  "@postponedFromTo": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "postponeHistory": "Postponement history",
+  "reminderNew": "New reminder",
+  "reminderEdit": "Edit the reminder",
+  "reminderText": "Text",
+  "reminderTime": "Time (optional, 24-hour)",
+  "reminderTimeHint": "10:30",
+  "errReminderText": "Write the reminder text",
+  "errTime": "Invalid time",
+  "reminderDeleted": "Reminder deleted",
+  "reminderCopied": "Reminder copied — paste it into WhatsApp or email",
+  "exportIcs": "Export to the calendar (.ics)",
+  "exportIcsVisible": "The visible range",
+  "exportIcsFuture": "All upcoming events",
+  "icsExported": "{count} events exported",
+  "@icsExported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "todayBanner": "Today: {due} due · {overdue} overdue",
+  "@todayBanner": {
+    "placeholders": {
+      "due": {
+        "type": "int"
+      },
+      "overdue": {
+        "type": "int"
+      }
+    }
+  },
+  "showInCalendar": "Show in the calendar",
+  "dismiss": "Dismiss",
+  "profileBanner": "Complete your details",
+  "profileBannerBody": "Add your name and payment details so they appear on your invoices and contracts.",
+  "inCalendar": "In the calendar",
+  "demoData": "Demo data",
+  "demoBody": "Fake clients, invoices and contracts to try things out. Any row you edit becomes yours and is not removed with them.",
+  "demoAdd": "Add demo data",
+  "demoRemove": "Remove the demo data",
+  "demoRemoveTitle": "Remove the demo data?",
+  "demoRemoveBody": "Only the demo rows are deleted permanently, after a backup. Your data is not touched.",
+  "demoAdded": "Demo data added",
+  "demoRemoved": "Demo data removed ({count} rows)",
+  "@demoRemoved": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "weekStart": "First day of the week",
+  "weekdaySaturday": "Saturday",
+  "weekdaySunday": "Sunday",
+  "weekdayMonday": "Monday",
+  "notifyOnStart": "Notification at start-up",
+  "notifyOnStartBody": "A desktop notification with what is due and overdue today (when available).",
+  "calendarShortcuts": "Arrows: move · PageUp/PageDown: month · T: today · M/W/A: view · Enter: the selected day",
+  "dayTotal": "Due today",
+  "wdMon": "Mon",
+  "wdTue": "Tue",
+  "wdWed": "Wed",
+  "wdThu": "Thu",
+  "wdFri": "Fri",
+  "wdSat": "Sat",
+  "wdSun": "Sun",
+  "general": "General",
+  "uiLanguage": "Language",
+  "uiLanguageSystem": "System language",
+  "uiLanguageAr": "العربية",
+  "uiLanguageEn": "English",
+  "uiLanguageHint": "The whole app follows this choice, including the reading direction."
+}

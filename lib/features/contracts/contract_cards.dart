@@ -8,6 +8,7 @@ import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/domain/contract_logic.dart';
 import 'package:invoice_desk/domain/contract_models.dart';
+import 'package:invoice_desk/domain/doc_format.dart';
 import 'package:invoice_desk/domain/invoice_logic.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/actions.dart';
@@ -106,7 +107,9 @@ class OptionalDateField extends ConsumerWidget {
                 )
               : const Icon(Icons.calendar_today_outlined, size: 16),
         ),
-        child: Text(value == null ? '—' : formatArabicDate(value!)),
+        child: Text(
+          value == null ? '—' : formatDocDate(value!, context.docLanguage),
+        ),
       ),
     );
   }

@@ -141,24 +141,10 @@ class _SectionHeader extends ConsumerWidget {
           ),
         ),
         const SizedBox(width: Space.s),
-        SizedBox(
-          width: 104,
-          child: DropdownButtonFormField<Currency>(
-            initialValue: section.currency,
-            decoration: InputDecoration(labelText: l.currency),
-            items: [
-              for (final cur in Currency.values)
-                DropdownMenuItem(value: cur, child: Text(cur.code)),
-            ],
-            onChanged: (cur) {
-              if (cur != null) {
-                ctl.editSection(
-                  section.id,
-                  (s) => s.copyWith(currency: cur),
-                );
-              }
-            },
-          ),
+        _CurrencyDropdown(
+          value: section.currency,
+          onChanged: (cur) =>
+              ctl.editSection(section.id, (s) => s.copyWith(currency: cur)),
         ),
         IconButton(
           tooltip: l.deleteSection,
@@ -166,6 +152,43 @@ class _SectionHeader extends ConsumerWidget {
           icon: const Icon(Icons.delete_outline, size: 20),
         ),
       ],
+    );
+  }
+}
+
+/// The currency of a section.
+///
+/// The field takes the whole width and the code is clipped, so a long
+/// code cannot push the section header out of the row.
+class _CurrencyDropdown extends StatelessWidget {
+  const _CurrencyDropdown({required this.value, required this.onChanged});
+
+  final Currency value;
+  final ValueChanged<Currency> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 124,
+      child: DropdownButtonFormField<Currency>(
+        initialValue: value,
+        decoration: InputDecoration(labelText: context.l10n.currency),
+        isExpanded: true,
+        items: [
+          for (final cur in Currency.values)
+            DropdownMenuItem(
+              value: cur,
+              child: Text(
+                cur.code,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+        ],
+        onChanged: (cur) {
+          if (cur != null) onChanged(cur);
+        },
+      ),
     );
   }
 }
