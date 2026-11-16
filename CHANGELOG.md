@@ -6,6 +6,7 @@ All notable changes to Invoice Desk. The format follows [Keep a Changelog](https
 
 ### Fixed
 - **Arabic words no longer run together in PDFs** (for example «وتطويرالتطبيق», «يجوزسداد»). The `pdf` package placed right-to-left words by their ink width, so words ending in ر or ز ate the following space. It is now vendored with a one-line fix (`third_party/pdf`, ADR-0013). Word spacing is back to the font's normal width, so English text in PDFs is no longer double-spaced either. Only re-exported documents change.
+- **A contract page no longer ends with a clause heading.** A heading is now kept with its first paragraph (or first sub-item); a long first block is left splittable so it still fits on a page. The page count of the sample contract is unchanged.
 
 ### Changed
 - The sample PDFs in `docs/` use fictional data (Sample Studio → Acme Studio).

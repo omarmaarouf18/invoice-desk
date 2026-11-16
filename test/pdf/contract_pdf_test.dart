@@ -6,6 +6,7 @@ import 'package:invoice_desk/domain/contract_models.dart';
 import 'package:invoice_desk/pdf/contract_pdf.dart';
 
 import '../helpers/contract_fixtures.dart';
+import '../helpers/pdf_golden.dart';
 
 void main() {
   final fonts = loadPdfFonts();
@@ -88,5 +89,35 @@ void main() {
     );
     expect(pale.allMatches(draft).length, draftPages);
     expect(pale.hasMatch(sent), isFalse);
+  });
+
+  test('no page ends with a clause heading', () async {
+    // Body text is 10.5 pt, clause headings 12 pt, the footer under 9 pt.
+    // Shifting the preamble moves every page break, so headings land at
+    // many different page ends.
+    final base = acmeContract(optionalOn: true);
+    for (var extra = 0; extra < 12; extra++) {
+      final c = base.copyWith(
+        preamble:
+            '${base.preamble}${' وذلك وفقًا لما يلي من بنود.' * (extra * 3)}',
+      );
+      final bytes = await buildContractPdf(
+        ContractPdfData(contract: c, client: acme, settings: sampleSettings),
+        fonts,
+      );
+      final pages = pdfContentDump(bytes).split('%% content stream').skip(1);
+      for (final (i, page) in pages.indexed) {
+        final sizes = [
+          for (final m in RegExp(r'/F\d+ ([\d.]+) Tf').allMatches(page))
+            double.parse(m[1]!),
+        ].where((s) => s >= 9).toList();
+        if (sizes.isEmpty) continue;
+        expect(
+          sizes.last,
+          isNot(12),
+          reason: 'variant $extra: page ${i + 1} ends with a heading',
+        );
+      }
+    }
   });
 }
