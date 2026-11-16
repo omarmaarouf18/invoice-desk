@@ -132,3 +132,6 @@ dist/
 
 # golden failure output
 test/**/failures/
+
+# Agent working notes (never committed)
+Claude outputs/

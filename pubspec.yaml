@@ -43,7 +43,7 @@ dev_dependencies:
   very_good_analysis: ^10.3.0
 
 dependency_overrides:
-  # Vendored pdf 3.13.1 + RTL advance-width fix (ADR-0011).
+  # Vendored pdf 3.13.1 + RTL advance-width fix (ADR-0013).
   pdf:
     path: third_party/pdf
 
