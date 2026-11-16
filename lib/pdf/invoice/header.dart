@@ -8,11 +8,11 @@ extension _Header on _Builder {
       s.website,
     ].where((e) => e.trim().isNotEmpty).join('  ·  ');
     final meta = <(String, String)>[
-      ('Invoice No.', inv.number),
-      ('Issue date', formatInvoiceDate(inv.issueDate)),
-      ('Due date', formatInvoiceDate(inv.effectiveDueDate)),
+      (labelEn.invoiceNo, inv.number),
+      (labelEn.issueDate, formatDocDate(inv.issueDate, DocLanguage.en)),
+      (labelEn.dueDate, formatDocDate(inv.effectiveDueDate, DocLanguage.en)),
       if (inv.contractRef.trim().isNotEmpty)
-        ('Contract ref.', inv.contractRef.trim()),
+        (labelEn.contractRef, inv.contractRef.trim()),
     ];
     return pw.Row(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -26,12 +26,13 @@ extension _Header on _Builder {
                 pw.SizedBox(height: 2),
                 t(
                   s.role,
-                  style: st(size: 11, font: semi, color: _teal),
+                  style: st(size: 11, font: semi, color: style.primary),
                 ),
               ],
               pw.SizedBox(height: 6),
-              if (s.city.isNotEmpty) t(s.city, style: st(color: _muted)),
-              if (contacts.isNotEmpty) t(contacts, style: st(color: _muted)),
+              if (s.city.isNotEmpty) t(s.city, style: st(color: style.muted)),
+              if (contacts.isNotEmpty)
+                t(contacts, style: st(color: style.muted)),
             ],
           ),
         ),
@@ -43,11 +44,11 @@ extension _Header on _Builder {
               mainAxisSize: pw.MainAxisSize.min,
               crossAxisAlignment: pw.CrossAxisAlignment.end,
               children: [
-                t('INVOICE', style: st(size: 22, font: bold, spacing: 2)),
+                t(labelEn.invoice, style: st(size: 22, font: bold, spacing: 2)),
                 pw.SizedBox(width: 8),
                 t(
-                  'فاتورة',
-                  style: st(size: 15, font: semi, color: _muted),
+                  labelAr.invoice,
+                  style: st(size: 15, font: semi, color: style.muted),
                 ),
               ],
             ),
@@ -60,7 +61,7 @@ extension _Header on _Builder {
                     children: [
                       pw.Padding(
                         padding: const pw.EdgeInsets.only(right: 14, bottom: 2),
-                        child: t(k, style: st(color: _muted)),
+                        child: t(k, style: st(color: style.muted)),
                       ),
                       pw.Padding(
                         padding: const pw.EdgeInsets.only(bottom: 2),
@@ -82,13 +83,18 @@ extension _Header on _Builder {
                   vertical: 4,
                 ),
                 decoration: pw.BoxDecoration(
-                  color: _greenBg,
-                  border: pw.Border.all(color: _green, width: 1.2),
+                  color: style.successSoft,
+                  border: pw.Border.all(color: style.success, width: 1.2),
                   borderRadius: pw.BorderRadius.circular(4),
                 ),
                 child: t(
-                  'PAID · ${formatInvoiceDate(inv.paidDate ?? inv.issueDate)}',
-                  style: st(size: 10, font: bold, color: _green, spacing: 1),
+                  '${labelEn.paid} · ${formatDocDate(inv.paidDate ?? inv.issueDate, DocLanguage.en)}',
+                  style: st(
+                    size: 10,
+                    font: bold,
+                    color: style.success,
+                    spacing: 1,
+                  ),
                 ),
               ),
             ],
@@ -101,7 +107,7 @@ extension _Header on _Builder {
   pw.Widget card(pw.Widget label, List<pw.Widget> lines) => pw.Container(
     padding: const pw.EdgeInsets.all(12),
     decoration: pw.BoxDecoration(
-      color: _soft,
+      color: style.surface,
       borderRadius: pw.BorderRadius.circular(8),
     ),
     child: pw.Column(
@@ -118,49 +124,52 @@ extension _Header on _Builder {
     ].where((e) => e.trim().isNotEmpty).join('  ·  ');
     final pay = <(String, String)>[
       if (s.instapay.trim().isNotEmpty) ('InstaPay', s.instapay.trim()),
-      if (s.wallet.trim().isNotEmpty) ('Wallet', s.wallet.trim()),
-      if (s.bankIban.trim().isNotEmpty) ('Bank / IBAN', s.bankIban.trim()),
+      if (s.wallet.trim().isNotEmpty) (labelEn.wallet, s.wallet.trim()),
+      if (s.bankIban.trim().isNotEmpty) (labelEn.bankIban, s.bankIban.trim()),
     ];
     return pw.Row(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
         pw.Expanded(
-          child: card(bilingualLabel('BILLED TO', 'العميل'), [
+          child: card(bilingualLabel(labelEn.billedTo, labelAr.billedTo), [
             t(c?.name ?? '—', style: st(size: 12, font: bold)),
             if ((c?.contact ?? '').trim().isNotEmpty)
-              t('Attn: ${c!.contact.trim()}', style: st()),
+              t(labelEn.attn(c!.contact.trim()), style: st()),
             if ((c?.city ?? '').trim().isNotEmpty)
-              t(c!.city.trim(), style: st(color: _muted)),
+              t(c!.city.trim(), style: st(color: style.muted)),
             if (contactLine.isNotEmpty)
-              t(contactLine, style: st(color: _muted)),
+              t(contactLine, style: st(color: style.muted)),
           ]),
         ),
         pw.SizedBox(width: 12),
         pw.Expanded(
-          child: card(bilingualLabel('PAYMENT DETAILS', 'بيانات الدفع'), [
-            for (final (k, v) in pay)
-              pw.Row(
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  pw.SizedBox(
-                    width: 64,
-                    child: t(k, style: st(color: _muted)),
-                  ),
-                  pw.Expanded(
-                    child: t(
-                      v,
-                      style: st(font: semi),
-                      dir: pw.TextDirection.ltr,
+          child: card(
+            bilingualLabel(labelEn.paymentDetails, labelAr.paymentDetails),
+            [
+              for (final (k, v) in pay)
+                pw.Row(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.SizedBox(
+                      width: 64,
+                      child: t(k, style: st(color: style.muted)),
                     ),
-                  ),
-                ],
+                    pw.Expanded(
+                      child: t(
+                        v,
+                        style: st(font: semi),
+                        dir: pw.TextDirection.ltr,
+                      ),
+                    ),
+                  ],
+                ),
+              if (pay.isNotEmpty) pw.SizedBox(height: 4),
+              t(
+                labelEn.pleaseQuote(inv.number),
+                style: st(size: 8.5, color: style.muted),
               ),
-            if (pay.isNotEmpty) pw.SizedBox(height: 4),
-            t(
-              'Please quote ${inv.number}',
-              style: st(size: 8.5, color: _muted),
-            ),
-          ]),
+            ],
+          ),
         ),
       ],
     );

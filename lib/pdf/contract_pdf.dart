@@ -4,8 +4,12 @@ import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/domain/contract_logic.dart';
 import 'package:invoice_desk/domain/contract_models.dart';
+import 'package:invoice_desk/domain/doc_format.dart';
+import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/pdf/invoice_pdf.dart' show PdfFonts;
+import 'package:invoice_desk/pdf/labels.dart';
+import 'package:invoice_desk/pdf/pdf_style.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 part 'contract/body.dart';
@@ -38,46 +42,43 @@ String contractFileName(Contract c, Client? client) {
   return name.isEmpty ? '${c.number}.pdf' : '${c.number} - $name.pdf';
 }
 
-/// The document heading: `عقد تطوير منصة`, `عرض سعر …`, `ملحق تعديل …`.
-String contractHeading(Contract c, {Contract? parent}) {
+/// The document heading: `عقد تطوير منصة`, `عرض سعر …`, `ملحق تعديل …`,
+/// in [lang] (Arabic unless given).
+String contractHeading(
+  Contract c, {
+  Contract? parent,
+  DocLanguage lang = DocLanguage.ar,
+}) {
+  final l = DocLabels.of(lang);
   final title = c.title.trim();
   return switch (c.kind) {
     ContractKind.amendment =>
-      'ملحق تعديل رقم ${c.amendmentNo} '
-          'للعقد ${parent?.number ?? c.number.replaceFirst(RegExp(r'-A\d+$'), '')}'
+      '${l.amendmentOf(c.amendmentNo, parent?.number ?? c.number.replaceFirst(RegExp(r'-A\d+$'), ''))}'
           '${title.isEmpty ? '' : ': $title'}',
-    ContractKind.quote => title.isEmpty ? 'عرض سعر' : 'عرض سعر $title',
-    ContractKind.contract => title.isEmpty ? 'عقد' : 'عقد $title',
+    ContractKind.quote => title.isEmpty ? l.quote : '${l.quote} $title',
+    ContractKind.contract =>
+      title.isEmpty ? l.contract : '${l.contract} $title',
   };
 }
 
-// Palette: the invoice's, plus amber for unresolved variables.
-const _ink = PdfColor.fromInt(0xFF0F1B2D);
-const _teal = PdfColor.fromInt(0xFF0F766E);
-const _tealBg = PdfColor.fromInt(0xFFD6F1EE);
-const _muted = PdfColor.fromInt(0xFF5B6878);
-const _soft = PdfColor.fromInt(0xFFF3F6F9);
-const _border = PdfColor.fromInt(0xFFDCE2EA);
-const _amberBg = PdfColor.fromInt(0xFFFFE8A3);
-const _amberFg = PdfColor.fromInt(0xFF7A4A00);
-
-/// Pale teal, drawn behind the content (the PDF engine ignores colour
-/// alpha, so transparency would print solid).
-const _watermark = PdfColor.fromInt(0xFFE4F1EF);
-
 final _latinOnly = RegExp(r'^[\x00-\x7F\u2066-\u2069]*$');
 
-/// Pure: contract data in, PDF bytes out.
-Future<Uint8List> buildContractPdf(ContractPdfData data, PdfFonts fonts) =>
-    buildContractDocument(data, fonts).save();
+/// Pure: contract data in, PDF bytes out. [style] is the resolved look;
+/// [PdfStyle.classic] is the 0.4 look.
+Future<Uint8List> buildContractPdf(
+  ContractPdfData data,
+  PdfFonts fonts, {
+  PdfStyle style = PdfStyle.classic,
+}) => buildContractDocument(data, fonts, style: style).save();
 
 /// [onFooter] reports each page's footer (tests check every page has one).
 pw.Document buildContractDocument(
   ContractPdfData data,
   PdfFonts fonts, {
+  PdfStyle style = PdfStyle.classic,
   void Function(int page, int pages)? onFooter,
 }) {
-  final b = _Builder(data, fonts, onFooter: onFooter);
+  final b = _Builder(data, fonts, style, onFooter: onFooter);
   final c = data.contract;
   return pw.Document(
       title: c.number,
@@ -121,7 +122,7 @@ pw.Document buildContractDocument(
 }
 
 class _Builder {
-  _Builder(this.data, this.fonts, {this.onFooter})
+  _Builder(this.data, this.fonts, this.style, {this.onFooter})
     : c = data.contract,
       s = data.settings,
       resolver = VariableResolver(
@@ -132,7 +133,16 @@ class _Builder {
 
   final ContractPdfData data;
   final PdfFonts fonts;
+
+  /// Colours and page geometry.
+  final PdfStyle style;
   final void Function(int page, int pages)? onFooter;
+
+  /// The contract's language: Arabic until contracts get one (phase 7).
+  DocLanguage get lang => DocLanguage.ar;
+
+  /// Fixed labels in [lang].
+  DocLabels get labels => DocLabels.of(lang);
   final Contract c;
   final Settings s;
   final VariableResolver resolver;
@@ -143,14 +153,14 @@ class _Builder {
           font: fonts.regular,
           fontBold: fonts.bold,
           fontSize: 10.5,
-          color: _ink,
+          color: style.ink,
           lineSpacing: 3,
         ),
       );
 
   pw.PageTheme get pageTheme => pw.PageTheme(
-    pageFormat: PdfPageFormat.a4,
-    margin: const pw.EdgeInsets.fromLTRB(52, 44, 52, 30),
+    pageFormat: style.paper,
+    margin: style.contractMargin,
     textDirection: pw.TextDirection.rtl,
     theme: theme,
     buildBackground: c.status == ContractStatus.draft ? _draftMark : null,
@@ -162,12 +172,12 @@ class _Builder {
       child: pw.Transform.rotateBox(
         angle: 0.6,
         child: pw.Text(
-          'مسودة',
+          labels.draft,
           textDirection: pw.TextDirection.rtl,
           style: pw.TextStyle(
             font: fonts.bold,
             fontSize: 120,
-            color: _watermark,
+            color: style.watermark,
           ),
         ),
       ),
@@ -177,13 +187,11 @@ class _Builder {
   pw.TextStyle st({
     double size = 10.5,
     pw.Font? font,
-    PdfColor color = _ink,
-    double? wordSpacing,
+    PdfColor? color,
   }) => pw.TextStyle(
     font: font ?? fonts.regular,
     fontSize: size,
-    color: color,
-    wordSpacing: wordSpacing,
+    color: color ?? style.ink,
   );
 
   /// `15 فبراير 2027` as two runs in an RTL row: the PDF's bidi pass drops
@@ -230,8 +238,10 @@ class _Builder {
               text: seg.text,
               style: seg.missing
                   ? base.copyWith(
-                      color: _amberFg,
-                      background: const pw.BoxDecoration(color: _amberBg),
+                      color: this.style.onHighlight,
+                      background: pw.BoxDecoration(
+                        color: this.style.highlight,
+                      ),
                     )
                   : null,
             ),

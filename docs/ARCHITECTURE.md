@@ -86,7 +86,8 @@ Large feature UIs are split into `part` files per card (for example `features/co
 | `contractProvider` | The open contract's buffer, lock, missing-variable focus | `Notifier<ContractEditorState>` |
 | `openResolverProvider`, `openMissingProvider` | Variable resolution for the open contract | derived `Provider` |
 | `sidebarDataProvider` | Filtered, grouped sidebar (pure `buildSidebar`) | derived `Provider` |
-| `workspaceProvider`, `previewTabProvider`, `searchQueryProvider`, `sidebarFilterProvider`, `themeModeProvider` | UI state | small `Notifier`s |
+| `workspaceProvider`, `previewTabProvider`, `searchQueryProvider`, `sidebarFilterProvider`, `themeModeProvider`, `uiLanguageProvider` | UI state | small `Notifier`s |
+| `localeProvider` | The app locale: the UI-language choice resolved against the translated locales (Arabic fallback) | derived `Provider` |
 | `accountServiceProvider`, `syncServiceProvider` | Future subscription/sync; local and no-op today | `Provider` |
 
 Widgets read with `ref.watch(x.select(...))` for display and `ref.read(x.notifier)` in callbacks. Each editor has one write path: the controller edits an immutable buffer, and a debounced save goes through a repository.
@@ -164,6 +165,8 @@ CI fails if the schema changed without a new snapshot. Migrations run inside the
 
 - **Fonts.** IBM Plex Sans Arabic is bundled and embedded, so all text is vector.
 - **Builders.** Each document is assembled by small builder extensions in `lib/pdf/invoice/` and `lib/pdf/contract/` (header, parties, tables, totals, signatures, footer).
+- **Look and labels.** Builders read colours and page geometry from a `PdfStyle` (`lib/pdf/pdf_style.dart`; `PdfStyle.classic` is the 0.4 look) and fixed labels from `DocLabels` (`lib/pdf/labels.dart`, Arabic and English). Document text never comes from ARB: a document's language is independent of the UI language ([ADR 0011](adr/0011-document-language-model.md)). Dates, clause headings, currency names and digits come from `lib/domain/doc_format.dart`.
+- **Goldens.** `test/pdf/goldens/*.txt` hold each sample document's page content streams, so any layout change shows up as a text diff.
 - **Arabic text.** Direction is chosen per run, with the font's normal word spacing. The `pdf` package is vendored with a one-line RTL fix (`third_party/pdf`, [ADR 0013](adr/0013-vendored-pdf-rtl-fix.md)): upstream mirrored words by their ink box, so words ending in ر or ز ran into the next word. `test/pdf/rtl_word_gap_test.dart` measures the gaps. A date ending in digits is laid out as two runs so its space survives bidi reordering.
 - **Contract variables.** Resolved at render time by `VariableResolver` and never stored resolved; unresolved ones are drawn on an amber background.
 - **Preview.** The preview pane re-renders the real PDF 300 ms after the last edit.

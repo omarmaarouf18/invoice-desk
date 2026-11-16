@@ -3,9 +3,9 @@ part of '../invoice_pdf.dart';
 extension _Table on _Builder {
   pw.Widget pill(BillingCycle c) {
     final (label, fg, bg) = switch (c) {
-      BillingCycle.oneTime => ('One-time', _muted, _greyBg),
-      BillingCycle.monthly => ('Monthly', _blue, _blueBg),
-      BillingCycle.annual => ('Annual', _teal, _tealBg),
+      BillingCycle.oneTime => (labelEn.oneTime, style.muted, style.neutralSoft),
+      BillingCycle.monthly => (labelEn.monthly, style.info, style.infoSoft),
+      BillingCycle.annual => (labelEn.annual, style.primary, style.primarySoft),
     };
     return pw.Container(
       padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
@@ -30,7 +30,7 @@ extension _Table on _Builder {
   pw.Widget headCell(String text, {bool right = false}) => cell(
     t(
       text,
-      style: st(size: 7.5, font: bold, color: _muted, spacing: 0.6),
+      style: st(size: 7.5, font: bold, color: style.muted, spacing: 0.6),
     ),
     right: right,
   );
@@ -52,22 +52,22 @@ extension _Table on _Builder {
               children: [
                 t(
                   '$n  ·  ',
-                  style: st(size: 11, font: bold, color: _teal),
+                  style: st(size: 11, font: bold, color: style.primary),
                 ),
                 if (title.isNotEmpty) t(title, style: st(size: 11, font: bold)),
                 if (title.isNotEmpty && titleAr.isNotEmpty)
-                  t('  ·  ', style: st(size: 11, color: _muted)),
+                  t('  ·  ', style: st(size: 11, color: style.muted)),
                 if (titleAr.isNotEmpty)
                   t(
                     titleAr,
-                    style: st(size: 10.5, font: semi, color: _muted),
+                    style: st(size: 10.5, font: semi, color: style.muted),
                   ),
               ],
             ),
           ),
           t(
-            'Amounts in ${sec.currency.code}',
-            style: st(size: 8, color: _muted),
+            labelEn.amountsIn(sec.currency.code),
+            style: st(size: 8, color: style.muted),
           ),
         ],
       ),
@@ -80,27 +80,27 @@ extension _Table on _Builder {
           3: pw.FixedColumnWidth(34),
           4: pw.FixedColumnWidth(84),
         },
-        border: const pw.TableBorder(
-          horizontalInside: pw.BorderSide(color: _border, width: 0.6),
-          bottom: pw.BorderSide(color: _border, width: 0.6),
+        border: pw.TableBorder(
+          horizontalInside: pw.BorderSide(color: style.border, width: 0.6),
+          bottom: pw.BorderSide(color: style.border, width: 0.6),
         ),
         children: [
           pw.TableRow(
             repeat: true,
-            decoration: const pw.BoxDecoration(color: _soft),
+            decoration: pw.BoxDecoration(color: style.surface),
             children: [
-              headCell('SERVICE'),
-              headCell('DESCRIPTION'),
-              headCell('BILLING'),
-              headCell('QTY', right: true),
-              headCell('AMOUNT', right: true),
+              headCell(labelEn.service),
+              headCell(labelEn.description),
+              headCell(labelEn.billing),
+              headCell(labelEn.qty, right: true),
+              headCell(labelEn.amount, right: true),
             ],
           ),
           for (final it in rows)
             pw.TableRow(
               children: [
                 cell(t(it.service, style: st(font: semi))),
-                cell(t(it.description, style: st(color: _muted))),
+                cell(t(it.description, style: st(color: style.muted))),
                 cell(pill(it.cycle)),
                 cell(t('${it.qty}', style: st()), right: true),
                 cell(
@@ -114,7 +114,7 @@ extension _Table on _Builder {
                       if (it.qty != 1)
                         t(
                           '${it.qty} × ${amount(it.unitPriceMinor, sec.currency)}',
-                          style: st(size: 7.5, color: _muted),
+                          style: st(size: 7.5, color: style.muted),
                         ),
                     ],
                   ),
@@ -129,7 +129,7 @@ extension _Table on _Builder {
         child: pw.Row(
           mainAxisAlignment: pw.MainAxisAlignment.end,
           children: [
-            t('Subtotal', style: st(color: _muted)),
+            t(labelEn.subtotal, style: st(color: style.muted)),
             pw.SizedBox(width: 16),
             t(sec.subtotal.format(), style: st(size: 10.5, font: bold)),
           ],
@@ -154,8 +154,8 @@ extension _Table on _Builder {
                   child: pw.Container(
                     width: 3,
                     height: 3,
-                    decoration: const pw.BoxDecoration(
-                      color: _teal,
+                    decoration: pw.BoxDecoration(
+                      color: style.primary,
                       shape: pw.BoxShape.circle,
                     ),
                   ),
@@ -163,7 +163,7 @@ extension _Table on _Builder {
                 pw.Expanded(
                   child: t(
                     l,
-                    style: st(size: 8, color: _muted),
+                    style: st(size: 8, color: style.muted),
                     dir: dir,
                   ),
                 ),

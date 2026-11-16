@@ -5,9 +5,9 @@ extension _AnnexTables on _Builder {
     crossAxisAlignment: pw.CrossAxisAlignment.stretch,
     children: [
       t(text, style: st(size: 16, font: bold)),
-      t(sub, style: st(size: 9, color: _muted)),
+      t(sub, style: st(size: 9, color: style.muted)),
       pw.SizedBox(height: 8),
-      pw.Container(height: 2, color: _ink),
+      pw.Container(height: 2, color: style.ink),
       pw.SizedBox(height: 12),
     ],
   );
@@ -22,7 +22,7 @@ extension _AnnexTables on _Builder {
   pw.Widget headCell(String text, {bool end = false}) => cell(
     t(
       text,
-      style: st(size: 8.5, font: bold, color: _muted),
+      style: st(size: 8.5, font: bold, color: style.muted),
     ),
     end: end,
   );
@@ -33,14 +33,14 @@ extension _AnnexTables on _Builder {
     required List<List<pw.Widget>> rows,
   }) => pw.Table(
     columnWidths: widths,
-    border: const pw.TableBorder(
-      horizontalInside: pw.BorderSide(color: _border, width: 0.6),
-      bottom: pw.BorderSide(color: _border, width: 0.6),
+    border: pw.TableBorder(
+      horizontalInside: pw.BorderSide(color: style.border, width: 0.6),
+      bottom: pw.BorderSide(color: style.border, width: 0.6),
     ),
     children: [
       pw.TableRow(
         repeat: true,
-        decoration: const pw.BoxDecoration(color: _soft),
+        decoration: pw.BoxDecoration(color: style.surface),
         children: head,
       ),
       for (final r in rows) pw.TableRow(children: r),
@@ -50,15 +50,15 @@ extension _AnnexTables on _Builder {
   List<pw.Widget> scopeAnnex() {
     final rows = c.scope.where((x) => !x.isBlank).toList();
     final out = splitLines(c.outOfScope);
-    pw.Widget txt(String v, {PdfColor color = _ink, pw.Font? font}) => rich(
+    pw.Widget txt(String v, {PdfColor? color, pw.Font? font}) => rich(
       v,
       style: st(size: 9.5, color: color, font: font),
       align: pw.TextAlign.right,
     );
     return [
-      annexTitle('ملحق (1) نطاق العمل', 'جزء لا يتجزأ من ${c.number}'),
+      annexTitle(labels.scopeAnnex, labels.integralPartOf(c.number)),
       if (rows.isEmpty)
-        t('لم تُحدد بنود النطاق بعد.', style: st(color: _muted))
+        t(labels.noScopeYet, style: st(color: style.muted))
       else
         table(
           widths: const {
@@ -70,24 +70,24 @@ extension _AnnexTables on _Builder {
           },
           head: [
             headCell('#'),
-            headCell('المرحلة'),
-            headCell('البند'),
-            headCell('الوصف'),
-            headCell('معيار القبول'),
+            headCell(labels.phase),
+            headCell(labels.item),
+            headCell(labels.description),
+            headCell(labels.acceptance),
           ],
           rows: [
             for (final (i, r) in rows.indexed)
               [
-                cell(t('${i + 1}', style: st(size: 9, color: _muted))),
-                cell(txt(r.phase, color: _teal, font: semi)),
+                cell(t('${i + 1}', style: st(size: 9, color: style.muted))),
+                cell(txt(r.phase, color: style.primary, font: semi)),
                 cell(txt(r.item, font: semi)),
-                cell(txt(r.description, color: _muted)),
+                cell(txt(r.description, color: style.muted)),
                 cell(txt(r.acceptance)),
               ],
           ],
         ),
       if (out.isNotEmpty) ...[
-        heading('خارج النطاق', top: 18),
+        heading(labels.outOfScope, top: 18),
         for (final line in out)
           pw.Padding(
             padding: const pw.EdgeInsets.only(bottom: 3),
@@ -98,8 +98,8 @@ extension _AnnexTables on _Builder {
                   width: 4,
                   height: 4,
                   margin: const pw.EdgeInsets.only(top: 7, left: 8),
-                  decoration: const pw.BoxDecoration(
-                    color: _muted,
+                  decoration: pw.BoxDecoration(
+                    color: style.muted,
                     shape: pw.BoxShape.circle,
                   ),
                 ),
@@ -123,24 +123,24 @@ extension _AnnexTables on _Builder {
     }
 
     return [
-      annexTitle('ملحق (2) المقابل والدفعات', 'جزء لا يتجزأ من ${c.number}'),
+      annexTitle(labels.paymentAnnex, labels.integralPartOf(c.number)),
       pw.Container(
         padding: const pw.EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: pw.BoxDecoration(
-          color: _tealBg,
+          color: style.primarySoft,
           borderRadius: pw.BorderRadius.circular(8),
         ),
         child: pw.Row(
           children: [
             pw.Expanded(
               child: t(
-                'إجمالي المقابل',
-                style: st(size: 11, font: semi, color: _teal),
+                labels.totalFee,
+                style: st(size: 11, font: semi, color: style.primary),
               ),
             ),
             t(
               formatContractMoney(c.totalMinor, c.currency),
-              style: st(size: 14, font: bold, color: _teal),
+              style: st(size: 14, font: bold, color: style.primary),
             ),
           ],
         ),
@@ -158,16 +158,16 @@ extension _AnnexTables on _Builder {
           },
           head: [
             headCell('#'),
-            headCell('الدفعة'),
-            headCell('النسبة'),
-            headCell('المبلغ', end: true),
-            headCell('الاستحقاق'),
-            headCell('التاريخ'),
+            headCell(labels.payment),
+            headCell(labels.percent),
+            headCell(labels.amount, end: true),
+            headCell(labels.trigger),
+            headCell(labels.date),
           ],
           rows: [
             for (final (i, m) in c.milestones.indexed)
               [
-                cell(t('${i + 1}', style: st(size: 9, color: _muted))),
+                cell(t('${i + 1}', style: st(size: 9, color: style.muted))),
                 cell(
                   rich(
                     m.label,
@@ -186,7 +186,7 @@ extension _AnnexTables on _Builder {
                 cell(
                   rich(
                     m.trigger,
-                    style: st(size: 9.5, color: _muted),
+                    style: st(size: 9.5, color: style.muted),
                     align: pw.TextAlign.right,
                   ),
                 ),
@@ -198,7 +198,7 @@ extension _AnnexTables on _Builder {
               ],
             [
               cell(t('')),
-              cell(t('الإجمالي', style: st(size: 9.5, font: bold))),
+              cell(t(labels.total, style: st(size: 9.5, font: bold))),
               cell(t('')),
               cell(
                 t(

@@ -2,8 +2,12 @@ import 'dart:typed_data';
 
 import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/core/money.dart';
+import 'package:invoice_desk/domain/doc_format.dart';
+import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:invoice_desk/domain/invoice_logic.dart';
 import 'package:invoice_desk/domain/models.dart';
+import 'package:invoice_desk/pdf/labels.dart';
+import 'package:invoice_desk/pdf/pdf_style.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 part 'invoice/header.dart';
@@ -53,19 +57,6 @@ String invoiceFileName(Invoice invoice, Client? client) {
       : '${invoice.number} - $name.pdf';
 }
 
-// Palette (matches the app's light theme).
-const _ink = PdfColor.fromInt(0xFF0F1B2D);
-const _teal = PdfColor.fromInt(0xFF0F766E);
-const _muted = PdfColor.fromInt(0xFF5B6878);
-const _soft = PdfColor.fromInt(0xFFF3F6F9);
-const _border = PdfColor.fromInt(0xFFDCE2EA);
-const _green = PdfColor.fromInt(0xFF067647);
-const _greenBg = PdfColor.fromInt(0xFFDCFAE6);
-const _blue = PdfColor.fromInt(0xFF1D4ED8);
-const _blueBg = PdfColor.fromInt(0xFFE0EAFF);
-const _tealBg = PdfColor.fromInt(0xFFD6F1EE);
-const _greyBg = PdfColor.fromInt(0xFFEEF1F5);
-
 final _arabic = RegExp(
   r'[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]',
 );
@@ -74,12 +65,20 @@ bool _hasArabic(String s) => _arabic.hasMatch(s);
 pw.TextDirection _dirOf(String s) =>
     _hasArabic(s) ? pw.TextDirection.rtl : pw.TextDirection.ltr;
 
-/// Pure: invoice data in, PDF bytes out.
-Future<Uint8List> buildInvoicePdf(InvoicePdfData data, PdfFonts fonts) =>
-    buildInvoiceDocument(data, fonts).save();
+/// Pure: invoice data in, PDF bytes out. [style] is the resolved look;
+/// [PdfStyle.classic] is the 0.4 look.
+Future<Uint8List> buildInvoicePdf(
+  InvoicePdfData data,
+  PdfFonts fonts, {
+  PdfStyle style = PdfStyle.classic,
+}) => buildInvoiceDocument(data, fonts, style: style).save();
 
-pw.Document buildInvoiceDocument(InvoicePdfData data, PdfFonts fonts) {
-  final b = _Builder(data, fonts);
+pw.Document buildInvoiceDocument(
+  InvoicePdfData data,
+  PdfFonts fonts, {
+  PdfStyle style = PdfStyle.classic,
+}) {
+  final b = _Builder(data, fonts, style);
   final doc =
       pw.Document(
         title: data.invoice.number,
@@ -93,7 +92,7 @@ pw.Document buildInvoiceDocument(InvoicePdfData data, PdfFonts fonts) {
           build: (_) => [
             b.header(),
             pw.SizedBox(height: 12),
-            pw.Container(height: 2, color: _ink),
+            pw.Container(height: 2, color: style.ink),
             pw.SizedBox(height: 14),
             b.parties(),
             pw.SizedBox(height: 16),
@@ -118,10 +117,21 @@ pw.Document buildInvoiceDocument(InvoicePdfData data, PdfFonts fonts) {
 }
 
 class _Builder {
-  _Builder(this.data, this.fonts) : inv = data.invoice, s = data.settings;
+  _Builder(this.data, this.fonts, this.style)
+    : inv = data.invoice,
+      s = data.settings;
 
   final InvoicePdfData data;
   final PdfFonts fonts;
+
+  /// Colours and page geometry.
+  final PdfStyle style;
+
+  /// Main labels (an invoice is bilingual until document languages land).
+  DocLabels get labelEn => DocLabels.en;
+
+  /// Secondary Arabic labels and the Arabic scope page.
+  DocLabels get labelAr => DocLabels.ar;
   final Invoice inv;
   final Settings s;
 
@@ -134,14 +144,14 @@ class _Builder {
           font: fonts.regular,
           fontBold: fonts.bold,
           fontSize: 9.5,
-          color: _ink,
+          color: style.ink,
           lineSpacing: 1.5,
         ),
       );
 
   pw.PageTheme pageTheme(pw.TextDirection dir) => pw.PageTheme(
-    pageFormat: PdfPageFormat.a4,
-    margin: const pw.EdgeInsets.fromLTRB(40, 34, 40, 26),
+    pageFormat: style.paper,
+    margin: style.invoiceMargin,
     textDirection: dir,
     theme: theme,
   );
@@ -149,12 +159,12 @@ class _Builder {
   pw.TextStyle st({
     double size = 9.5,
     pw.Font? font,
-    PdfColor color = _ink,
+    PdfColor? color,
     double? spacing,
   }) => pw.TextStyle(
     font: font ?? fonts.regular,
     fontSize: size,
-    color: color,
+    color: color ?? style.ink,
     letterSpacing: spacing,
   );
 
@@ -175,21 +185,23 @@ class _Builder {
   );
 
   /// Latin label + Arabic label, e.g. `BILLED TO · العميل`.
-  pw.Widget bilingualLabel(String en, String ar, {PdfColor color = _muted}) =>
-      pw.Row(
-        mainAxisSize: pw.MainAxisSize.min,
-        children: [
-          t(
-            en,
-            style: st(size: 7.5, font: bold, color: color, spacing: 0.8),
-          ),
-          t('  ·  ', style: st(size: 7.5, color: color)),
-          t(
-            ar,
-            style: st(size: 8, font: semi, color: color),
-          ),
-        ],
-      );
+  pw.Widget bilingualLabel(String en, String ar, {PdfColor? color}) {
+    final c = color ?? style.muted;
+    return pw.Row(
+      mainAxisSize: pw.MainAxisSize.min,
+      children: [
+        t(
+          en,
+          style: st(size: 7.5, font: bold, color: c, spacing: 0.8),
+        ),
+        t('  ·  ', style: st(size: 7.5, color: c)),
+        t(
+          ar,
+          style: st(size: 8, font: semi, color: c),
+        ),
+      ],
+    );
+  }
 
   // ── Header ────────────────────────────────────────────────────────────
   // ── Billed to / payment details ───────────────────────────────────────

@@ -32,7 +32,7 @@ extension _Cover on _Builder {
                     pw.SizedBox(height: 2),
                     rich(
                       c.projectName,
-                      style: st(size: 11.5, font: semi, color: _teal),
+                      style: st(size: 11.5, font: semi, color: style.primary),
                       align: pw.TextAlign.right,
                     ),
                   ],
@@ -46,7 +46,7 @@ extension _Cover on _Builder {
                 vertical: 6,
               ),
               decoration: pw.BoxDecoration(
-                color: _tealBg,
+                color: style.primarySoft,
                 borderRadius: pw.BorderRadius.circular(6),
               ),
               child: pw.Column(
@@ -54,37 +54,37 @@ extension _Cover on _Builder {
                 children: [
                   t(
                     c.number,
-                    style: st(font: bold, color: _teal),
+                    style: st(font: bold, color: style.primary),
                   ),
-                  date(c.issueDate, st(size: 9, color: _teal)),
+                  date(c.issueDate, st(size: 9, color: style.primary)),
                 ],
               ),
             ),
           ],
         ),
         pw.SizedBox(height: 12),
-        pw.Container(height: 2, color: _ink),
+        pw.Container(height: 2, color: style.ink),
         pw.SizedBox(height: 14),
         pw.Row(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
             pw.Expanded(
-              child: party('الطرف الأول (مقدم الخدمة)', [
+              child: party(labels.firstPartyProvider, [
                 (null, provider),
-                ('رقم قومي / سجل تجاري', s.nationalIdOrRegistry),
-                ('العنوان', s.address),
-                ('البريد الإلكتروني', s.email),
-                ('الهاتف', s.phone),
+                (labels.providerIdOrRegistry, s.nationalIdOrRegistry),
+                (labels.address, s.address),
+                (labels.email, s.email),
+                (labels.phone, s.phone),
               ]),
             ),
             pw.SizedBox(width: 12),
             pw.Expanded(
-              child: party('الطرف الثاني (العميل)', [
+              child: party(labels.secondPartyClient, [
                 (null, clientName),
-                ('سجل تجاري / رقم قومي', cl?.registryNo ?? ''),
-                ('العنوان', cl?.address ?? ''),
-                ('يمثله', rep),
-                ('البريد الإلكتروني', cl?.email ?? ''),
+                (labels.clientRegistryOrId, cl?.registryNo ?? ''),
+                (labels.address, cl?.address ?? ''),
+                (labels.representedBy, rep),
+                (labels.email, cl?.email ?? ''),
               ]),
             ),
           ],
@@ -97,7 +97,7 @@ extension _Cover on _Builder {
   pw.Widget party(String label, List<(String?, String)> lines) => pw.Container(
     padding: const pw.EdgeInsets.all(12),
     decoration: pw.BoxDecoration(
-      color: _soft,
+      color: style.surface,
       borderRadius: pw.BorderRadius.circular(8),
     ),
     child: pw.Column(
@@ -105,7 +105,7 @@ extension _Cover on _Builder {
       children: [
         t(
           label,
-          style: st(size: 9, font: semi, color: _teal),
+          style: st(size: 9, font: semi, color: style.primary),
         ),
         pw.SizedBox(height: 6),
         for (final (k, v) in lines)
@@ -117,7 +117,7 @@ extension _Cover on _Builder {
                     child: pw.Row(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
-                        t('$k: ', style: st(size: 9, color: _muted)),
+                        t('$k: ', style: st(size: 9, color: style.muted)),
                         pw.Expanded(child: t(v.trim(), style: st(size: 9.5))),
                       ],
                     ),

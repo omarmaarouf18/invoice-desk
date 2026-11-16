@@ -7,7 +7,7 @@ extension _Signatures on _Builder {
       child: pw.Container(
         padding: const pw.EdgeInsets.all(12),
         decoration: pw.BoxDecoration(
-          border: pw.Border.all(color: _border, width: 0.8),
+          border: pw.Border.all(color: style.border, width: 0.8),
           borderRadius: pw.BorderRadius.circular(8),
         ),
         child: pw.Column(
@@ -15,23 +15,23 @@ extension _Signatures on _Builder {
           children: [
             t(
               side,
-              style: st(size: 10, font: bold, color: _teal),
+              style: st(size: 10, font: bold, color: style.primary),
             ),
             pw.SizedBox(height: 8),
-            line('الاسم', name),
-            line('الصفة', title),
-            line('التوقيع', ''),
-            line('التاريخ', ''),
+            line(labels.name, name),
+            line(labels.title, title),
+            line(labels.signature, ''),
+            line(labels.date, ''),
             pw.SizedBox(height: 8),
             pw.Row(
               children: [
-                t('الختم', style: st(size: 9, color: _muted)),
+                t(labels.stamp, style: st(size: 9, color: style.muted)),
                 pw.SizedBox(width: 8),
                 pw.Container(
                   width: 70,
                   height: 46,
                   decoration: pw.BoxDecoration(
-                    border: pw.Border.all(color: _border, width: 0.8),
+                    border: pw.Border.all(color: style.border, width: 0.8),
                     borderRadius: pw.BorderRadius.circular(6),
                   ),
                 ),
@@ -44,19 +44,19 @@ extension _Signatures on _Builder {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.stretch,
       children: [
-        t('التوقيعات', style: st(size: 12, font: bold)),
+        t(labels.signatures, style: st(size: 12, font: bold)),
         pw.SizedBox(height: 8),
         pw.Row(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
             column(
-              'الطرف الأول',
+              labels.firstParty,
               s.legalName.trim().isEmpty ? s.name : s.legalName,
               s.role,
             ),
             pw.SizedBox(width: 14),
             column(
-              'الطرف الثاني',
+              labels.secondParty,
               (cl?.representative.trim().isNotEmpty ?? false)
                   ? cl!.representative
                   : (cl?.legalName.trim().isNotEmpty ?? false)
@@ -77,14 +77,14 @@ extension _Signatures on _Builder {
       children: [
         pw.SizedBox(
           width: 46,
-          child: t(label, style: st(size: 9, color: _muted)),
+          child: t(label, style: st(size: 9, color: style.muted)),
         ),
         pw.Expanded(
           child: pw.Container(
             padding: const pw.EdgeInsets.only(bottom: 2),
-            decoration: const pw.BoxDecoration(
+            decoration: pw.BoxDecoration(
               border: pw.Border(
-                bottom: pw.BorderSide(color: _border, width: 0.8),
+                bottom: pw.BorderSide(color: style.border, width: 0.8),
               ),
             ),
             child: t(

@@ -9,6 +9,12 @@ All notable changes to Invoice Desk. The format follows [Keep a Changelog](https
 
 ### Changed
 - The sample PDFs in `docs/` use fictional data (Sample Studio → Acme Studio).
+- Groundwork for bilingual documents and document styles. Nothing looks different yet (ADR-0011):
+  - a document language model (`ar` / `en` / `bilingual`) and a digit style;
+  - language-aware dates, clause headings, currency names, default milestones and payment reminders;
+  - one table of PDF labels in Arabic and English;
+  - the PDF palette and page geometry in one `PdfStyle` (Classic reproduces 0.4 exactly);
+  - a per-machine UI-language preference, wired into the app's locale.
 
 ## [0.4.0] - 2026-11-16
 

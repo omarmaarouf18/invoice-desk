@@ -7,7 +7,7 @@ extension _Body on _Builder {
     padding: pw.EdgeInsets.only(top: top, bottom: 6),
     child: rich(
       text,
-      style: st(size: 12, font: bold, color: _teal),
+      style: st(size: 12, font: bold, color: style.primary),
       align: pw.TextAlign.right,
     ),
   );
@@ -34,7 +34,7 @@ extension _Body on _Builder {
                         width: 22,
                         child: t(
                           _digits(i + 1),
-                          style: st(font: semi, color: _teal),
+                          style: st(font: semi, color: style.primary),
                         ),
                       ),
                       pw.Expanded(child: rich(item)),
@@ -49,7 +49,7 @@ extension _Body on _Builder {
 
   List<pw.Widget> preamble() => c.preamble.trim().isEmpty
       ? const []
-      : [heading('تمهيد', top: 0), ...body(c.preamble)];
+      : [heading(labels.preamble, top: 0), ...body(c.preamble)];
 
   List<pw.Widget> clauses() {
     final enabled = c.clauses.where((x) => x.enabled).toList();
@@ -57,8 +57,8 @@ extension _Body on _Builder {
       for (final (i, cl) in enabled.indexed) ...[
         heading(
           cl.title.trim().isEmpty
-              ? 'البند ${arabicOrdinal(i + 1)}'
-              : 'البند ${arabicOrdinal(i + 1)}: ${cl.title.trim()}',
+              ? clauseHeading(i + 1, lang)
+              : clauseHeadingWithTitle(i + 1, cl.title, lang),
         ),
         ...body(cl.body),
       ],
@@ -71,8 +71,10 @@ extension _Body on _Builder {
           pw.SizedBox(height: 10),
           pw.Container(
             padding: const pw.EdgeInsets.all(10),
-            decoration: const pw.BoxDecoration(
-              border: pw.Border(right: pw.BorderSide(color: _teal, width: 2)),
+            decoration: pw.BoxDecoration(
+              border: pw.Border(
+                right: pw.BorderSide(color: style.primary, width: 2),
+              ),
             ),
             child: rich(c.closing, style: st(font: semi)),
           ),

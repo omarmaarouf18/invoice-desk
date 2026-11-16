@@ -6,13 +6,13 @@ extension _Totals on _Builder {
     final en = splitLines(inv.notesEn);
     final ar = splitLines(inv.notesAr);
     final multi = inv.sections.length > 1;
-    pw.Widget line(String k, String v, {PdfColor color = _ink}) => pw.Padding(
+    pw.Widget line(String k, String v, {PdfColor? color}) => pw.Padding(
       padding: const pw.EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       child: pw.Row(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
           pw.Expanded(
-            child: t(k, style: st(color: _muted)),
+            child: t(k, style: st(color: style.muted)),
           ),
           pw.SizedBox(width: 8),
           t(
@@ -27,7 +27,7 @@ extension _Totals on _Builder {
     final totalsBox = pw.Container(
       width: 236,
       decoration: pw.BoxDecoration(
-        border: pw.Border.all(color: _border, width: 0.8),
+        border: pw.Border.all(color: style.border, width: 0.8),
         borderRadius: pw.BorderRadius.circular(8),
       ),
       child: pw.Column(
@@ -42,20 +42,20 @@ extension _Totals on _Builder {
               ),
           if (inv.vatOn)
             line(
-              'VAT (${formatBpAsPercent(inv.vatRateBp)}%)',
+              '${labelEn.vat} (${formatBpAsPercent(inv.vatRateBp)}%)',
               totals.vat.format(separator: '\n'),
             )
           else
-            line('VAT', 'Not applicable', color: _muted),
+            line(labelEn.vat, labelEn.vatNotApplicable, color: style.muted),
           pw.SizedBox(height: 6),
           pw.Container(
             padding: const pw.EdgeInsets.symmetric(
               horizontal: 12,
               vertical: 10,
             ),
-            decoration: const pw.BoxDecoration(
-              color: _ink,
-              borderRadius: pw.BorderRadius.only(
+            decoration: pw.BoxDecoration(
+              color: style.ink,
+              borderRadius: const pw.BorderRadius.only(
                 bottomLeft: pw.Radius.circular(7),
                 bottomRight: pw.Radius.circular(7),
               ),
@@ -68,14 +68,14 @@ extension _Totals on _Builder {
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
                       t(
-                        'Total due',
-                        style: st(size: 10, font: bold, color: PdfColors.white),
+                        labelEn.totalDue,
+                        style: st(size: 10, font: bold, color: style.onInk),
                       ),
                       t(
-                        'الإجمالي المستحق',
+                        labelAr.totalDue,
                         style: st(
                           size: 8,
-                          color: const PdfColor.fromInt(0xFFB8C2CF),
+                          color: style.onInkMuted,
                         ),
                       ),
                     ],
@@ -87,12 +87,12 @@ extension _Totals on _Builder {
                     for (final m in totals.total.nonZero)
                       t(
                         m.format(),
-                        style: st(size: 13, font: bold, color: PdfColors.white),
+                        style: st(size: 13, font: bold, color: style.onInk),
                       ),
                     if (totals.total.isEmpty)
                       t(
                         '0',
-                        style: st(size: 13, font: bold, color: PdfColors.white),
+                        style: st(size: 13, font: bold, color: style.onInk),
                       ),
                   ],
                 ),
@@ -114,7 +114,7 @@ extension _Totals on _Builder {
                 crossAxisAlignment: pw.CrossAxisAlignment.stretch,
                 children: [
                   if (en.isNotEmpty || ar.isNotEmpty) ...[
-                    bilingualLabel('NOTES', 'ملاحظات'),
+                    bilingualLabel(labelEn.notes, labelAr.notes),
                     pw.SizedBox(height: 6),
                   ],
                   if (en.isNotEmpty) bullets(en, pw.TextDirection.ltr),
@@ -130,7 +130,9 @@ extension _Totals on _Builder {
                 totalsBox,
                 pw.SizedBox(height: 6),
                 t(
-                  'Due by ${formatInvoiceDate(inv.effectiveDueDate)}',
+                  labelEn.dueBy(
+                    formatDocDate(inv.effectiveDueDate, DocLanguage.en),
+                  ),
                   style: st(font: semi),
                 ),
                 arabicDueLine(),
@@ -159,7 +161,7 @@ extension _Totals on _Builder {
       child: pw.Wrap(
         spacing: 2.5,
         children: [
-          for (final w in words) t(w, style: st(size: 8.5, color: _muted)),
+          for (final w in words) t(w, style: st(size: 8.5, color: style.muted)),
         ],
       ),
     );
