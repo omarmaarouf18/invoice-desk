@@ -66,6 +66,7 @@ class DetailsCard extends ConsumerWidget {
             paid: paid,
             issue: issue,
           ),
+          const _CalendarStrip(),
         ],
       ),
     );

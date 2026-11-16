@@ -10,7 +10,7 @@ extension _Header on _Builder {
     final meta = <(String, String)>[
       ('Invoice No.', inv.number),
       ('Issue date', formatInvoiceDate(inv.issueDate)),
-      ('Due date', formatInvoiceDate(inv.dueDate)),
+      ('Due date', formatInvoiceDate(inv.effectiveDueDate)),
       if (inv.contractRef.trim().isNotEmpty)
         ('Contract ref.', inv.contractRef.trim()),
     ];

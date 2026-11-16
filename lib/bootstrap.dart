@@ -8,6 +8,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invoice_desk/account/account.dart';
 import 'package:invoice_desk/app/app.dart';
+import 'package:invoice_desk/app/desktop_notifier.dart';
 import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/app/ui_prefs.dart';
 import 'package:invoice_desk/data/app_paths.dart';
@@ -86,6 +87,7 @@ Future<void> _start(AppPaths paths, UiPrefs prefs) async {
       syncServiceProvider.overrideWithValue(const NoopSyncService()),
       uiPrefsProvider.overrideWithValue(prefs),
       appPathsProvider.overrideWithValue(paths),
+      desktopNotifierProvider.overrideWithValue(const LinuxDesktopNotifier()),
     ],
   );
   windowManager.addListener(_WindowSaver(container, prefs));
@@ -102,7 +104,9 @@ Future<void> _start(AppPaths paths, UiPrefs prefs) async {
   WidgetsBinding.instance.addPostFrameCallback((_) {
     final last = prefs.lastInvoiceId;
     if (last != null) {
-      unawaited(container.read(editorProvider.notifier).open(last));
+      unawaited(
+        container.read(editorProvider.notifier).open(last, reveal: false),
+      );
     }
     unawaited(_housekeeping(db!, paths));
   });

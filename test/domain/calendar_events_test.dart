@@ -70,7 +70,9 @@ Postponement pp(
 void main() {
   group('invoices', () {
     test('sent and not yet due → due on its due date', () {
-      final e = run(CalendarData(invoices: [inv('a')], clients: const [client]));
+      final e = run(
+        CalendarData(invoices: [inv('a')], clients: const [client]),
+      );
       expect(e.single.type, CalendarEventType.due);
       expect(e.single.date, const CalendarDate(2026, 11, 20));
       expect(e.single.clientName, 'Acme Studio');

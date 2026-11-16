@@ -1251,4 +1251,311 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get cloudSyncBody => 'اشتراك اختياري لاحقًا: مزامنة مشفّرة من طرف إلى طرف بين أجهزتك. البرنامج المكتبي يظل مجانيًا وكاملًا بدونها، وبياناتك لا تغادر جهازك اليوم.';
+
+  @override
+  String get calendar => 'التقويم';
+
+  @override
+  String get invoicesAndContracts => 'الفواتير والعقود';
+
+  @override
+  String get viewMonth => 'شهر';
+
+  @override
+  String get viewWeek => 'أسبوع';
+
+  @override
+  String get viewAgenda => 'جدول';
+
+  @override
+  String get today => 'اليوم';
+
+  @override
+  String get previous => 'السابق';
+
+  @override
+  String get next => 'التالي';
+
+  @override
+  String get summaryExpected => 'متوقع تحصيله';
+
+  @override
+  String get summaryCollected => 'تم تحصيله';
+
+  @override
+  String get summaryLate => 'متأخر';
+
+  @override
+  String get evDue => 'واجب التحصيل';
+
+  @override
+  String get evOverdue => 'متأخر';
+
+  @override
+  String get evOverdueRollup => 'متأخرات';
+
+  @override
+  String get evPaid => 'تم الدفع';
+
+  @override
+  String get evPostponed => 'مؤجَّل';
+
+  @override
+  String get evMilestone => 'دفعة عقد مستحقة';
+
+  @override
+  String get evRenewal => 'تجديد';
+
+  @override
+  String get evContractStart => 'بداية عقد';
+
+  @override
+  String get evContractEnd => 'نهاية عقد';
+
+  @override
+  String get evWarrantyEnd => 'نهاية الضمان';
+
+  @override
+  String get evReminder => 'تذكير';
+
+  @override
+  String daysOverdue(int days) {
+    return 'متأخرة $days يوم';
+  }
+
+  @override
+  String overdueRollup(int count) {
+    return '$count متأخرة';
+  }
+
+  @override
+  String moreEvents(int count) {
+    return '+$count';
+  }
+
+  @override
+  String get filterClient => 'العميل';
+
+  @override
+  String get filterType => 'نوع الحدث';
+
+  @override
+  String get filterCurrency => 'العملة';
+
+  @override
+  String get allClients => 'كل العملاء';
+
+  @override
+  String get allTypes => 'كل الأنواع';
+
+  @override
+  String get allCurrencies => 'كل العملات';
+
+  @override
+  String get clearFilters => 'مسح الفلاتر';
+
+  @override
+  String get showPast => 'عرض السابق';
+
+  @override
+  String get agendaEmpty => 'لا أحداث قادمة مطابقة';
+
+  @override
+  String get dayEmpty => 'لا أحداث في هذا اليوم';
+
+  @override
+  String get searchCalendar => 'ابحث في التقويم';
+
+  @override
+  String get actOpen => 'فتح';
+
+  @override
+  String get actMarkPaid => 'تحديد كمدفوعة';
+
+  @override
+  String get actPostpone => 'تأجيل';
+
+  @override
+  String get actCopyReminder => 'نسخ رسالة تذكير';
+
+  @override
+  String get actCreateInvoice => 'إنشاء فاتورة';
+
+  @override
+  String get actOpenContract => 'فتح العقد';
+
+  @override
+  String get actRenewInvoice => 'إنشاء فاتورة تجديد';
+
+  @override
+  String get actEdit => 'تعديل';
+
+  @override
+  String get actMarkDone => 'تم';
+
+  @override
+  String get actReopen => 'إعادة فتح';
+
+  @override
+  String get actDelete => 'حذف';
+
+  @override
+  String get addReminder => '+ تذكير';
+
+  @override
+  String get postponeTitle => 'تأجيل الاستحقاق';
+
+  @override
+  String get postponeNewDate => 'التاريخ الجديد';
+
+  @override
+  String get postponeReason => 'السبب';
+
+  @override
+  String get postponeReasonHint => 'مثال: طلب العميل مهلة';
+
+  @override
+  String postponed(String date) {
+    return 'تم التأجيل إلى $date';
+  }
+
+  @override
+  String postponedFromTo(String from, String to) {
+    return 'مؤجَّلة من $from إلى $to';
+  }
+
+  @override
+  String get postponeHistory => 'سجل التأجيل';
+
+  @override
+  String get reminderNew => 'تذكير جديد';
+
+  @override
+  String get reminderEdit => 'تعديل التذكير';
+
+  @override
+  String get reminderText => 'النص';
+
+  @override
+  String get reminderTime => 'الوقت (اختياري، 24 ساعة)';
+
+  @override
+  String get reminderTimeHint => '10:30';
+
+  @override
+  String get errReminderText => 'اكتب نص التذكير';
+
+  @override
+  String get errTime => 'وقت غير صالح';
+
+  @override
+  String get reminderDeleted => 'حُذف التذكير';
+
+  @override
+  String get reminderCopied => 'نُسخت رسالة التذكير — الصقها في واتساب أو البريد';
+
+  @override
+  String get exportIcs => 'تصدير إلى التقويم (.ics)';
+
+  @override
+  String get exportIcsVisible => 'النطاق الظاهر';
+
+  @override
+  String get exportIcsFuture => 'كل الأحداث القادمة';
+
+  @override
+  String icsExported(int count) {
+    return 'صُدّر $count حدثًا';
+  }
+
+  @override
+  String todayBanner(int due, int overdue) {
+    return 'اليوم: $due مستحق · $overdue متأخر';
+  }
+
+  @override
+  String get showInCalendar => 'عرض في التقويم';
+
+  @override
+  String get dismiss => 'إخفاء';
+
+  @override
+  String get profileBanner => 'أكمل بياناتك';
+
+  @override
+  String get profileBannerBody => 'أضف اسمك وبيانات الدفع لتظهر على الفواتير والعقود.';
+
+  @override
+  String get inCalendar => 'في التقويم';
+
+  @override
+  String get demoData => 'البيانات التجريبية';
+
+  @override
+  String get demoBody => 'عملاء وفواتير وعقود وهمية للتجربة. أي صف تعدّله يصبح من بياناتك ولا يُحذف معها.';
+
+  @override
+  String get demoAdd => 'إضافة بيانات تجريبية';
+
+  @override
+  String get demoRemove => 'حذف البيانات التجريبية';
+
+  @override
+  String get demoRemoveTitle => 'حذف البيانات التجريبية؟';
+
+  @override
+  String get demoRemoveBody => 'تُحذف نهائيًا الصفوف التجريبية فقط، بعد نسخة احتياطية. بياناتك لا تُمس.';
+
+  @override
+  String get demoAdded => 'أُضيفت البيانات التجريبية';
+
+  @override
+  String demoRemoved(int count) {
+    return 'حُذفت البيانات التجريبية ($count صف)';
+  }
+
+  @override
+  String get weekStart => 'بداية الأسبوع';
+
+  @override
+  String get weekdaySaturday => 'السبت';
+
+  @override
+  String get weekdaySunday => 'الأحد';
+
+  @override
+  String get weekdayMonday => 'الإثنين';
+
+  @override
+  String get notifyOnStart => 'إشعار عند التشغيل';
+
+  @override
+  String get notifyOnStartBody => 'إشعار سطح المكتب بما يستحق اليوم وما تأخر (إن كان متاحًا).';
+
+  @override
+  String get calendarShortcuts => 'الأسهم: تنقّل · PageUp/PageDown: شهر · T: اليوم · M/W/A: العرض · Enter: اليوم المحدد';
+
+  @override
+  String get dayTotal => 'مستحق اليوم';
+
+  @override
+  String get wdMon => 'الإثنين';
+
+  @override
+  String get wdTue => 'الثلاثاء';
+
+  @override
+  String get wdWed => 'الأربعاء';
+
+  @override
+  String get wdThu => 'الخميس';
+
+  @override
+  String get wdFri => 'الجمعة';
+
+  @override
+  String get wdSat => 'السبت';
+
+  @override
+  String get wdSun => 'الأحد';
 }

@@ -158,7 +158,10 @@ void main() {
         expect(await count(db, 'SELECT COUNT(*) FROM $t WHERE is_demo = 1'), 0);
       }
       expect(await count(db, 'SELECT COUNT(*) FROM postponements'), 0);
-      expect((await db.customSelect('PRAGMA foreign_key_check').get()).length, 0);
+      expect(
+        (await db.customSelect('PRAGMA foreign_key_check').get()).length,
+        0,
+      );
       expect(await repo.hasDemo(), isFalse);
     });
 
@@ -185,7 +188,10 @@ void main() {
       expect(owner, isNotNull);
       expect(owner!.isDemo, isFalse);
       expect(r.keptClients, greaterThanOrEqualTo(1));
-      expect((await db.customSelect('PRAGMA foreign_key_check').get()).length, 0);
+      expect(
+        (await db.customSelect('PRAGMA foreign_key_check').get()).length,
+        0,
+      );
     });
   });
 }

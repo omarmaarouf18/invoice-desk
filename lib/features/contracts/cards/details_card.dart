@@ -36,6 +36,7 @@ class ContractDetailsCard extends ConsumerWidget {
                 _ctl(ref).edit((c) => c.copyWith(jurisdiction: v)),
           ),
           if (hasHistory) ...[_gap, const _HistoryList()],
+          const _ContractCalendarLink(),
         ],
       ),
     );

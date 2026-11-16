@@ -41,6 +41,30 @@ class UiPrefs {
   );
   set themeMode(ThemeMode m) => _set('themeMode', m.name);
 
+  /// Top-level switch: the calendar instead of invoices & contracts.
+  bool get calendarMode => _data['calendarMode'] == true;
+  set calendarMode(bool v) => _set('calendarMode', v);
+
+  /// `month`, `week` or `agenda`.
+  String get calendarView => _data['calendarView'] as String? ?? 'month';
+  set calendarView(String v) => _set('calendarView', v);
+
+  /// `saturday`, `sunday` or `monday`.
+  String get weekStart => _data['weekStart'] as String? ?? 'saturday';
+  set weekStart(String v) => _set('weekStart', v);
+
+  /// Desktop notification on start (off by default).
+  bool get notifyOnStart => _data['notifyOnStart'] == true;
+  set notifyOnStart(bool v) => _set('notifyOnStart', v);
+
+  /// `YYYY-MM-DD` the "today" banner was dismissed on.
+  String? get todayBannerDismissed => _data['todayBannerDismissed'] as String?;
+  set todayBannerDismissed(String? v) => _set('todayBannerDismissed', v);
+
+  /// The "أكمل بياناتك" banner was dismissed.
+  bool get profileBannerDismissed => _data['profileBannerDismissed'] == true;
+  set profileBannerDismissed(bool v) => _set('profileBannerDismissed', v);
+
   Rect? get windowBounds {
     final b = _data['window'];
     if (b is! List || b.length != 4) return null;

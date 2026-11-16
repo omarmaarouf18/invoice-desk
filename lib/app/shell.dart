@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/features/actions.dart';
+import 'package:invoice_desk/features/calendar/banners.dart';
+import 'package:invoice_desk/features/calendar/calendar_page.dart';
 import 'package:invoice_desk/features/contracts/contract_actions.dart';
 import 'package:invoice_desk/features/contracts/contract_controller.dart';
 import 'package:invoice_desk/features/contracts/contract_page.dart';
@@ -50,6 +52,9 @@ class Shell extends ConsumerWidget {
             unawaited(a.newClient()),
         ctrl(LogicalKeyboardKey.keyK, shift: true): () =>
             unawaited(ca.newContract()),
+        ctrl(LogicalKeyboardKey.keyC, shift: true): () => ref
+            .read(calendarModeProvider.notifier)
+            .set(!ref.read(calendarModeProvider)),
         ctrl(LogicalKeyboardKey.keyK): focusSearch,
         ctrl(LogicalKeyboardKey.keyF): focusSearch,
         ctrl(LogicalKeyboardKey.keyS): () => onContract()
@@ -70,11 +75,22 @@ class Shell extends ConsumerWidget {
       child: Focus(
         autofocus: true,
         child: Scaffold(
-          body: Row(
+          body: Column(
             children: [
-              const SizedBox(width: sidebarWidth, child: Sidebar()),
-              const VerticalDivider(width: 1),
-              Expanded(child: FocusTraversalGroup(child: const _Workspace())),
+              const ModeBar(),
+              const TopBanners(),
+              const StartupNotification(),
+              Expanded(
+                child: Row(
+                  children: [
+                    const SizedBox(width: sidebarWidth, child: Sidebar()),
+                    const VerticalDivider(width: 1),
+                    Expanded(
+                      child: FocusTraversalGroup(child: const _Workspace()),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -88,6 +104,7 @@ class _Workspace extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (ref.watch(calendarModeProvider)) return const CalendarPage();
     final ws = ref.watch(workspaceProvider);
     final hasInvoice = ref.watch(
       editorProvider.select((s) => s.invoice != null),
@@ -106,6 +123,45 @@ class _Workspace extends ConsumerWidget {
     return AnimatedSwitcher(
       duration: motion(context),
       child: KeyedSubtree(key: ValueKey('${ws.name}$open'), child: child),
+    );
+  }
+}
+
+/// The top-level switch: الفواتير والعقود | التقويم (Ctrl+Shift+C).
+class ModeBar extends ConsumerWidget {
+  const ModeBar({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
+    final on = ref.watch(calendarModeProvider);
+    return Container(
+      height: 44,
+      padding: const EdgeInsets.symmetric(horizontal: Space.m),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: context.colors.border)),
+      ),
+      alignment: AlignmentDirectional.centerStart,
+      child: SegmentedButton<bool>(
+        showSelectedIcon: false,
+        style: const ButtonStyle(visualDensity: VisualDensity.compact),
+        segments: [
+          ButtonSegment(
+            value: false,
+            icon: const Icon(Icons.receipt_long_outlined, size: 18),
+            label: Text(l.invoicesAndContracts),
+          ),
+          ButtonSegment(
+            value: true,
+            icon: const Icon(Icons.calendar_month_outlined, size: 18),
+            label: Text(l.calendar),
+            tooltip: 'Ctrl+Shift+C',
+          ),
+        ],
+        selected: {on},
+        onSelectionChanged: (v) =>
+            ref.read(calendarModeProvider.notifier).set(v.first),
+      ),
     );
   }
 }

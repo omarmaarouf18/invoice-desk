@@ -77,8 +77,7 @@ class Clients extends Table with SyncRev {
   TextColumn get representativeTitle =>
       text().withDefault(const Constant(''))();
 
-  /// v5: part of the demo set; removed by "حذف البيانات التجريبية" and
-  /// cleared when the user edits the row.
+  /// v5: demo row (removed with the demo set; cleared on user edits).
   BoolColumn get isDemo => boolean().withDefault(const Constant(false))();
 
   @override
@@ -119,8 +118,7 @@ class Invoices extends Table with SyncRev {
   TextColumn get scopeWarranty => text().withDefault(const Constant(''))();
   IntColumn get deletedAt => integer().nullable()();
 
-  /// v5: part of the demo set; removed by "حذف البيانات التجريبية" and
-  /// cleared when the user edits the row.
+  /// v5: demo row (removed with the demo set; cleared on user edits).
   BoolColumn get isDemo => boolean().withDefault(const Constant(false))();
   IntColumn get createdAt => integer()();
   IntColumn get updatedAt => integer()();
@@ -199,8 +197,7 @@ class ClauseTemplates extends Table with SyncRev {
   /// v4: tombstone instead of a hard delete.
   IntColumn get deletedAt => integer().nullable()();
 
-  /// v5: part of the demo set; removed by "حذف البيانات التجريبية" and
-  /// cleared when the user edits the row.
+  /// v5: demo row (removed with the demo set; cleared on user edits).
   BoolColumn get isDemo => boolean().withDefault(const Constant(false))();
   IntColumn get createdAt => integer()();
   IntColumn get updatedAt => integer()();
@@ -299,8 +296,7 @@ class Contracts extends Table with SyncRev {
   TextColumn get history => text().withDefault(const Constant('[]'))();
   IntColumn get deletedAt => integer().nullable()();
 
-  /// v5: part of the demo set; removed by "حذف البيانات التجريبية" and
-  /// cleared when the user edits the row.
+  /// v5: demo row (removed with the demo set; cleared on user edits).
   BoolColumn get isDemo => boolean().withDefault(const Constant(false))();
   IntColumn get createdAt => integer()();
   IntColumn get updatedAt => integer()();
@@ -391,9 +387,8 @@ class PaymentMilestones extends Table with SyncRev, ChildSync {
 
 // ── v5: calendar ───────────────────────────────────────────────────────
 
-/// A history of moved due dates: each row moves an invoice's or a payment
-/// milestone's due date from [fromDate] to [toDate]. The latest row (by
-/// createdAt) is the effective date; the original is never overwritten.
+/// History of moved due dates (invoice or milestone); the latest row by
+/// createdAt is the effective date, the original is never overwritten.
 @DataClassName('PostponementRow')
 @TableIndex(name: 'postponements_entity', columns: {#entityId})
 class Postponements extends Table with SyncRev {
@@ -401,7 +396,7 @@ class Postponements extends Table with SyncRev {
   TextColumn get entityType =>
       text().check(entityType.isIn(const ['invoice', 'milestone']))();
 
-  /// Invoice or milestone id. Not a foreign key: one column, two tables.
+  /// Not a foreign key: one column, two tables.
   TextColumn get entityId => text()();
   TextColumn get fromDate => text()();
   TextColumn get toDate => text()();
@@ -417,8 +412,7 @@ class Postponements extends Table with SyncRev {
   bool get isStrict => true;
 }
 
-/// A manual calendar reminder, optionally at a time and about a client or
-/// a document.
+/// A manual calendar reminder (optional time, client and document).
 @DataClassName('ReminderRow')
 @TableIndex(name: 'reminders_date', columns: {#date})
 class Reminders extends Table with SyncRev {
@@ -452,7 +446,6 @@ class Reminders extends Table with SyncRev {
   @override
   bool get isStrict => true;
 }
-
 // ── v4: sync-ready rows ────────────────────────────────────────────────
 
 /// Every syncable table: a revision that triggers bump on each insert and

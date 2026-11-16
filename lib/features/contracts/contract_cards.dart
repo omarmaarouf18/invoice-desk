@@ -11,6 +11,7 @@ import 'package:invoice_desk/domain/contract_models.dart';
 import 'package:invoice_desk/domain/invoice_logic.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/actions.dart';
+import 'package:invoice_desk/features/calendar/calendar_controller.dart';
 import 'package:invoice_desk/features/contracts/contract_actions.dart';
 import 'package:invoice_desk/features/contracts/contract_controller.dart';
 import 'package:invoice_desk/features/contracts/contract_widgets.dart';
@@ -19,6 +20,7 @@ import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
 import 'package:invoice_desk/widgets/common.dart';
 
+part 'cards/calendar_link.dart';
 part 'cards/lock_banner.dart';
 part 'cards/details_card.dart';
 part 'cards/variables_card.dart';

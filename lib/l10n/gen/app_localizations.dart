@@ -2266,6 +2266,588 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'اشتراك اختياري لاحقًا: مزامنة مشفّرة من طرف إلى طرف بين أجهزتك. البرنامج المكتبي يظل مجانيًا وكاملًا بدونها، وبياناتك لا تغادر جهازك اليوم.'**
   String get cloudSyncBody;
+
+  /// No description provided for @calendar.
+  ///
+  /// In ar, this message translates to:
+  /// **'التقويم'**
+  String get calendar;
+
+  /// No description provided for @invoicesAndContracts.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفواتير والعقود'**
+  String get invoicesAndContracts;
+
+  /// No description provided for @viewMonth.
+  ///
+  /// In ar, this message translates to:
+  /// **'شهر'**
+  String get viewMonth;
+
+  /// No description provided for @viewWeek.
+  ///
+  /// In ar, this message translates to:
+  /// **'أسبوع'**
+  String get viewWeek;
+
+  /// No description provided for @viewAgenda.
+  ///
+  /// In ar, this message translates to:
+  /// **'جدول'**
+  String get viewAgenda;
+
+  /// No description provided for @today.
+  ///
+  /// In ar, this message translates to:
+  /// **'اليوم'**
+  String get today;
+
+  /// No description provided for @previous.
+  ///
+  /// In ar, this message translates to:
+  /// **'السابق'**
+  String get previous;
+
+  /// No description provided for @next.
+  ///
+  /// In ar, this message translates to:
+  /// **'التالي'**
+  String get next;
+
+  /// No description provided for @summaryExpected.
+  ///
+  /// In ar, this message translates to:
+  /// **'متوقع تحصيله'**
+  String get summaryExpected;
+
+  /// No description provided for @summaryCollected.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تحصيله'**
+  String get summaryCollected;
+
+  /// No description provided for @summaryLate.
+  ///
+  /// In ar, this message translates to:
+  /// **'متأخر'**
+  String get summaryLate;
+
+  /// No description provided for @evDue.
+  ///
+  /// In ar, this message translates to:
+  /// **'واجب التحصيل'**
+  String get evDue;
+
+  /// No description provided for @evOverdue.
+  ///
+  /// In ar, this message translates to:
+  /// **'متأخر'**
+  String get evOverdue;
+
+  /// No description provided for @evOverdueRollup.
+  ///
+  /// In ar, this message translates to:
+  /// **'متأخرات'**
+  String get evOverdueRollup;
+
+  /// No description provided for @evPaid.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم الدفع'**
+  String get evPaid;
+
+  /// No description provided for @evPostponed.
+  ///
+  /// In ar, this message translates to:
+  /// **'مؤجَّل'**
+  String get evPostponed;
+
+  /// No description provided for @evMilestone.
+  ///
+  /// In ar, this message translates to:
+  /// **'دفعة عقد مستحقة'**
+  String get evMilestone;
+
+  /// No description provided for @evRenewal.
+  ///
+  /// In ar, this message translates to:
+  /// **'تجديد'**
+  String get evRenewal;
+
+  /// No description provided for @evContractStart.
+  ///
+  /// In ar, this message translates to:
+  /// **'بداية عقد'**
+  String get evContractStart;
+
+  /// No description provided for @evContractEnd.
+  ///
+  /// In ar, this message translates to:
+  /// **'نهاية عقد'**
+  String get evContractEnd;
+
+  /// No description provided for @evWarrantyEnd.
+  ///
+  /// In ar, this message translates to:
+  /// **'نهاية الضمان'**
+  String get evWarrantyEnd;
+
+  /// No description provided for @evReminder.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذكير'**
+  String get evReminder;
+
+  /// No description provided for @daysOverdue.
+  ///
+  /// In ar, this message translates to:
+  /// **'متأخرة {days} يوم'**
+  String daysOverdue(int days);
+
+  /// No description provided for @overdueRollup.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} متأخرة'**
+  String overdueRollup(int count);
+
+  /// No description provided for @moreEvents.
+  ///
+  /// In ar, this message translates to:
+  /// **'+{count}'**
+  String moreEvents(int count);
+
+  /// No description provided for @filterClient.
+  ///
+  /// In ar, this message translates to:
+  /// **'العميل'**
+  String get filterClient;
+
+  /// No description provided for @filterType.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوع الحدث'**
+  String get filterType;
+
+  /// No description provided for @filterCurrency.
+  ///
+  /// In ar, this message translates to:
+  /// **'العملة'**
+  String get filterCurrency;
+
+  /// No description provided for @allClients.
+  ///
+  /// In ar, this message translates to:
+  /// **'كل العملاء'**
+  String get allClients;
+
+  /// No description provided for @allTypes.
+  ///
+  /// In ar, this message translates to:
+  /// **'كل الأنواع'**
+  String get allTypes;
+
+  /// No description provided for @allCurrencies.
+  ///
+  /// In ar, this message translates to:
+  /// **'كل العملات'**
+  String get allCurrencies;
+
+  /// No description provided for @clearFilters.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسح الفلاتر'**
+  String get clearFilters;
+
+  /// No description provided for @showPast.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض السابق'**
+  String get showPast;
+
+  /// No description provided for @agendaEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا أحداث قادمة مطابقة'**
+  String get agendaEmpty;
+
+  /// No description provided for @dayEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا أحداث في هذا اليوم'**
+  String get dayEmpty;
+
+  /// No description provided for @searchCalendar.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابحث في التقويم'**
+  String get searchCalendar;
+
+  /// No description provided for @actOpen.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح'**
+  String get actOpen;
+
+  /// No description provided for @actMarkPaid.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحديد كمدفوعة'**
+  String get actMarkPaid;
+
+  /// No description provided for @actPostpone.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأجيل'**
+  String get actPostpone;
+
+  /// No description provided for @actCopyReminder.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسخ رسالة تذكير'**
+  String get actCopyReminder;
+
+  /// No description provided for @actCreateInvoice.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء فاتورة'**
+  String get actCreateInvoice;
+
+  /// No description provided for @actOpenContract.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح العقد'**
+  String get actOpenContract;
+
+  /// No description provided for @actRenewInvoice.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء فاتورة تجديد'**
+  String get actRenewInvoice;
+
+  /// No description provided for @actEdit.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل'**
+  String get actEdit;
+
+  /// No description provided for @actMarkDone.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم'**
+  String get actMarkDone;
+
+  /// No description provided for @actReopen.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة فتح'**
+  String get actReopen;
+
+  /// No description provided for @actDelete.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف'**
+  String get actDelete;
+
+  /// No description provided for @addReminder.
+  ///
+  /// In ar, this message translates to:
+  /// **'+ تذكير'**
+  String get addReminder;
+
+  /// No description provided for @postponeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأجيل الاستحقاق'**
+  String get postponeTitle;
+
+  /// No description provided for @postponeNewDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'التاريخ الجديد'**
+  String get postponeNewDate;
+
+  /// No description provided for @postponeReason.
+  ///
+  /// In ar, this message translates to:
+  /// **'السبب'**
+  String get postponeReason;
+
+  /// No description provided for @postponeReasonHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: طلب العميل مهلة'**
+  String get postponeReasonHint;
+
+  /// No description provided for @postponed.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم التأجيل إلى {date}'**
+  String postponed(String date);
+
+  /// No description provided for @postponedFromTo.
+  ///
+  /// In ar, this message translates to:
+  /// **'مؤجَّلة من {from} إلى {to}'**
+  String postponedFromTo(String from, String to);
+
+  /// No description provided for @postponeHistory.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل التأجيل'**
+  String get postponeHistory;
+
+  /// No description provided for @reminderNew.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذكير جديد'**
+  String get reminderNew;
+
+  /// No description provided for @reminderEdit.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل التذكير'**
+  String get reminderEdit;
+
+  /// No description provided for @reminderText.
+  ///
+  /// In ar, this message translates to:
+  /// **'النص'**
+  String get reminderText;
+
+  /// No description provided for @reminderTime.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوقت (اختياري، 24 ساعة)'**
+  String get reminderTime;
+
+  /// No description provided for @reminderTimeHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'10:30'**
+  String get reminderTimeHint;
+
+  /// No description provided for @errReminderText.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب نص التذكير'**
+  String get errReminderText;
+
+  /// No description provided for @errTime.
+  ///
+  /// In ar, this message translates to:
+  /// **'وقت غير صالح'**
+  String get errTime;
+
+  /// No description provided for @reminderDeleted.
+  ///
+  /// In ar, this message translates to:
+  /// **'حُذف التذكير'**
+  String get reminderDeleted;
+
+  /// No description provided for @reminderCopied.
+  ///
+  /// In ar, this message translates to:
+  /// **'نُسخت رسالة التذكير — الصقها في واتساب أو البريد'**
+  String get reminderCopied;
+
+  /// No description provided for @exportIcs.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصدير إلى التقويم (.ics)'**
+  String get exportIcs;
+
+  /// No description provided for @exportIcsVisible.
+  ///
+  /// In ar, this message translates to:
+  /// **'النطاق الظاهر'**
+  String get exportIcsVisible;
+
+  /// No description provided for @exportIcsFuture.
+  ///
+  /// In ar, this message translates to:
+  /// **'كل الأحداث القادمة'**
+  String get exportIcsFuture;
+
+  /// No description provided for @icsExported.
+  ///
+  /// In ar, this message translates to:
+  /// **'صُدّر {count} حدثًا'**
+  String icsExported(int count);
+
+  /// No description provided for @todayBanner.
+  ///
+  /// In ar, this message translates to:
+  /// **'اليوم: {due} مستحق · {overdue} متأخر'**
+  String todayBanner(int due, int overdue);
+
+  /// No description provided for @showInCalendar.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض في التقويم'**
+  String get showInCalendar;
+
+  /// No description provided for @dismiss.
+  ///
+  /// In ar, this message translates to:
+  /// **'إخفاء'**
+  String get dismiss;
+
+  /// No description provided for @profileBanner.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكمل بياناتك'**
+  String get profileBanner;
+
+  /// No description provided for @profileBannerBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'أضف اسمك وبيانات الدفع لتظهر على الفواتير والعقود.'**
+  String get profileBannerBody;
+
+  /// No description provided for @inCalendar.
+  ///
+  /// In ar, this message translates to:
+  /// **'في التقويم'**
+  String get inCalendar;
+
+  /// No description provided for @demoData.
+  ///
+  /// In ar, this message translates to:
+  /// **'البيانات التجريبية'**
+  String get demoData;
+
+  /// No description provided for @demoBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'عملاء وفواتير وعقود وهمية للتجربة. أي صف تعدّله يصبح من بياناتك ولا يُحذف معها.'**
+  String get demoBody;
+
+  /// No description provided for @demoAdd.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة بيانات تجريبية'**
+  String get demoAdd;
+
+  /// No description provided for @demoRemove.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف البيانات التجريبية'**
+  String get demoRemove;
+
+  /// No description provided for @demoRemoveTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف البيانات التجريبية؟'**
+  String get demoRemoveTitle;
+
+  /// No description provided for @demoRemoveBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'تُحذف نهائيًا الصفوف التجريبية فقط، بعد نسخة احتياطية. بياناتك لا تُمس.'**
+  String get demoRemoveBody;
+
+  /// No description provided for @demoAdded.
+  ///
+  /// In ar, this message translates to:
+  /// **'أُضيفت البيانات التجريبية'**
+  String get demoAdded;
+
+  /// No description provided for @demoRemoved.
+  ///
+  /// In ar, this message translates to:
+  /// **'حُذفت البيانات التجريبية ({count} صف)'**
+  String demoRemoved(int count);
+
+  /// No description provided for @weekStart.
+  ///
+  /// In ar, this message translates to:
+  /// **'بداية الأسبوع'**
+  String get weekStart;
+
+  /// No description provided for @weekdaySaturday.
+  ///
+  /// In ar, this message translates to:
+  /// **'السبت'**
+  String get weekdaySaturday;
+
+  /// No description provided for @weekdaySunday.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأحد'**
+  String get weekdaySunday;
+
+  /// No description provided for @weekdayMonday.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإثنين'**
+  String get weekdayMonday;
+
+  /// No description provided for @notifyOnStart.
+  ///
+  /// In ar, this message translates to:
+  /// **'إشعار عند التشغيل'**
+  String get notifyOnStart;
+
+  /// No description provided for @notifyOnStartBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'إشعار سطح المكتب بما يستحق اليوم وما تأخر (إن كان متاحًا).'**
+  String get notifyOnStartBody;
+
+  /// No description provided for @calendarShortcuts.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأسهم: تنقّل · PageUp/PageDown: شهر · T: اليوم · M/W/A: العرض · Enter: اليوم المحدد'**
+  String get calendarShortcuts;
+
+  /// No description provided for @dayTotal.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستحق اليوم'**
+  String get dayTotal;
+
+  /// No description provided for @wdMon.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإثنين'**
+  String get wdMon;
+
+  /// No description provided for @wdTue.
+  ///
+  /// In ar, this message translates to:
+  /// **'الثلاثاء'**
+  String get wdTue;
+
+  /// No description provided for @wdWed.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأربعاء'**
+  String get wdWed;
+
+  /// No description provided for @wdThu.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخميس'**
+  String get wdThu;
+
+  /// No description provided for @wdFri.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجمعة'**
+  String get wdFri;
+
+  /// No description provided for @wdSat.
+  ///
+  /// In ar, this message translates to:
+  /// **'السبت'**
+  String get wdSat;
+
+  /// No description provided for @wdSun.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأحد'**
+  String get wdSun;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

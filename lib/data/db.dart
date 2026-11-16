@@ -16,6 +16,9 @@ import 'package:uuid/uuid.dart';
 
 part 'db.g.dart';
 
+/// Fills a just-created database (fresh install, tests).
+typedef Seeder = Future<void> Function(AppDatabase db);
+
 @DriftDatabase(
   tables: [
     AppSettings,
@@ -43,9 +46,6 @@ part 'db.g.dart';
   ],
   include: {'triggers.drift', 'sync_triggers.drift'},
 )
-/// Fills a just-created database (fresh install, tests).
-typedef Seeder = Future<void> Function(AppDatabase db);
-
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e, {this.seedOnCreate = true, Seeder? seeder})
     : seeder = seeder ?? seedDatabase;

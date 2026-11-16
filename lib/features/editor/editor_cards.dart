@@ -5,14 +5,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/core/money.dart';
+import 'package:invoice_desk/domain/calendar/models.dart';
 import 'package:invoice_desk/domain/invoice_logic.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/actions.dart';
+import 'package:invoice_desk/features/calendar/calendar_controller.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
 import 'package:invoice_desk/widgets/common.dart';
 
+part 'cards/calendar_link.dart';
 part 'cards/details_card.dart';
 part 'cards/totals_card.dart';
 part 'cards/notes_scope_cards.dart';

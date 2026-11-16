@@ -94,10 +94,14 @@ class EditorController extends Notifier<EditorState> {
   CalendarDate get _today => todayFrom(ref);
 
   // ── Opening ─────────────────────────────────────────────────────────
-  Future<void> open(String id) async {
+  /// Opens [id] in the editor; [reveal] false keeps the calendar up
+  /// (start-up restore).
+  Future<void> open(String id, {bool reveal = true}) async {
     await ref.read(contractProvider.notifier).flush();
     if (state.invoice?.id == id) {
-      ref.read(workspaceProvider.notifier).show(Workspace.invoice);
+      ref
+          .read(workspaceProvider.notifier)
+          .show(Workspace.invoice, reveal: reveal);
       return;
     }
     await flush();
@@ -105,7 +109,9 @@ class EditorController extends Notifier<EditorState> {
     if (!ref.mounted || inv == null) return;
     state = EditorState(invoice: inv, revision: state.revision + 1);
     ref.read(uiPrefsProvider).lastInvoiceId = id;
-    ref.read(workspaceProvider.notifier).show(Workspace.invoice);
+    ref
+        .read(workspaceProvider.notifier)
+        .show(Workspace.invoice, reveal: reveal);
   }
 
   void close() {
@@ -317,9 +323,10 @@ class EditorController extends Notifier<EditorState> {
     List<InvoiceSection> sections, {
     required bool keepScope,
     required bool todayDates,
+    CalendarDate? on,
   }) async {
     final settings = await ref.read(settingsRepositoryProvider).get();
-    final today = _today;
+    final today = on ?? _today;
     final number = await _nextNumber(today.year, settings.invoicePrefix);
     final p = parseInvoiceNumber(number)!;
     final terms = src.issueDate.daysUntil(src.dueDate);
@@ -361,25 +368,50 @@ class EditorController extends Notifier<EditorState> {
     );
   }
 
-  Future<ActionResult> renew(String id) async {
+  /// A renewal invoice of [id]'s recurring items, dated [on] (default
+  /// today; the calendar passes the renewal day).
+  Future<ActionResult> renew(String id, {CalendarDate? on}) async {
     final src = await _load(id);
     if (src == null || src.clientId.isEmpty) return const Failed();
     final sections = renewalSections(src.sections, newId);
     if (sections == null) return NothingToRenew(src.number);
-    return _createFrom(src, sections, keepScope: false, todayDates: true);
+    return _createFrom(
+      src,
+      sections,
+      keepScope: false,
+      todayDates: true,
+      on: on,
+    );
   }
 
-  Future<ActionResult> markPaid(String id) async {
+  /// Paid on [on] (default today; the calendar passes the selected day).
+  Future<ActionResult> markPaid(String id, {CalendarDate? on}) async {
+    final date = on ?? _today;
     if (state.invoice?.id == id) {
-      setStatus(InvoiceStatus.paid);
+      edit(
+        (inv) => inv.copyWith(
+          status: InvoiceStatus.paid,
+          paidDate: () => date,
+        ),
+      );
       await save();
       return Done(state.invoice!.number);
     }
     final dao = ref.read(invoiceRepositoryProvider);
     final inv = await dao.getById(id);
     if (inv == null) return const Failed();
-    await dao.markPaid(id, _today);
+    await dao.markPaid(id, date);
     return Done(inv.number);
+  }
+
+  /// Undo of [markPaid]: sent again, no paid date.
+  Future<void> markUnpaid(String id) async {
+    if (state.invoice?.id == id) {
+      setStatus(InvoiceStatus.sent);
+      await save();
+      return;
+    }
+    await ref.read(invoiceRepositoryProvider).markUnpaid(id);
   }
 
   /// Soft delete. Returns the number for the Undo snackbar.

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invoice_desk/account/account.dart';
+import 'package:invoice_desk/app/desktop_notifier.dart';
 import 'package:invoice_desk/app/ui_prefs.dart';
 import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/data/providers.dart';
@@ -67,8 +68,52 @@ enum Workspace { invoice, contract, settings, library }
 class WorkspaceNotifier extends Notifier<Workspace> {
   @override
   Workspace build() => Workspace.invoice;
-  void show(Workspace w) => state = w;
+
+  /// Shows [w]; with [reveal] (the default: the user asked for it) the
+  /// calendar steps aside so the workspace is visible.
+  void show(Workspace w, {bool reveal = true}) {
+    state = w;
+    if (reveal) ref.read(calendarModeProvider.notifier).set(false);
+  }
 }
+
+/// The top-level switch: الفواتير والعقود | التقويم, remembered.
+class CalendarModeNotifier extends Notifier<bool> {
+  @override
+  bool build() => ref.read(uiPrefsProvider).calendarMode;
+
+  // ignore: avoid_positional_boolean_parameters, simple toggle
+  void set(bool on) {
+    if (state == on) return;
+    state = on;
+    ref.read(uiPrefsProvider).calendarMode = on;
+  }
+}
+
+final calendarModeProvider = NotifierProvider<CalendarModeNotifier, bool>(
+  CalendarModeNotifier.new,
+);
+
+/// Seam: the optional desktop notification; bootstrap wires the Linux one.
+final desktopNotifierProvider = Provider<DesktopNotifier>(
+  (ref) => const NoopDesktopNotifier(),
+);
+
+/// Settings → التقويم: notify on start (off by default).
+class NotifyOnStartNotifier extends Notifier<bool> {
+  @override
+  bool build() => ref.read(uiPrefsProvider).notifyOnStart;
+
+  // ignore: avoid_positional_boolean_parameters, simple toggle
+  void set(bool on) {
+    state = on;
+    ref.read(uiPrefsProvider).notifyOnStart = on;
+  }
+}
+
+final notifyOnStartProvider = NotifierProvider<NotifyOnStartNotifier, bool>(
+  NotifyOnStartNotifier.new,
+);
 
 final workspaceProvider = NotifierProvider<WorkspaceNotifier, Workspace>(
   WorkspaceNotifier.new,

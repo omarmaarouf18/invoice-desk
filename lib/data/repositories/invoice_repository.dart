@@ -57,6 +57,9 @@ class InvoiceRepository with ClockedRepository {
   Future<void> markPaid(String id, CalendarDate date) =>
       at(() => _dao.markPaid(id, date));
 
+  /// Undo of [markPaid]: sent again, paid date cleared.
+  Future<void> markUnpaid(String id) => at(() => _dao.markUnpaid(id));
+
   /// Invoices not in the trash.
   Future<int> countLive() => _dao.countLive();
 }

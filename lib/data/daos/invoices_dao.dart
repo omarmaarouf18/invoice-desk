@@ -323,6 +323,16 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
     );
   });
 
+  Future<void> markUnpaid(String id) => transaction(() async {
+    await (update(invoices)..where((i) => i.id.equals(id))).write(
+      InvoicesCompanion(
+        status: const Value('sent'),
+        paidDate: const Value(null),
+        updatedAt: Value(_now()),
+      ),
+    );
+  });
+
   Future<int> countLive() async {
     final c = invoices.id.count();
     final q = selectOnly(invoices)

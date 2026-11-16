@@ -827,5 +827,164 @@
   "cloudSync": "المزامنة السحابية",
   "cloudSyncOff": "غير مفعّلة — قريبًا",
   "cloudSyncOn": "مفعّلة",
-  "cloudSyncBody": "اشتراك اختياري لاحقًا: مزامنة مشفّرة من طرف إلى طرف بين أجهزتك. البرنامج المكتبي يظل مجانيًا وكاملًا بدونها، وبياناتك لا تغادر جهازك اليوم."
+  "cloudSyncBody": "اشتراك اختياري لاحقًا: مزامنة مشفّرة من طرف إلى طرف بين أجهزتك. البرنامج المكتبي يظل مجانيًا وكاملًا بدونها، وبياناتك لا تغادر جهازك اليوم.",
+  "calendar": "التقويم",
+  "invoicesAndContracts": "الفواتير والعقود",
+  "viewMonth": "شهر",
+  "viewWeek": "أسبوع",
+  "viewAgenda": "جدول",
+  "today": "اليوم",
+  "previous": "السابق",
+  "next": "التالي",
+  "summaryExpected": "متوقع تحصيله",
+  "summaryCollected": "تم تحصيله",
+  "summaryLate": "متأخر",
+  "evDue": "واجب التحصيل",
+  "evOverdue": "متأخر",
+  "evOverdueRollup": "متأخرات",
+  "evPaid": "تم الدفع",
+  "evPostponed": "مؤجَّل",
+  "evMilestone": "دفعة عقد مستحقة",
+  "evRenewal": "تجديد",
+  "evContractStart": "بداية عقد",
+  "evContractEnd": "نهاية عقد",
+  "evWarrantyEnd": "نهاية الضمان",
+  "evReminder": "تذكير",
+  "daysOverdue": "متأخرة {days} يوم",
+  "@daysOverdue": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "overdueRollup": "{count} متأخرة",
+  "@overdueRollup": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "moreEvents": "+{count}",
+  "@moreEvents": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "filterClient": "العميل",
+  "filterType": "نوع الحدث",
+  "filterCurrency": "العملة",
+  "allClients": "كل العملاء",
+  "allTypes": "كل الأنواع",
+  "allCurrencies": "كل العملات",
+  "clearFilters": "مسح الفلاتر",
+  "showPast": "عرض السابق",
+  "agendaEmpty": "لا أحداث قادمة مطابقة",
+  "dayEmpty": "لا أحداث في هذا اليوم",
+  "searchCalendar": "ابحث في التقويم",
+  "actOpen": "فتح",
+  "actMarkPaid": "تحديد كمدفوعة",
+  "actPostpone": "تأجيل",
+  "actCopyReminder": "نسخ رسالة تذكير",
+  "actCreateInvoice": "إنشاء فاتورة",
+  "actOpenContract": "فتح العقد",
+  "actRenewInvoice": "إنشاء فاتورة تجديد",
+  "actEdit": "تعديل",
+  "actMarkDone": "تم",
+  "actReopen": "إعادة فتح",
+  "actDelete": "حذف",
+  "addReminder": "+ تذكير",
+  "postponeTitle": "تأجيل الاستحقاق",
+  "postponeNewDate": "التاريخ الجديد",
+  "postponeReason": "السبب",
+  "postponeReasonHint": "مثال: طلب العميل مهلة",
+  "postponed": "تم التأجيل إلى {date}",
+  "@postponed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "postponedFromTo": "مؤجَّلة من {from} إلى {to}",
+  "@postponedFromTo": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "postponeHistory": "سجل التأجيل",
+  "reminderNew": "تذكير جديد",
+  "reminderEdit": "تعديل التذكير",
+  "reminderText": "النص",
+  "reminderTime": "الوقت (اختياري، 24 ساعة)",
+  "reminderTimeHint": "10:30",
+  "errReminderText": "اكتب نص التذكير",
+  "errTime": "وقت غير صالح",
+  "reminderDeleted": "حُذف التذكير",
+  "reminderCopied": "نُسخت رسالة التذكير — الصقها في واتساب أو البريد",
+  "exportIcs": "تصدير إلى التقويم (.ics)",
+  "exportIcsVisible": "النطاق الظاهر",
+  "exportIcsFuture": "كل الأحداث القادمة",
+  "icsExported": "صُدّر {count} حدثًا",
+  "@icsExported": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "todayBanner": "اليوم: {due} مستحق · {overdue} متأخر",
+  "@todayBanner": {
+    "placeholders": {
+      "due": {
+        "type": "int"
+      },
+      "overdue": {
+        "type": "int"
+      }
+    }
+  },
+  "showInCalendar": "عرض في التقويم",
+  "dismiss": "إخفاء",
+  "profileBanner": "أكمل بياناتك",
+  "profileBannerBody": "أضف اسمك وبيانات الدفع لتظهر على الفواتير والعقود.",
+  "inCalendar": "في التقويم",
+  "demoData": "البيانات التجريبية",
+  "demoBody": "عملاء وفواتير وعقود وهمية للتجربة. أي صف تعدّله يصبح من بياناتك ولا يُحذف معها.",
+  "demoAdd": "إضافة بيانات تجريبية",
+  "demoRemove": "حذف البيانات التجريبية",
+  "demoRemoveTitle": "حذف البيانات التجريبية؟",
+  "demoRemoveBody": "تُحذف نهائيًا الصفوف التجريبية فقط، بعد نسخة احتياطية. بياناتك لا تُمس.",
+  "demoAdded": "أُضيفت البيانات التجريبية",
+  "demoRemoved": "حُذفت البيانات التجريبية ({count} صف)",
+  "@demoRemoved": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "weekStart": "بداية الأسبوع",
+  "weekdaySaturday": "السبت",
+  "weekdaySunday": "الأحد",
+  "weekdayMonday": "الإثنين",
+  "notifyOnStart": "إشعار عند التشغيل",
+  "notifyOnStartBody": "إشعار سطح المكتب بما يستحق اليوم وما تأخر (إن كان متاحًا).",
+  "calendarShortcuts": "الأسهم: تنقّل · PageUp/PageDown: شهر · T: اليوم · M/W/A: العرض · Enter: اليوم المحدد",
+  "dayTotal": "مستحق اليوم",
+  "wdMon": "الإثنين",
+  "wdTue": "الثلاثاء",
+  "wdWed": "الأربعاء",
+  "wdThu": "الخميس",
+  "wdFri": "الجمعة",
+  "wdSat": "السبت",
+  "wdSun": "الأحد"
 }

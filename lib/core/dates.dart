@@ -151,3 +151,7 @@ String formatArabicDayMonth(CalendarDate d) =>
 /// `14 Sep 2026` — used on the invoice.
 String formatInvoiceDate(CalendarDate d) =>
     '${d.day} ${_englishMonths[d.month - 1]} ${d.year}';
+
+/// `نوفمبر 2026` — the calendar's month title.
+String formatArabicMonthYear(CalendarDate d) =>
+    '${_arabicMonths[d.month - 1]} ${d.year}';

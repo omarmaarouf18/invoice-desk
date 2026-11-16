@@ -2182,8 +2182,7 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
   final String representative;
   final String representativeTitle;
 
-  /// v5: part of the demo set; removed by "حذف البيانات التجريبية" and
-  /// cleared when the user edits the row.
+  /// v5: demo row (removed with the demo set; cleared on user edits).
   final bool isDemo;
   const ClientRow({
     required this.rev,
@@ -3331,8 +3330,7 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
   final String scopeWarranty;
   final int? deletedAt;
 
-  /// v5: part of the demo set; removed by "حذف البيانات التجريبية" and
-  /// cleared when the user edits the row.
+  /// v5: demo row (removed with the demo set; cleared on user edits).
   final bool isDemo;
   final int createdAt;
   final int updatedAt;
@@ -5598,8 +5596,7 @@ class TemplateRow extends DataClass implements Insertable<TemplateRow> {
   /// v4: tombstone instead of a hard delete.
   final int? deletedAt;
 
-  /// v5: part of the demo set; removed by "حذف البيانات التجريبية" and
-  /// cleared when the user edits the row.
+  /// v5: demo row (removed with the demo set; cleared on user edits).
   final bool isDemo;
   final int createdAt;
   final int updatedAt;
@@ -7463,8 +7460,7 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
   final String history;
   final int? deletedAt;
 
-  /// v5: part of the demo set; removed by "حذف البيانات التجريبية" and
-  /// cleared when the user edits the row.
+  /// v5: demo row (removed with the demo set; cleared on user edits).
   final bool isDemo;
   final int createdAt;
   final int updatedAt;
@@ -10592,7 +10588,7 @@ class PostponementRow extends DataClass implements Insertable<PostponementRow> {
   final String id;
   final String entityType;
 
-  /// Invoice or milestone id. Not a foreign key: one column, two tables.
+  /// Not a foreign key: one column, two tables.
   final String entityId;
   final String fromDate;
   final String toDate;

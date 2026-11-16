@@ -130,7 +130,7 @@ extension _Totals on _Builder {
                 totalsBox,
                 pw.SizedBox(height: 6),
                 t(
-                  'Due by ${formatInvoiceDate(inv.dueDate)}',
+                  'Due by ${formatInvoiceDate(inv.effectiveDueDate)}',
                   style: st(font: semi),
                 ),
                 arabicDueLine(),
@@ -145,7 +145,7 @@ extension _Totals on _Builder {
   /// `مستحقة السداد في 14 أكتوبر 2026`, laid out word by word so the
   /// trailing Western-digit year keeps its spacing in RTL.
   pw.Widget arabicDueLine() {
-    final d = inv.dueDate;
+    final d = inv.effectiveDueDate;
     final words = [
       'مستحقة',
       'السداد',

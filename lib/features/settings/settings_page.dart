@@ -9,16 +9,20 @@ import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/data/backup.dart';
 import 'package:invoice_desk/data/repositories/settings_repository.dart';
+import 'package:invoice_desk/domain/calendar/models.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/actions.dart';
+import 'package:invoice_desk/features/calendar/calendar_controller.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/sync/sync.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
 import 'package:invoice_desk/widgets/common.dart';
+import 'package:path/path.dart' as p;
 
+part 'settings/about_card.dart';
 part 'settings/appearance_card.dart';
 part 'settings/backup_card.dart';
-part 'settings/about_card.dart';
+part 'settings/calendar_cards.dart';
 part 'settings/form_cards.dart';
 part 'settings/sync_card.dart';
 
@@ -121,6 +125,10 @@ class _SettingsFormState extends ConsumerState<_SettingsForm> {
                 _NotesCard(s: s, update: _update),
                 cardGap,
                 const _AppearanceCard(),
+                cardGap,
+                const _CalendarCard(),
+                cardGap,
+                const _DemoCard(),
                 cardGap,
                 _BackupCard(
                   settings: s,
