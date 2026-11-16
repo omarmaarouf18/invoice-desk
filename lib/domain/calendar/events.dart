@@ -147,24 +147,10 @@ class _Builder {
   /// issue date until a later invoice of the same client bills the same
   /// service as a recurring item (the renewal invoice).
   Iterable<CalendarEvent> renewals(DateRange range) sync* {
-    final byClient = groupBy(
-      data.invoices.where(
-        (i) => i.status != InvoiceStatus.voided && i.clientId.isNotEmpty,
-      ),
-      (i) => i.clientId,
-    );
+    final renewedLater = _renewedLater();
     for (final inv in data.invoices) {
       if (inv.status != InvoiceStatus.paid) continue;
-      final later = [
-        for (final o in byClient[inv.clientId] ?? const <Invoice>[])
-          if (o.id != inv.id && inv.issueDate.isBefore(o.issueDate)) o,
-      ];
-      final renewed = {
-        for (final o in later)
-          for (final s in o.sections)
-            for (final it in s.items)
-              if (it.cycle.isRecurring) _serviceKey(it.service),
-      };
+      final renewed = renewedLater[inv.id] ?? const <String>{};
       // date → (services, per-currency amounts)
       final byDate = <CalendarDate, (List<String>, MoneyBag)>{};
       for (final s in inv.sections) {
@@ -195,6 +181,38 @@ class _Builder {
         );
       }
     }
+  }
+
+  /// Per invoice: the recurring services billed by later (non-void)
+  /// invoices of the same client. Linear per client: walk the client's
+  /// invoices from the latest issue date back, collecting services.
+  Map<String, Set<String>> _renewedLater() {
+    final byClient = groupBy(
+      data.invoices.where(
+        (i) => i.status != InvoiceStatus.voided && i.clientId.isNotEmpty,
+      ),
+      (i) => i.clientId,
+    );
+    final out = <String, Set<String>>{};
+    for (final list in byClient.values) {
+      final byDate = groupBy(list, (i) => i.issueDate);
+      final dates = byDate.keys.toList()..sort((a, b) => b.compareTo(a));
+      var later = <String>{};
+      for (final d in dates) {
+        final group = byDate[d]!;
+        for (final i in group) {
+          out[i.id] = later;
+        }
+        later = {
+          ...later,
+          for (final i in group)
+            for (final s in i.sections)
+              for (final it in s.items)
+                if (it.cycle.isRecurring) _serviceKey(it.service),
+        };
+      }
+    }
+    return out;
   }
 
   Iterable<CalendarEvent> contractEvents() sync* {

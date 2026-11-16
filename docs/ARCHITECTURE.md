@@ -54,13 +54,15 @@ lib/
     repositories/             what the UI uses
     providers.dart            DB seam, repositories, live read models
     backup.dart               VACUUM INTO backups, restore, start-up housekeeping
-    library_seed.dart, seed.dart   clause library seed, demo data
+    library_seed.dart, seed.dart   clause library seed, fresh-install seed
+    demo_seed.dart            the fictional demo set (dated from the clock, flagged is_demo)
   features/
     sidebar/                  search, filters, client groups, document rows
     editor/                   invoice editor (controller, cards, sections table)
     contracts/                contract editor (controller, cards, actions, preview)
     library/                  clause library editor
     trash/                    المحذوفات
+    calendar/                 التقويم: controller, month/week/agenda views, day panel, banners, actions
     settings/, clients/       settings page, client dialogs
   pdf/                        invoice_pdf + parts, contract_pdf + parts
   account/, sync/             future subscription and sync seams (local/no-op today)
@@ -165,6 +167,35 @@ CI fails if the schema changed without a new snapshot. Migrations run inside the
 - **Arabic text.** Direction is chosen per run. Word spacing is widened, because the PDF engine applies no OpenType kerning and this font's space is narrow without it. A date ending in digits is laid out as two runs so its space survives bidi reordering.
 - **Contract variables.** Resolved at render time by `VariableResolver` and never stored resolved; unresolved ones are drawn on an amber background.
 - **Preview.** The preview pane re-renders the real PDF 300 ms after the last edit.
+
+## Calendar
+
+The calendar is a **derived view plus two stored tables**.
+
+- **Derived.** `calendarEvents(range, data, clock)` in `lib/domain/calendar/events.dart` is a pure function: invoices, contracts, clients, postponements and reminders in, a sorted list of events out. Nothing it returns is stored; due, overdue, paid, milestone, renewal, contract and warranty events are recomputed from the documents on every change. Dates are civil dates (`CalendarDate`), so time zones and DST never move an event.
+- **Stored.** Only what the documents can't express:
+  - `postponements`: a history of moved due dates for invoices and milestones. The latest row is the effective due date, and overdue is measured against it everywhere (sidebar, PDF, calendar). The original due date is never overwritten.
+  - `reminders`: manual entries, optionally timed and linked to a client or document.
+  Both are sync-ready like every other table (UUID, `rev`, `updated_at`, `deleted_at`, outbox triggers).
+- **Rules worth knowing.**
+  - A milestone shows until a sent or paid invoice covers it; then the invoice's own event takes over.
+  - Recurring items of a paid invoice renew monthly/annually from its issue date until a later invoice of the same client bills the same service as a recurring item.
+  - The overdue rollup on today counts every overdue invoice, wherever its date is.
+- **Actions** in the day panel go through the same controllers and repositories as the editors (autosave, undo, validation); the calendar never writes to the database itself.
+- **Export.** `buildIcs` writes RFC 5545 with stable UIDs (`invoice-due-<id>@invoice-desk.local`, …), so a re-import updates events.
+
+```mermaid
+flowchart LR
+  D[(invoices · contracts · clients)] --> F["calendarEvents(range, data, clock)"]
+  P[(postponements)] --> F
+  R[(reminders)] --> F
+  F --> V[month / week / agenda] --> A[day panel actions] --> Repo[repositories]
+  Repo --> D & P & R
+```
+
+## Demo data
+
+A fresh install gets an empty profile and the demo set from `seedDemo`: five fictional clients (example.com / example.eg addresses, `0100 000 00xx` numbers), fourteen invoices in every state and both currencies, three contracts and reminders, all dated relative to the injected clock. Every demo row has `is_demo = 1` and numbers in a separate `DEMO-…` series (seq 9001+) that real numbering ignores. A user save through a repository clears the flag (the row is adopted). "حذف البيانات التجريبية" writes a `before-remove-demo-…` backup and hard-deletes only `is_demo` rows and what hangs off them; a demo client still used by an adopted document is kept and becomes real.
 
 ## Future: encrypted sync
 

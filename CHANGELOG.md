@@ -2,6 +2,26 @@
 
 All notable changes to Invoice Desk. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.4.0] - 2026-11-16
+
+### Added
+- **Calendar ("التقويم").** A top-level switch beside invoices & contracts (Ctrl+Shift+C), remembered across launches.
+  - Month view (6×7, week starting Saturday, Sunday or Monday), week view and an agenda list; up to three chips per day with "+N" and the day's total per currency.
+  - Events are derived from your data, never copied: due, overdue (plus a rollup on today), paid, postponed, contract payment milestones, renewals of paid monthly/annual items, contract start/end, warranty ends and manual reminders.
+  - Month header: expected, collected and overdue per currency; click one to filter. Filters by client, event type and currency, plus the sidebar's search box.
+  - Day panel: open, mark paid on that day (with Undo), postpone with a reason, copy a short Arabic/English payment reminder, create the milestone or renewal invoice, and add/edit/complete/delete reminders. Drag a chip to another day to postpone it (Esc cancels).
+  - Keyboard: arrows, PageUp/PageDown, T, M/W/A, Enter, Esc.
+  - "في التقويم" in the invoice and contract editors opens the calendar on that event.
+  - Export to `.ics` (visible range or every future event) with stable UIDs, so re-importing updates instead of duplicating.
+- **Postponements.** A kept history of moved due dates. Overdue status, the sidebar and the invoice PDF use the effective (latest) due date; the editor shows "مؤجَّلة من … إلى … — السبب".
+- **"Today" banner** ("اليوم: 2 مستحق · 1 متأخر — عرض في التقويم"), dismissable for the day, and an optional desktop notification at start-up (Settings → التقويم; uses `notify-send` when installed).
+- **Demo data.** Fresh installs start with a fictional demo set dated around today, an empty profile and a "أكمل بياناتك" banner. Settings → البيانات التجريبية adds it again or removes it (after a `before-remove-demo-…` backup); editing a demo row makes it yours.
+- **Schema v5:** `is_demo` flags, `postponements` and `reminders` tables (sync-ready) and date indexes. Backups from v1–v4 still restore.
+
+### Changed
+- The old single-invoice seed (a real client and phone number) is gone; tests use a scrubbed fixture.
+- Renewal invoices and "mark as paid" can be dated (the calendar passes the selected day).
+
 ## [0.3.0] - 2026-11-15
 
 ### Added
@@ -71,6 +91,7 @@ All notable changes to Invoice Desk. The format follows [Keep a Changelog](https
 - **Backups.** Daily `VACUUM INTO` backups (last 30 kept), plus manual backup and restore. `INVOICE_DESK_DATA_DIR` overrides the data folder.
 - **Linux packages.** Tarball with install/uninstall scripts, AppImage, and an RPM in `/opt/invoice-desk`, all with RUNPATHs rewritten to `$ORIGIN`.
 
+[0.4.0]: https://github.com/omarmaarouf18/invoice-desk/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/omarmaarouf18/invoice-desk/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/omarmaarouf18/invoice-desk/compare/v0.1.0...v0.2.0
 [0.1.1]: https://github.com/omarmaarouf18/invoice-desk/compare/v0.1.0...v0.1.1

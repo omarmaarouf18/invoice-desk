@@ -29,7 +29,7 @@ void main() {
       await tester.runAsync(
         () => db.clientsDao.upsert(
           client.copyWith(
-            legalName: 'أكاديمية المتر للتعليم',
+            legalName: 'أكاديمية العينة للتعليم',
             representative: 'أحمد علي',
             representativeTitle: 'المدير التنفيذي',
           ),
@@ -48,7 +48,7 @@ void main() {
           clientId: client.id,
           template: t,
           title: 'تطوير وتشغيل منصة تعليمية',
-          projectName: 'منصة المتر',
+          projectName: 'منصة العينة',
         ),
       ),
     );

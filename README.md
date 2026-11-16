@@ -4,7 +4,7 @@
 
 **العربية.** «سجل الفواتير» برنامج مكتبي يعمل بدون إنترنت للمستقلين الذين يصدرون فواتيرهم بالعربية والإنجليزية. تحفظ فيه العملاء والفواتير والعقود في مكان واحد، وتعدّلها مع معاينة حيّة لملف الـ PDF الحقيقي، ثم تصدّر مستندات A4 واضحة. كل البيانات تبقى على جهازك في ملف SQLite واحد مع نسخ احتياطية يومية تلقائية، بلا حساب ولا سحابة.
 
-![Invoice Desk: a signed contract open in the editor, with the client list on the right](docs/screenshot.png)
+![Invoice Desk: the calendar's month view with the demo data, beside the client list](docs/screenshot.png)
 
 > **Not an official tax e-invoice.** Invoice Desk produces commercial invoices as PDF. It does not connect to the Egyptian Tax Authority's e-invoicing system (or any other) and does not produce signed e-invoices. Where the law requires those, use the official system.
 
@@ -19,6 +19,11 @@
   - Annex 1 is the scope of work; annex 2 is payments, split by percentage or fixed amount.
   - One click turns a payment milestone into an invoice.
   - Signed contracts are locked; changes go through a numbered amendment (`CT-2026-0003-A1`).
+- **Calendar ("التقويم").** Month, week and agenda views of what is due, overdue, paid, postponed, contract payments, renewals, contract dates, warranty ends and your own reminders, all derived from your data.
+  - The day panel marks invoices paid, postpones them with a reason (the history is kept), copies a polite payment reminder, and turns milestones and renewals into invoices. Drag a chip to another day to postpone it.
+  - A "today" banner says what is due and overdue; an optional desktop notification does the same at start-up.
+  - Export to `.ics` for GNOME Calendar or Google Calendar; re-importing updates events instead of duplicating them.
+- **Demo data.** A fresh install opens on a fictional demo set dated around today. Settings → البيانات التجريبية removes it (after a backup) or adds it back; anything you edit becomes yours and stays.
 - **Live PDF preview** beside the editor on wide windows, with tabs on narrow ones. PDFs are A4 with vector text in IBM Plex Sans Arabic.
 - **Search** across clients, phone numbers, invoice and contract numbers, and contract titles. Filters: unpaid, overdue, paid, drafts, contracts in force, archived, and "المحذوفات" (trash).
 - **Safe deletes.**
@@ -110,6 +115,8 @@ A new data folder starts with sample data: a profile, one client and one invoice
 | Ctrl+D | Duplicate |
 | Ctrl+R | Renewal invoice (recurring lines only) |
 | Ctrl+1 / Ctrl+2 | Edit / preview tab on narrow windows |
+| Ctrl+Shift+C | Switch between invoices & contracts and the calendar |
+| Calendar: arrows, PageUp/PageDown, T, M/W/A, Enter | Move the day, change month, today, month/week/agenda, open the day panel |
 | Esc | Clear search, close dialogs |
 
 In the items table, Tab moves across cells, and Enter in the last price cell adds a row.
