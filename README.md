@@ -45,7 +45,7 @@ sha256sum -c SHA256SUMS.txt --ignore-missing
 **Fedora / RHEL (RPM).** Installs system-wide in `/opt/invoice-desk`, with a menu entry and the `invoice-desk` command:
 
 ```bash
-sudo dnf install ./invoice-desk-0.3.0-1.x86_64.rpm
+sudo dnf install ./invoice-desk-0.4.0-1.x86_64.rpm
 ```
 
 ```bash
@@ -55,7 +55,7 @@ sudo dnf remove invoice-desk   # removes the app only; your data and backups sta
 **Any distro (tarball).** Installs for your user only, in `~/.local/opt/invoice-desk`, without root:
 
 ```bash
-tar xzf invoice-desk-0.3.0-linux-x64.tar.gz && ./invoice-desk-0.3.0-linux-x64/install.sh
+tar xzf invoice-desk-0.4.0-linux-x64.tar.gz && ./invoice-desk-0.4.0-linux-x64/install.sh
 ```
 
 To remove it later, run `./uninstall.sh` from the same folder.
@@ -63,7 +63,7 @@ To remove it later, run `./uninstall.sh` from the same folder.
 **Any distro (AppImage).** A single file; nothing is installed:
 
 ```bash
-chmod +x InvoiceDesk-0.3.0-x86_64.AppImage && ./InvoiceDesk-0.3.0-x86_64.AppImage
+chmod +x InvoiceDesk-0.4.0-x86_64.AppImage && ./InvoiceDesk-0.4.0-x86_64.AppImage
 ```
 
 All three need GTK 3, which every mainstream desktop has. Uninstalling never touches your data.
