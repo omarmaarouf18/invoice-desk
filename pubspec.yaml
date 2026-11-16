@@ -22,7 +22,8 @@ dependencies:
   package_info_plus: ^10.2.2
   path: ^1.9.1
   path_provider: ^2.1.6
-  pdf: ^3.13.1
+  # Pinned: resolved from third_party/pdf (patched), see third_party/pdf/README.md.
+  pdf: 3.13.1
   printing: ^5.15.1
   sqlite3: ^3.5.2
   url_launcher: ^6.3.3
@@ -40,6 +41,11 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   very_good_analysis: ^10.3.0
+
+dependency_overrides:
+  # Vendored pdf 3.13.1 + RTL advance-width fix (ADR-0011).
+  pdf:
+    path: third_party/pdf
 
 flutter:
   generate: true

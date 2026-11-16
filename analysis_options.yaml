@@ -4,6 +4,7 @@ analyzer:
     - lib/l10n/gen/**
     - "**/*.g.dart"
     - test/drift/app_db/generated/**
+    - third_party/**
 linter:
   rules:
     public_member_api_docs: false

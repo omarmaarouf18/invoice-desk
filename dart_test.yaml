@@ -1,3 +1,5 @@
 tags:
   golden:
     description: Pixel comparisons against committed PNGs (font-rendering sensitive).
+  rtl:
+    description: Right-to-left PDF layout checks (guard for the vendored pdf patch).

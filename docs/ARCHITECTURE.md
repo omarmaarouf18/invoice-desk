@@ -164,7 +164,7 @@ CI fails if the schema changed without a new snapshot. Migrations run inside the
 
 - **Fonts.** IBM Plex Sans Arabic is bundled and embedded, so all text is vector.
 - **Builders.** Each document is assembled by small builder extensions in `lib/pdf/invoice/` and `lib/pdf/contract/` (header, parties, tables, totals, signatures, footer).
-- **Arabic text.** Direction is chosen per run. Word spacing is widened, because the PDF engine applies no OpenType kerning and this font's space is narrow without it. A date ending in digits is laid out as two runs so its space survives bidi reordering.
+- **Arabic text.** Direction is chosen per run, with the font's normal word spacing. The `pdf` package is vendored with a one-line RTL fix (`third_party/pdf`, [ADR 0013](adr/0013-vendored-pdf-rtl-fix.md)): upstream mirrored words by their ink box, so words ending in ر or ز ran into the next word. `test/pdf/rtl_word_gap_test.dart` measures the gaps. A date ending in digits is laid out as two runs so its space survives bidi reordering.
 - **Contract variables.** Resolved at render time by `VariableResolver` and never stored resolved; unresolved ones are drawn on an amber background.
 - **Preview.** The preview pane re-renders the real PDF 300 ms after the last edit.
 

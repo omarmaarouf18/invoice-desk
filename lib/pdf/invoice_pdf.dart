@@ -136,9 +136,6 @@ class _Builder {
           fontSize: 9.5,
           color: _ink,
           lineSpacing: 1.5,
-          // IBM Plex Sans Arabic's space is narrow without OpenType kerning;
-          // without this, Arabic words run together.
-          wordSpacing: 2,
         ),
       );
 

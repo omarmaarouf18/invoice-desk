@@ -2,6 +2,14 @@
 
 All notable changes to Invoice Desk. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+- **Arabic words no longer run together in PDFs** (for example «وتطويرالتطبيق», «يجوزسداد»). The `pdf` package placed right-to-left words by their ink width, so words ending in ر or ز ate the following space. It is now vendored with a one-line fix (`third_party/pdf`, ADR-0013). Word spacing is back to the font's normal width, so English text in PDFs is no longer double-spaced either. Only re-exported documents change.
+
+### Changed
+- The sample PDFs in `docs/` use fictional data (Sample Studio → Acme Studio).
+
 ## [0.4.0] - 2026-11-16
 
 ### Added

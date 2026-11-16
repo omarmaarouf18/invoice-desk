@@ -1,0 +1,40 @@
+--- a/lib/src/widgets/text.dart
++++ b/lib/src/widgets/text.dart
+@@ -63,6 +63,9 @@
+ 
+   double get width;
+ 
++  /// Horizontal space the span occupies in the line (pen advance).
++  double get advanceWidth => width;
++
+   double get height;
+ 
+   @override
+@@ -276,6 +279,9 @@
+   double get width => metrics.width;
+ 
+   @override
++  double get advanceWidth => metrics.advanceWidth;
++
++  @override
+   double get height => metrics.maxHeight;
+ 
+   @override
+@@ -605,7 +611,7 @@
+         for (final span in spans) {
+           span.offset = PdfPoint(
+             isRTL
+-                ? delta - x - (span.offset.x + span.width)
++                ? delta - x - (span.offset.x + span.advanceWidth)
+                 : span.offset.x + x,
+             span.offset.y - baseline,
+           );
+@@ -618,7 +624,7 @@
+     if (isRTL) {
+       for (final span in spans) {
+         span.offset = PdfPoint(
+-          delta - (span.offset.x + span.width),
++          delta - (span.offset.x + span.advanceWidth),
+           span.offset.y - baseline,
+         );
+       }

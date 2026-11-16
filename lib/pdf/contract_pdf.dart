@@ -145,9 +145,6 @@ class _Builder {
           fontSize: 10.5,
           color: _ink,
           lineSpacing: 3,
-          // IBM Plex Sans Arabic's space is narrow without OpenType kerning;
-          // this multiple of it reads like the app's spacing.
-          wordSpacing: 2,
         ),
       );
 
