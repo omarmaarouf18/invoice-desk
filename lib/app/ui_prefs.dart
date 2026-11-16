@@ -41,6 +41,11 @@ class UiPrefs {
   );
   set themeMode(ThemeMode m) => _set('themeMode', m.name);
 
+  /// UI language: `system`, `ar` or `en` (see `UiLanguage`); null until
+  /// the user picks one.
+  String? get uiLanguage => _data['uiLanguage'] as String?;
+  set uiLanguage(String? v) => _set('uiLanguage', v);
+
   /// Top-level switch: the calendar instead of invoices & contracts.
   bool get calendarMode => _data['calendarMode'] == true;
   set calendarMode(bool v) => _set('calendarMode', v);
