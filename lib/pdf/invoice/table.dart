@@ -66,7 +66,7 @@ extension _Table on _Builder {
             ),
           ),
           t(
-            labelEn.amountsIn(sec.currency.code),
+            labelEn.amountsIn(sec.currency),
             style: st(size: 8, color: style.muted),
           ),
         ],

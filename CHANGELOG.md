@@ -9,6 +9,7 @@ All notable changes to Invoice Desk. The format follows [Keep a Changelog](https
 - **A contract page no longer ends with a clause heading.** A heading is now kept with its first paragraph (or first sub-item); a long first block is left splittable so it still fits on a page. The page count of the sample contract is unchanged.
 
 ### Changed
+- The Arabic invoice labels are reworded: «لعناية: …», «يُرجى ذكر رقم الفاتورة عند الدفع: …», «المبالغ بالجنيه المصري», «التكرار», «المجموع الفرعي», «غير مطبَّقة», «محفظة إلكترونية» and «حساب بنكي (IBAN)». They are printed on Arabic documents, which arrive with the bilingual documents; the contract labels are unchanged.
 - The sample PDFs in `docs/` use fictional data (Sample Studio → Acme Studio).
 - Groundwork for bilingual documents and document styles. Nothing looks different yet (ADR-0011):
   - a document language model (`ar` / `en` / `bilingual`) and a digit style;

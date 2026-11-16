@@ -1,3 +1,5 @@
+import 'package:invoice_desk/core/money.dart';
+import 'package:invoice_desk/domain/doc_format.dart';
 import 'package:invoice_desk/domain/doc_language.dart';
 
 /// Every fixed label printed on a document, in one language.
@@ -107,8 +109,8 @@ class DocLabels {
   final String Function(String number) pleaseQuote;
 
   // ── Items table ──
-  /// `Amounts in EGP`.
-  final String Function(String currencyCode) amountsIn;
+  /// `Amounts in EGP` / `المبالغ بالجنيه المصري`.
+  final String Function(Currency currency) amountsIn;
   final String service;
   final String description;
   final String billing;
@@ -200,7 +202,7 @@ class DocLabels {
     wallet: 'Wallet',
     bankIban: 'Bank / IBAN',
     pleaseQuote: (n) => 'Please quote $n',
-    amountsIn: (c) => 'Amounts in $c',
+    amountsIn: (c) => 'Amounts in ${c.code}',
     service: 'SERVICE',
     description: 'DESCRIPTION',
     billing: 'BILLING',
@@ -271,24 +273,25 @@ class DocLabels {
     contractRef: 'مرجع العقد',
     paid: 'مدفوعة',
     billedTo: 'العميل',
-    attn: (n) => 'عناية: $n',
+    attn: (n) => 'لعناية: $n',
     paymentDetails: 'بيانات الدفع',
-    wallet: 'محفظة',
-    bankIban: 'بنك / IBAN',
-    pleaseQuote: (n) => 'يرجى ذكر رقم الفاتورة $n',
-    amountsIn: (c) => 'المبالغ بعملة $c',
+    wallet: 'محفظة إلكترونية',
+    bankIban: 'حساب بنكي (IBAN)',
+    pleaseQuote: (n) => 'يُرجى ذكر رقم الفاتورة عند الدفع: $n',
+    // «ب» attaches to the definite form: «بالجنيه المصري».
+    amountsIn: (c) => 'المبالغ ب${currencyNameDefiniteAr(c)}',
     service: 'الخدمة',
     description: 'الوصف',
-    billing: 'الفوترة',
+    billing: 'التكرار',
     qty: 'الكمية',
     amount: 'المبلغ',
     oneTime: 'مرة واحدة',
     monthly: 'شهري',
     annual: 'سنوي',
-    subtotal: 'الإجمالي الفرعي',
+    subtotal: 'المجموع الفرعي',
     notes: 'ملاحظات',
     vat: 'ضريبة القيمة المضافة',
-    vatNotApplicable: 'لا تنطبق',
+    vatNotApplicable: 'غير مطبَّقة',
     totalDue: 'الإجمالي المستحق',
     dueBy: (d) => 'مستحقة السداد في $d',
     pageOf: (p, n) => 'صفحة $p من $n',

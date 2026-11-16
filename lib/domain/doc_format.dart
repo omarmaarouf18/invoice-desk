@@ -136,6 +136,17 @@ String currencyName(Currency c, DocLanguage lang) => lang == DocLanguage.ar
 /// Arabic currency names; the same as `currencyName(c, DocLanguage.ar)`.
 String currencyNameAr(Currency c) => currencyName(c, DocLanguage.ar);
 
+/// The Arabic currency name in its definite form, for labels that name the
+/// currency itself rather than an amount: `الجنيه المصري`,
+/// `الدولار الأمريكي`, `الريال السعودي`, `الدرهم الإماراتي`, `اليورو`.
+String currencyNameDefiniteAr(Currency c) => switch (c) {
+  Currency.egp => 'الجنيه المصري',
+  Currency.usd => 'الدولار الأمريكي',
+  Currency.sar => 'الريال السعودي',
+  Currency.aed => 'الدرهم الإماراتي',
+  Currency.eur => 'اليورو',
+};
+
 /// An amount written out with its currency name: `180,000 جنيه مصري`,
 /// `180,000 Egyptian pounds`. [minor] is in minor units.
 String formatDocMoney(int minor, Currency c, DocLanguage lang) =>
