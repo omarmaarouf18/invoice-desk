@@ -11,16 +11,17 @@ import 'package:invoice_desk/data/daos/invoices_dao.dart';
 import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/sidebar/sidebar_model.dart';
+import '../helpers/legacy_seed.dart';
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   late AppDatabase db;
-  setUp(() => db = AppDatabase.memory(seed: true));
+  setUp(() => db = AppDatabase.memory(seeder: legacySeed));
   tearDown(() => db.close());
 
   test('seed creates settings, client and invoice', () async {
     final s = await db.settingsDao.get();
-    expect(s.name, 'Omar Maarouf');
+    expect(s.name, 'Test Provider');
     final all = await db.invoicesDao.getAll();
     expect(all.single.number, 'OM-2026-0001');
     expect(all.single.sections, hasLength(2));
@@ -91,9 +92,9 @@ void main() {
       filter: SidebarFilter.all,
       today: today,
     );
-    expect(run('metr').groups, hasLength(1));
+    expect(run('sample').groups, hasLength(1));
     expect(run('0001').groups.single.invoices, hasLength(1));
-    expect(run('٠١٢٢٢').groups, hasLength(1));
+    expect(run('٠٠٩٩').groups, hasLength(1));
     expect(run('nothing').groups, isEmpty);
     expect(run('').summary.unpaid.format(), r'22,000 EGP + $255.50');
     expect(run('').summary.overdueCount, 1);

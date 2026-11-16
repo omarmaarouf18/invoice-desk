@@ -37,6 +37,7 @@ class Contract {
     this.milestones = const [],
     this.createdAt = 0,
     this.updatedAt = 0,
+    this.isDemo = false,
   });
 
   /// Stable UUID.
@@ -135,6 +136,9 @@ class Contract {
   /// UTC epoch ms of the last save.
   final int updatedAt;
 
+  /// Part of the demo set (cleared when the user saves the contract).
+  final bool isDemo;
+
   /// Has a [parentId] and an `-An` number.
   bool get isAmendment => kind == ContractKind.amendment;
 
@@ -182,6 +186,7 @@ class Contract {
     List<PaymentMilestone>? milestones,
     int? createdAt,
     int? updatedAt,
+    bool? isDemo,
   }) => Contract(
     id: id ?? this.id,
     clientId: clientId ?? this.clientId,
@@ -215,5 +220,6 @@ class Contract {
     milestones: milestones ?? this.milestones,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    isDemo: isDemo ?? this.isDemo,
   );
 }

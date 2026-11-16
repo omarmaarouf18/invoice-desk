@@ -193,3 +193,39 @@ BEGIN
   INSERT INTO outbox (entity, row_id, rev, changed_at)
   VALUES ('payment_milestones', NEW.id, OLD.rev + 1, NEW.updated_at);
 END;
+
+-- v5
+CREATE TRIGGER postponements_sync_insert AFTER INSERT ON postponements
+BEGIN
+  UPDATE postponements SET rev = NEW.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'postponements' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('postponements', NEW.id, NEW.rev + 1, NEW.updated_at);
+END;
+
+CREATE TRIGGER postponements_sync_update AFTER UPDATE ON postponements
+WHEN NEW.rev = OLD.rev
+BEGIN
+  UPDATE postponements SET rev = OLD.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'postponements' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('postponements', NEW.id, OLD.rev + 1, NEW.updated_at);
+END;
+
+-- v5
+CREATE TRIGGER reminders_sync_insert AFTER INSERT ON reminders
+BEGIN
+  UPDATE reminders SET rev = NEW.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'reminders' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('reminders', NEW.id, NEW.rev + 1, NEW.updated_at);
+END;
+
+CREATE TRIGGER reminders_sync_update AFTER UPDATE ON reminders
+WHEN NEW.rev = OLD.rev
+BEGIN
+  UPDATE reminders SET rev = OLD.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'reminders' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('reminders', NEW.id, OLD.rev + 1, NEW.updated_at);
+END;

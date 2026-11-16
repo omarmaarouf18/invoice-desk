@@ -17,6 +17,7 @@ class Client {
     this.address = '',
     this.representative = '',
     this.representativeTitle = '',
+    this.isDemo = false,
   });
 
   /// Stable UUID.
@@ -55,6 +56,9 @@ class Client {
   /// Their title; `{{client.representativeTitle}}`.
   final String representativeTitle;
 
+  /// Part of the demo set (cleared when the user saves the client).
+  final bool isDemo;
+
   /// A copy with the given fields replaced (the id never changes).
   Client copyWith({
     String? name,
@@ -68,6 +72,7 @@ class Client {
     String? address,
     String? representative,
     String? representativeTitle,
+    bool? isDemo,
   }) => Client(
     id: id,
     name: name ?? this.name,
@@ -81,6 +86,7 @@ class Client {
     address: address ?? this.address,
     representative: representative ?? this.representative,
     representativeTitle: representativeTitle ?? this.representativeTitle,
+    isDemo: isDemo ?? this.isDemo,
   );
 
   @override
@@ -97,7 +103,8 @@ class Client {
       other.registryNo == registryNo &&
       other.address == address &&
       other.representative == representative &&
-      other.representativeTitle == representativeTitle;
+      other.representativeTitle == representativeTitle &&
+      other.isDemo == isDemo;
 
   @override
   int get hashCode => Object.hash(
@@ -113,5 +120,6 @@ class Client {
     address,
     representative,
     representativeTitle,
+    isDemo,
   );
 }

@@ -5,6 +5,7 @@ import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/data/tables.dart';
+import 'package:invoice_desk/domain/calendar/models.dart';
 import 'package:invoice_desk/domain/invoice_logic.dart';
 import 'package:invoice_desk/domain/models.dart';
 
@@ -19,7 +20,7 @@ class DuplicateInvoiceNumber implements Exception {
 }
 
 /// Owns the invoice aggregate: invoices + sections + items.
-@DriftAccessor(tables: [Invoices, Sections, Items])
+@DriftAccessor(tables: [Invoices, Sections, Items, Postponements])
 class InvoicesDao extends DatabaseAccessor<AppDatabase>
     with _$InvoicesDaoMixin {
   InvoicesDao(super.attachedDatabase);
@@ -32,7 +33,7 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
     // Drift shares watch streams by SQL text: each aggregate needs its own
     // query, or it inherits another stream's table set.
     'SELECT 1 AS invoices_tick',
-    readsFrom: {invoices, sections, items},
+    readsFrom: {invoices, sections, items, postponements},
   ).watch().asyncMap((_) => getAll());
 
   Future<List<Invoice>> getAll({bool includeDeleted = false}) async {
@@ -50,6 +51,7 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
               ..orderBy([(i) => OrderingTerm.asc(i.position)]))
             .get();
     final itemsBySection = groupBy(itemRows, (r) => r.sectionId);
+    final moved = await _postponedTo();
     final sectionsByInvoice = groupBy(secRows, (r) => r.invoiceId);
     return [
       for (final r in invRows)
@@ -59,6 +61,7 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
             for (final s in sectionsByInvoice[r.id] ?? const <SectionRow>[])
               _sectionToModel(s, itemsBySection[s.id] ?? const []),
           ],
+          moved[r.id],
         ),
     ];
   }
@@ -82,14 +85,40 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
               .get();
       out.add(_sectionToModel(s, itemRows));
     }
-    return _toModel(r, out);
+    return _toModel(r, out, (await _postponedTo(id))[id]);
   }
 
-  /// Year/seq pairs in use, soft-deleted invoices included.
+  /// Effective (latest) postponed due date per invoice id.
+  Future<Map<String, CalendarDate>> _postponedTo([String? id]) async {
+    final q = select(postponements)
+      ..where(
+        (p) => p.entityType.equals('invoice') & p.deletedAt.isNull(),
+      );
+    if (id != null) q.where((p) => p.entityId.equals(id));
+    final rows = await q.get();
+    final latest = latestPostponements(
+      rows.map(
+        (r) => Postponement(
+          id: r.id,
+          entityType: PostponedEntity.invoice,
+          entityId: r.entityId,
+          fromDate: CalendarDate.parse(r.fromDate),
+          toDate: CalendarDate.parse(r.toDate),
+          createdAt: r.createdAt,
+        ),
+      ),
+    );
+    return {for (final e in latest.entries) e.key: e.value.toDate};
+  }
+
+  /// Year/seq pairs in use, soft-deleted invoices included. The demo set
+  /// numbers itself apart (DEMO-…, seq 9001+) and is left out.
   Future<List<({int year, int seq})>> usedSequences() async {
-    final rows = await (selectOnly(
-      invoices,
-    )..addColumns([invoices.year, invoices.seq])).get();
+    final rows =
+        await (selectOnly(invoices)
+              ..addColumns([invoices.year, invoices.seq])
+              ..where(invoices.number.like('DEMO-%').not()))
+            .get();
     return [
       for (final r in rows)
         (year: r.read(invoices.year)!, seq: r.read(invoices.seq)!),
@@ -154,6 +183,7 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
         scopeDone: Value(inv.scope.done),
         scopeDelivered: Value(inv.scope.delivered),
         scopeWarranty: Value(inv.scope.warranty),
+        isDemo: Value(inv.isDemo),
         createdAt: inv.createdAt == 0 ? now : inv.createdAt,
         updatedAt: now,
       ),
@@ -301,7 +331,11 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
     return (await q.getSingle()).read(c)!;
   }
 
-  Invoice _toModel(InvoiceRow r, List<InvoiceSection> secs) => Invoice(
+  Invoice _toModel(
+    InvoiceRow r,
+    List<InvoiceSection> secs, [
+    CalendarDate? postponedTo,
+  ]) => Invoice(
     id: r.id,
     clientId: r.clientId,
     number: r.number,
@@ -327,6 +361,8 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
     sections: secs,
     createdAt: r.createdAt,
     updatedAt: r.updatedAt,
+    isDemo: r.isDemo,
+    postponedTo: postponedTo,
   );
 
   InvoiceSection _sectionToModel(SectionRow s, List<ItemRow> rows) =>

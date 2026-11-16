@@ -23,7 +23,8 @@ class ClientRepository with ClockedRepository {
       (await getAll()).where((c) => c.id == id).firstOrNull;
 
   /// Inserts or updates; trims text fields and keeps `createdAt`.
-  Future<void> save(Client c) => at(() => _db.clientsDao.upsert(c));
+  Future<void> save(Client c) =>
+      at(() => _db.clientsDao.upsert(c.copyWith(isDemo: false)));
 
   /// Archived clients and their documents leave the sidebar, search and
   /// summary; nothing is deleted.

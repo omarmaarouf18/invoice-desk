@@ -10,12 +10,13 @@ import 'package:path/path.dart' as p;
 
 import '../drift/app_db/generated/schema.dart';
 import '../drift/app_db/migration_test.dart' show insertV1Data;
+import '../helpers/legacy_seed.dart';
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   final verifier = SchemaVerifier(GeneratedHelper());
 
-  for (final version in [1, 2, 3]) {
+  for (final version in [1, 2, 3, 4]) {
     test('a v$version backup restores into the current schema', () async {
       final dir = await Directory.systemTemp.createTemp('bk');
       addTearDown(() => dir.delete(recursive: true));
@@ -32,7 +33,7 @@ void main() {
 
       // A current DB with its own library (and a contract that the
       // restore replaces).
-      final db = AppDatabase.memory(seed: true);
+      final db = AppDatabase.memory(seeder: legacySeed);
       addTearDown(db.close);
       final templates = await db.libraryDao.getAll();
       expect(templates, hasLength(2));
@@ -40,7 +41,7 @@ void main() {
       await BackupService(db, paths: AppPaths(dir)).restoreFrom(file);
       expect(
         (await db.clientsDao.getAll()).map((c) => c.name),
-        containsAll(['EL METR Academy', 'Empty Co']),
+        containsAll(['Sample Academy', 'Empty Co']),
       );
       expect((await db.invoicesDao.getAll()).single.number, 'OM-2026-0001');
       expect((await db.settingsDao.get()).contractPrefix, 'CT');

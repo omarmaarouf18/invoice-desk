@@ -42,7 +42,8 @@ class ContractRepository with ClockedRepository {
   /// [DuplicateNumber] when the number or series/year/seq is taken.
   Future<SaveResult> save(Contract c) => at(() async {
     try {
-      await _dao.saveContract(c);
+      // A user save adopts a demo row: it is real data from now on.
+      await _dao.saveContract(c.copyWith(isDemo: false));
       return const Saved();
     } on DuplicateContractNumber catch (e) {
       return DuplicateNumber(e.number);

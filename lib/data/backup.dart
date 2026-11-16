@@ -190,6 +190,10 @@ class BackupService {
       'contract_clauses',
       'scope_items',
       'payment_milestones',
+      // v5: the calendar's stored tables (absent from older backups, which
+      // therefore restore with none).
+      'postponements',
+      'reminders',
     ];
     // A v1/v2 backup has no library: keep the current one in that case.
     const library = {'clause_templates', 'library_clauses'};
@@ -246,5 +250,6 @@ Future<File?> startupHousekeeping(AppDatabase db, AppPaths paths) async {
   await db.invoicesDao.purgeDeleted();
   await db.clientsDao.purgeDeleted();
   await db.libraryDao.purgeDeleted();
+  await db.calendarDao.purge();
   return BackupService(db, paths: paths).backupIfDue();
 }

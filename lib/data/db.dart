@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:clock/clock.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:invoice_desk/data/daos/calendar_dao.dart';
 import 'package:invoice_desk/data/daos/clients_dao.dart';
 import 'package:invoice_desk/data/daos/contracts_dao.dart';
 import 'package:invoice_desk/data/daos/invoices_dao.dart';
@@ -29,18 +30,35 @@ part 'db.g.dart';
     ScopeItems,
     PaymentMilestones,
     Outbox,
+    Postponements,
+    Reminders,
   ],
-  daos: [SettingsDao, ClientsDao, InvoicesDao, LibraryDao, ContractsDao],
+  daos: [
+    SettingsDao,
+    ClientsDao,
+    InvoicesDao,
+    LibraryDao,
+    ContractsDao,
+    CalendarDao,
+  ],
   include: {'triggers.drift', 'sync_triggers.drift'},
 )
-class AppDatabase extends _$AppDatabase {
-  AppDatabase(super.e, {this.seedOnCreate = true});
+/// Fills a just-created database (fresh install, tests).
+typedef Seeder = Future<void> Function(AppDatabase db);
 
-  /// In-memory database for tests. FKs on, no seed unless asked.
-  factory AppDatabase.memory({bool seed = false}) => AppDatabase(
-    NativeDatabase.memory(setup: _setupPragmas),
-    seedOnCreate: seed,
-  );
+class AppDatabase extends _$AppDatabase {
+  AppDatabase(super.e, {this.seedOnCreate = true, Seeder? seeder})
+    : seeder = seeder ?? seedDatabase;
+
+  /// In-memory database for tests. FKs on, no seed unless asked: [seed]
+  /// runs the fresh-install seed (profile + demo set), [seeder] a custom
+  /// one.
+  factory AppDatabase.memory({bool seed = false, Seeder? seeder}) =>
+      AppDatabase(
+        NativeDatabase.memory(setup: _setupPragmas),
+        seedOnCreate: seed || seeder != null,
+        seeder: seeder,
+      );
 
   /// Opens (or creates) the database file at [file].
   factory AppDatabase.file(File file, {bool seed = true}) => AppDatabase(
@@ -50,7 +68,10 @@ class AppDatabase extends _$AppDatabase {
 
   final bool seedOnCreate;
 
-  static const currentSchemaVersion = 4;
+  /// What [seedOnCreate] runs.
+  final Seeder seeder;
+
+  static const currentSchemaVersion = 5;
 
   @override
   int get schemaVersion => currentSchemaVersion;
@@ -73,7 +94,7 @@ class AppDatabase extends _$AppDatabase {
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
       if (details.wasCreated && seedOnCreate) {
-        await seedDatabase(this);
+        await seeder(this);
       }
       await ensureDeviceId();
     },
@@ -237,6 +258,37 @@ class AppDatabase extends _$AppDatabase {
         schema.paymentMilestonesSyncUpdate,
       ]) {
         await m.create(trigger);
+      }
+    },
+    // v5: the calendar. Demo flags, the postponement history and manual
+    // reminders (both sync-ready), and indexes for date-range queries.
+    // Existing rows are real data: is_demo defaults to 0.
+    from4To5: (m, schema) async {
+      await m.addColumn(schema.clients, schema.clients.isDemo);
+      await m.addColumn(schema.invoices, schema.invoices.isDemo);
+      await m.addColumn(schema.contracts, schema.contracts.isDemo);
+      await m.addColumn(
+        schema.clauseTemplates,
+        schema.clauseTemplates.isDemo,
+      );
+      await m.create(schema.postponements);
+      await m.create(schema.reminders);
+      for (final i in [
+        schema.invoicesDue,
+        schema.invoicesPaid,
+        schema.milestonesDue,
+        schema.postponementsEntity,
+        schema.remindersDate,
+      ]) {
+        await m.create(i);
+      }
+      for (final t in [
+        schema.postponementsSyncInsert,
+        schema.postponementsSyncUpdate,
+        schema.remindersSyncInsert,
+        schema.remindersSyncUpdate,
+      ]) {
+        await m.create(t);
       }
     },
   );

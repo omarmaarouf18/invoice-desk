@@ -6,6 +6,7 @@ import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/domain/models.dart';
 
 import '../helpers/harness.dart';
+import '../helpers/legacy_seed.dart';
 
 void main() {
   setUpAll(loadAppFonts);
@@ -15,7 +16,7 @@ void main() {
   late Invoice invoice;
 
   Future<ProviderContainer> start(WidgetTester tester) async {
-    db = AppDatabase.memory(seed: true);
+    db = AppDatabase.memory(seeder: legacySeed);
     addTearDown(db.close);
     client = (await drive(tester, db.clientsDao.getAll)).single;
     invoice = (await drive(tester, db.invoicesDao.getAll)).single;
@@ -51,7 +52,7 @@ void main() {
     expect(find.text('OM-2026-0001'), findsOneWidget);
     expect(find.textContaining('حُذف في 15 نوفمبر'), findsOneWidget);
     expect(find.textContaining('يُحذف نهائيًا خلال 30 يوم'), findsOneWidget);
-    expect(find.textContaining('لـ EL METR Academy'), findsOneWidget);
+    expect(find.textContaining('لـ Sample Academy'), findsOneWidget);
   });
 
   testWidgets('restoring a document of a deleted client offers both', (
@@ -65,7 +66,7 @@ void main() {
     await openTrash(tester);
     expect(find.textContaining('العميل محذوف'), findsOneWidget);
     await tap(tester, find.byKey(ValueKey('restore-${invoice.id}')));
-    expect(find.text('العميل EL METR Academy في المحذوفات'), findsOneWidget);
+    expect(find.text('العميل Sample Academy في المحذوفات'), findsOneWidget);
     await tap(tester, find.byKey(const ValueKey('restore-with-client')));
     expect(await drive(tester, db.invoicesDao.countLive), 1);
     expect(await drive(tester, db.clientsDao.getAll), hasLength(1));

@@ -1,0 +1,4365 @@
+{
+  "_meta": {
+    "description": "This file contains a serialized version of schema entities for drift.",
+    "version": "1.3.0"
+  },
+  "options": {
+    "store_date_time_values_as_text": false
+  },
+  "entities": [
+    {
+      "id": 0,
+      "references": [],
+      "type": "table",
+      "data": {
+        "name": "settings",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "rev",
+            "getter_name": "rev",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "id",
+                        "tag": "id"
+                      },
+                      ".equals(1)"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "name",
+            "getter_name": "name",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "role",
+            "getter_name": "role",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "city",
+            "getter_name": "city",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "email",
+            "getter_name": "email",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "phone",
+            "getter_name": "phone",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "website",
+            "getter_name": "website",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "invoice_prefix",
+            "getter_name": "invoicePrefix",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'OM\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "default_due_days",
+            "getter_name": "defaultDueDays",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('30')",
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "ComparableExpr",
+                        "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+                      },
+                      "(",
+                      {
+                        "lexeme": "defaultDueDays",
+                        "tag": "defaultDueDays"
+                      },
+                      ").isBetweenValues(0,3650)"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "instapay",
+            "getter_name": "instapay",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "wallet",
+            "getter_name": "wallet",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "bank_iban",
+            "getter_name": "bankIban",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "notes_en",
+            "getter_name": "notesEn",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "notes_ar",
+            "getter_name": "notesAr",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "backup_dir",
+            "getter_name": "backupDir",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "last_backup_at",
+            "getter_name": "lastBackupAt",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "legal_name",
+            "getter_name": "legalName",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "national_id_or_registry",
+            "getter_name": "nationalIdOrRegistry",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "address",
+            "getter_name": "address",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "contract_prefix",
+            "getter_name": "contractPrefix",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'CT\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "quote_prefix",
+            "getter_name": "quotePrefix",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'QT\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "default_jurisdiction",
+            "getter_name": "defaultJurisdiction",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'المحكمة الاقتصادية المختصة\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "contract_western_digits",
+            "getter_name": "contractWesternDigits",
+            "moor_type": "bool",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "CHECK (\"contract_western_digits\" IN (0, 1))",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "CHECK (\"contract_western_digits\" IN (0, 1))"
+            },
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "device_id",
+            "getter_name": "deviceId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "strict": true,
+        "explicit_pk": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": 1,
+      "references": [],
+      "type": "table",
+      "data": {
+        "name": "outbox",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "PRIMARY KEY AUTOINCREMENT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "PRIMARY KEY AUTOINCREMENT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              "auto-increment"
+            ]
+          },
+          {
+            "name": "entity",
+            "getter_name": "entity",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "row_id",
+            "getter_name": "rowId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "rev",
+            "getter_name": "rev",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "changed_at",
+            "getter_name": "changedAt",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "strict": true,
+        "unique_keys": [
+          [
+            "entity",
+            "row_id"
+          ]
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "references": [
+        0,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 0,
+        "references_in_body": [
+          0,
+          1
+        ],
+        "name": "settings_sync_insert",
+        "sql": "CREATE TRIGGER settings_sync_insert AFTER INSERT ON settings\nBEGIN\n  UPDATE settings SET rev = NEW.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'settings' AND row_id = CAST(NEW.id AS TEXT);\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('settings', CAST(NEW.id AS TEXT), NEW.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 3,
+      "references": [
+        0,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 0,
+        "references_in_body": [
+          0,
+          1
+        ],
+        "name": "settings_sync_update",
+        "sql": "CREATE TRIGGER settings_sync_update AFTER UPDATE ON settings\nWHEN NEW.rev = OLD.rev\nBEGIN\n  UPDATE settings SET rev = OLD.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'settings' AND row_id = CAST(NEW.id AS TEXT);\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('settings', CAST(NEW.id AS TEXT), OLD.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 4,
+      "references": [],
+      "type": "table",
+      "data": {
+        "name": "clients",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "rev",
+            "getter_name": "rev",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "name",
+            "getter_name": "name",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "ComparableExpr",
+                        "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+                      },
+                      "(",
+                      {
+                        "lexeme": "StringExpressionOperators",
+                        "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+                      },
+                      "(",
+                      {
+                        "lexeme": "name",
+                        "tag": "name"
+                      },
+                      ").trim().length).isBiggerThanValue(0)"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "contact",
+            "getter_name": "contact",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "city",
+            "getter_name": "city",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "phone",
+            "getter_name": "phone",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "email",
+            "getter_name": "email",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "archived",
+            "getter_name": "archived",
+            "moor_type": "bool",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "CHECK (\"archived\" IN (0, 1))",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "CHECK (\"archived\" IN (0, 1))"
+            },
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at",
+            "getter_name": "deletedAt",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "legal_name",
+            "getter_name": "legalName",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "registry_no",
+            "getter_name": "registryNo",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "address",
+            "getter_name": "address",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "representative",
+            "getter_name": "representative",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "representative_title",
+            "getter_name": "representativeTitle",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "is_demo",
+            "getter_name": "isDemo",
+            "moor_type": "bool",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "CHECK (\"is_demo\" IN (0, 1))",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "CHECK (\"is_demo\" IN (0, 1))"
+            },
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "strict": true,
+        "explicit_pk": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "references": [
+        4,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 4,
+        "references_in_body": [
+          4,
+          1
+        ],
+        "name": "clients_sync_insert",
+        "sql": "CREATE TRIGGER clients_sync_insert AFTER INSERT ON clients\nBEGIN\n  UPDATE clients SET rev = NEW.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'clients' AND row_id = NEW.id;\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('clients', NEW.id, NEW.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 6,
+      "references": [
+        4,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 4,
+        "references_in_body": [
+          4,
+          1
+        ],
+        "name": "clients_sync_update",
+        "sql": "CREATE TRIGGER clients_sync_update AFTER UPDATE ON clients\nWHEN NEW.rev = OLD.rev\nBEGIN\n  UPDATE clients SET rev = OLD.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'clients' AND row_id = NEW.id;\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('clients', NEW.id, OLD.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 7,
+      "references": [
+        4
+      ],
+      "type": "table",
+      "data": {
+        "name": "invoices",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "rev",
+            "getter_name": "rev",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "client_id",
+            "getter_name": "clientId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES clients (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES clients (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "clients",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "number",
+            "getter_name": "number",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "UNIQUE",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "UNIQUE"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              "unique"
+            ]
+          },
+          {
+            "name": "year",
+            "getter_name": "year",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "seq",
+            "getter_name": "seq",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "ComparableExpr",
+                        "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+                      },
+                      "(",
+                      {
+                        "lexeme": "seq",
+                        "tag": "seq"
+                      },
+                      ").isBiggerOrEqualValue(0)"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "issue_date",
+            "getter_name": "issueDate",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "due_date",
+            "getter_name": "dueDate",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "paid_date",
+            "getter_name": "paidDate",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "status",
+            "getter_name": "status",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "status",
+                        "tag": "status"
+                      },
+                      ".isIn(const ['draft','sent','paid','void'])"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "contract_ref",
+            "getter_name": "contractRef",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "vat_on",
+            "getter_name": "vatOn",
+            "moor_type": "bool",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "CHECK (\"vat_on\" IN (0, 1))",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "CHECK (\"vat_on\" IN (0, 1))"
+            },
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "vat_rate_bp",
+            "getter_name": "vatRateBp",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('1400')",
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "ComparableExpr",
+                        "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+                      },
+                      "(",
+                      {
+                        "lexeme": "vatRateBp",
+                        "tag": "vatRateBp"
+                      },
+                      ").isBetweenValues(0,10000)"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "notes_en",
+            "getter_name": "notesEn",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "notes_ar",
+            "getter_name": "notesAr",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "scope_on",
+            "getter_name": "scopeOn",
+            "moor_type": "bool",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "CHECK (\"scope_on\" IN (0, 1))",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "CHECK (\"scope_on\" IN (0, 1))"
+            },
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "scope_title",
+            "getter_name": "scopeTitle",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "scope_overview",
+            "getter_name": "scopeOverview",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "scope_done",
+            "getter_name": "scopeDone",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "scope_delivered",
+            "getter_name": "scopeDelivered",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "scope_warranty",
+            "getter_name": "scopeWarranty",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at",
+            "getter_name": "deletedAt",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "is_demo",
+            "getter_name": "isDemo",
+            "moor_type": "bool",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "CHECK (\"is_demo\" IN (0, 1))",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "CHECK (\"is_demo\" IN (0, 1))"
+            },
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "strict": true,
+        "explicit_pk": [
+          "id"
+        ],
+        "unique_keys": [
+          [
+            "year",
+            "seq"
+          ]
+        ]
+      }
+    },
+    {
+      "id": 8,
+      "references": [
+        7,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 7,
+        "references_in_body": [
+          7,
+          1
+        ],
+        "name": "invoices_sync_insert",
+        "sql": "CREATE TRIGGER invoices_sync_insert AFTER INSERT ON invoices\nBEGIN\n  UPDATE invoices SET rev = NEW.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'invoices' AND row_id = NEW.id;\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('invoices', NEW.id, NEW.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 9,
+      "references": [
+        7,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 7,
+        "references_in_body": [
+          7,
+          1
+        ],
+        "name": "invoices_sync_update",
+        "sql": "CREATE TRIGGER invoices_sync_update AFTER UPDATE ON invoices\nWHEN NEW.rev = OLD.rev\nBEGIN\n  UPDATE invoices SET rev = OLD.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'invoices' AND row_id = NEW.id;\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('invoices', NEW.id, OLD.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 10,
+      "references": [
+        7
+      ],
+      "type": "table",
+      "data": {
+        "name": "sections",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "rev",
+            "getter_name": "rev",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at",
+            "getter_name": "deletedAt",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "invoice_id",
+            "getter_name": "invoiceId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES invoices (id) ON DELETE CASCADE",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES invoices (id) ON DELETE CASCADE"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "invoices",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "cascade"
+                }
+              }
+            ]
+          },
+          {
+            "name": "position",
+            "getter_name": "position",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "title_en",
+            "getter_name": "titleEn",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "title_ar",
+            "getter_name": "titleAr",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "currency",
+            "getter_name": "currency",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "currency",
+                        "tag": "currency"
+                      },
+                      ".isIn(const ['EGP','USD','SAR','AED','EUR'])"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "strict": true,
+        "explicit_pk": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": 11,
+      "references": [
+        10,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 10,
+        "references_in_body": [
+          10,
+          1
+        ],
+        "name": "sections_sync_insert",
+        "sql": "CREATE TRIGGER sections_sync_insert AFTER INSERT ON sections\nBEGIN\n  UPDATE sections SET rev = NEW.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'sections' AND row_id = NEW.id;\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('sections', NEW.id, NEW.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 12,
+      "references": [
+        10,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 10,
+        "references_in_body": [
+          10,
+          1
+        ],
+        "name": "sections_sync_update",
+        "sql": "CREATE TRIGGER sections_sync_update AFTER UPDATE ON sections\nWHEN NEW.rev = OLD.rev\nBEGIN\n  UPDATE sections SET rev = OLD.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'sections' AND row_id = NEW.id;\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('sections', NEW.id, OLD.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 13,
+      "references": [
+        10
+      ],
+      "type": "table",
+      "data": {
+        "name": "items",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "rev",
+            "getter_name": "rev",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at",
+            "getter_name": "deletedAt",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "section_id",
+            "getter_name": "sectionId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES sections (id) ON DELETE CASCADE",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES sections (id) ON DELETE CASCADE"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "sections",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "cascade"
+                }
+              }
+            ]
+          },
+          {
+            "name": "position",
+            "getter_name": "position",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "service",
+            "getter_name": "service",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "description",
+            "getter_name": "description",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "cycle",
+            "getter_name": "cycle",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "cycle",
+                        "tag": "cycle"
+                      },
+                      ".isIn(const ['one-time','monthly','annual'])"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "qty",
+            "getter_name": "qty",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "ComparableExpr",
+                        "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+                      },
+                      "(",
+                      {
+                        "lexeme": "qty",
+                        "tag": "qty"
+                      },
+                      ").isBiggerOrEqualValue(0)"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "unit_price_minor",
+            "getter_name": "unitPriceMinor",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "ComparableExpr",
+                        "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+                      },
+                      "(",
+                      {
+                        "lexeme": "unitPriceMinor",
+                        "tag": "unitPriceMinor"
+                      },
+                      ").isBiggerOrEqualValue(0)"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "strict": true,
+        "explicit_pk": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": 14,
+      "references": [
+        13,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 13,
+        "references_in_body": [
+          13,
+          1
+        ],
+        "name": "items_sync_insert",
+        "sql": "CREATE TRIGGER items_sync_insert AFTER INSERT ON items\nBEGIN\n  UPDATE items SET rev = NEW.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'items' AND row_id = NEW.id;\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('items', NEW.id, NEW.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 15,
+      "references": [
+        13,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 13,
+        "references_in_body": [
+          13,
+          1
+        ],
+        "name": "items_sync_update",
+        "sql": "CREATE TRIGGER items_sync_update AFTER UPDATE ON items\nWHEN NEW.rev = OLD.rev\nBEGIN\n  UPDATE items SET rev = OLD.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'items' AND row_id = NEW.id;\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('items', NEW.id, OLD.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 16,
+      "references": [],
+      "type": "table",
+      "data": {
+        "name": "clause_templates",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "rev",
+            "getter_name": "rev",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "name",
+            "getter_name": "name",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "ComparableExpr",
+                        "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+                      },
+                      "(",
+                      {
+                        "lexeme": "StringExpressionOperators",
+                        "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+                      },
+                      "(",
+                      {
+                        "lexeme": "name",
+                        "tag": "name"
+                      },
+                      ").trim().length).isBiggerThanValue(0)"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "kind",
+            "getter_name": "kind",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "kind",
+                        "tag": "kind"
+                      },
+                      ".isIn(const ['contract','quote'])"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "position",
+            "getter_name": "position",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "archived",
+            "getter_name": "archived",
+            "moor_type": "bool",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "CHECK (\"archived\" IN (0, 1))",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "CHECK (\"archived\" IN (0, 1))"
+            },
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "preamble",
+            "getter_name": "preamble",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "closing",
+            "getter_name": "closing",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "var_defaults",
+            "getter_name": "varDefaults",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'{}\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at",
+            "getter_name": "deletedAt",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "is_demo",
+            "getter_name": "isDemo",
+            "moor_type": "bool",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "CHECK (\"is_demo\" IN (0, 1))",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "CHECK (\"is_demo\" IN (0, 1))"
+            },
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "strict": true,
+        "explicit_pk": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": 17,
+      "references": [
+        16,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 16,
+        "references_in_body": [
+          16,
+          1
+        ],
+        "name": "clause_templates_sync_insert",
+        "sql": "CREATE TRIGGER clause_templates_sync_insert AFTER INSERT ON clause_templates\nBEGIN\n  UPDATE clause_templates SET rev = NEW.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'clause_templates' AND row_id = NEW.id;\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('clause_templates', NEW.id, NEW.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 18,
+      "references": [
+        16,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 16,
+        "references_in_body": [
+          16,
+          1
+        ],
+        "name": "clause_templates_sync_update",
+        "sql": "CREATE TRIGGER clause_templates_sync_update AFTER UPDATE ON clause_templates\nWHEN NEW.rev = OLD.rev\nBEGIN\n  UPDATE clause_templates SET rev = OLD.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'clause_templates' AND row_id = NEW.id;\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('clause_templates', NEW.id, OLD.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 19,
+      "references": [
+        16
+      ],
+      "type": "table",
+      "data": {
+        "name": "library_clauses",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "rev",
+            "getter_name": "rev",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at",
+            "getter_name": "deletedAt",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "template_id",
+            "getter_name": "templateId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES clause_templates (id) ON DELETE CASCADE",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES clause_templates (id) ON DELETE CASCADE"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "clause_templates",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "cascade"
+                }
+              }
+            ]
+          },
+          {
+            "name": "position",
+            "getter_name": "position",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "title",
+            "getter_name": "title",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "body",
+            "getter_name": "body",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "optional",
+            "getter_name": "optional",
+            "moor_type": "bool",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "CHECK (\"optional\" IN (0, 1))",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "CHECK (\"optional\" IN (0, 1))"
+            },
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "enabled_by_default",
+            "getter_name": "enabledByDefault",
+            "moor_type": "bool",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "CHECK (\"enabled_by_default\" IN (0, 1))",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "CHECK (\"enabled_by_default\" IN (0, 1))"
+            },
+            "default_dart": "const CustomExpression('1')",
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "strict": true,
+        "explicit_pk": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": 20,
+      "references": [
+        19,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 19,
+        "references_in_body": [
+          19,
+          1
+        ],
+        "name": "library_clauses_sync_insert",
+        "sql": "CREATE TRIGGER library_clauses_sync_insert AFTER INSERT ON library_clauses\nBEGIN\n  UPDATE library_clauses SET rev = NEW.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'library_clauses' AND row_id = NEW.id;\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('library_clauses', NEW.id, NEW.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 21,
+      "references": [
+        19,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 19,
+        "references_in_body": [
+          19,
+          1
+        ],
+        "name": "library_clauses_sync_update",
+        "sql": "CREATE TRIGGER library_clauses_sync_update AFTER UPDATE ON library_clauses\nWHEN NEW.rev = OLD.rev\nBEGIN\n  UPDATE library_clauses SET rev = OLD.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'library_clauses' AND row_id = NEW.id;\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('library_clauses', NEW.id, OLD.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 22,
+      "references": [
+        4
+      ],
+      "type": "table",
+      "data": {
+        "name": "contracts",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "rev",
+            "getter_name": "rev",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "client_id",
+            "getter_name": "clientId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES clients (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES clients (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "clients",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "number",
+            "getter_name": "number",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "UNIQUE",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "UNIQUE"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              "unique"
+            ]
+          },
+          {
+            "name": "series",
+            "getter_name": "series",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "series",
+                        "tag": "series"
+                      },
+                      ".isIn(const ['contract','quote'])"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "year",
+            "getter_name": "year",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "seq",
+            "getter_name": "seq",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "ComparableExpr",
+                        "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+                      },
+                      "(",
+                      {
+                        "lexeme": "seq",
+                        "tag": "seq"
+                      },
+                      ").isBiggerOrEqualValue(0)"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "amendment_no",
+            "getter_name": "amendmentNo",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "ComparableExpr",
+                        "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+                      },
+                      "(",
+                      {
+                        "lexeme": "amendmentNo",
+                        "tag": "amendmentNo"
+                      },
+                      ").isBiggerOrEqualValue(0)"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "parent_id",
+            "getter_name": "parentId",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES contracts (id) ON DELETE CASCADE",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES contracts (id) ON DELETE CASCADE"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "contracts",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "cascade"
+                }
+              }
+            ]
+          },
+          {
+            "name": "kind",
+            "getter_name": "kind",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "kind",
+                        "tag": "kind"
+                      },
+                      ".isIn(const ['contract','quote','amendment'])"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "template_name",
+            "getter_name": "templateName",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "title",
+            "getter_name": "title",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "project_name",
+            "getter_name": "projectName",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "project_summary",
+            "getter_name": "projectSummary",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "preamble",
+            "getter_name": "preamble",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "closing",
+            "getter_name": "closing",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "issue_date",
+            "getter_name": "issueDate",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "start_date",
+            "getter_name": "startDate",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "signed_date",
+            "getter_name": "signedDate",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "end_date",
+            "getter_name": "endDate",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "status",
+            "getter_name": "status",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "status",
+                        "tag": "status"
+                      },
+                      ".isIn(const ['draft','sent','signed','active','completed','cancelled'])"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "jurisdiction",
+            "getter_name": "jurisdiction",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "currency",
+            "getter_name": "currency",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "currency",
+                        "tag": "currency"
+                      },
+                      ".isIn(const ['EGP','USD','SAR','AED','EUR'])"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "total_minor",
+            "getter_name": "totalMinor",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "ComparableExpr",
+                        "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+                      },
+                      "(",
+                      {
+                        "lexeme": "totalMinor",
+                        "tag": "totalMinor"
+                      },
+                      ").isBiggerOrEqualValue(0)"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "vars",
+            "getter_name": "vars",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'{}\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "out_of_scope",
+            "getter_name": "outOfScope",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "unlocked",
+            "getter_name": "unlocked",
+            "moor_type": "bool",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "CHECK (\"unlocked\" IN (0, 1))",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "CHECK (\"unlocked\" IN (0, 1))"
+            },
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "history",
+            "getter_name": "history",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'[]\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at",
+            "getter_name": "deletedAt",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "is_demo",
+            "getter_name": "isDemo",
+            "moor_type": "bool",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "CHECK (\"is_demo\" IN (0, 1))",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "CHECK (\"is_demo\" IN (0, 1))"
+            },
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "strict": true,
+        "explicit_pk": [
+          "id"
+        ],
+        "unique_keys": [
+          [
+            "series",
+            "year",
+            "seq",
+            "amendment_no"
+          ]
+        ]
+      }
+    },
+    {
+      "id": 23,
+      "references": [
+        22,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 22,
+        "references_in_body": [
+          22,
+          1
+        ],
+        "name": "contracts_sync_insert",
+        "sql": "CREATE TRIGGER contracts_sync_insert AFTER INSERT ON contracts\nBEGIN\n  UPDATE contracts SET rev = NEW.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'contracts' AND row_id = NEW.id;\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('contracts', NEW.id, NEW.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 24,
+      "references": [
+        22,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 22,
+        "references_in_body": [
+          22,
+          1
+        ],
+        "name": "contracts_sync_update",
+        "sql": "CREATE TRIGGER contracts_sync_update AFTER UPDATE ON contracts\nWHEN NEW.rev = OLD.rev\nBEGIN\n  UPDATE contracts SET rev = OLD.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'contracts' AND row_id = NEW.id;\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('contracts', NEW.id, OLD.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 25,
+      "references": [
+        22
+      ],
+      "type": "table",
+      "data": {
+        "name": "contract_clauses",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "rev",
+            "getter_name": "rev",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at",
+            "getter_name": "deletedAt",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "contract_id",
+            "getter_name": "contractId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES contracts (id) ON DELETE CASCADE",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES contracts (id) ON DELETE CASCADE"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "contracts",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "cascade"
+                }
+              }
+            ]
+          },
+          {
+            "name": "position",
+            "getter_name": "position",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "title",
+            "getter_name": "title",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "body",
+            "getter_name": "body",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "enabled",
+            "getter_name": "enabled",
+            "moor_type": "bool",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "CHECK (\"enabled\" IN (0, 1))",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "CHECK (\"enabled\" IN (0, 1))"
+            },
+            "default_dart": "const CustomExpression('1')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "optional",
+            "getter_name": "optional",
+            "moor_type": "bool",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "CHECK (\"optional\" IN (0, 1))",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "CHECK (\"optional\" IN (0, 1))"
+            },
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "from_library_clause_id",
+            "getter_name": "fromLibraryClauseId",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "strict": true,
+        "explicit_pk": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": 26,
+      "references": [
+        25,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 25,
+        "references_in_body": [
+          25,
+          1
+        ],
+        "name": "contract_clauses_sync_insert",
+        "sql": "CREATE TRIGGER contract_clauses_sync_insert AFTER INSERT ON contract_clauses\nBEGIN\n  UPDATE contract_clauses SET rev = NEW.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'contract_clauses' AND row_id = NEW.id;\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('contract_clauses', NEW.id, NEW.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 27,
+      "references": [
+        25,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 25,
+        "references_in_body": [
+          25,
+          1
+        ],
+        "name": "contract_clauses_sync_update",
+        "sql": "CREATE TRIGGER contract_clauses_sync_update AFTER UPDATE ON contract_clauses\nWHEN NEW.rev = OLD.rev\nBEGIN\n  UPDATE contract_clauses SET rev = OLD.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'contract_clauses' AND row_id = NEW.id;\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('contract_clauses', NEW.id, OLD.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 28,
+      "references": [
+        22
+      ],
+      "type": "table",
+      "data": {
+        "name": "scope_items",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "rev",
+            "getter_name": "rev",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at",
+            "getter_name": "deletedAt",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "contract_id",
+            "getter_name": "contractId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES contracts (id) ON DELETE CASCADE",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES contracts (id) ON DELETE CASCADE"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "contracts",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "cascade"
+                }
+              }
+            ]
+          },
+          {
+            "name": "position",
+            "getter_name": "position",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "phase",
+            "getter_name": "phase",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "item",
+            "getter_name": "item",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "description",
+            "getter_name": "description",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "acceptance",
+            "getter_name": "acceptance",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "strict": true,
+        "explicit_pk": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": 29,
+      "references": [
+        28,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 28,
+        "references_in_body": [
+          28,
+          1
+        ],
+        "name": "scope_items_sync_insert",
+        "sql": "CREATE TRIGGER scope_items_sync_insert AFTER INSERT ON scope_items\nBEGIN\n  UPDATE scope_items SET rev = NEW.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'scope_items' AND row_id = NEW.id;\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('scope_items', NEW.id, NEW.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 30,
+      "references": [
+        28,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 28,
+        "references_in_body": [
+          28,
+          1
+        ],
+        "name": "scope_items_sync_update",
+        "sql": "CREATE TRIGGER scope_items_sync_update AFTER UPDATE ON scope_items\nWHEN NEW.rev = OLD.rev\nBEGIN\n  UPDATE scope_items SET rev = OLD.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'scope_items' AND row_id = NEW.id;\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('scope_items', NEW.id, OLD.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 31,
+      "references": [
+        22,
+        7
+      ],
+      "type": "table",
+      "data": {
+        "name": "payment_milestones",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "rev",
+            "getter_name": "rev",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at",
+            "getter_name": "deletedAt",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "contract_id",
+            "getter_name": "contractId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES contracts (id) ON DELETE CASCADE",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES contracts (id) ON DELETE CASCADE"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "contracts",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "cascade"
+                }
+              }
+            ]
+          },
+          {
+            "name": "position",
+            "getter_name": "position",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "label",
+            "getter_name": "label",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "percent_bp",
+            "getter_name": "percentBp",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "ComparableExpr",
+                        "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+                      },
+                      "(",
+                      {
+                        "lexeme": "percentBp",
+                        "tag": "percentBp"
+                      },
+                      ").isBetweenValues(0,10000)"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "amount_minor",
+            "getter_name": "amountMinor",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "ComparableExpr",
+                        "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+                      },
+                      "(",
+                      {
+                        "lexeme": "amountMinor",
+                        "tag": "amountMinor"
+                      },
+                      ").isBiggerOrEqualValue(0)"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "trigger",
+            "getter_name": "trigger",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "due_date",
+            "getter_name": "dueDate",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "invoice_id",
+            "getter_name": "invoiceId",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES invoices (id) ON DELETE SET NULL",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES invoices (id) ON DELETE SET NULL"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "invoices",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "setNull"
+                }
+              }
+            ]
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "strict": true,
+        "explicit_pk": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": 32,
+      "references": [
+        31,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 31,
+        "references_in_body": [
+          31,
+          1
+        ],
+        "name": "payment_milestones_sync_insert",
+        "sql": "CREATE TRIGGER payment_milestones_sync_insert AFTER INSERT ON payment_milestones\nBEGIN\n  UPDATE payment_milestones SET rev = NEW.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'payment_milestones' AND row_id = NEW.id;\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('payment_milestones', NEW.id, NEW.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 33,
+      "references": [
+        31,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 31,
+        "references_in_body": [
+          31,
+          1
+        ],
+        "name": "payment_milestones_sync_update",
+        "sql": "CREATE TRIGGER payment_milestones_sync_update AFTER UPDATE ON payment_milestones\nWHEN NEW.rev = OLD.rev\nBEGIN\n  UPDATE payment_milestones SET rev = OLD.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'payment_milestones' AND row_id = NEW.id;\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('payment_milestones', NEW.id, OLD.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 34,
+      "references": [],
+      "type": "table",
+      "data": {
+        "name": "postponements",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "rev",
+            "getter_name": "rev",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "entity_type",
+            "getter_name": "entityType",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "entityType",
+                        "tag": "entityType"
+                      },
+                      ".isIn(const ['invoice','milestone'])"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "entity_id",
+            "getter_name": "entityId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "from_date",
+            "getter_name": "fromDate",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "to_date",
+            "getter_name": "toDate",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "reason",
+            "getter_name": "reason",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at",
+            "getter_name": "deletedAt",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "strict": true,
+        "explicit_pk": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": 35,
+      "references": [
+        34,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 34,
+        "references_in_body": [
+          34,
+          1
+        ],
+        "name": "postponements_sync_insert",
+        "sql": "CREATE TRIGGER postponements_sync_insert AFTER INSERT ON postponements\nBEGIN\n  UPDATE postponements SET rev = NEW.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'postponements' AND row_id = NEW.id;\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('postponements', NEW.id, NEW.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 36,
+      "references": [
+        34,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 34,
+        "references_in_body": [
+          34,
+          1
+        ],
+        "name": "postponements_sync_update",
+        "sql": "CREATE TRIGGER postponements_sync_update AFTER UPDATE ON postponements\nWHEN NEW.rev = OLD.rev\nBEGIN\n  UPDATE postponements SET rev = OLD.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'postponements' AND row_id = NEW.id;\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('postponements', NEW.id, OLD.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 37,
+      "references": [
+        4
+      ],
+      "type": "table",
+      "data": {
+        "name": "reminders",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "rev",
+            "getter_name": "rev",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "date",
+            "getter_name": "date",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "time",
+            "getter_name": "time",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "text",
+            "getter_name": "body",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "ComparableExpr",
+                        "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+                      },
+                      "(",
+                      {
+                        "lexeme": "StringExpressionOperators",
+                        "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+                      },
+                      "(",
+                      {
+                        "lexeme": "body",
+                        "tag": "body"
+                      },
+                      ").trim().length).isBiggerThanValue(0)"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "client_id",
+            "getter_name": "clientId",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES clients (id) ON DELETE SET NULL",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES clients (id) ON DELETE SET NULL"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "clients",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "setNull"
+                }
+              }
+            ]
+          },
+          {
+            "name": "entity_type",
+            "getter_name": "entityType",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "entityType",
+                        "tag": "entityType"
+                      },
+                      ".isIn(const ['invoice','contract'])"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "entity_id",
+            "getter_name": "entityId",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "done_at",
+            "getter_name": "doneAt",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at",
+            "getter_name": "deletedAt",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "is_demo",
+            "getter_name": "isDemo",
+            "moor_type": "bool",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "CHECK (\"is_demo\" IN (0, 1))",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "CHECK (\"is_demo\" IN (0, 1))"
+            },
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "strict": true,
+        "explicit_pk": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": 38,
+      "references": [
+        37,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 37,
+        "references_in_body": [
+          37,
+          1
+        ],
+        "name": "reminders_sync_insert",
+        "sql": "CREATE TRIGGER reminders_sync_insert AFTER INSERT ON reminders\nBEGIN\n  UPDATE reminders SET rev = NEW.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'reminders' AND row_id = NEW.id;\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('reminders', NEW.id, NEW.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 39,
+      "references": [
+        37,
+        1
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 37,
+        "references_in_body": [
+          37,
+          1
+        ],
+        "name": "reminders_sync_update",
+        "sql": "CREATE TRIGGER reminders_sync_update AFTER UPDATE ON reminders\nWHEN NEW.rev = OLD.rev\nBEGIN\n  UPDATE reminders SET rev = OLD.rev + 1 WHERE id = NEW.id;\n  DELETE FROM outbox WHERE entity = 'reminders' AND row_id = NEW.id;\n  INSERT INTO outbox (entity, row_id, rev, changed_at)\n  VALUES ('reminders', NEW.id, OLD.rev + 1, NEW.updated_at);\nEND;"
+      }
+    },
+    {
+      "id": 40,
+      "references": [
+        7
+      ],
+      "type": "index",
+      "data": {
+        "on": 7,
+        "name": "invoices_client",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "client_id",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 41,
+      "references": [
+        7
+      ],
+      "type": "index",
+      "data": {
+        "on": 7,
+        "name": "invoices_due",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "due_date",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 42,
+      "references": [
+        7
+      ],
+      "type": "index",
+      "data": {
+        "on": 7,
+        "name": "invoices_paid",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "paid_date",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 43,
+      "references": [
+        10
+      ],
+      "type": "index",
+      "data": {
+        "on": 10,
+        "name": "sections_invoice",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "invoice_id",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 44,
+      "references": [
+        13
+      ],
+      "type": "index",
+      "data": {
+        "on": 13,
+        "name": "items_section",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "section_id",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 45,
+      "references": [
+        19
+      ],
+      "type": "index",
+      "data": {
+        "on": 19,
+        "name": "library_clauses_template",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "template_id",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 46,
+      "references": [
+        22
+      ],
+      "type": "index",
+      "data": {
+        "on": 22,
+        "name": "contracts_client",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "client_id",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 47,
+      "references": [
+        22
+      ],
+      "type": "index",
+      "data": {
+        "on": 22,
+        "name": "contracts_parent",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "parent_id",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 48,
+      "references": [
+        25
+      ],
+      "type": "index",
+      "data": {
+        "on": 25,
+        "name": "contract_clauses_contract",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "contract_id",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 49,
+      "references": [
+        28
+      ],
+      "type": "index",
+      "data": {
+        "on": 28,
+        "name": "scope_items_contract",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "contract_id",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 50,
+      "references": [
+        31
+      ],
+      "type": "index",
+      "data": {
+        "on": 31,
+        "name": "milestones_contract",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "contract_id",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 51,
+      "references": [
+        31
+      ],
+      "type": "index",
+      "data": {
+        "on": 31,
+        "name": "milestones_invoice",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "invoice_id",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 52,
+      "references": [
+        31
+      ],
+      "type": "index",
+      "data": {
+        "on": 31,
+        "name": "milestones_due",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "due_date",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 53,
+      "references": [
+        34
+      ],
+      "type": "index",
+      "data": {
+        "on": 34,
+        "name": "postponements_entity",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "entity_id",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 54,
+      "references": [
+        37
+      ],
+      "type": "index",
+      "data": {
+        "on": 37,
+        "name": "reminders_date",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "date",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 55,
+      "references": [
+        4,
+        7,
+        22
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 4,
+        "references_in_body": [
+          4,
+          7,
+          22
+        ],
+        "name": "clients_soft_delete_guard",
+        "sql": "CREATE TRIGGER clients_soft_delete_guard\nBEFORE UPDATE OF deleted_at ON clients\nWHEN NEW.deleted_at IS NOT NULL AND (\n  EXISTS (\n    SELECT 1 FROM invoices WHERE client_id = NEW.id AND deleted_at IS NULL\n  ) OR EXISTS (\n    SELECT 1 FROM contracts WHERE client_id = NEW.id AND deleted_at IS NULL\n  )\n)\nBEGIN\n  SELECT RAISE(ABORT, 'client has live documents');\nEND;"
+      }
+    },
+    {
+      "id": 56,
+      "references": [
+        7,
+        4
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 7,
+        "references_in_body": [
+          7,
+          4
+        ],
+        "name": "invoices_revive_guard",
+        "sql": "CREATE TRIGGER invoices_revive_guard\nBEFORE UPDATE OF deleted_at ON invoices\nWHEN NEW.deleted_at IS NULL AND EXISTS (\n  SELECT 1 FROM clients WHERE id = NEW.client_id AND deleted_at IS NOT NULL\n)\nBEGIN\n  SELECT RAISE(ABORT, 'client is deleted');\nEND;"
+      }
+    },
+    {
+      "id": 57,
+      "references": [
+        7,
+        4
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 7,
+        "references_in_body": [
+          7,
+          4
+        ],
+        "name": "invoices_insert_guard",
+        "sql": "CREATE TRIGGER invoices_insert_guard\nBEFORE INSERT ON invoices\nWHEN NEW.deleted_at IS NULL AND EXISTS (\n  SELECT 1 FROM clients WHERE id = NEW.client_id AND deleted_at IS NOT NULL\n)\nBEGIN\n  SELECT RAISE(ABORT, 'client is deleted');\nEND;"
+      }
+    },
+    {
+      "id": 58,
+      "references": [
+        22,
+        4
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 22,
+        "references_in_body": [
+          22,
+          4
+        ],
+        "name": "contracts_revive_guard",
+        "sql": "CREATE TRIGGER contracts_revive_guard\nBEFORE UPDATE OF deleted_at ON contracts\nWHEN NEW.deleted_at IS NULL AND EXISTS (\n  SELECT 1 FROM clients WHERE id = NEW.client_id AND deleted_at IS NOT NULL\n)\nBEGIN\n  SELECT RAISE(ABORT, 'client is deleted');\nEND;"
+      }
+    },
+    {
+      "id": 59,
+      "references": [
+        22,
+        4
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 22,
+        "references_in_body": [
+          22,
+          4
+        ],
+        "name": "contracts_insert_guard",
+        "sql": "CREATE TRIGGER contracts_insert_guard\nBEFORE INSERT ON contracts\nWHEN NEW.deleted_at IS NULL AND EXISTS (\n  SELECT 1 FROM clients WHERE id = NEW.client_id AND deleted_at IS NOT NULL\n)\nBEGIN\n  SELECT RAISE(ABORT, 'client is deleted');\nEND;"
+      }
+    }
+  ],
+  "fixed_sql": [
+    {
+      "name": "settings",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"settings\" (\"rev\" INTEGER NOT NULL DEFAULT 0, \"id\" INTEGER NOT NULL CHECK(\"id\" = 1), \"name\" TEXT NOT NULL DEFAULT '', \"role\" TEXT NOT NULL DEFAULT '', \"city\" TEXT NOT NULL DEFAULT '', \"email\" TEXT NOT NULL DEFAULT '', \"phone\" TEXT NOT NULL DEFAULT '', \"website\" TEXT NOT NULL DEFAULT '', \"invoice_prefix\" TEXT NOT NULL DEFAULT 'OM', \"default_due_days\" INTEGER NOT NULL DEFAULT 30 CHECK(\"default_due_days\" BETWEEN 0 AND 3650), \"instapay\" TEXT NOT NULL DEFAULT '', \"wallet\" TEXT NOT NULL DEFAULT '', \"bank_iban\" TEXT NOT NULL DEFAULT '', \"notes_en\" TEXT NOT NULL DEFAULT '', \"notes_ar\" TEXT NOT NULL DEFAULT '', \"backup_dir\" TEXT NULL, \"last_backup_at\" INTEGER NULL, \"legal_name\" TEXT NOT NULL DEFAULT '', \"national_id_or_registry\" TEXT NOT NULL DEFAULT '', \"address\" TEXT NOT NULL DEFAULT '', \"contract_prefix\" TEXT NOT NULL DEFAULT 'CT', \"quote_prefix\" TEXT NOT NULL DEFAULT 'QT', \"default_jurisdiction\" TEXT NOT NULL DEFAULT 'المحكمة الاقتصادية المختصة', \"contract_western_digits\" INTEGER NOT NULL DEFAULT 0 CHECK (\"contract_western_digits\" IN (0, 1)), \"device_id\" TEXT NOT NULL DEFAULT '', \"updated_at\" INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (\"id\")) STRICT;"
+        }
+      ]
+    },
+    {
+      "name": "outbox",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"outbox\" (\"id\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \"entity\" TEXT NOT NULL, \"row_id\" TEXT NOT NULL, \"rev\" INTEGER NOT NULL, \"changed_at\" INTEGER NOT NULL, UNIQUE (\"entity\", \"row_id\")) STRICT;"
+        }
+      ]
+    },
+    {
+      "name": "settings_sync_insert",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER settings_sync_insert AFTER INSERT ON settings BEGIN UPDATE settings SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'settings' AND row_id = CAST(NEW.id AS TEXT);INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('settings', CAST(NEW.id AS TEXT), NEW.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "settings_sync_update",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER settings_sync_update AFTER UPDATE ON settings WHEN NEW.rev = OLD.rev BEGIN UPDATE settings SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'settings' AND row_id = CAST(NEW.id AS TEXT);INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('settings', CAST(NEW.id AS TEXT), OLD.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "clients",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"clients\" (\"rev\" INTEGER NOT NULL DEFAULT 0, \"id\" TEXT NOT NULL, \"name\" TEXT NOT NULL CHECK(LENGTH(TRIM(\"name\")) > 0), \"contact\" TEXT NOT NULL DEFAULT '', \"city\" TEXT NOT NULL DEFAULT '', \"phone\" TEXT NOT NULL DEFAULT '', \"email\" TEXT NOT NULL DEFAULT '', \"created_at\" INTEGER NOT NULL, \"updated_at\" INTEGER NOT NULL, \"archived\" INTEGER NOT NULL DEFAULT 0 CHECK (\"archived\" IN (0, 1)), \"deleted_at\" INTEGER NULL, \"legal_name\" TEXT NOT NULL DEFAULT '', \"registry_no\" TEXT NOT NULL DEFAULT '', \"address\" TEXT NOT NULL DEFAULT '', \"representative\" TEXT NOT NULL DEFAULT '', \"representative_title\" TEXT NOT NULL DEFAULT '', \"is_demo\" INTEGER NOT NULL DEFAULT 0 CHECK (\"is_demo\" IN (0, 1)), PRIMARY KEY (\"id\")) STRICT;"
+        }
+      ]
+    },
+    {
+      "name": "clients_sync_insert",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER clients_sync_insert AFTER INSERT ON clients BEGIN UPDATE clients SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'clients' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('clients', NEW.id, NEW.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "clients_sync_update",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER clients_sync_update AFTER UPDATE ON clients WHEN NEW.rev = OLD.rev BEGIN UPDATE clients SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'clients' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('clients', NEW.id, OLD.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "invoices",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"invoices\" (\"rev\" INTEGER NOT NULL DEFAULT 0, \"id\" TEXT NOT NULL, \"client_id\" TEXT NOT NULL REFERENCES clients (id) ON DELETE RESTRICT, \"number\" TEXT NOT NULL UNIQUE, \"year\" INTEGER NOT NULL, \"seq\" INTEGER NOT NULL CHECK(\"seq\" >= 0), \"issue_date\" TEXT NOT NULL, \"due_date\" TEXT NOT NULL, \"paid_date\" TEXT NULL, \"status\" TEXT NOT NULL CHECK(\"status\" IN ('draft', 'sent', 'paid', 'void')), \"contract_ref\" TEXT NOT NULL DEFAULT '', \"vat_on\" INTEGER NOT NULL DEFAULT 0 CHECK (\"vat_on\" IN (0, 1)), \"vat_rate_bp\" INTEGER NOT NULL DEFAULT 1400 CHECK(\"vat_rate_bp\" BETWEEN 0 AND 10000), \"notes_en\" TEXT NOT NULL DEFAULT '', \"notes_ar\" TEXT NOT NULL DEFAULT '', \"scope_on\" INTEGER NOT NULL DEFAULT 0 CHECK (\"scope_on\" IN (0, 1)), \"scope_title\" TEXT NOT NULL DEFAULT '', \"scope_overview\" TEXT NOT NULL DEFAULT '', \"scope_done\" TEXT NOT NULL DEFAULT '', \"scope_delivered\" TEXT NOT NULL DEFAULT '', \"scope_warranty\" TEXT NOT NULL DEFAULT '', \"deleted_at\" INTEGER NULL, \"is_demo\" INTEGER NOT NULL DEFAULT 0 CHECK (\"is_demo\" IN (0, 1)), \"created_at\" INTEGER NOT NULL, \"updated_at\" INTEGER NOT NULL, PRIMARY KEY (\"id\"), UNIQUE (\"year\", \"seq\")) STRICT;"
+        }
+      ]
+    },
+    {
+      "name": "invoices_sync_insert",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER invoices_sync_insert AFTER INSERT ON invoices BEGIN UPDATE invoices SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'invoices' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('invoices', NEW.id, NEW.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "invoices_sync_update",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER invoices_sync_update AFTER UPDATE ON invoices WHEN NEW.rev = OLD.rev BEGIN UPDATE invoices SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'invoices' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('invoices', NEW.id, OLD.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "sections",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"sections\" (\"rev\" INTEGER NOT NULL DEFAULT 0, \"updated_at\" INTEGER NOT NULL DEFAULT 0, \"deleted_at\" INTEGER NULL, \"id\" TEXT NOT NULL, \"invoice_id\" TEXT NOT NULL REFERENCES invoices (id) ON DELETE CASCADE, \"position\" INTEGER NOT NULL, \"title_en\" TEXT NOT NULL DEFAULT '', \"title_ar\" TEXT NOT NULL DEFAULT '', \"currency\" TEXT NOT NULL CHECK(\"currency\" IN ('EGP', 'USD', 'SAR', 'AED', 'EUR')), PRIMARY KEY (\"id\")) STRICT;"
+        }
+      ]
+    },
+    {
+      "name": "sections_sync_insert",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER sections_sync_insert AFTER INSERT ON sections BEGIN UPDATE sections SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'sections' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('sections', NEW.id, NEW.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "sections_sync_update",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER sections_sync_update AFTER UPDATE ON sections WHEN NEW.rev = OLD.rev BEGIN UPDATE sections SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'sections' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('sections', NEW.id, OLD.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "items",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"items\" (\"rev\" INTEGER NOT NULL DEFAULT 0, \"updated_at\" INTEGER NOT NULL DEFAULT 0, \"deleted_at\" INTEGER NULL, \"id\" TEXT NOT NULL, \"section_id\" TEXT NOT NULL REFERENCES sections (id) ON DELETE CASCADE, \"position\" INTEGER NOT NULL, \"service\" TEXT NOT NULL DEFAULT '', \"description\" TEXT NOT NULL DEFAULT '', \"cycle\" TEXT NOT NULL CHECK(\"cycle\" IN ('one-time', 'monthly', 'annual')), \"qty\" INTEGER NOT NULL CHECK(\"qty\" >= 0), \"unit_price_minor\" INTEGER NOT NULL CHECK(\"unit_price_minor\" >= 0), PRIMARY KEY (\"id\")) STRICT;"
+        }
+      ]
+    },
+    {
+      "name": "items_sync_insert",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER items_sync_insert AFTER INSERT ON items BEGIN UPDATE items SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'items' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('items', NEW.id, NEW.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "items_sync_update",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER items_sync_update AFTER UPDATE ON items WHEN NEW.rev = OLD.rev BEGIN UPDATE items SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'items' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('items', NEW.id, OLD.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "clause_templates",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"clause_templates\" (\"rev\" INTEGER NOT NULL DEFAULT 0, \"id\" TEXT NOT NULL, \"name\" TEXT NOT NULL CHECK(LENGTH(TRIM(\"name\")) > 0), \"kind\" TEXT NOT NULL CHECK(\"kind\" IN ('contract', 'quote')), \"position\" INTEGER NOT NULL, \"archived\" INTEGER NOT NULL DEFAULT 0 CHECK (\"archived\" IN (0, 1)), \"preamble\" TEXT NOT NULL DEFAULT '', \"closing\" TEXT NOT NULL DEFAULT '', \"var_defaults\" TEXT NOT NULL DEFAULT '{}', \"deleted_at\" INTEGER NULL, \"is_demo\" INTEGER NOT NULL DEFAULT 0 CHECK (\"is_demo\" IN (0, 1)), \"created_at\" INTEGER NOT NULL, \"updated_at\" INTEGER NOT NULL, PRIMARY KEY (\"id\")) STRICT;"
+        }
+      ]
+    },
+    {
+      "name": "clause_templates_sync_insert",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER clause_templates_sync_insert AFTER INSERT ON clause_templates BEGIN UPDATE clause_templates SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'clause_templates' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('clause_templates', NEW.id, NEW.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "clause_templates_sync_update",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER clause_templates_sync_update AFTER UPDATE ON clause_templates WHEN NEW.rev = OLD.rev BEGIN UPDATE clause_templates SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'clause_templates' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('clause_templates', NEW.id, OLD.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "library_clauses",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"library_clauses\" (\"rev\" INTEGER NOT NULL DEFAULT 0, \"updated_at\" INTEGER NOT NULL DEFAULT 0, \"deleted_at\" INTEGER NULL, \"id\" TEXT NOT NULL, \"template_id\" TEXT NOT NULL REFERENCES clause_templates (id) ON DELETE CASCADE, \"position\" INTEGER NOT NULL, \"title\" TEXT NOT NULL DEFAULT '', \"body\" TEXT NOT NULL DEFAULT '', \"optional\" INTEGER NOT NULL DEFAULT 0 CHECK (\"optional\" IN (0, 1)), \"enabled_by_default\" INTEGER NOT NULL DEFAULT 1 CHECK (\"enabled_by_default\" IN (0, 1)), PRIMARY KEY (\"id\")) STRICT;"
+        }
+      ]
+    },
+    {
+      "name": "library_clauses_sync_insert",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER library_clauses_sync_insert AFTER INSERT ON library_clauses BEGIN UPDATE library_clauses SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'library_clauses' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('library_clauses', NEW.id, NEW.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "library_clauses_sync_update",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER library_clauses_sync_update AFTER UPDATE ON library_clauses WHEN NEW.rev = OLD.rev BEGIN UPDATE library_clauses SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'library_clauses' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('library_clauses', NEW.id, OLD.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "contracts",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"contracts\" (\"rev\" INTEGER NOT NULL DEFAULT 0, \"id\" TEXT NOT NULL, \"client_id\" TEXT NOT NULL REFERENCES clients (id) ON DELETE RESTRICT, \"number\" TEXT NOT NULL UNIQUE, \"series\" TEXT NOT NULL CHECK(\"series\" IN ('contract', 'quote')), \"year\" INTEGER NOT NULL, \"seq\" INTEGER NOT NULL CHECK(\"seq\" >= 0), \"amendment_no\" INTEGER NOT NULL DEFAULT 0 CHECK(\"amendment_no\" >= 0), \"parent_id\" TEXT NULL REFERENCES contracts (id) ON DELETE CASCADE, \"kind\" TEXT NOT NULL CHECK(\"kind\" IN ('contract', 'quote', 'amendment')), \"template_name\" TEXT NOT NULL DEFAULT '', \"title\" TEXT NOT NULL DEFAULT '', \"project_name\" TEXT NOT NULL DEFAULT '', \"project_summary\" TEXT NOT NULL DEFAULT '', \"preamble\" TEXT NOT NULL DEFAULT '', \"closing\" TEXT NOT NULL DEFAULT '', \"issue_date\" TEXT NOT NULL, \"start_date\" TEXT NULL, \"signed_date\" TEXT NULL, \"end_date\" TEXT NULL, \"status\" TEXT NOT NULL CHECK(\"status\" IN ('draft', 'sent', 'signed', 'active', 'completed', 'cancelled')), \"jurisdiction\" TEXT NOT NULL DEFAULT '', \"currency\" TEXT NOT NULL CHECK(\"currency\" IN ('EGP', 'USD', 'SAR', 'AED', 'EUR')), \"total_minor\" INTEGER NOT NULL DEFAULT 0 CHECK(\"total_minor\" >= 0), \"vars\" TEXT NOT NULL DEFAULT '{}', \"out_of_scope\" TEXT NOT NULL DEFAULT '', \"unlocked\" INTEGER NOT NULL DEFAULT 0 CHECK (\"unlocked\" IN (0, 1)), \"history\" TEXT NOT NULL DEFAULT '[]', \"deleted_at\" INTEGER NULL, \"is_demo\" INTEGER NOT NULL DEFAULT 0 CHECK (\"is_demo\" IN (0, 1)), \"created_at\" INTEGER NOT NULL, \"updated_at\" INTEGER NOT NULL, PRIMARY KEY (\"id\"), UNIQUE (\"series\", \"year\", \"seq\", \"amendment_no\")) STRICT;"
+        }
+      ]
+    },
+    {
+      "name": "contracts_sync_insert",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER contracts_sync_insert AFTER INSERT ON contracts BEGIN UPDATE contracts SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'contracts' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('contracts', NEW.id, NEW.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "contracts_sync_update",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER contracts_sync_update AFTER UPDATE ON contracts WHEN NEW.rev = OLD.rev BEGIN UPDATE contracts SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'contracts' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('contracts', NEW.id, OLD.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "contract_clauses",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"contract_clauses\" (\"rev\" INTEGER NOT NULL DEFAULT 0, \"updated_at\" INTEGER NOT NULL DEFAULT 0, \"deleted_at\" INTEGER NULL, \"id\" TEXT NOT NULL, \"contract_id\" TEXT NOT NULL REFERENCES contracts (id) ON DELETE CASCADE, \"position\" INTEGER NOT NULL, \"title\" TEXT NOT NULL DEFAULT '', \"body\" TEXT NOT NULL DEFAULT '', \"enabled\" INTEGER NOT NULL DEFAULT 1 CHECK (\"enabled\" IN (0, 1)), \"optional\" INTEGER NOT NULL DEFAULT 0 CHECK (\"optional\" IN (0, 1)), \"from_library_clause_id\" TEXT NULL, PRIMARY KEY (\"id\")) STRICT;"
+        }
+      ]
+    },
+    {
+      "name": "contract_clauses_sync_insert",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER contract_clauses_sync_insert AFTER INSERT ON contract_clauses BEGIN UPDATE contract_clauses SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'contract_clauses' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('contract_clauses', NEW.id, NEW.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "contract_clauses_sync_update",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER contract_clauses_sync_update AFTER UPDATE ON contract_clauses WHEN NEW.rev = OLD.rev BEGIN UPDATE contract_clauses SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'contract_clauses' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('contract_clauses', NEW.id, OLD.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "scope_items",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"scope_items\" (\"rev\" INTEGER NOT NULL DEFAULT 0, \"updated_at\" INTEGER NOT NULL DEFAULT 0, \"deleted_at\" INTEGER NULL, \"id\" TEXT NOT NULL, \"contract_id\" TEXT NOT NULL REFERENCES contracts (id) ON DELETE CASCADE, \"position\" INTEGER NOT NULL, \"phase\" TEXT NOT NULL DEFAULT '', \"item\" TEXT NOT NULL DEFAULT '', \"description\" TEXT NOT NULL DEFAULT '', \"acceptance\" TEXT NOT NULL DEFAULT '', PRIMARY KEY (\"id\")) STRICT;"
+        }
+      ]
+    },
+    {
+      "name": "scope_items_sync_insert",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER scope_items_sync_insert AFTER INSERT ON scope_items BEGIN UPDATE scope_items SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'scope_items' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('scope_items', NEW.id, NEW.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "scope_items_sync_update",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER scope_items_sync_update AFTER UPDATE ON scope_items WHEN NEW.rev = OLD.rev BEGIN UPDATE scope_items SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'scope_items' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('scope_items', NEW.id, OLD.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "payment_milestones",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"payment_milestones\" (\"rev\" INTEGER NOT NULL DEFAULT 0, \"updated_at\" INTEGER NOT NULL DEFAULT 0, \"deleted_at\" INTEGER NULL, \"id\" TEXT NOT NULL, \"contract_id\" TEXT NOT NULL REFERENCES contracts (id) ON DELETE CASCADE, \"position\" INTEGER NOT NULL, \"label\" TEXT NOT NULL DEFAULT '', \"percent_bp\" INTEGER NULL CHECK(\"percent_bp\" BETWEEN 0 AND 10000), \"amount_minor\" INTEGER NULL CHECK(\"amount_minor\" >= 0), \"trigger\" TEXT NOT NULL DEFAULT '', \"due_date\" TEXT NULL, \"invoice_id\" TEXT NULL REFERENCES invoices (id) ON DELETE SET NULL, PRIMARY KEY (\"id\")) STRICT;"
+        }
+      ]
+    },
+    {
+      "name": "payment_milestones_sync_insert",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER payment_milestones_sync_insert AFTER INSERT ON payment_milestones BEGIN UPDATE payment_milestones SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'payment_milestones' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('payment_milestones', NEW.id, NEW.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "payment_milestones_sync_update",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER payment_milestones_sync_update AFTER UPDATE ON payment_milestones WHEN NEW.rev = OLD.rev BEGIN UPDATE payment_milestones SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'payment_milestones' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('payment_milestones', NEW.id, OLD.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "postponements",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"postponements\" (\"rev\" INTEGER NOT NULL DEFAULT 0, \"id\" TEXT NOT NULL, \"entity_type\" TEXT NOT NULL CHECK(\"entity_type\" IN ('invoice', 'milestone')), \"entity_id\" TEXT NOT NULL, \"from_date\" TEXT NOT NULL, \"to_date\" TEXT NOT NULL, \"reason\" TEXT NOT NULL DEFAULT '', \"created_at\" INTEGER NOT NULL, \"updated_at\" INTEGER NOT NULL, \"deleted_at\" INTEGER NULL, PRIMARY KEY (\"id\")) STRICT;"
+        }
+      ]
+    },
+    {
+      "name": "postponements_sync_insert",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER postponements_sync_insert AFTER INSERT ON postponements BEGIN UPDATE postponements SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'postponements' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('postponements', NEW.id, NEW.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "postponements_sync_update",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER postponements_sync_update AFTER UPDATE ON postponements WHEN NEW.rev = OLD.rev BEGIN UPDATE postponements SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'postponements' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('postponements', NEW.id, OLD.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "reminders",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"reminders\" (\"rev\" INTEGER NOT NULL DEFAULT 0, \"id\" TEXT NOT NULL, \"date\" TEXT NOT NULL, \"time\" TEXT NULL, \"text\" TEXT NOT NULL CHECK(LENGTH(TRIM(\"text\")) > 0), \"client_id\" TEXT NULL REFERENCES clients (id) ON DELETE SET NULL, \"entity_type\" TEXT NULL CHECK(\"entity_type\" IN ('invoice', 'contract')), \"entity_id\" TEXT NULL, \"done_at\" INTEGER NULL, \"deleted_at\" INTEGER NULL, \"is_demo\" INTEGER NOT NULL DEFAULT 0 CHECK (\"is_demo\" IN (0, 1)), \"created_at\" INTEGER NOT NULL, \"updated_at\" INTEGER NOT NULL, PRIMARY KEY (\"id\")) STRICT;"
+        }
+      ]
+    },
+    {
+      "name": "reminders_sync_insert",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER reminders_sync_insert AFTER INSERT ON reminders BEGIN UPDATE reminders SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'reminders' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('reminders', NEW.id, NEW.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "reminders_sync_update",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER reminders_sync_update AFTER UPDATE ON reminders WHEN NEW.rev = OLD.rev BEGIN UPDATE reminders SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = 'reminders' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES ('reminders', NEW.id, OLD.rev + 1, NEW.updated_at);END"
+        }
+      ]
+    },
+    {
+      "name": "invoices_client",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX invoices_client ON invoices (client_id)"
+        }
+      ]
+    },
+    {
+      "name": "invoices_due",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX invoices_due ON invoices (due_date)"
+        }
+      ]
+    },
+    {
+      "name": "invoices_paid",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX invoices_paid ON invoices (paid_date)"
+        }
+      ]
+    },
+    {
+      "name": "sections_invoice",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX sections_invoice ON sections (invoice_id)"
+        }
+      ]
+    },
+    {
+      "name": "items_section",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX items_section ON items (section_id)"
+        }
+      ]
+    },
+    {
+      "name": "library_clauses_template",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX library_clauses_template ON library_clauses (template_id)"
+        }
+      ]
+    },
+    {
+      "name": "contracts_client",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX contracts_client ON contracts (client_id)"
+        }
+      ]
+    },
+    {
+      "name": "contracts_parent",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX contracts_parent ON contracts (parent_id)"
+        }
+      ]
+    },
+    {
+      "name": "contract_clauses_contract",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX contract_clauses_contract ON contract_clauses (contract_id)"
+        }
+      ]
+    },
+    {
+      "name": "scope_items_contract",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX scope_items_contract ON scope_items (contract_id)"
+        }
+      ]
+    },
+    {
+      "name": "milestones_contract",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX milestones_contract ON payment_milestones (contract_id)"
+        }
+      ]
+    },
+    {
+      "name": "milestones_invoice",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX milestones_invoice ON payment_milestones (invoice_id)"
+        }
+      ]
+    },
+    {
+      "name": "milestones_due",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX milestones_due ON payment_milestones (due_date)"
+        }
+      ]
+    },
+    {
+      "name": "postponements_entity",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX postponements_entity ON postponements (entity_id)"
+        }
+      ]
+    },
+    {
+      "name": "reminders_date",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX reminders_date ON reminders (date)"
+        }
+      ]
+    },
+    {
+      "name": "clients_soft_delete_guard",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER clients_soft_delete_guard BEFORE UPDATE OF deleted_at ON clients WHEN NEW.deleted_at IS NOT NULL AND(EXISTS (SELECT 1 FROM invoices WHERE client_id = NEW.id AND deleted_at IS NULL) OR EXISTS (SELECT 1 FROM contracts WHERE client_id = NEW.id AND deleted_at IS NULL))BEGIN SELECT RAISE (ABORT, 'client has live documents');END"
+        }
+      ]
+    },
+    {
+      "name": "invoices_revive_guard",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER invoices_revive_guard BEFORE UPDATE OF deleted_at ON invoices WHEN NEW.deleted_at IS NULL AND EXISTS (SELECT 1 FROM clients WHERE id = NEW.client_id AND deleted_at IS NOT NULL) BEGIN SELECT RAISE (ABORT, 'client is deleted');END"
+        }
+      ]
+    },
+    {
+      "name": "invoices_insert_guard",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER invoices_insert_guard BEFORE INSERT ON invoices WHEN NEW.deleted_at IS NULL AND EXISTS (SELECT 1 FROM clients WHERE id = NEW.client_id AND deleted_at IS NOT NULL) BEGIN SELECT RAISE (ABORT, 'client is deleted');END"
+        }
+      ]
+    },
+    {
+      "name": "contracts_revive_guard",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER contracts_revive_guard BEFORE UPDATE OF deleted_at ON contracts WHEN NEW.deleted_at IS NULL AND EXISTS (SELECT 1 FROM clients WHERE id = NEW.client_id AND deleted_at IS NOT NULL) BEGIN SELECT RAISE (ABORT, 'client is deleted');END"
+        }
+      ]
+    },
+    {
+      "name": "contracts_insert_guard",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER contracts_insert_guard BEFORE INSERT ON contracts WHEN NEW.deleted_at IS NULL AND EXISTS (SELECT 1 FROM clients WHERE id = NEW.client_id AND deleted_at IS NOT NULL) BEGIN SELECT RAISE (ABORT, 'client is deleted');END"
+        }
+      ]
+    }
+  ]
+}

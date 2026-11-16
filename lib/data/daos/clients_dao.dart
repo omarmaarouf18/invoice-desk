@@ -143,6 +143,7 @@ class ClientsDao extends DatabaseAccessor<AppDatabase> with _$ClientsDaoMixin {
         address: Value(c.address.trim()),
         representative: Value(c.representative.trim()),
         representativeTitle: Value(c.representativeTitle.trim()),
+        isDemo: Value(c.isDemo),
         createdAt: existing?.createdAt ?? now,
         updatedAt: now,
       ),
@@ -172,5 +173,6 @@ class ClientsDao extends DatabaseAccessor<AppDatabase> with _$ClientsDaoMixin {
     address: r.address,
     representative: r.representative,
     representativeTitle: r.representativeTitle,
+    isDemo: r.isDemo,
   );
 }

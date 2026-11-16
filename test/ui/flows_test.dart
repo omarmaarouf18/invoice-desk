@@ -8,6 +8,7 @@ import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart';
 
 import '../helpers/harness.dart';
+import '../helpers/legacy_seed.dart';
 
 void main() {
   setUpAll(loadAppFonts);
@@ -16,7 +17,7 @@ void main() {
   late ProviderContainer c;
 
   Future<void> start(WidgetTester tester) async {
-    db = AppDatabase.memory(seed: true);
+    db = AppDatabase.memory(seeder: legacySeed);
     addTearDown(db.close);
     await drive(tester, db.settingsDao.get);
     c = await pumpShell(tester, db);
@@ -110,7 +111,7 @@ void main() {
     await tester.enterText(find.byType(TextField).first, '0001');
     await tester.pump(const Duration(milliseconds: 150));
     await settle(tester);
-    expect(find.text('EL METR Academy'), findsOneWidget);
+    expect(find.text('Sample Academy'), findsOneWidget);
   });
 
   testWidgets('delete is soft and undoable', (tester) async {

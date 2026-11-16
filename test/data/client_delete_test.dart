@@ -10,6 +10,7 @@ import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/sidebar/sidebar_model.dart';
 import 'package:sqlite3/sqlite3.dart' show SqliteException;
+import '../helpers/legacy_seed.dart';
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -17,7 +18,7 @@ void main() {
   late Client academy;
 
   setUp(() async {
-    db = AppDatabase.memory(seed: true);
+    db = AppDatabase.memory(seeder: legacySeed);
     academy = (await db.clientsDao.getAll()).single;
   });
   tearDown(() => db.close());

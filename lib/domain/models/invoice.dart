@@ -179,6 +179,8 @@ class Invoice {
     this.sections = const [],
     this.createdAt = 0,
     this.updatedAt = 0,
+    this.isDemo = false,
+    this.postponedTo,
   });
 
   /// Stable UUID.
@@ -235,6 +237,16 @@ class Invoice {
   /// UTC epoch ms of the last save.
   final int updatedAt;
 
+  /// Part of the demo set (cleared when the user saves the invoice).
+  final bool isDemo;
+
+  /// The latest postponement's new date; read from the postponement
+  /// history, never saved with the invoice.
+  final CalendarDate? postponedTo;
+
+  /// The day it is due: [postponedTo] when postponed, else [dueDate].
+  CalendarDate get effectiveDueDate => postponedTo ?? dueDate;
+
   /// A copy with the given fields replaced; [paidDate] takes a function
   /// so it can be cleared.
   Invoice copyWith({
@@ -256,6 +268,8 @@ class Invoice {
     List<InvoiceSection>? sections,
     int? createdAt,
     int? updatedAt,
+    bool? isDemo,
+    CalendarDate? Function()? postponedTo,
   }) => Invoice(
     id: id ?? this.id,
     clientId: clientId ?? this.clientId,
@@ -275,5 +289,7 @@ class Invoice {
     sections: sections ?? this.sections,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    isDemo: isDemo ?? this.isDemo,
+    postponedTo: postponedTo != null ? postponedTo() : this.postponedTo,
   );
 }

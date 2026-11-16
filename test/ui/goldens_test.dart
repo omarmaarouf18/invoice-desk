@@ -11,12 +11,13 @@ import 'package:invoice_desk/features/contracts/contract_controller.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart';
 
 import '../helpers/harness.dart';
+import '../helpers/legacy_seed.dart';
 
 void main() {
   setUpAll(loadAppFonts);
 
   /// Seed data plus a contract (with a milestone invoice and an amendment)
-  /// for EL METR Academy. [complete] fills every variable.
+  /// for Sample Academy. [complete] fills every variable.
   Future<ProviderContainer> withContracts(
     WidgetTester tester,
     AppDatabase db,
@@ -79,7 +80,7 @@ void main() {
     final name = mode.name;
 
     testWidgets('seed: sidebar + editor ($name)', (tester) async {
-      final db = AppDatabase.memory(seed: true);
+      final db = AppDatabase.memory(seeder: legacySeed);
       addTearDown(() => tester.runAsync(db.close));
       await tester.runAsync(() => db.settingsDao.get());
       final c = await pumpShell(tester, db, mode: mode);
@@ -106,7 +107,7 @@ void main() {
     testWidgets('contracts: sidebar + signed contract editor ($name)', (
       tester,
     ) async {
-      final db = AppDatabase.memory(seed: true);
+      final db = AppDatabase.memory(seeder: legacySeed);
       addTearDown(() => tester.runAsync(db.close));
       await withContracts(tester, db, mode, complete: true);
       await expectLater(
@@ -118,7 +119,7 @@ void main() {
     testWidgets('contracts: variables panel with missing ones ($name)', (
       tester,
     ) async {
-      final db = AppDatabase.memory(seed: true);
+      final db = AppDatabase.memory(seeder: legacySeed);
       addTearDown(() => tester.runAsync(db.close));
       await withContracts(tester, db, mode, complete: false);
       await tester.tap(find.byKey(const ValueKey('missing-variables')));

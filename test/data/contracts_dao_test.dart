@@ -11,6 +11,7 @@ import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/sidebar/sidebar_model.dart';
 
 import '../helpers/contract_fixtures.dart';
+import '../helpers/legacy_seed.dart';
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -19,7 +20,7 @@ void main() {
   late ClauseTemplate templateA;
 
   setUp(() async {
-    db = AppDatabase.memory(seed: true);
+    db = AppDatabase.memory(seeder: legacySeed);
     client = (await db.clientsDao.getAll()).single;
     templateA = (await db.libraryDao.getAll()).firstWhere(
       (t) => t.name == developmentTemplateName,

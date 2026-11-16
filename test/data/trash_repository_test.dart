@@ -12,6 +12,7 @@ import 'package:invoice_desk/domain/contract_models.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/domain/trash.dart';
 import 'package:path/path.dart' as p;
+import '../helpers/legacy_seed.dart';
 
 var _n = 0;
 
@@ -24,7 +25,7 @@ void main() {
   late Invoice invoice;
 
   setUp(() async {
-    db = AppDatabase.memory(seed: true);
+    db = AppDatabase.memory(seeder: legacySeed);
     dir = await Directory.systemTemp.createTemp('trash');
     trash = TrashRepository(db, BackupService(db, paths: AppPaths(dir)));
     academy = (await db.clientsDao.getAll()).single;
@@ -78,7 +79,7 @@ void main() {
       expect(all.first.label, 'Empty Co');
       final inv = only(all, TrashKind.invoice);
       expect(inv.label, 'OM-2026-0001');
-      expect(inv.clientName, 'EL METR Academy');
+      expect(inv.clientName, 'Sample Academy');
       expect(inv.clientDeleted, isFalse);
       expect(daysUntilPurge(inv.deletedAt, t0), 30);
       expect(
@@ -114,7 +115,7 @@ void main() {
 
     final first = await trash.restore(inv);
     expect(first, isA<NeedsClient>());
-    expect((first as NeedsClient).clientName, 'EL METR Academy');
+    expect((first as NeedsClient).clientName, 'Sample Academy');
     expect(await db.invoicesDao.countLive(), 0);
 
     final second = await trash.restore(inv, withClient: true);

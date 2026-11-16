@@ -77,6 +77,10 @@ class Clients extends Table with SyncRev {
   TextColumn get representativeTitle =>
       text().withDefault(const Constant(''))();
 
+  /// v5: part of the demo set; removed by "حذف البيانات التجريبية" and
+  /// cleared when the user edits the row.
+  BoolColumn get isDemo => boolean().withDefault(const Constant(false))();
+
   @override
   Set<Column<Object>> get primaryKey => {id};
 
@@ -86,6 +90,8 @@ class Clients extends Table with SyncRev {
 
 @DataClassName('InvoiceRow')
 @TableIndex(name: 'invoices_client', columns: {#clientId})
+@TableIndex(name: 'invoices_due', columns: {#dueDate})
+@TableIndex(name: 'invoices_paid', columns: {#paidDate})
 class Invoices extends Table with SyncRev {
   TextColumn get id => text()();
   TextColumn get clientId =>
@@ -112,6 +118,10 @@ class Invoices extends Table with SyncRev {
   TextColumn get scopeDelivered => text().withDefault(const Constant(''))();
   TextColumn get scopeWarranty => text().withDefault(const Constant(''))();
   IntColumn get deletedAt => integer().nullable()();
+
+  /// v5: part of the demo set; removed by "حذف البيانات التجريبية" and
+  /// cleared when the user edits the row.
+  BoolColumn get isDemo => boolean().withDefault(const Constant(false))();
   IntColumn get createdAt => integer()();
   IntColumn get updatedAt => integer()();
 
@@ -188,6 +198,10 @@ class ClauseTemplates extends Table with SyncRev {
 
   /// v4: tombstone instead of a hard delete.
   IntColumn get deletedAt => integer().nullable()();
+
+  /// v5: part of the demo set; removed by "حذف البيانات التجريبية" and
+  /// cleared when the user edits the row.
+  BoolColumn get isDemo => boolean().withDefault(const Constant(false))();
   IntColumn get createdAt => integer()();
   IntColumn get updatedAt => integer()();
 
@@ -284,6 +298,10 @@ class Contracts extends Table with SyncRev {
   /// JSON list of `{at, event}` entries (unlocks, status changes).
   TextColumn get history => text().withDefault(const Constant('[]'))();
   IntColumn get deletedAt => integer().nullable()();
+
+  /// v5: part of the demo set; removed by "حذف البيانات التجريبية" and
+  /// cleared when the user edits the row.
+  BoolColumn get isDemo => boolean().withDefault(const Constant(false))();
   IntColumn get createdAt => integer()();
   IntColumn get updatedAt => integer()();
 
@@ -344,6 +362,7 @@ class ScopeItems extends Table with SyncRev, ChildSync {
 @DataClassName('MilestoneRow')
 @TableIndex(name: 'milestones_contract', columns: {#contractId})
 @TableIndex(name: 'milestones_invoice', columns: {#invoiceId})
+@TableIndex(name: 'milestones_due', columns: {#dueDate})
 class PaymentMilestones extends Table with SyncRev, ChildSync {
   TextColumn get id => text()();
   TextColumn get contractId =>
@@ -362,6 +381,70 @@ class PaymentMilestones extends Table with SyncRev, ChildSync {
     #id,
     onDelete: KeyAction.setNull,
   )();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  bool get isStrict => true;
+}
+
+// ── v5: calendar ───────────────────────────────────────────────────────
+
+/// A history of moved due dates: each row moves an invoice's or a payment
+/// milestone's due date from [fromDate] to [toDate]. The latest row (by
+/// createdAt) is the effective date; the original is never overwritten.
+@DataClassName('PostponementRow')
+@TableIndex(name: 'postponements_entity', columns: {#entityId})
+class Postponements extends Table with SyncRev {
+  TextColumn get id => text()();
+  TextColumn get entityType =>
+      text().check(entityType.isIn(const ['invoice', 'milestone']))();
+
+  /// Invoice or milestone id. Not a foreign key: one column, two tables.
+  TextColumn get entityId => text()();
+  TextColumn get fromDate => text()();
+  TextColumn get toDate => text()();
+  TextColumn get reason => text().withDefault(const Constant(''))();
+  IntColumn get createdAt => integer()();
+  IntColumn get updatedAt => integer()();
+  IntColumn get deletedAt => integer().nullable()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  bool get isStrict => true;
+}
+
+/// A manual calendar reminder, optionally at a time and about a client or
+/// a document.
+@DataClassName('ReminderRow')
+@TableIndex(name: 'reminders_date', columns: {#date})
+class Reminders extends Table with SyncRev {
+  TextColumn get id => text()();
+  TextColumn get date => text()();
+
+  /// `HH:MM`, 24-hour; null for an all-day reminder.
+  TextColumn get time => text().nullable()();
+  TextColumn get body =>
+      text().named('text').check(body.trim().length.isBiggerThanValue(0))();
+  TextColumn get clientId => text().nullable().references(
+    Clients,
+    #id,
+    onDelete: KeyAction.setNull,
+  )();
+
+  /// `invoice` or `contract`, with [entityId]; both null when unlinked.
+  TextColumn get entityType => text().nullable().check(
+    entityType.isIn(const ['invoice', 'contract']),
+  )();
+  TextColumn get entityId => text().nullable()();
+  IntColumn get doneAt => integer().nullable()();
+  IntColumn get deletedAt => integer().nullable()();
+  BoolColumn get isDemo => boolean().withDefault(const Constant(false))();
+  IntColumn get createdAt => integer()();
+  IntColumn get updatedAt => integer()();
 
   @override
   Set<Column<Object>> get primaryKey => {id};

@@ -39,9 +39,10 @@ extension InvoiceDerived on Invoice {
   /// Recomputed on every call; cheap for invoice-sized data.
   InvoiceTotals get totals => InvoiceTotals.of(this);
 
-  /// Sent and due before [today]; due today is not overdue yet.
+  /// Sent and due before [today]; due today is not overdue yet. Measured
+  /// against the effective (postponed) due date.
   bool isOverdue(CalendarDate today) =>
-      status == InvoiceStatus.sent && dueDate.isBefore(today);
+      status == InvoiceStatus.sent && effectiveDueDate.isBefore(today);
 
   /// Sent and not paid: counts towards "غير مدفوع".
   bool get isUnpaid => status == InvoiceStatus.sent;

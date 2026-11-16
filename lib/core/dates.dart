@@ -59,6 +59,29 @@ class CalendarDate implements Comparable<CalendarDate> {
     other.day,
   ).difference(DateTime.utc(year, month, day)).inDays;
 
+  /// This day moved by [months]; the day is clamped to the target month's
+  /// length (31 Jan + 1 month = 28 or 29 Feb).
+  CalendarDate addMonths(int months) {
+    final index = year * 12 + (month - 1) + months;
+    final y = index ~/ 12;
+    final m = index % 12 + 1;
+    final last = DateTime.utc(y, m + 1, 0).day;
+    return CalendarDate(y, m, day > last ? last : day);
+  }
+
+  /// ISO weekday: 1 = Monday … 7 = Sunday.
+  int get weekday => DateTime.utc(year, month, day).weekday;
+
+  /// The first day of this month.
+  CalendarDate get firstOfMonth => CalendarDate(year, month, 1);
+
+  /// Days in this month.
+  int get daysInMonth => DateTime.utc(year, month + 1, 0).day;
+
+  /// Not before [start] and not after [end].
+  bool isWithin(CalendarDate start, CalendarDate end) =>
+      compareTo(start) >= 0 && compareTo(end) <= 0;
+
   /// `YYYY-MM-DD`, the storage format (sorts as text).
   String toIso() =>
       '${year.toString().padLeft(4, '0')}-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}';

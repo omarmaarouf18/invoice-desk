@@ -11,11 +11,11 @@ import 'generated/schema.dart';
 /// section and an item.
 void insertV1Data(sql.Database raw) => raw
   ..execute(
-    "INSERT INTO settings (id, name, invoice_prefix) VALUES (1, 'Omar', 'OM')",
+    "INSERT INTO settings (id, name, invoice_prefix) VALUES (1, 'Provider', 'OM')",
   )
   ..execute(
     'INSERT INTO clients (id, name, phone, created_at, updated_at, archived) '
-    "VALUES ('c1', 'EL METR Academy', '0122', 1, 2, 0), "
+    "VALUES ('c1', 'Sample Academy', '0122', 1, 2, 0), "
     "('c2', 'Empty Co', '', 1, 1, 1)",
   )
   ..execute(
@@ -51,7 +51,7 @@ void main() {
 
   Future<void> expectCarriedOver(AppDatabase db) async {
     final clients = await db.clientsDao.getAll();
-    expect(clients.map((c) => c.name), ['EL METR Academy', 'Empty Co']);
+    expect(clients.map((c) => c.name), ['Sample Academy', 'Empty Co']);
     expect(clients.last.archived, isTrue);
     expect(clients.first.legalName, '');
     final rows = await (db.select(
@@ -65,7 +65,7 @@ void main() {
     expect(inv.paidDate?.toIso(), '2026-10-01');
     expect(inv.sections.single.items.single.unitPriceMinor, 150000);
     final settings = await db.settingsDao.get();
-    expect(settings.name, 'Omar');
+    expect(settings.name, 'Provider');
     expect(settings.contractPrefix, 'CT');
     expect(settings.quotePrefix, 'QT');
 
@@ -239,6 +239,79 @@ void main() {
         (await db.contractsDao.getById('k1'))!.milestones.single.percentBp,
         10000,
       );
+    },
+  );
+
+  test(
+    'v4 → v5: real rows stay real, calendar tables are sync-ready',
+    () async {
+      final schema = await verifier.schemaAt(4);
+      insertV1Data(schema.rawDatabase);
+      schema.rawDatabase.execute(
+        'INSERT INTO contracts (id, client_id, number, series, year, seq, '
+        'kind, issue_date, status, currency, created_at, updated_at) VALUES '
+        "('k1', 'c1', 'CT-2026-0001', 'contract', 2026, 1, 'contract', "
+        "'2026-11-15', 'signed', 'EGP', 1, 3)",
+      );
+      final db = AppDatabase(schema.newConnection());
+      addTearDown(db.close);
+      await verifier.migrateAndValidate(db, AppDatabase.currentSchemaVersion);
+
+      Future<int> one(String sql) async =>
+          (await db.customSelect(sql).getSingle()).data.values.first! as int;
+      for (final t in [
+        'clients',
+        'invoices',
+        'contracts',
+        'clause_templates',
+      ]) {
+        expect(
+          await one('SELECT COUNT(*) FROM $t WHERE is_demo = 1'),
+          0,
+          reason: t,
+        );
+      }
+      for (final i in [
+        'invoices_due',
+        'invoices_paid',
+        'milestones_due',
+        'postponements_entity',
+        'reminders_date',
+      ]) {
+        expect(
+          await one(
+            "SELECT COUNT(*) FROM sqlite_master WHERE type = 'index' "
+            "AND name = '$i'",
+          ),
+          1,
+          reason: i,
+        );
+      }
+      // The new tables are sync-ready: writes bump rev and fill the outbox.
+      await db.customStatement(
+        'INSERT INTO reminders (id, date, text, created_at, updated_at) '
+        "VALUES ('r1', '2026-11-20', 'call', 1, 1)",
+      );
+      await db.customStatement(
+        'INSERT INTO postponements (id, entity_type, entity_id, from_date, '
+        "to_date, created_at, updated_at) VALUES ('p1', 'invoice', 'i1', "
+        "'2026-10-14', '2026-11-30', 1, 1)",
+      );
+      expect(await one("SELECT rev FROM reminders WHERE id = 'r1'"), 1);
+      expect(
+        await one(
+          'SELECT COUNT(*) FROM outbox WHERE entity IN '
+          "('reminders', 'postponements')",
+        ),
+        2,
+      );
+      // Old data reads the same, now with the effective due date.
+      final inv = (await db.invoicesDao.getAll()).single;
+      expect(inv.number, 'OM-2026-0001');
+      expect(inv.isDemo, isFalse);
+      expect(inv.postponedTo?.toIso(), '2026-11-30');
+      expect(inv.dueDate.toIso(), '2026-10-14');
+      expect((await db.contractsDao.getById('k1'))!.isDemo, isFalse);
     },
   );
 }

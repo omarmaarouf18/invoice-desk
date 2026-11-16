@@ -8,6 +8,7 @@ mixin _$InvoicesDaoMixin on DatabaseAccessor<AppDatabase> {
   $InvoicesTable get invoices => attachedDatabase.invoices;
   $SectionsTable get sections => attachedDatabase.sections;
   $ItemsTable get items => attachedDatabase.items;
+  $PostponementsTable get postponements => attachedDatabase.postponements;
   InvoicesDaoManager get managers => InvoicesDaoManager(this);
 }
 
@@ -22,4 +23,6 @@ class InvoicesDaoManager {
       $$SectionsTableTableManager(_db.attachedDatabase, _db.sections);
   $$ItemsTableTableManager get items =>
       $$ItemsTableTableManager(_db.attachedDatabase, _db.items);
+  $$PostponementsTableTableManager get postponements =>
+      $$PostponementsTableTableManager(_db.attachedDatabase, _db.postponements);
 }

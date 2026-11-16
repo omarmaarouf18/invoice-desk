@@ -5,6 +5,7 @@ import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/pdf/invoice_pdf.dart';
+import '../helpers/legacy_seed.dart';
 
 ByteData _font(String w) => ByteData.sublistView(
   File('assets/fonts/IBMPlexSansArabic-$w.ttf').readAsBytesSync(),
@@ -20,7 +21,7 @@ void main() {
   );
 
   setUpAll(() async {
-    final db = AppDatabase.memory(seed: true);
+    final db = AppDatabase.memory(seeder: legacySeed);
     final inv = (await db.invoicesDao.getAll()).single;
     data = InvoicePdfData(
       invoice: inv,

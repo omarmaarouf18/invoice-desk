@@ -5,6 +5,7 @@ import 'package:invoice_desk/account/account.dart';
 import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/sync/sync.dart';
+import '../helpers/legacy_seed.dart';
 
 /// v4 sync seams: rev, outbox, tombstones, device id, local/no-op services.
 void main() {
@@ -13,7 +14,7 @@ void main() {
   late Invoice inv;
 
   setUp(() async {
-    db = AppDatabase.memory(seed: true);
+    db = AppDatabase.memory(seeder: legacySeed);
     inv = (await db.invoicesDao.getAll()).single;
   });
   tearDown(() => db.close());

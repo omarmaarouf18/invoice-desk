@@ -112,7 +112,9 @@ class ContractsDao extends DatabaseAccessor<AppDatabase>
       ..where(
         contracts.series.equals(series.dbValue) &
             contracts.year.equals(year) &
-            contracts.amendmentNo.equals(0),
+            contracts.amendmentNo.equals(0) &
+            // The demo set numbers itself apart (DEMO-…, seq 9001+).
+            contracts.number.like('DEMO-%').not(),
       );
     return ((await q.getSingle()).read(m) ?? 0) + 1;
   }
@@ -180,6 +182,7 @@ class ContractsDao extends DatabaseAccessor<AppDatabase>
         history: Value(
           jsonEncode([for (final e in c.history) e.toJson()]),
         ),
+        isDemo: Value(c.isDemo),
         createdAt: c.createdAt == 0 ? now : c.createdAt,
         updatedAt: now,
       ),
@@ -334,6 +337,7 @@ class ContractsDao extends DatabaseAccessor<AppDatabase>
           invoiceId: x.invoiceId,
         ),
     ],
+    isDemo: r.isDemo,
     createdAt: r.createdAt,
     updatedAt: r.updatedAt,
   );

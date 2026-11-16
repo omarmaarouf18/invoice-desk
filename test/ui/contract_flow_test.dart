@@ -12,6 +12,7 @@ import 'package:invoice_desk/features/contracts/contract_controller.dart';
 import 'package:invoice_desk/features/sidebar/sidebar.dart';
 
 import '../helpers/harness.dart';
+import '../helpers/legacy_seed.dart';
 
 void main() {
   setUpAll(loadAppFonts);
@@ -24,7 +25,7 @@ void main() {
   Contract open() => c.read(contractProvider).contract!;
 
   Future<void> start(WidgetTester tester) async {
-    db = AppDatabase.memory(seed: true);
+    db = AppDatabase.memory(seeder: legacySeed);
     addTearDown(db.close);
     client = (await drive(tester, db.clientsDao.getAll)).single;
     c = await pumpShell(tester, db);
@@ -86,7 +87,7 @@ void main() {
     tester,
   ) async {
     await start(tester);
-    await tester.tap(find.text('EL METR Academy'), buttons: kSecondaryButton);
+    await tester.tap(find.text('Sample Academy'), buttons: kSecondaryButton);
     await settle(tester);
     await tester.tap(find.text('عقد جديد').last);
     await settle(tester);

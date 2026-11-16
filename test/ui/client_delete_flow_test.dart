@@ -9,6 +9,7 @@ import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/domain/models.dart';
 
 import '../helpers/harness.dart';
+import '../helpers/legacy_seed.dart';
 
 void main() {
   setUpAll(loadAppFonts);
@@ -17,7 +18,7 @@ void main() {
   late ProviderContainer c;
 
   Future<void> start(WidgetTester tester) async {
-    db = AppDatabase.memory(seed: true);
+    db = AppDatabase.memory(seeder: legacySeed);
     addTearDown(db.close);
     await drive(
       tester,
@@ -77,8 +78,8 @@ void main() {
       tester,
     ) async {
       await start(tester);
-      await menu(tester, 'EL METR Academy', 'حذف العميل');
-      expect(find.text('EL METR Academy عنده فواتير'), findsOneWidget);
+      await menu(tester, 'Sample Academy', 'حذف العميل');
+      expect(find.text('Sample Academy عنده فواتير'), findsOneWidget);
       expect(find.textContaining('1 فاتورة'), findsWidgets);
       expect(
         find.textContaining(r'غير المدفوع: 22,000 EGP + $255.50'),
@@ -86,7 +87,7 @@ void main() {
       );
 
       await tapAndSettle(tester, find.byKey(const ValueKey('archive-client')));
-      expect(find.text('EL METR Academy'), findsNothing);
+      expect(find.text('Sample Academy'), findsNothing);
       expect(find.text('OM-2026-0001'), findsNothing);
       expect(await drive(tester, db.invoicesDao.countLive), 1);
 
@@ -94,20 +95,20 @@ void main() {
       await tester.enterText(find.byType(TextField).first, '0001');
       await tester.pump(const Duration(milliseconds: 150));
       await settle(tester);
-      expect(find.text('EL METR Academy'), findsNothing);
+      expect(find.text('Sample Academy'), findsNothing);
       await tester.enterText(find.byType(TextField).first, '');
       await tester.pump(const Duration(milliseconds: 150));
       await settle(tester);
 
       await tapAndSettle(tester, find.widgetWithText(ChoiceChip, 'مؤرشف'));
-      expect(find.text('EL METR Academy'), findsOneWidget);
+      expect(find.text('Sample Academy'), findsOneWidget);
       expect(find.text('OM-2026-0001'), findsOneWidget);
       expect(find.text('Empty Co'), findsNothing);
 
-      await menu(tester, 'EL METR Academy', 'إلغاء الأرشفة');
-      expect(find.text('EL METR Academy'), findsNothing);
+      await menu(tester, 'Sample Academy', 'إلغاء الأرشفة');
+      expect(find.text('Sample Academy'), findsNothing);
       await tapAndSettle(tester, find.widgetWithText(ChoiceChip, 'الكل'));
-      expect(find.text('EL METR Academy'), findsOneWidget);
+      expect(find.text('Sample Academy'), findsOneWidget);
     },
   );
 
@@ -116,7 +117,7 @@ void main() {
     (tester) async {
       await start(tester);
       final backups = c.read(appPathsProvider).defaultBackupDir;
-      await menu(tester, 'EL METR Academy', 'حذف العميل');
+      await menu(tester, 'Sample Academy', 'حذف العميل');
       await tapAndSettle(
         tester,
         find.byKey(const ValueKey('delete-client-and-invoices')),
@@ -130,7 +131,7 @@ void main() {
       await tester.enterText(field, 'EL METR');
       await tester.pump();
       expect(confirm().onPressed, isNull);
-      await tester.enterText(field, ' EL METR Academy ');
+      await tester.enterText(field, ' Sample Academy ');
       await tester.pump();
       expect(confirm().onPressed, isNotNull);
 
@@ -149,9 +150,9 @@ void main() {
 
       expect(await drive(tester, db.clientsDao.getAll), hasLength(1));
       expect(await drive(tester, db.invoicesDao.countLive), 0);
-      expect(find.text('EL METR Academy'), findsNothing);
+      expect(find.text('Sample Academy'), findsNothing);
       expect(
-        find.text('اتحذف EL METR Academy و1 فاتورة — تراجع، أو من المحذوفات'),
+        find.text('اتحذف Sample Academy و1 فاتورة — تراجع، أو من المحذوفات'),
         findsOneWidget,
       );
 
@@ -160,7 +161,7 @@ void main() {
       final restored = await drive(tester, db.invoicesDao.getAll);
       expect(restored.single.number, 'OM-2026-0001');
       expect(restored.single.sections, hasLength(2));
-      expect(find.text('EL METR Academy'), findsOneWidget);
+      expect(find.text('Sample Academy'), findsOneWidget);
     },
   );
 }

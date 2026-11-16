@@ -3,12 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invoice_desk/data/app_paths.dart';
 import 'package:invoice_desk/data/backup.dart';
 import 'package:invoice_desk/data/db.dart';
+import 'package:invoice_desk/data/repositories/calendar_repository.dart';
 import 'package:invoice_desk/data/repositories/client_repository.dart';
 import 'package:invoice_desk/data/repositories/contract_repository.dart';
+import 'package:invoice_desk/data/repositories/demo_repository.dart';
 import 'package:invoice_desk/data/repositories/invoice_repository.dart';
 import 'package:invoice_desk/data/repositories/library_repository.dart';
 import 'package:invoice_desk/data/repositories/settings_repository.dart';
 import 'package:invoice_desk/data/repositories/trash_repository.dart';
+import 'package:invoice_desk/domain/calendar/models.dart';
 import 'package:invoice_desk/domain/contract_models.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/domain/trash.dart';
@@ -107,4 +110,32 @@ final libraryProvider = StreamProvider<List<ClauseTemplate>>(
 /// "المحذوفات", newest deletion first.
 final trashProvider = StreamProvider<List<TrashEntry>>(
   (ref) => ref.watch(trashRepositoryProvider).watch(),
+);
+
+final calendarRepositoryProvider = Provider<CalendarRepository>(
+  (ref) => CalendarRepository(
+    ref.watch(databaseProvider),
+    clock: ref.watch(clockProvider),
+  ),
+);
+
+final demoRepositoryProvider = Provider<DemoRepository>(
+  (ref) => DemoRepository(
+    ref.watch(databaseProvider),
+    ref.watch(backupServiceProvider),
+    clock: ref.watch(clockProvider),
+  ),
+);
+
+final postponementsProvider = StreamProvider<List<Postponement>>(
+  (ref) => ref.watch(calendarRepositoryProvider).watchPostponements(),
+);
+
+final remindersProvider = StreamProvider<List<Reminder>>(
+  (ref) => ref.watch(calendarRepositoryProvider).watchReminders(),
+);
+
+/// Settings → البيانات التجريبية: show "إضافة" or "حذف".
+final hasDemoProvider = StreamProvider<bool>(
+  (ref) => ref.watch(demoRepositoryProvider).watchHasDemo(),
 );

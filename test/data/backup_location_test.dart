@@ -43,7 +43,7 @@ void main() {
       expect(backup, isNotNull);
       expect(p.isWithin(tmp.path, backup!.path), isTrue);
       expect(backup.existsSync(), isTrue);
-      expect(BackupService.inspect(backup).invoiceCount, 1);
+      expect(BackupService.inspect(backup).invoiceCount, 14); // the demo set
 
       // Second start the same day: not due again.
       expect(await startupHousekeeping(db, paths), isNull);

@@ -38,7 +38,8 @@ class InvoiceRepository with ClockedRepository {
   /// its year/sequence is taken.
   Future<SaveResult> save(Invoice inv) => at(() async {
     try {
-      await _dao.saveInvoice(inv);
+      // A user save adopts a demo row: it is real data from now on.
+      await _dao.saveInvoice(inv.copyWith(isDemo: false));
       return const Saved();
     } on DuplicateInvoiceNumber catch (e) {
       return DuplicateNumber(e.number);
