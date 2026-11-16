@@ -13,16 +13,17 @@ Run everything the way CI does:
 | `test/core/`, `test/domain/` | Pure logic: money, dates, totals, numbering, variables, milestones, diff |
 | `test/data/` | Repositories and DAOs on in-memory drift (`AppDatabase.memory()`): deletes, trash, backups, restore of older backups, outbox |
 | `test/drift/app_db/` | Migration tests against the committed snapshots (generated helpers in `generated/`) |
-| `test/pdf/` | PDF smoke tests: page counts, footer on every page, amber highlights, watermark |
+| `test/pdf/` | PDF smoke tests (page counts, footer on every page, amber highlights, watermark), content goldens in `test/pdf/goldens/`, and the RTL word-gap measurement |
 | `test/ui/` | Widget flows through the real shell (`pumpShell`) and goldens |
-| `test/architecture/` | The layering rule |
-| `test/helpers/` | `harness.dart` (fonts, `pumpShell`, `drive`, `settle`) and `contract_fixtures.dart` (fake "Acme Studio" data) |
+| `test/architecture/` | The layering rule, and the guard for the vendored `pdf` package (`third_party/pdf`) |
+| `test/helpers/` | `harness.dart` (fonts, `pumpShell`, `drive`, `settle`), `contract_fixtures.dart` and `sample_documents.dart` (fake "Sample Studio" / "Acme Studio" data), `pdf_golden.dart` |
 
 Widget tests run in a fake-async zone and drift does real I/O. Await database work with `drive(tester, () => …)` and let streams settle with `settle(tester)`. Pass a fixed `Clock` through `clockProvider` (the harness does) rather than `withClock`: repositories and the backup service use the injected clock.
 
 ## Tags
 
-- `golden`: pixel comparisons against the PNGs in `test/ui/goldens/` and `docs/screenshot.png`. They depend on font rendering, so CI runs them in their own job on a pinned runner.
+- `golden`: pixel comparisons against the PNGs in `test/ui/goldens/` and `docs/screenshot.png`. They depend on font rendering, so CI runs them in their own job on a pinned runner. PDF goldens (`test/pdf/pdf_goldens_test.dart`) share the tag. They compare the inflated page content streams (every glyph run and position) as text, so they don't depend on a rasteriser.
+- `rtl`: the right-to-left PDF checks that guard the vendored `pdf` patch. Run them alone with `--tags rtl`.
 
 Run the suite without them with `--exclude-tags golden`, or only them with `--tags golden`.
 
@@ -34,6 +35,14 @@ A golden should only change because the UI changed on purpose.
 2. Look at `*_isolatedDiff.png` and `*_testImage.png` and confirm the change is the intended one, in the intended region.
 3. Re-run with `--update-goldens`.
 4. Say in the commit message what changed visually and why.
+
+PDF goldens are `.txt` dumps, so the diff shows which runs moved. Render the documents too and look at every page:
+
+```bash
+flutter test --tags golden --dart-define=SAMPLE_PDF_DIR=docs
+```
+
+That writes `docs/sample-invoice.pdf`, `docs/sample-invoice-scope.pdf` and `docs/sample-contract.pdf`, all from fictional data.
 
 Refactors must not change goldens. If one does, find out why before updating it.
 
