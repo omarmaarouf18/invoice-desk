@@ -8,6 +8,7 @@ import 'package:invoice_desk/features/editor/editor_controller.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
 import 'package:invoice_desk/widgets/common.dart';
+import 'package:invoice_desk/widgets/text_direction.dart';
 
 part 'sections/section_editor.dart';
 part 'sections/item_row.dart';

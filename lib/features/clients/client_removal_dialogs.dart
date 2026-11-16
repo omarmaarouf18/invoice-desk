@@ -3,6 +3,7 @@ import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
+import 'package:invoice_desk/widgets/text_direction.dart';
 
 enum ClientRemoval { archive, deleteAll }
 
@@ -127,7 +128,7 @@ class _ConfirmDeleteAllState extends State<_ConfirmDeleteAll> {
                     ),
             ),
             const SizedBox(height: Space.s + 4),
-            TextField(
+            ContentTextField(
               key: const ValueKey('confirm-client-name'),
               controller: _typed,
               autofocus: true,

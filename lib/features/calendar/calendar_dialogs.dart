@@ -4,6 +4,7 @@ import 'package:invoice_desk/domain/calendar/models.dart';
 import 'package:invoice_desk/domain/doc_format.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
+import 'package:invoice_desk/widgets/text_direction.dart';
 
 /// "تأجيل": a new date (prefilled) and a reason. Null when cancelled
 /// (Esc or Cancel).
@@ -77,7 +78,7 @@ class _PostponeDialogState extends State<_PostponeDialog> {
               ),
             ),
             const SizedBox(height: Space.m),
-            TextField(
+            ContentTextField(
               key: const Key('postpone-reason'),
               controller: _reason,
               autofocus: true,
@@ -182,7 +183,7 @@ class _ReminderDialogState extends State<_ReminderDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            TextField(
+            ContentTextField(
               key: const Key('reminder-text'),
               controller: _text,
               autofocus: true,

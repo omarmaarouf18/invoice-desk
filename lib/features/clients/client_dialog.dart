@@ -3,6 +3,7 @@ import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart' show newId;
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
+import 'package:invoice_desk/widgets/text_direction.dart';
 
 /// Create or edit a client. Returns the edited client, or null on cancel.
 /// When editing, [onDelete] adds a "حذف العميل" button; it closes the dialog
@@ -189,7 +190,7 @@ class _Field extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsetsDirectional.only(bottom: Space.m - 4),
-    child: TextField(
+    child: ContentTextField(
       controller: controller,
       autofocus: autofocus,
       textDirection: dir,

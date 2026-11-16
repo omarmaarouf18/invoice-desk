@@ -61,22 +61,23 @@ class _ServiceFieldState extends ConsumerState<_ServiceField> {
         widget.onPicked(s);
         _focus.nextFocus();
       },
-      fieldViewBuilder: (context, controller, focus, onSubmit) => TextField(
-        controller: controller,
-        focusNode: focus,
-        autofocus: widget.autofocus,
-        textInputAction: TextInputAction.next,
-        onChanged: widget.onChanged,
-        onSubmitted: (_) => onSubmit(),
-        decoration: InputDecoration(
-          hintText: l.colService,
-          isDense: true,
-          contentPadding: const EdgeInsetsDirectional.symmetric(
-            horizontal: 8,
-            vertical: 9,
+      fieldViewBuilder: (context, controller, focus, onSubmit) =>
+          ContentTextField(
+            controller: controller,
+            focusNode: focus,
+            autofocus: widget.autofocus,
+            textInputAction: TextInputAction.next,
+            onChanged: widget.onChanged,
+            onSubmitted: (_) => onSubmit(),
+            decoration: InputDecoration(
+              hintText: l.colService,
+              isDense: true,
+              contentPadding: const EdgeInsetsDirectional.symmetric(
+                horizontal: 8,
+                vertical: 9,
+              ),
+            ),
           ),
-        ),
-      ),
       optionsViewBuilder: (context, onSelected, options) => Align(
         alignment: AlignmentDirectional.topStart,
         child: Material(

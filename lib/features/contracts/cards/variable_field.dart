@@ -71,7 +71,7 @@ class _VariableFieldState extends ConsumerState<_VariableField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        TextField(
+        ContentTextField(
           controller: _c,
           focusNode: _focus,
           minLines: widget.multiline ? 3 : 1,

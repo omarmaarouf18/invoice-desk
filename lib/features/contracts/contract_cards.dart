@@ -20,6 +20,7 @@ import 'package:invoice_desk/features/editor/editor_cards.dart' show DateField;
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
 import 'package:invoice_desk/widgets/common.dart';
+import 'package:invoice_desk/widgets/text_direction.dart';
 
 part 'cards/calendar_link.dart';
 part 'cards/lock_banner.dart';

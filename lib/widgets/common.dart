@@ -4,6 +4,7 @@ import 'package:invoice_desk/core/digits.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
+import 'package:invoice_desk/widgets/text_direction.dart';
 
 String statusLabel(BuildContext context, DisplayStatus s) {
   final l = context.l10n;
@@ -228,7 +229,7 @@ class _SyncedTextFieldState extends State<SyncedTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return ContentTextField(
       controller: _c,
       focusNode: _focus,
       autofocus: widget.autofocus,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
+import 'package:invoice_desk/widgets/text_direction.dart';
 
 /// A destructive confirmation: the button stays disabled until [expected]
 /// is typed exactly (surrounding spaces ignored). True when confirmed.
@@ -67,7 +68,7 @@ class _TypedConfirmState extends State<_TypedConfirm> {
           children: [
             Text(widget.body),
             const SizedBox(height: Space.s + 4),
-            TextField(
+            ContentTextField(
               key: const ValueKey('typed-confirm'),
               controller: _typed,
               autofocus: true,

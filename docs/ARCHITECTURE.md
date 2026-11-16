@@ -125,6 +125,7 @@ The UI strings live in ARB files (`lib/l10n/arb/`): `app_ar.arb` is the template
 - **The choice.** Settings → General picks Arabic, English or the system language; the choice is kept per machine in `uiPrefsProvider` (`uiLanguage`). `localeProvider` resolves it against the locales that actually have translations and falls back to Arabic.
 - **Live and whole-app.** The choice is a provider, so the locale, the reading direction and every string change at once, without a restart.
 - **Direction.** Widgets use `EdgeInsetsDirectional`, `AlignmentDirectional` and `TextDirection`-aware icons. Material mirrors its own directional icons (`chevron_left`, `arrow_back`); the few that exist in a left-to-right and a right-to-left variant are picked with `directionalIcon` (`lib/widgets/common.dart`).
+- **The text of a field.** A text field follows its content, not the interface: the first strong character decides the direction, and an empty field follows the interface. The numbers, the codes, the dates and the e-mail addresses keep an explicit direction. `ContentTextField` (`lib/widgets/text_direction.dart`) does it once for every field, and scrolls the field to the start of its text.
 - **Dates.** The UI formats dates with the document formatter (`lib/domain/doc_format.dart`) and the UI language, so an English screen shows "14 Nov 2026" and an Arabic one "١٤ نوفمبر ٢٠٢٦".
 - **Documents are separate.** The language of a document is not the language of the UI ([ADR 0011](adr/0011-document-language-model.md)).
 
