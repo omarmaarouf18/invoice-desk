@@ -19,6 +19,7 @@ All notable changes to Invoice Desk. The format follows [Keep a Changelog](https
 - **A contract page no longer ends with a clause heading.** A heading is now kept with its first paragraph (or first sub-item); a long first block is left splittable so it still fits on a page. The page count of the sample contract is unchanged.
 
 ### Changed
+- **A system language the app does not have now falls back to English**, not to Arabic. A French or German machine opens Invoice Desk in English; Arabic is still followed when the machine asks for it, and an explicit choice the app cannot show still falls back to Arabic (ADR-0011).
 - The Arabic invoice labels are reworded: «لعناية: …», «يُرجى ذكر رقم الفاتورة عند الدفع: …», «المبالغ بالجنيه المصري», «التكرار», «المجموع الفرعي», «غير مطبَّقة», «محفظة إلكترونية» and «حساب بنكي (IBAN)». They are printed on Arabic documents, which arrive with the bilingual documents; the contract labels are unchanged.
 - The calendar's keyboard hint is translated, so it reads correctly in English; the app name stays «Invoice Desk» in every language.
 - Dates in the interface follow the interface language ("14 Nov 2026" in English), while the documents keep their own language.

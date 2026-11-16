@@ -87,7 +87,7 @@ Large feature UIs are split into `part` files per card (for example `features/co
 | `openResolverProvider`, `openMissingProvider` | Variable resolution for the open contract | derived `Provider` |
 | `sidebarDataProvider` | Filtered, grouped sidebar (pure `buildSidebar`) | derived `Provider` |
 | `workspaceProvider`, `previewTabProvider`, `searchQueryProvider`, `sidebarFilterProvider`, `themeModeProvider`, `uiLanguageProvider` | UI state | small `Notifier`s |
-| `localeProvider` | The app locale: the UI-language choice resolved against the translated locales (Arabic fallback) | derived `Provider` |
+| `localeProvider` | The app locale: the UI-language choice resolved against the translated locales (English when the system asks for another language) | derived `Provider` |
 | `accountServiceProvider`, `syncServiceProvider` | Future subscription/sync; local and no-op today | `Provider` |
 
 Widgets read with `ref.watch(x.select(...))` for display and `ref.read(x.notifier)` in callbacks. Each editor has one write path: the controller edits an immutable buffer, and a debounced save goes through a repository.
@@ -122,7 +122,7 @@ Switching documents, exporting and closing the window all flush the buffer first
 
 The UI strings live in ARB files (`lib/l10n/arb/`): `app_ar.arb` is the template and `app_en.arb` follows it key for key. `test/l10n/arb_parity_test.dart` fails when a key, a placeholder or an ICU plural branch is missing in one of them, so a half-translated screen cannot slip through.
 
-- **The choice.** Settings → General picks Arabic, English or the system language; the choice is kept per machine in `uiPrefsProvider` (`uiLanguage`). `localeProvider` resolves it against the locales that actually have translations and falls back to Arabic.
+- **The choice.** Settings → General picks Arabic, English or the system language; the choice is kept per machine in `uiPrefsProvider` (`uiLanguage`). `localeProvider` resolves it against the locales that actually have translations: a system language the app does not have falls back to English.
 - **Live and whole-app.** The choice is a provider, so the locale, the reading direction and every string change at once, without a restart.
 - **Direction.** Widgets use `EdgeInsetsDirectional`, `AlignmentDirectional` and `TextDirection`-aware icons. Material mirrors its own directional icons (`chevron_left`, `arrow_back`); the few that exist in a left-to-right and a right-to-left variant are picked with `directionalIcon` (`lib/widgets/common.dart`).
 - **The text of a field.** A text field follows its content, not the interface: the first strong character decides the direction, and an empty field follows the interface. The numbers, the codes, the dates and the e-mail addresses keep an explicit direction. `ContentTextField` (`lib/widgets/text_direction.dart`) does it once for every field, and scrolls the field to the start of its text.

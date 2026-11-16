@@ -27,7 +27,7 @@ Invoice Desk had one language per layer, hard-wired. The UI was Arabic. Invoices
 - **Digits (D6).** `DigitStyle { western, arabicIndic }` applies to Arabic document text only; English text always uses Western digits. The default for new documents is Western. The existing `contractWesternDigits` setting migrates into it, so existing contracts keep their digits.
 - **Line items (D1)** stay one field, written in the document's language. Bilingual invoices keep their bilingual section titles and notes.
 - **Unknown values.** Unknown or damaged stored values fall back instead of throwing (`DocLanguage.fromCode`, `DigitStyle.fromCode`, `UiLanguage.fromName`).
-- **The UI locale.** `localeProvider` resolves the choice against the locales that have translations. Choosing English before `app_en.arb` exists safely stays Arabic, and so does a system locale the app doesn't support.
+- **The UI locale.** `localeProvider` resolves the choice against the locales that have translations. Choosing English before `app_en.arb` exists safely stays Arabic. A system locale the app does not support falls back to **English** (the language most of the world reads), not to Arabic; an explicit choice that cannot be shown falls back to Arabic, the app's first language, which is always translated.
 
 ## Consequences
 

@@ -8,13 +8,18 @@ import 'package:invoice_desk/l10n/l10n.dart';
 /// The language the UI falls back to: Arabic, the app's first language.
 const appLocale = Locale('ar');
 
+/// The language the UI uses when the system asks for one the app does not
+/// have: English, the language most of the world reads.
+const appSystemFallbackLocale = Locale('en');
+
 /// Every UI language the app is built for. A language only becomes
 /// selectable once its ARB file exists (see [resolveAppLocale]).
 const appSupportedLocales = [Locale('ar'), Locale('en')];
 
 /// The user's UI-language choice, stored per machine in UiPrefs (D8).
 enum UiLanguage {
-  /// Follow the operating system; Arabic when it isn't a supported language.
+  /// Follow the operating system; English when it isn't a supported
+  /// language.
   system,
   ar,
   en;
@@ -28,8 +33,8 @@ enum UiLanguage {
 ///
 /// [platform] is the OS locale, used for [UiLanguage.system]. A language
 /// without translations in [translated] (the generated
-/// `AppLocalizations.supportedLocales`) falls back to [appLocale], so an
-/// English choice is safe before the English strings exist.
+/// `AppLocalizations.supportedLocales`) falls back to English when the
+/// system asked for it, and to [appLocale] when the user did.
 Locale resolveAppLocale(
   UiLanguage choice, {
   required Locale platform,
@@ -43,6 +48,17 @@ Locale resolveAppLocale(
   for (final l in translated) {
     if (l.languageCode == code) return Locale(code);
   }
+  if (choice == UiLanguage.system) {
+    // The machine speaks a language the app does not have: English is the
+    // fallback.
+    for (final l in translated) {
+      if (l.languageCode == appSystemFallbackLocale.languageCode) {
+        return appSystemFallbackLocale;
+      }
+    }
+  }
+  // The user asked for a language the app cannot show: the app's first
+  // language, Arabic, is always there.
   return appLocale;
 }
 

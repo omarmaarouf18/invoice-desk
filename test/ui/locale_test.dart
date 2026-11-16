@@ -27,7 +27,7 @@ void main() {
       );
     });
 
-    test('system follows the OS, else Arabic', () {
+    test('system follows the OS, else English', () {
       expect(
         resolveAppLocale(
           UiLanguage.system,
@@ -40,6 +40,15 @@ void main() {
         resolveAppLocale(
           UiLanguage.system,
           platform: french,
+          translated: [ar, en],
+        ),
+        en,
+      );
+      // Arabic is still followed when the machine asks for it.
+      expect(
+        resolveAppLocale(
+          UiLanguage.system,
+          platform: ar,
           translated: [ar, en],
         ),
         ar,
@@ -73,7 +82,7 @@ void main() {
     addTearDown(container.dispose);
 
     expect(container.read(uiLanguageProvider), UiLanguage.system);
-    expect(container.read(localeProvider), ar);
+    expect(container.read(localeProvider), en);
 
     container.read(uiLanguageProvider.notifier).set(UiLanguage.ar);
     expect(prefs.uiLanguage, 'ar');
