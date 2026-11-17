@@ -21,7 +21,7 @@ However, a fundamental invariant of Invoice Desk is that documents that were sen
   4. Global default in settings (`defaultInvoiceStyleId` or `defaultContractStyleId`);
   5. Ultimate fallback: `DocPreset.classic.style`.
 - **Snapshots on commitment.** When an invoice is transitioned to `sent` or `paid`, or a contract is marked `signed`, the repository freezes the resolved `DocumentStyle` JSON into `invoices.style_snapshot` or `contracts.style_snapshot` in the exact same SQLite transaction.
-- **Logo freezing & garbage collection.** Snapshots freeze the style JSON including `logoAssetId`. An asset referenced by any document snapshot (even on soft-deleted documents) or active style is immune to garbage collection (`StyleRepository.purgeUnusedAssets`). Replacing a company logo later never alters the visual output or byte content of past sent or paid documents.
+- **Logo freezing & garbage collection.** Snapshots freeze the style JSON including `logoAssetId`. An asset referenced by any document snapshot (even on soft-deleted documents) or custom style (including soft-deleted styles in the trash) is immune to garbage collection (`StyleRepository.purgeUnusedAssets`). Furthermore, unattached assets enjoy a 24-hour grace period from creation before becoming eligible for purge. Asset purge is a hard delete without a sync tombstone because assets are content-addressed by SHA-256: any peer requiring the binary can re-derive its identity or re-upload it deterministically, and unreferenced blobs generate no synchronization tombstones. Replacing a company logo later never alters the visual output or byte content of past sent or paid documents.
 - **Typography & Latin fallback.** Alongside IBM Plex Sans Arabic, Noto Naskh Arabic is bundled with its OFL licence. Because Noto Naskh Arabic lacks Latin glyphs, PDF builders configure IBM Plex Sans Arabic as an automatic `fontFallback` for Naskh styles, ensuring mixed Arabic and Latin text renders cleanly without missing glyphs.
 - **Decoupled rendering.** PDF builders (`buildInvoicePdf`, `buildContractPdf`) take a resolved `PdfStyle` and plain font data, maintaining zero runtime dependency on drift or repositories.
 
@@ -29,5 +29,5 @@ However, a fundamental invariant of Invoice Desk is that documents that were sen
 
 - Existing documents and future documents using `DocPreset.classic` remain 100% byte-identical to previous releases.
 - Any change to global settings, client preferences, or custom style presets has zero impact on sent, paid, or signed documents.
-- Asset storage is content-addressed and deduplicated: identical logos share storage and are purged only when all referencing documents and styles are permanently deleted.
+- Asset storage is content-addressed and deduplicated: identical logos share storage and are purged only when all referencing documents and styles (including trashed records) are permanently deleted, after a 24-hour upload grace period. Asset purge is a hard delete with no sync tombstones.
 - UI layer for style creation and editing (Phase 5) will build directly on top of `StyleRepository` without requiring schema or PDF engine alterations.

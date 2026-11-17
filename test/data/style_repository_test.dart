@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:clock/clock.dart';
 import 'package:crypto/crypto.dart';
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:flutter_test/flutter_test.dart';
@@ -23,12 +24,14 @@ void main() {
   late StyleRepository styles;
   late InvoiceRepository invoices;
   late ContractRepository contracts;
+  var currentTime = DateTime.utc(2026, 11, 1, 12, 0);
 
   setUp(() {
+    currentTime = DateTime.utc(2026, 11, 1, 12, 0);
     db = AppDatabase.memory(seeder: legacySeed);
-    styles = StyleRepository(db);
-    invoices = InvoiceRepository(db, styles: styles);
-    contracts = ContractRepository(db, styles: styles);
+    styles = StyleRepository(db, clock: Clock(() => currentTime));
+    invoices = InvoiceRepository(db, styles: styles, clock: Clock(() => currentTime));
+    contracts = ContractRepository(db, styles: styles, clock: Clock(() => currentTime));
   });
 
   tearDown(() => db.close());
@@ -90,30 +93,90 @@ void main() {
   });
 
   group('Asset usage and purging', () {
-    test('purges unreferenced assets and retains referenced ones', () async {
-      final hashA = await styles.saveAsset(bytes: validPng);
-      final hashB = await styles.saveAsset(bytes: validJpeg);
+    test('never purges unreferenced assets younger than 24h grace period', () async {
+      final hash = await styles.saveAsset(bytes: validPng);
+      expect(await styles.isAssetInUse(hash), isFalse);
 
-      expect(await styles.isAssetInUse(hashA), isFalse);
-      expect(await styles.isAssetInUse(hashB), isFalse);
+      // Immediately after upload (< 24h): not purged
+      var purged = await styles.purgeUnusedAssets();
+      expect(purged, 0);
+      expect(await styles.getAsset(hash), isNotNull);
 
-      // Create a style referencing hashA
+      // Advance time by 23 hours (< 24h): still not purged
+      currentTime = currentTime.add(const Duration(hours: 23));
+      purged = await styles.purgeUnusedAssets();
+      expect(purged, 0);
+      expect(await styles.getAsset(hash), isNotNull);
+
+      // Advance time past 24 hours (> 24h): now purged
+      currentTime = currentTime.add(const Duration(hours: 2));
+      purged = await styles.purgeUnusedAssets();
+      expect(purged, 1);
+      expect(await styles.getAsset(hash), isNull);
+    });
+
+    test('asset referenced by soft-deleted (trashed) style is not purged', () async {
+      final hash = await styles.saveAsset(bytes: validPng);
+
+      // Create a style referencing the asset
       await styles.saveUserStyle(
         CustomStyle(
-          id: 'style-with-logo',
-          name: 'With Logo',
-          style: DocumentStyle(logoAssetId: hashA),
+          id: 'trashed-style-with-logo',
+          name: 'Trashed Style',
+          style: DocumentStyle(logoAssetId: hash),
         ),
       );
 
-      expect(await styles.isAssetInUse(hashA), isTrue);
-      expect(await styles.isAssetInUse(hashB), isFalse);
+      // Soft delete the style into trash
+      await styles.softDeleteUserStyle('trashed-style-with-logo');
+
+      // Asset must still count as in use so restoring preserves the logo
+      expect(await styles.isAssetInUse(hash), isTrue);
+
+      // Advance time past 24h
+      currentTime = currentTime.add(const Duration(hours: 48));
+
+      // Purge must NOT delete the asset of the trashed style
+      final purged = await styles.purgeUnusedAssets();
+      expect(purged, 0);
+      expect(await styles.getAsset(hash), isNotNull);
+    });
+
+    test('purges unreferenced older assets while retaining active and trashed ones', () async {
+      final hashActive = await styles.saveAsset(bytes: validPng);
+      final hashTrashed = await styles.saveAsset(bytes: validPng);
+      final hashOrphan = await styles.saveAsset(bytes: validJpeg);
+
+      await styles.saveUserStyle(
+        CustomStyle(
+          id: 'active-style',
+          name: 'Active Style',
+          style: DocumentStyle(logoAssetId: hashActive),
+        ),
+      );
+
+      await styles.saveUserStyle(
+        CustomStyle(
+          id: 'trashed-style',
+          name: 'Trashed Style',
+          style: DocumentStyle(logoAssetId: hashTrashed),
+        ),
+      );
+      await styles.softDeleteUserStyle('trashed-style');
+
+      expect(await styles.isAssetInUse(hashActive), isTrue);
+      expect(await styles.isAssetInUse(hashTrashed), isTrue);
+      expect(await styles.isAssetInUse(hashOrphan), isFalse);
+
+      // Advance past 24h
+      currentTime = currentTime.add(const Duration(hours: 25));
 
       final purged = await styles.purgeUnusedAssets();
       expect(purged, 1);
 
-      expect(await styles.getAsset(hashA), isNotNull);
-      expect(await styles.getAsset(hashB), isNull);
+      expect(await styles.getAsset(hashActive), isNotNull);
+      expect(await styles.getAsset(hashTrashed), isNotNull);
+      expect(await styles.getAsset(hashOrphan), isNull);
     });
   });
 

@@ -204,13 +204,13 @@ class StyleRepository with ClockedRepository {
     return row?.bytes;
   }
 
-  /// Whether [assetId] is currently referenced by any live custom style,
-  /// invoice snapshot, or contract snapshot.
+  /// Whether [assetId] is currently referenced by any custom style (live or
+  /// trashed), invoice snapshot, or contract snapshot.
   Future<bool> isAssetInUse(String assetId) async {
-    // 1. Check live custom styles
+    // 1. Check custom styles (live or trashed, so restoring preserves logo)
     final inStyle =
         await (_db.select(_db.documentStyles)
-              ..where((s) => s.deletedAt.isNull() & s.json.like('%$assetId%'))
+              ..where((s) => s.json.like('%$assetId%'))
               ..limit(1))
             .getSingleOrNull();
     if (inStyle != null) return true;
@@ -242,9 +242,12 @@ class StyleRepository with ClockedRepository {
     return false;
   }
 
-  /// Permanently removes assets not referenced by any document or style.
+  /// Permanently removes unreferenced assets created more than 24 hours ago.
   Future<int> purgeUnusedAssets() => at(() async {
-    final assets = await _db.select(_db.documentAssets).get();
+    final cutoffMs = _nowMs - const Duration(hours: 24).inMilliseconds;
+    final assets = await (_db.select(_db.documentAssets)
+          ..where((a) => a.createdAt.isSmallerOrEqualValue(cutoffMs)))
+        .get();
     var purged = 0;
     for (final a in assets) {
       if (!await isAssetInUse(a.id)) {
