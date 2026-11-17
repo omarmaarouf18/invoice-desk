@@ -65,6 +65,10 @@ The full ritual applies: a drift step, `make-migrations` with the snapshot, a v7
 7. `test(SET-01)`: goldens (settings sections ar/en), and the flow test: search → section → change → autosave.
 8. `docs(SET-01)`: CHANGELOG, ARCHITECTURE, AI_CONTEXT, this worklog.
 
+## Progress
+
+- 2026-11-17 — Commit 1 done: `689145f` navigation + search, `489def5` header/label/My details fixes, `e1542cf` golden. Stopped before commit 2 to get Q1–Q3 answered, since schema v8 (commit 3) depends on Q1.
+
 ## Open questions
 
 1. **Document-format settings vs rule 8.** Date format, currency display and tax registration number print on documents but live in settings, so changing one would re-render already-sent invoices differently. Recommended: freeze them at the same moment as the style. Add one nullable `format_snapshot` TEXT (JSON: date format, currency display, tax number, digit style) on `invoices` and `contracts`, written in the same transaction as `style_snapshot`. Committed documents without one render as today (long date, currency code, no tax number). The alternative is to accept that these three follow live settings, like the profile and payment details do today. — **open, blocks commits 3 and 6.**

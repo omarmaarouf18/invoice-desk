@@ -16,15 +16,15 @@
 | 2 — English UI + follow-ups | ✅ done. `app_en.arb`, ICU plurals (`0a67998`), auto-direction inputs (`c28ffd7`), fallback to English (`e1965fe`) |
 | 3 — Document language: invoices | ✅ done. Schema v6 (`627e6a0`), PDF builder (`baf5940`), UI/repos/settings (`d232ee4`), goldens (`fd8bd76`), Arabic PDF bug fixes (`96dc046`, `f4f0bd2`) |
 | 4 — Style engine (schema v7) | ✅ done. Schema v7 (`c0a2150`), StyleRepository & snapshots (`7aad4c7`), PdfStyle builders (`12bc577`), ADR-0012; follow-ups: VAT row correctness, 24h asset grace period & trash retention, 6 distinct presets (Formal with Naskh, Bold/Modern with Plex), word-level font fallback and bidi paragraph context preservation in vendored pdf (`9f8d21c`), text bidi guard test (`e86c606`), updated preset goldens |
-| 5 — Style editor UI | ⏸ built, awaiting review. Page «تصميم المستندات» (`bd2767e`), pickers + lock notice + Settings defaults (`1c4b37c`), styles in previews/exports (`d7e6fe2`), legacy lock (`349a373`), JSON export/import + trash (`52768d0`), flow test + goldens. Pre-phase: Arabic runs never letter-spaced (`3a16598`) |
-| 6 — Settings redesign | — |
+| 5 — Style editor UI | ✅ done (owner review 2026-11-17). Editor page, pickers + lock, styles in previews/exports, legacy lock, JSON import/export, trash; review fixes: Modern contrast (`98d6483`), preview language, «بارز», delete usage count |
+| 6 — Settings redesign | ⏳ in progress. Plan: `docs/worklog/SET-01.md`. Done: sectioned navigation + search (`689145f`, `489def5`). Waiting on owner Q1–Q3 (document-format settings vs rule 8) before schema v8 |
 | 7 — Contracts in English + styles | — |
 | 8 — UX polish | — |
 
 ## Next
 
-1. **Owner review of Phase 5 (STY-02).** Open questions in `docs/worklog/STY-02.md` (Modern preset contrast, legacy lock).
-2. **Phase 6 — Settings redesign (SET-01):** sectioned navigation with search; the Document styles card moves into its section. Client preferred style (`clients.style_id`) still has no UI.
+1. **Owner answers SET-01 Q1–Q3** (`docs/worklog/SET-01.md`): freeze date format / currency display / tax number / digits with the snapshot, or follow live settings.
+2. Then SET-01 commit 2 (per-machine controls: density, accent, start-up view, PDF file name, export folder, open after export, shortcuts reference), schema v8, numbering pattern, VAT/currency defaults, document-format settings.
 3. **Phase 7 note (owner, 2026-11-17):** in English contracts, Arabic values with numbers must not wrap with the number alone on a line.
 
 ## Decided (do not reopen without the owner)
