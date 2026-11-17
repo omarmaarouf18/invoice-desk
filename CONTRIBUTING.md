@@ -1,6 +1,7 @@
 # Contributing
 
 Thanks for helping. Invoice Desk is a small, offline Flutter desktop app; please keep it that way.
+For AI coding agents working on this repository, see [AGENTS.md](AGENTS.md).
 
 ## Setup
 

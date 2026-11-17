@@ -127,4 +127,4 @@ In the items table, Tab moves across cells, and Enter in the last price cell add
 - [Architecture](docs/ARCHITECTURE.md): layers, state, data flow, PDFs, and where sync will plug in
 - [Data model](docs/DATA_MODEL.md): every table, constraint and trigger, and the migration history
 - [Decisions](docs/adr/): ADRs
-- [Testing](docs/TESTING.md) · [Releasing](docs/RELEASING.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Changelog](CHANGELOG.md)
+- [Testing](docs/TESTING.md) · [Releasing](docs/RELEASING.md) · [Contributing](CONTRIBUTING.md) · [AI agents](AGENTS.md) · [Security](SECURITY.md) · [Changelog](CHANGELOG.md)
