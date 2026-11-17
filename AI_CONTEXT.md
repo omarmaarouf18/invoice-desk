@@ -14,16 +14,16 @@
 | 0 — Arabic PDF word gaps (B1) | ✅ done. `pdf` vendored + patched (ADR-0013); gap regression test; samples regenerated from fictional data |
 | 1 — Foundations | ✅ done. `DocLanguage`, `doc_format`, `DocLabels`, `PdfStyle.classic` (pixel-identical), `localeProvider` (ADR-0011) |
 | 2 — English UI + follow-ups | ✅ done. `app_en.arb`, ICU plurals (`0a67998`), auto-direction inputs (`c28ffd7`), fallback to English (`e1965fe`) |
-| 3 — Document language: invoices | ✅ done. Schema v6 (`627e6a0`), PDF builder (`baf5940`), UI/repositories/settings/tests/samples (`d232ee4`), goldens (`fd8bd76`) |
-| 4 — Style engine (schema v7) | ⏳ next (needs owner answer on Noto Naskh font) |
+| 3 — Document language: invoices | ✅ done. Schema v6 (`627e6a0`), PDF builder (`baf5940`), UI/repos/settings (`d232ee4`), goldens (`fd8bd76`), Arabic PDF bug fixes (`96dc046`, `f4f0bd2`) |
+| 4 — Style engine (schema v7) | ⏳ starting (Noto Naskh approved; schema v7, PdfStyle, repositories) |
 | 5 — Style editor UI | — |
 | 6 — Settings redesign | — |
 | 7 — Contracts in English + styles | — |
 | 8 — UX polish | — |
 
-## Next (Phase 4 — Document style engine)
+## Next (Phase 4 — Document style engine: STY-01)
 
-1. **Owner decision:** Confirm approval on bundled Noto Naskh Arabic (from an official source with OFL license).
+1. **Noto Naskh Arabic:** Download Regular, SemiBold, Bold from official Google Fonts repo to `assets/fonts/` with `OFL.txt`, and extend `rtl_word_gap_test.dart`.
 2. **Schema v7:** `document_styles` table, snapshotting styles on documents (ADR-0012). Write forward migration step from v6 to v7.
 3. **Style engine:** Extend `PdfStyle` with fonts, primary/secondary colors, logo image, geometry adjustments.
 4. **Style tests:** Migration test v6→v7, style repository tests, backwards compatibility.
