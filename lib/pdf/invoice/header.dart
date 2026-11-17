@@ -178,9 +178,14 @@ extension _Header on _Builder {
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
                     pw.SizedBox(
-                      width: isArabic ? 90 : 64,
-                      child: t(k, style: st(color: style.muted)),
+                      width: isArabic ? 85 : 64,
+                      child: t(
+                        k,
+                        style: st(color: style.muted),
+                        align: isArabic ? startAlign : null,
+                      ),
                     ),
+                    if (isArabic) pw.SizedBox(width: 8),
                     pw.Expanded(
                       child: t(
                         v,

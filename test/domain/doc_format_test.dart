@@ -119,6 +119,56 @@ void main() {
         'Page 12 of 30',
       );
       expect(applyDigitStyle('صفحة 12', DigitStyle.arabicIndic), 'صفحة ١٢');
+
+      // Amounts: Western keeps , and .; Arabic-Indic uses ٬ and ٫.
+      expect(
+        applyDigitStyle('22,000.00', DigitStyle.western),
+        '22,000.00',
+      );
+      expect(
+        applyDigitStyle('22,000.00', DigitStyle.arabicIndic),
+        '٢٢٬٠٠٠٫٠٠',
+      );
+      expect(
+        applyDigitStyle('255.50', DigitStyle.arabicIndic),
+        '٢٥٥٫٥٠',
+      );
+
+      // Quantities:
+      expect(applyDigitStyle('1.5', DigitStyle.western), '1.5');
+      expect(applyDigitStyle('1.5', DigitStyle.arabicIndic), '١٫٥');
+      expect(applyDigitStyle('1,500', DigitStyle.western), '1,500');
+      expect(applyDigitStyle('1,500', DigitStyle.arabicIndic), '١٬٥٠٠');
+
+      // Dates:
+      const date = CalendarDate(2026, 9, 14);
+      expect(
+        formatDocDate(date, DocLanguage.ar),
+        '14 سبتمبر 2026',
+      );
+      expect(
+        formatDocDate(date, DocLanguage.ar, digits: DigitStyle.arabicIndic),
+        '١٤ سبتمبر ٢٠٢٦',
+      );
+
+      // Totals with formatDocMoney:
+      expect(
+        formatDocMoney(
+          18000000,
+          Currency.egp,
+          DocLanguage.ar,
+        ),
+        '180,000 جنيه مصري',
+      );
+      expect(
+        formatDocMoney(
+          18000000,
+          Currency.egp,
+          DocLanguage.ar,
+          digits: DigitStyle.arabicIndic,
+        ),
+        '١٨٠٬٠٠٠ جنيه مصري',
+      );
     });
 
     test('currency names per language', () {

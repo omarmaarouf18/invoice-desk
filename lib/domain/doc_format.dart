@@ -8,15 +8,27 @@ import 'package:invoice_desk/domain/doc_language.dart';
 
 // ── Digits ────────────────────────────────────────────────────────────────
 
+/// Arabic decimal separator (٫, U+066B).
+const arabicDecimalSeparator = '\u066B';
+
+/// Arabic thousands separator (٬, U+066C).
+const arabicThousandsSeparator = '\u066C';
+
 /// `12` → `١٢`; everything that is not a Western digit is kept.
 String arabicIndicDigits(String s) => s.replaceAllMapped(
   RegExp('[0-9]'),
   (m) => String.fromCharCode(0x0660 + int.parse(m.group(0)!)),
 );
 
-/// [s] with its digits in [style]. Western leaves it unchanged.
-String applyDigitStyle(String s, DigitStyle style) =>
-    style == DigitStyle.arabicIndic ? arabicIndicDigits(s) : s;
+/// [s] with its digits in [style]. Western leaves it unchanged;
+/// [DigitStyle.arabicIndic] translates digits to Arabic-Indic and replaces
+/// Western separators: `,` → `٬` (U+066C) and `.` → `٫` (U+066B).
+String applyDigitStyle(String s, DigitStyle style) {
+  if (style == DigitStyle.western) return s;
+  return arabicIndicDigits(s)
+      .replaceAll(',', arabicThousandsSeparator)
+      .replaceAll('.', arabicDecimalSeparator);
+}
 
 // ── Dates ─────────────────────────────────────────────────────────────────
 
@@ -149,5 +161,12 @@ String currencyNameDefiniteAr(Currency c) => switch (c) {
 
 /// An amount written out with its currency name: `180,000 جنيه مصري`,
 /// `180,000 Egyptian pounds`. [minor] is in minor units.
-String formatDocMoney(int minor, Currency c, DocLanguage lang) =>
-    '${formatAmount(minor, c)} ${currencyName(c, lang)}';
+String formatDocMoney(
+  int minor,
+  Currency c,
+  DocLanguage lang, {
+  DigitStyle digits = DigitStyle.western,
+}) => applyDigitStyle(
+  '${formatAmount(minor, c)} ${currencyName(c, lang)}',
+  digits,
+);

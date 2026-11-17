@@ -12,7 +12,11 @@ extension _Totals on _Builder {
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
           pw.Expanded(
-            child: t(k, style: st(color: style.muted)),
+            child: t(
+              k,
+              style: st(color: style.muted),
+              align: isArabic ? startAlign : null,
+            ),
           ),
           pw.SizedBox(width: 8),
           t(

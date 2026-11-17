@@ -63,23 +63,37 @@ extension _Table on _Builder {
         crossAxisAlignment: pw.CrossAxisAlignment.end,
         children: [
           pw.Expanded(
-            child: pw.Wrap(
-              crossAxisAlignment: pw.WrapCrossAlignment.end,
-              children: [
-                t(
-                  '${docNumber('$n')}  ·  ',
-                  style: st(size: 11, font: bold, color: style.primary),
-                ),
-                if (title.isNotEmpty) t(title, style: st(size: 11, font: bold)),
-                if (title.isNotEmpty && titleAr.isNotEmpty)
-                  t('  ·  ', style: st(size: 11, color: style.muted)),
-                if (titleAr.isNotEmpty)
-                  t(
-                    titleAr,
-                    style: st(size: 10.5, font: semi, color: style.muted),
+            child: isArabic
+                ? pw.Row(
+                    mainAxisSize: pw.MainAxisSize.min,
+                    children: [
+                      t(
+                        docNumber('$n'),
+                        style: st(size: 11, font: bold, color: style.primary),
+                      ),
+                      t('  ·  ', style: st(size: 11, color: style.muted)),
+                      if (title.isNotEmpty)
+                        t(title, style: st(size: 11, font: bold)),
+                    ],
+                  )
+                : pw.Wrap(
+                    crossAxisAlignment: pw.WrapCrossAlignment.end,
+                    children: [
+                      t(
+                        '${docNumber('$n')}  ·  ',
+                        style: st(size: 11, font: bold, color: style.primary),
+                      ),
+                      if (title.isNotEmpty)
+                        t(title, style: st(size: 11, font: bold)),
+                      if (title.isNotEmpty && titleAr.isNotEmpty)
+                        t('  ·  ', style: st(size: 11, color: style.muted)),
+                      if (titleAr.isNotEmpty)
+                        t(
+                          titleAr,
+                          style: st(size: 10.5, font: semi, color: style.muted),
+                        ),
+                    ],
                   ),
-              ],
-            ),
           ),
           t(
             label.amountsIn(sec.currency),

@@ -19,7 +19,11 @@ extension _Footer on _Builder {
         child: pw.Row(
           children: [
             pw.Expanded(
-              child: t(left, style: st(size: 7.5, color: style.muted)),
+              child: t(
+                left,
+                style: st(size: 7.5, color: style.muted),
+                align: isArabic ? startAlign : null,
+              ),
             ),
             t(
               '${inv.number}  ·  ${label.pageOf(docNumber('${context.pageNumber}'), docNumber('${context.pagesCount}'))}',
