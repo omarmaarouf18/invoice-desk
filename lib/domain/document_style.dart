@@ -63,33 +63,33 @@ class DocumentStyle {
       surface: _parseColor(json['surface'], 0xFFF3F6F9),
       tableHeaderBg: _parseColor(json['tableHeaderBg'], 0xFFF3F6F9),
       border: _parseColor(json['border'], 0xFFDCE2EA),
-      fontFamily: DocFontFamily.fromString(json['fontFamily'] as String?),
+      fontFamily: DocFontFamily.fromString(_string(json['fontFamily'])),
       baseSize: _clampDouble(json['baseSize'], 8, 14, 9.5),
       scale: _clampDouble(json['scale'], 0.8, 1.5, 1),
-      paper: DocPaper.fromString(json['paper'] as String?),
+      paper: DocPaper.fromString(_string(json['paper'])),
       marginHorizontal: _clampDouble(json['marginHorizontal'], 15, 80, 40),
       marginTop: _clampDouble(json['marginTop'], 15, 80, 34),
       marginBottom: _clampDouble(json['marginBottom'], 15, 80, 26),
-      headerStyle: HeaderStyle.fromString(json['headerStyle'] as String?),
+      headerStyle: HeaderStyle.fromString(_string(json['headerStyle'])),
       logoAssetId:
           json['logoAssetId'] is String &&
               (json['logoAssetId'] as String).isNotEmpty
           ? json['logoAssetId'] as String
           : null,
       logoSize: _clampDouble(json['logoSize'], 20, 120, 48),
-      logoPosition: LogoPosition.fromString(json['logoPosition'] as String?),
-      tableStyle: TableStyle.fromString(json['tableStyle'] as String?),
-      totalsStyle: TotalsStyle.fromString(json['totalsStyle'] as String?),
-      showRole: (json['showRole'] as bool?) ?? true,
-      showCity: (json['showCity'] as bool?) ?? true,
-      showContacts: (json['showContacts'] as bool?) ?? true,
-      showPaymentCard: (json['showPaymentCard'] as bool?) ?? true,
-      showNotes: (json['showNotes'] as bool?) ?? true,
-      showVatRow: (json['showVatRow'] as bool?) ?? true,
-      showPleaseQuote: (json['showPleaseQuote'] as bool?) ?? true,
-      showPageNumbers: (json['showPageNumbers'] as bool?) ?? true,
-      showSignatureBoxes: (json['showSignatureBoxes'] as bool?) ?? true,
-      showPaidStamp: (json['showPaidStamp'] as bool?) ?? true,
+      logoPosition: LogoPosition.fromString(_string(json['logoPosition'])),
+      tableStyle: TableStyle.fromString(_string(json['tableStyle'])),
+      totalsStyle: TotalsStyle.fromString(_string(json['totalsStyle'])),
+      showRole: _bool(json['showRole']),
+      showCity: _bool(json['showCity']),
+      showContacts: _bool(json['showContacts']),
+      showPaymentCard: _bool(json['showPaymentCard']),
+      showNotes: _bool(json['showNotes']),
+      showVatRow: _bool(json['showVatRow']),
+      showPleaseQuote: _bool(json['showPleaseQuote']),
+      showPageNumbers: _bool(json['showPageNumbers']),
+      showSignatureBoxes: _bool(json['showSignatureBoxes']),
+      showPaidStamp: _bool(json['showPaidStamp']),
       blockOrder: _parseBlockOrder(json['blockOrder']),
       footerTextAr: json['footerTextAr'] is String
           ? json['footerTextAr'] as String
@@ -418,6 +418,13 @@ class DocumentStyle {
 
 String _colorHex(int color) =>
     '#${(color & 0xFFFFFFFF).toRadixString(16).padLeft(8, '0').toUpperCase()}';
+
+/// [v] when it is a string, else null (the enum's default): a hand-edited
+/// or fuzzed file may put any JSON type here.
+String? _string(Object? v) => v is String ? v : null;
+
+/// [v] when it is a bool, else true (every toggle defaults to shown).
+bool _bool(Object? v) => v is! bool || v;
 
 int _parseColor(dynamic v, int fallback) {
   if (v is int) return v | 0xFF000000;
