@@ -6,6 +6,7 @@ import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart';
+import 'package:invoice_desk/features/settings/settings_section.dart';
 
 import '../helpers/harness.dart';
 import '../helpers/legacy_seed.dart';
@@ -121,6 +122,7 @@ void main() {
 
       // Should navigate to settings workspace
       expect(c.read(workspaceProvider), Workspace.settings);
+      expect(c.read(settingsSectionProvider), SettingsSection.payment);
     },
   );
 

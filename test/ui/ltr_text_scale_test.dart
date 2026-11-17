@@ -11,6 +11,7 @@ import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/features/calendar/calendar_controller.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart';
+import 'package:invoice_desk/features/settings/settings_section.dart';
 
 import '../helpers/harness.dart';
 import '../helpers/legacy_seed.dart';
@@ -80,5 +81,11 @@ void main() {
     c.read(workspaceProvider.notifier).show(Workspace.settings);
     await settle(tester);
     expect(tester.takeException(), isNull);
+    // Every section, not just the first one shown.
+    for (final s in SettingsSection.values) {
+      c.read(settingsSectionProvider.notifier).set(s);
+      await settle(tester);
+      expect(tester.takeException(), isNull, reason: s.name);
+    }
   });
 }

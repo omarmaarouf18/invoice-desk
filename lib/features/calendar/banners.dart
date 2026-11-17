@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/features/calendar/calendar_controller.dart';
+import 'package:invoice_desk/features/settings/settings_section.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
 
@@ -64,7 +65,7 @@ class TopBanners extends ConsumerWidget {
             action: l.openSettings,
             onAction: () {
               ref.read(calendarModeProvider.notifier).set(false);
-              ref.read(workspaceProvider.notifier).show(Workspace.settings);
+              openSettings(ref, SettingsSection.profile);
             },
             onDismiss: ref
                 .read(profileBannerDismissedProvider.notifier)

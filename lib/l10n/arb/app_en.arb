@@ -1237,5 +1237,8 @@
         "type": "String"
       }
     }
-  }
+  },
+  "settingsData": "Data & backups",
+  "settingsSearchHint": "Search settings",
+  "settingsNoMatch": "No settings match."
 }

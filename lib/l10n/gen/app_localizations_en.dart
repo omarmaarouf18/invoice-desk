@@ -2167,4 +2167,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String styleDeletedInUse(String name, String usage) {
     return '“$name” moved to the trash; it was used by $usage.';
   }
+
+  @override
+  String get settingsData => 'Data & backups';
+
+  @override
+  String get settingsSearchHint => 'Search settings';
+
+  @override
+  String get settingsNoMatch => 'No settings match.';
 }

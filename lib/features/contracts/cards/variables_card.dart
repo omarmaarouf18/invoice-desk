@@ -243,8 +243,7 @@ class _FixButton extends ConsumerWidget {
     if (name.startsWith('provider.')) {
       return TextButton(
         focusNode: focus,
-        onPressed: () =>
-            ref.read(workspaceProvider.notifier).show(Workspace.settings),
+        onPressed: () => openSettings(ref, SettingsSection.contracts),
         child: Text(l.openSettings),
       );
     }

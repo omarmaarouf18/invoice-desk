@@ -11,6 +11,7 @@ import 'package:invoice_desk/features/editor/editor_cards.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart';
 import 'package:invoice_desk/features/editor/sections_editor.dart';
 import 'package:invoice_desk/features/preview/preview_pane.dart';
+import 'package:invoice_desk/features/settings/settings_section.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
 import 'package:invoice_desk/widgets/common.dart';
@@ -153,8 +154,7 @@ class _PaymentWarningBanner extends ConsumerWidget {
           const SizedBox(width: Space.m),
           FilledButton.tonal(
             key: const ValueKey('open-settings-payment-warning'),
-            onPressed: () =>
-                ref.read(workspaceProvider.notifier).show(Workspace.settings),
+            onPressed: () => openSettings(ref, SettingsSection.payment),
             child: Text(l.openSettings),
           ),
         ],

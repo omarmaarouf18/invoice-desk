@@ -47,6 +47,10 @@ class UiPrefs {
   set uiLanguage(String? v) => _set('uiLanguage', v);
 
   /// Top-level switch: the calendar instead of invoices & contracts.
+  /// The Settings section last shown (a `SettingsSection` name).
+  String? get settingsSection => _data['settingsSection'] as String?;
+  set settingsSection(String? v) => _set('settingsSection', v);
+
   bool get calendarMode => _data['calendarMode'] == true;
   set calendarMode(bool v) => _set('calendarMode', v);
 

@@ -17,6 +17,7 @@ import 'package:invoice_desk/features/contracts/contract_actions.dart';
 import 'package:invoice_desk/features/contracts/contract_controller.dart';
 import 'package:invoice_desk/features/contracts/contract_widgets.dart';
 import 'package:invoice_desk/features/editor/editor_cards.dart' show DateField;
+import 'package:invoice_desk/features/settings/settings_section.dart';
 import 'package:invoice_desk/features/styles/document_style_fields.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/theme/app_theme.dart';

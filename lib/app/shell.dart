@@ -14,6 +14,7 @@ import 'package:invoice_desk/features/editor/editor_controller.dart';
 import 'package:invoice_desk/features/editor/editor_page.dart';
 import 'package:invoice_desk/features/library/library_page.dart';
 import 'package:invoice_desk/features/settings/settings_page.dart';
+import 'package:invoice_desk/features/settings/settings_section.dart';
 import 'package:invoice_desk/features/sidebar/sidebar.dart';
 import 'package:invoice_desk/features/sidebar/sidebar_providers.dart';
 import 'package:invoice_desk/features/styles/styles_page.dart';
@@ -227,9 +228,7 @@ class WelcomePane extends ConsumerWidget {
                 body: l.stepProfileBody,
                 done: profileDone,
                 action: l.stepProfile,
-                onPressed: () => ref
-                    .read(workspaceProvider.notifier)
-                    .show(Workspace.settings),
+                onPressed: () => openSettings(ref, SettingsSection.profile),
               ),
               const SizedBox(height: Space.m - 4),
               _Step(

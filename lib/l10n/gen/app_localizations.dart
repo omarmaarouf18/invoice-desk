@@ -3756,6 +3756,24 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'نُقل «{name}» إلى المحذوفات، وكان يستخدمه {usage}.'**
   String styleDeletedInUse(String name, String usage);
+
+  /// No description provided for @settingsData.
+  ///
+  /// In ar, this message translates to:
+  /// **'البيانات والنسخ الاحتياطية'**
+  String get settingsData;
+
+  /// No description provided for @settingsSearchHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابحث في الإعدادات'**
+  String get settingsSearchHint;
+
+  /// No description provided for @settingsNoMatch.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد إعدادات بهذا الاسم.'**
+  String get settingsNoMatch;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

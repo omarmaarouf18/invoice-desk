@@ -17,6 +17,7 @@ import 'package:invoice_desk/domain/document_style_presets.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/actions.dart';
 import 'package:invoice_desk/features/calendar/calendar_controller.dart';
+import 'package:invoice_desk/features/settings/settings_section.dart';
 import 'package:invoice_desk/features/styles/style_picker.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/sync/sync.dart';
@@ -30,6 +31,7 @@ part 'settings/backup_card.dart';
 part 'settings/calendar_cards.dart';
 part 'settings/form_cards.dart';
 part 'settings/general_card.dart';
+part 'settings/settings_nav.dart';
 part 'settings/styles_card.dart';
 part 'settings/sync_card.dart';
 
@@ -102,58 +104,77 @@ class _SettingsFormState extends ConsumerState<_SettingsForm> {
 
   @override
   Widget build(BuildContext context) {
-    final s = _draft;
-    const cardGap = SizedBox(height: Space.m);
-
-    return Scrollbar(
-      child: SingleChildScrollView(
-        padding: const EdgeInsetsDirectional.fromSTEB(
-          Space.l,
-          Space.l,
-          Space.l,
-          Space.xl * 2,
-        ),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 860),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _SettingsHeader(dirty: _dirty),
-                const SizedBox(height: Space.l),
-                const _GeneralCard(),
-                cardGap,
-                _ProfileCard(s: s, update: _update),
-                cardGap,
-                _InvoicingCard(s: s, update: _update),
-                cardGap,
-                _ContractsSettingsCard(s: s, update: _update),
-                cardGap,
-                _StylesSettingsCard(s: s, update: _update),
-                cardGap,
-                _PaymentCard(s: s, update: _update),
-                cardGap,
-                _NotesCard(s: s, update: _update),
-                cardGap,
-                const _AppearanceCard(),
-                cardGap,
-                const _CalendarCard(),
-                cardGap,
-                const _DemoCard(),
-                cardGap,
-                _BackupCard(
-                  settings: s,
-                  onDirChanged: (d) => _update((x) => x.copyWith(backupDir: d)),
+    final section = ref.watch(settingsSectionProvider);
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(
+        Space.l,
+        Space.l,
+        Space.l,
+        0,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SizedBox(width: 240, child: _SettingsNav()),
+          const SizedBox(width: Space.l),
+          Expanded(
+            child: Scrollbar(
+              child: SingleChildScrollView(
+                key: ValueKey('settings-body-${section.name}'),
+                padding: const EdgeInsetsDirectional.only(bottom: Space.xl * 2),
+                child: Align(
+                  alignment: AlignmentDirectional.topStart,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 860),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _SettingsHeader(dirty: _dirty),
+                        const SizedBox(height: Space.l),
+                        ..._sectionCards(section),
+                      ],
+                    ),
+                  ),
                 ),
-                cardGap,
-                const _SyncCard(),
-                cardGap,
-                const _AboutCard(),
-              ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
+  }
+
+  /// The cards of [section], spaced on the 8 px grid.
+  List<Widget> _sectionCards(SettingsSection section) {
+    final s = _draft;
+    final cards = switch (section) {
+      SettingsSection.general => const [_GeneralCard(), _AppearanceCard()],
+      SettingsSection.profile => [_ProfileCard(s: s, update: _update)],
+      SettingsSection.invoices => [
+        _InvoicingCard(s: s, update: _update),
+        _NotesCard(s: s, update: _update),
+      ],
+      SettingsSection.contracts => [
+        _ContractsSettingsCard(s: s, update: _update),
+      ],
+      SettingsSection.payment => [_PaymentCard(s: s, update: _update)],
+      SettingsSection.styles => [_StylesSettingsCard(s: s, update: _update)],
+      SettingsSection.calendar => const [_CalendarCard()],
+      SettingsSection.data => [
+        _BackupCard(
+          settings: s,
+          onDirChanged: (d) => _update((x) => x.copyWith(backupDir: d)),
+        ),
+        const _DemoCard(),
+      ],
+      SettingsSection.sync => const [_SyncCard()],
+      SettingsSection.about => const [_AboutCard()],
+    };
+    return [
+      for (final (i, c) in cards.indexed) ...[
+        if (i > 0) const SizedBox(height: Space.m),
+        c,
+      ],
+    ];
   }
 }

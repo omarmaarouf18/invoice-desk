@@ -2167,4 +2167,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String styleDeletedInUse(String name, String usage) {
     return 'نُقل «$name» إلى المحذوفات، وكان يستخدمه $usage.';
   }
+
+  @override
+  String get settingsData => 'البيانات والنسخ الاحتياطية';
+
+  @override
+  String get settingsSearchHint => 'ابحث في الإعدادات';
+
+  @override
+  String get settingsNoMatch => 'لا توجد إعدادات بهذا الاسم.';
 }

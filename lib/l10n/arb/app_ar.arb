@@ -1237,5 +1237,8 @@
         "type": "String"
       }
     }
-  }
+  },
+  "settingsData": "البيانات والنسخ الاحتياطية",
+  "settingsSearchHint": "ابحث في الإعدادات",
+  "settingsNoMatch": "لا توجد إعدادات بهذا الاسم."
 }
