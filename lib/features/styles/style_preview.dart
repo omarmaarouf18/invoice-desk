@@ -47,8 +47,12 @@ class _PreviewToolbar extends ConsumerWidget {
     final l = context.l10n;
     final st = ref.watch(styleEditorProvider);
     final ctl = ref.read(styleEditorProvider.notifier);
-    final hasInvoice = ref.watch(
-      editorProvider.select((s) => s.invoice != null),
+    final openLang = ref.watch(
+      editorProvider.select((s) => s.invoice?.language),
+    );
+    final hasInvoice = openLang != null;
+    final defaultLang = ref.watch(
+      settingsProvider.select((s) => s.value?.defaultDocLanguage),
     );
     final hasContract = ref.watch(
       contractProvider.select((s) => s.contract != null),
@@ -60,6 +64,11 @@ class _PreviewToolbar extends ConsumerWidget {
       DocLanguage.en,
     ];
     final onDoc = contract || hasInvoice;
+    final shown = previewLanguageOf(
+      st,
+      contract: contract,
+      documentLanguage: openLang ?? defaultLang ?? DocLanguage.ar,
+    );
     return Padding(
       padding: const EdgeInsets.all(Space.s),
       child: Wrap(
@@ -80,18 +89,28 @@ class _PreviewToolbar extends ConsumerWidget {
             selected: {contract},
             onSelectionChanged: (v) => ctl.setPreviewContract(v.first),
           ),
-          DropdownButton<DocLanguage?>(
-            key: ValueKey('style-preview-lang-${st.previewLanguage}'),
-            value: langs.contains(st.previewLanguage)
-                ? st.previewLanguage
-                : null,
-            underline: const SizedBox.shrink(),
-            items: [
-              DropdownMenuItem(child: Text(l.docLanguage)),
-              for (final lang in langs)
-                DropdownMenuItem(value: lang, child: Text(_langName(l, lang))),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                l.docLanguage,
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
+              const SizedBox(width: Space.s),
+              DropdownButton<DocLanguage>(
+                key: const ValueKey('style-preview-lang'),
+                value: shown,
+                underline: const SizedBox.shrink(),
+                items: [
+                  for (final lang in langs)
+                    DropdownMenuItem(
+                      value: lang,
+                      child: Text(_langName(l, lang)),
+                    ),
+                ],
+                onChanged: ctl.setPreviewLanguage,
+              ),
             ],
-            onChanged: ctl.setPreviewLanguage,
           ),
           Text(
             onDoc ? l.stylePreviewOpenDoc : l.stylePreviewSample,
@@ -101,6 +120,23 @@ class _PreviewToolbar extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// The language the preview is drawn in: the one picked in the toolbar,
+/// else [documentLanguage] (the open invoice's, or the default for the
+/// sample). Contracts are Arabic or English only.
+DocLanguage previewLanguageOf(
+  StyleEditorState st, {
+  required bool contract,
+  required DocLanguage documentLanguage,
+}) {
+  final picked = st.previewLanguage ?? documentLanguage;
+  if (contract) {
+    return st.previewLanguage == DocLanguage.en
+        ? DocLanguage.en
+        : DocLanguage.ar;
+  }
+  return picked;
 }
 
 String _langName(AppLocalizations l, DocLanguage lang) => switch (lang) {
@@ -146,9 +182,11 @@ class _PreviewPagesState extends ConsumerState<_PreviewPages> {
     LayoutCallback build;
     if (st.previewContract && contract != null) {
       final contracts = ref.read(contractsProvider).value ?? const <Contract>[];
-      final lang = st.previewLanguage == DocLanguage.en
-          ? DocLanguage.en
-          : DocLanguage.ar;
+      final lang = previewLanguageOf(
+        st,
+        contract: true,
+        documentLanguage: DocLanguage.ar,
+      );
       final data = ContractPdfData(
         contract: contract,
         client: clientOf(contract.clientId),
@@ -162,9 +200,13 @@ class _PreviewPagesState extends ConsumerState<_PreviewPages> {
       final today = CalendarDate.fromDateTime(ref.read(clockProvider).now());
       final base =
           open ?? styleSampleInvoice(settings.defaultDocLanguage, today);
-      final inv = st.previewLanguage == null
-          ? base
-          : base.copyWith(language: st.previewLanguage);
+      final inv = base.copyWith(
+        language: previewLanguageOf(
+          st,
+          contract: false,
+          documentLanguage: base.language,
+        ),
+      );
       final data = InvoicePdfData(
         invoice: inv,
         client: open == null ? styleSampleClient : clientOf(open.clientId),
