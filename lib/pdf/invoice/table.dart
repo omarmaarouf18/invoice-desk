@@ -71,7 +71,10 @@ extension _Table on _Builder {
                         docNumber('$n'),
                         style: st(size: 11, font: bold, color: style.primary),
                       ),
-                      t('  ·  ', style: st(size: 11, color: style.muted)),
+                      t(
+                        digits == DigitStyle.arabicIndic ? ' – ' : '  ·  ',
+                        style: st(size: 11, color: style.muted),
+                      ),
                       if (title.isNotEmpty)
                         t(title, style: st(size: 11, font: bold)),
                     ],

@@ -41,7 +41,9 @@ extension _Totals on _Builder {
           if (multi)
             for (final (i, sec) in inv.sections.indexed)
               line(
-                '${docNumber('${i + 1}')} · ${_sectionName(sec)}',
+                isArabic && digits == DigitStyle.arabicIndic
+                    ? '${docNumber('${i + 1}')} – ${_sectionName(sec)}'
+                    : '${docNumber('${i + 1}')} · ${_sectionName(sec)}',
                 docNumber(sec.subtotal.format()),
               ),
           if (inv.vatOn)
