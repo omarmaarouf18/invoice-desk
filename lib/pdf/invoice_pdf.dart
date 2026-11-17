@@ -264,6 +264,10 @@ class _Builder {
   );
 
   /// Text that picks its own direction (Arabic → RTL).
+  ///
+  /// Letter spacing (tracking) is for Latin runs only: spacing out Arabic
+  /// glyphs breaks the cursive joins, so any run that holds Arabic is
+  /// drawn with a letter spacing of 0 whatever [style] asks for.
   pw.Widget t(
     String text, {
     pw.TextStyle? style,
@@ -271,7 +275,9 @@ class _Builder {
     pw.TextDirection? dir,
   }) => pw.Text(
     text,
-    style: style,
+    style: _hasArabic(text) && (style?.letterSpacing ?? 0) != 0
+        ? style!.copyWith(letterSpacing: 0)
+        : style,
     textAlign: align,
     textDirection: dir ?? _dirOf(text),
   );
