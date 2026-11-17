@@ -1,6 +1,6 @@
 import 'package:invoice_desk/domain/document_style.dart';
 
-/// The 5 built-in style presets provided with Invoice Desk.
+/// The 6 built-in style presets provided with Invoice Desk.
 ///
 /// Presets have stable read-only IDs (`preset_classic`, `preset_modern`, etc.).
 /// Users cannot overwrite presets; they can duplicate them into customizable
@@ -45,7 +45,7 @@ enum DocPreset {
       primary: 0xFF374151,
       accent: 0xFF4B5563,
       ink: 0xFF1F2937,
-      muted: 0xFF9CA3AF,
+      muted: 0xFF6B7280,
       surface: 0xFFFFFFFF,
       tableHeaderBg: 0xFFFFFFFF,
       border: 0xFFE5E7EB,
@@ -59,7 +59,7 @@ enum DocPreset {
   ),
 
   /// High-contrast executive layout with bold crimson accent, framed bordered table,
-  /// solid totals banner, and traditional Noto Naskh Arabic typography.
+  /// and solid totals banner.
   bold(
     id: 'preset_bold',
     nameAr: 'بارز',
@@ -72,13 +72,31 @@ enum DocPreset {
       surface: 0xFFF4F4F5,
       tableHeaderBg: 0xFFFEE2E2,
       border: 0xFFA1A1AA,
-      fontFamily: DocFontFamily.notoNaskhArabic,
       baseSize: 10,
       marginHorizontal: 38,
       marginTop: 32,
       headerStyle: HeaderStyle.band,
       tableStyle: TableStyle.bordered,
       totalsStyle: TotalsStyle.solid,
+    ),
+  ),
+
+  /// Traditional formal layout with deep navy accent, rule header, plain table,
+  /// outlined totals, and classical Noto Naskh Arabic typography.
+  formal(
+    id: 'preset_formal',
+    nameAr: 'رسمي',
+    nameEn: 'Formal',
+    style: DocumentStyle(
+      primary: 0xFF1E3A5F,
+      accent: 0xFF2563EB,
+      ink: 0xFF0F172A,
+      muted: 0xFF475569,
+      surface: 0xFFF8FAFC,
+      tableHeaderBg: 0xFFF1F5F9,
+      border: 0xFFCBD5E1,
+      fontFamily: DocFontFamily.notoNaskhArabic,
+      baseSize: 10,
     ),
   ),
 
@@ -135,6 +153,7 @@ enum DocPreset {
     'preset_modern' || 'modern' => DocPreset.modern,
     'preset_minimal' || 'minimal' => DocPreset.minimal,
     'preset_bold' || 'bold' => DocPreset.bold,
+    'preset_formal' || 'formal' => DocPreset.formal,
     'preset_blank' || 'blank' => DocPreset.blank,
     _ => DocPreset.classic,
   };
