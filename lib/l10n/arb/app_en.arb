@@ -1182,5 +1182,6 @@
   "presetBold": "Bold",
   "presetFormal": "Formal",
   "presetBlank": "Blank",
-  "styleMoreActions": "Style actions"
+  "styleMoreActions": "Style actions",
+  "previewFailed": "The preview couldn’t be shown. You can still export the file."
 }

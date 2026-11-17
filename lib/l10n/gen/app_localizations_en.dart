@@ -2118,4 +2118,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get styleMoreActions => 'Style actions';
+
+  @override
+  String get previewFailed => 'The preview couldn’t be shown. You can still export the file.';
 }

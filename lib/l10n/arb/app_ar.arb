@@ -1182,5 +1182,6 @@
   "presetBold": "جريء",
   "presetFormal": "رسمي",
   "presetBlank": "أساسي",
-  "styleMoreActions": "إجراءات التصميم"
+  "styleMoreActions": "إجراءات التصميم",
+  "previewFailed": "تعذّر عرض المعاينة. يمكنك تصدير الملف كالمعتاد."
 }

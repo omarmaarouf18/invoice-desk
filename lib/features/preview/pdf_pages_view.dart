@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
 import 'package:printing/printing.dart';
 
@@ -22,6 +23,8 @@ class PdfPagesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    // The UI direction, for the message (the pages themselves are LTR).
+    final uiDir = Directionality.of(context);
     // The page itself is laid out by the PDF; the scroll view is LTR so
     // the pages don't jump sides when the UI is Arabic.
     return Directionality(
@@ -45,6 +48,19 @@ class PdfPagesView extends StatelessWidget {
           border: Border.all(color: context.colors.border),
         ),
         loadingWidget: const SizedBox.shrink(),
+        // A calm message instead of the package's red error box (also what
+        // tests see: they have no rasteriser).
+        onError: (context, _) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(Space.l),
+            child: Text(
+              context.l10n.previewFailed,
+              textAlign: TextAlign.center,
+              textDirection: uiDir,
+              style: theme.textTheme.bodySmall,
+            ),
+          ),
+        ),
       ),
     );
   }

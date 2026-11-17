@@ -3714,6 +3714,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'إجراءات التصميم'**
   String get styleMoreActions;
+
+  /// No description provided for @previewFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر عرض المعاينة. يمكنك تصدير الملف كالمعتاد.'**
+  String get previewFailed;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

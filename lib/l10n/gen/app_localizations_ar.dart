@@ -2118,4 +2118,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get styleMoreActions => 'إجراءات التصميم';
+
+  @override
+  String get previewFailed => 'تعذّر عرض المعاينة. يمكنك تصدير الملف كالمعتاد.';
 }
