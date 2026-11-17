@@ -89,15 +89,19 @@ enum TableStyle {
 
 /// Styling of the totals and payment summary box.
 enum TotalsStyle {
-  /// Rounded box with subtle hairline border.
+  /// Rounded box with subtle hairline border and solid total banner.
   outlined,
 
   /// Filled background container with inverted or contrasting text.
-  solid;
+  solid,
+
+  /// Light, minimal summary without solid dark fills; total rendered in dark ink.
+  plain;
 
   /// Parses totals style, defaulting to [outlined].
   static TotalsStyle fromString(String? v) => switch (v?.toLowerCase()) {
     'solid' => TotalsStyle.solid,
+    'plain' || 'minimal' || 'light' => TotalsStyle.plain,
     _ => TotalsStyle.outlined,
   };
 }

@@ -28,11 +28,15 @@ extension _Totals on _Builder {
       ),
     );
 
+    final isPlainTotals = style.totalsStyle == TotalsStyle.plain;
     final totalsBox = pw.Container(
       width: 236,
       decoration: pw.BoxDecoration(
-        border: pw.Border.all(color: style.border, width: 0.8),
-        borderRadius: pw.BorderRadius.circular(8),
+        border: pw.Border.all(
+          color: style.border,
+          width: isPlainTotals ? 0.6 : 0.8,
+        ),
+        borderRadius: pw.BorderRadius.circular(isPlainTotals ? 6 : 8),
       ),
       child: pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.stretch,
@@ -54,19 +58,24 @@ extension _Totals on _Builder {
           else if (style.showVatRow)
             line(label.vat, label.vatNotApplicable, color: style.muted),
           pw.SizedBox(height: 6),
+          if (isPlainTotals) pw.Container(height: 0.6, color: style.border),
           pw.Container(
             padding: const pw.EdgeInsets.symmetric(
               horizontal: 12,
               vertical: 10,
             ),
             decoration: pw.BoxDecoration(
-              color: style.totalsStyle == TotalsStyle.solid
+              color: isPlainTotals
+                  ? null
+                  : style.totalsStyle == TotalsStyle.solid
                   ? style.primary
                   : style.ink,
-              borderRadius: const pw.BorderRadius.only(
-                bottomLeft: pw.Radius.circular(7),
-                bottomRight: pw.Radius.circular(7),
-              ),
+              borderRadius: isPlainTotals
+                  ? null
+                  : const pw.BorderRadius.only(
+                      bottomLeft: pw.Radius.circular(7),
+                      bottomRight: pw.Radius.circular(7),
+                    ),
             ),
             child: pw.Row(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -78,12 +87,20 @@ extension _Totals on _Builder {
                     for (final m in totals.total.nonZero)
                       t(
                         docNumber(m.format()),
-                        style: st(size: 13, font: bold, color: style.onInk),
+                        style: st(
+                          size: 13,
+                          font: bold,
+                          color: isPlainTotals ? style.ink : style.onInk,
+                        ),
                       ),
                     if (totals.total.isEmpty)
                       t(
                         docNumber('0'),
-                        style: st(size: 13, font: bold, color: style.onInk),
+                        style: st(
+                          size: 13,
+                          font: bold,
+                          color: isPlainTotals ? style.ink : style.onInk,
+                        ),
                       ),
                   ],
                 ),
@@ -143,10 +160,13 @@ extension _Totals on _Builder {
   /// The label of the total: the language's own, with the Arabic one as a
   /// small secondary label in a bilingual document.
   pw.Widget _totalLabel() {
+    final isPlainTotals = style.totalsStyle == TotalsStyle.plain;
+    final fg = isPlainTotals ? style.ink : style.onInk;
+    final fgMuted = isPlainTotals ? style.muted : style.onInkMuted;
     if (!isBilingual) {
       return t(
         label.totalDue,
-        style: st(size: 10, font: bold, color: style.onInk),
+        style: st(size: 10, font: bold, color: fg),
       );
     }
     return pw.Column(
@@ -154,9 +174,9 @@ extension _Totals on _Builder {
       children: [
         t(
           label.totalDue,
-          style: st(size: 10, font: bold, color: style.onInk),
+          style: st(size: 10, font: bold, color: fg),
         ),
-        t(labelAr.totalDue, style: st(size: 8, color: style.onInkMuted)),
+        t(labelAr.totalDue, style: st(size: 8, color: fgMuted)),
       ],
     );
   }

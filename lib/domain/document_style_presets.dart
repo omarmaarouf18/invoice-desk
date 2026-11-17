@@ -15,7 +15,7 @@ enum DocPreset {
   ),
 
   /// Contemporary layout with royal indigo accent, alternating striped table,
-  /// solid totals box, and Noto Naskh Arabic typography.
+  /// solid totals box, and modern IBM Plex Sans Arabic typography.
   modern(
     id: 'preset_modern',
     nameAr: 'عصري',
@@ -28,7 +28,7 @@ enum DocPreset {
       surface: 0xFFF8FAFC,
       tableHeaderBg: 0xFFEFF6FF,
       border: 0xFFCBD5E1,
-      fontFamily: DocFontFamily.notoNaskhArabic,
+      fontFamily: DocFontFamily.ibmPlexSansArabic,
       marginTop: 32,
       headerStyle: HeaderStyle.band,
       tableStyle: TableStyle.striped,
@@ -37,7 +37,7 @@ enum DocPreset {
   ),
 
   /// Clean, light, high-whitespace aesthetic with charcoal ink, rule-free header,
-  /// and generous page margins.
+  /// no card backgrounds, light totals block, and generous page margins.
   minimal(
     id: 'preset_minimal',
     nameAr: 'بسيط',
@@ -47,19 +47,20 @@ enum DocPreset {
       accent: 0xFF4B5563,
       ink: 0xFF1F2937,
       muted: 0xFF9CA3AF,
-      surface: 0xFFFAFAFA,
-      tableHeaderBg: 0xFFFAFAFA,
+      surface: 0xFFFFFFFF,
+      tableHeaderBg: 0xFFFFFFFF,
       border: 0xFFE5E7EB,
       baseSize: 9,
       marginHorizontal: 48,
       marginTop: 44,
       marginBottom: 36,
       headerStyle: HeaderStyle.none,
+      totalsStyle: TotalsStyle.plain,
     ),
   ),
 
   /// High-contrast executive layout with bold crimson accent, framed bordered table,
-  /// and solid totals banner.
+  /// solid totals banner, and traditional Noto Naskh Arabic typography.
   bold(
     id: 'preset_bold',
     nameAr: 'بارز',
@@ -72,6 +73,7 @@ enum DocPreset {
       surface: 0xFFF4F4F5,
       tableHeaderBg: 0xFFFEE2E2,
       border: 0xFFA1A1AA,
+      fontFamily: DocFontFamily.notoNaskhArabic,
       baseSize: 10,
       marginHorizontal: 38,
       marginTop: 32,

@@ -166,12 +166,21 @@ extension _Header on _Builder {
     ),
   );
 
+  bool get _hasCardBg =>
+      style.surface.red < 0.99 ||
+      style.surface.green < 0.99 ||
+      style.surface.blue < 0.99;
+
   pw.Widget card(pw.Widget label, List<pw.Widget> lines) => pw.Container(
-    padding: const pw.EdgeInsets.all(12),
-    decoration: pw.BoxDecoration(
-      color: style.surface,
-      borderRadius: pw.BorderRadius.circular(8),
-    ),
+    padding: _hasCardBg
+        ? const pw.EdgeInsets.all(12)
+        : const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+    decoration: _hasCardBg
+        ? pw.BoxDecoration(
+            color: style.surface,
+            borderRadius: pw.BorderRadius.circular(8),
+          )
+        : null,
     child: pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [label, pw.SizedBox(height: 6), ...lines],

@@ -47,21 +47,26 @@ void main() {
       expect(blank.showPaidStamp, isTrue);
     });
 
-    test('modern preset uses Noto Naskh Arabic font', () {
-      expect(DocPreset.modern.style.fontFamily, DocFontFamily.notoNaskhArabic);
+    test('modern preset uses modern IBM Plex Sans Arabic font', () {
+      expect(DocPreset.modern.style.fontFamily, DocFontFamily.ibmPlexSansArabic);
       expect(DocPreset.modern.style.tableStyle, TableStyle.striped);
       expect(DocPreset.modern.style.totalsStyle, TotalsStyle.solid);
     });
 
+    test('bold preset uses traditional Noto Naskh Arabic font', () {
+      expect(DocPreset.bold.style.fontFamily, DocFontFamily.notoNaskhArabic);
+      expect(DocPreset.bold.style.tableStyle, TableStyle.bordered);
+      expect(DocPreset.bold.style.headerStyle, HeaderStyle.band);
+      expect(DocPreset.bold.style.primary, 0xFF991B1B);
+    });
+
     test(
-      'minimal and bold are clearly distinct in colors and table styles',
+      'minimal has pure white surface, light totals style, and no header rule',
       () {
         expect(DocPreset.minimal.style.tableStyle, TableStyle.plain);
         expect(DocPreset.minimal.style.headerStyle, HeaderStyle.none);
-
-        expect(DocPreset.bold.style.tableStyle, TableStyle.bordered);
-        expect(DocPreset.bold.style.headerStyle, HeaderStyle.band);
-        expect(DocPreset.bold.style.primary, 0xFF991B1B);
+        expect(DocPreset.minimal.style.totalsStyle, TotalsStyle.plain);
+        expect(DocPreset.minimal.style.surface, 0xFFFFFFFF);
       },
     );
   });
