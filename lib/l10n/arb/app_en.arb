@@ -1006,5 +1006,181 @@
   "digitStyleWestern": "Western (123)",
   "digitStyleArabicIndic": "Arabic-Indic (١٢٣)",
   "warnNoPaymentMethod": "Add a payment method in Settings",
-  "warnNoPaymentMethodHint": "The payment details card will not appear on the invoice until at least one payment method is added."
+  "warnNoPaymentMethodHint": "The payment details card will not appear on the invoice until at least one payment method is added.",
+  "stylesTitle": "Document styles",
+  "stylesSubtitle": "Choose how invoices and contracts look, or design your own.",
+  "stylesPresets": "Ready-made",
+  "stylesMine": "My styles",
+  "stylesNoneYet": "You have no styles of your own yet.",
+  "styleNewFromBlank": "New from Blank",
+  "styleImport": "Import style file…",
+  "styleDuplicate": "Duplicate",
+  "styleDuplicateToCustomize": "Duplicate to customise",
+  "styleRename": "Rename",
+  "styleResetToPreset": "Reset to preset",
+  "styleResetConfirm": "“{name}” goes back to its preset’s colours, fonts and settings. Its name and logo stay.",
+  "@styleResetConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "styleReset": "Reset",
+  "styleExport": "Export style file…",
+  "styleDelete": "Delete",
+  "styleDeleted": "“{name}” moved to the trash",
+  "@styleDeleted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "styleCopyName": "{name} (copy)",
+  "@styleCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "styleNameLabel": "Style name",
+  "styleNewName": "New style",
+  "styleImported": "Imported “{name}”",
+  "@styleImported": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "styleImportFailed": "This file isn’t a valid style file.",
+  "styleExported": "Style saved to {file}",
+  "@styleExported": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "styleExportFailed": "Couldn’t save the style file.",
+  "styleFileType": "Style file",
+  "stylePresetReadOnly": "Ready-made styles are read-only. Duplicate one to change it.",
+  "stylePreviewInvoice": "Invoice",
+  "stylePreviewContract": "Contract",
+  "stylePreviewSample": "Previewing on a sample invoice",
+  "stylePreviewOpenDoc": "Previewing on the open document",
+  "styleGroupColours": "Colours",
+  "styleGroupFont": "Font & page",
+  "styleGroupHeader": "Header & logo",
+  "styleGroupTable": "Table",
+  "styleGroupTotals": "Totals",
+  "styleGroupBlocks": "Visible blocks",
+  "styleGroupFooter": "Footer",
+  "colourPrimary": "Primary",
+  "colourAccent": "Accent",
+  "colourInk": "Text",
+  "colourMuted": "Secondary text",
+  "colourSurface": "Card background",
+  "colourTableHeader": "Table header background",
+  "colourBorder": "Rules & borders",
+  "colourPick": "Pick a colour",
+  "colourHexInvalid": "Enter 6 hex digits, like 0F766E",
+  "contrastWarning": "{pair}: contrast {ratio}:1 is below 4.5:1, so the text may be hard to read.",
+  "@contrastWarning": {
+    "placeholders": {
+      "pair": {
+        "type": "String"
+      },
+      "ratio": {
+        "type": "String"
+      }
+    }
+  },
+  "contrastInkOnPage": "Text on the page",
+  "contrastMutedOnPage": "Secondary text on the page",
+  "contrastPrimaryOnPage": "Headings on the page",
+  "contrastInkOnSurface": "Text on cards",
+  "contrastMutedOnSurface": "Secondary text on cards",
+  "contrastMutedOnTableHeader": "Table header labels",
+  "contrastWhiteOnInk": "Total on its dark band",
+  "contrastWhiteOnPrimary": "Total on its coloured band",
+  "fontFamily": "Typeface",
+  "fontPlex": "IBM Plex Sans Arabic",
+  "fontNaskh": "Noto Naskh Arabic",
+  "fontBaseSize": "Base size",
+  "fontScale": "Text scale",
+  "paperSize": "Paper size",
+  "paperA4": "A4",
+  "paperLetter": "Letter",
+  "marginSide": "Side margin",
+  "marginTop": "Top margin",
+  "marginBottom": "Bottom margin",
+  "pointsValue": "{value} pt",
+  "@pointsValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "headerStyleLabel": "Header style",
+  "headerBand": "Band",
+  "headerRule": "Rule",
+  "headerNone": "None",
+  "logoLabel": "Logo",
+  "logoChoose": "Choose image…",
+  "logoRemove": "Remove logo",
+  "logoHint": "PNG or JPG, up to 1 MB",
+  "logoRejected": "That image wasn’t accepted: it must be a PNG or JPG of 1 MB or less.",
+  "logoImageType": "Image",
+  "logoSize": "Logo size",
+  "logoPosition": "Logo position",
+  "positionStart": "Start",
+  "positionCenter": "Centre",
+  "positionEnd": "End",
+  "showRole": "Your role",
+  "showCity": "City",
+  "showContacts": "Contact details",
+  "tableStyleLabel": "Table style",
+  "tablePlain": "Plain",
+  "tableStriped": "Striped",
+  "tableBordered": "Bordered",
+  "totalsStyleLabel": "Totals style",
+  "totalsOutlined": "Outlined",
+  "totalsSolid": "Solid",
+  "totalsPlain": "Plain",
+  "showVatRow": "VAT row",
+  "showPaidStamp": "“Paid” stamp",
+  "blockHeader": "Header",
+  "blockParties": "Parties",
+  "blockItems": "Items",
+  "blockTotals": "Totals",
+  "blockNotes": "Notes",
+  "blockFooter": "Footer",
+  "blockRequired": "Required",
+  "blocksHint": "Drag the blocks to change their order in the document.",
+  "showPaymentCard": "Payment details card",
+  "showPleaseQuote": "“Please quote the invoice number”",
+  "showPageNumbers": "Page numbers",
+  "showSignatureBoxes": "Signature boxes in contracts",
+  "footerAr": "Footer text (Arabic)",
+  "footerEn": "Footer text (English)",
+  "docStyle": "Document style",
+  "docStyleFollows": "Client or default",
+  "docStyleEdit": "Edit styles…",
+  "styleLockedInvoice": "The style is fixed because the invoice was sent",
+  "styleLockedContract": "The style is fixed because the contract was signed",
+  "stylesSettings": "Document styles",
+  "defaultInvoiceStyle": "Default invoice style",
+  "defaultContractStyle": "Default contract style",
+  "openStyleEditor": "Open style editor",
+  "presetClassic": "Classic",
+  "presetModern": "Modern",
+  "presetMinimal": "Minimal",
+  "presetBold": "Bold",
+  "presetFormal": "Formal",
+  "presetBlank": "Blank",
+  "styleMoreActions": "Style actions"
 }

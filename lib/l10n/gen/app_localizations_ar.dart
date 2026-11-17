@@ -1732,4 +1732,390 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get warnNoPaymentMethodHint => 'لن تظهر بطاقة بيانات الدفع في الفاتورة حتى تضيف وسيلة دفع واحدة على الأقل.';
+
+  @override
+  String get stylesTitle => 'تصميم المستندات';
+
+  @override
+  String get stylesSubtitle => 'اختر شكل الفواتير والعقود، أو صمّم شكلك الخاص.';
+
+  @override
+  String get stylesPresets => 'تصاميم جاهزة';
+
+  @override
+  String get stylesMine => 'تصاميمي';
+
+  @override
+  String get stylesNoneYet => 'لا توجد تصاميم خاصة بك بعد.';
+
+  @override
+  String get styleNewFromBlank => 'تصميم جديد من «أساسي»';
+
+  @override
+  String get styleImport => 'استيراد ملف تصميم…';
+
+  @override
+  String get styleDuplicate => 'نسخ';
+
+  @override
+  String get styleDuplicateToCustomize => 'انسخه لتعديله';
+
+  @override
+  String get styleRename => 'إعادة التسمية';
+
+  @override
+  String get styleResetToPreset => 'إرجاع إلى التصميم الأصلي';
+
+  @override
+  String styleResetConfirm(String name) {
+    return 'ستعود ألوان «$name» وخطوطه وإعداداته إلى التصميم الأصلي، ويبقى الاسم والشعار.';
+  }
+
+  @override
+  String get styleReset => 'إرجاع';
+
+  @override
+  String get styleExport => 'تصدير ملف تصميم…';
+
+  @override
+  String get styleDelete => 'حذف';
+
+  @override
+  String styleDeleted(String name) {
+    return 'نُقل «$name» إلى المحذوفات';
+  }
+
+  @override
+  String styleCopyName(String name) {
+    return '$name (نسخة)';
+  }
+
+  @override
+  String get styleNameLabel => 'اسم التصميم';
+
+  @override
+  String get styleNewName => 'تصميم جديد';
+
+  @override
+  String styleImported(String name) {
+    return 'استُورد «$name»';
+  }
+
+  @override
+  String get styleImportFailed => 'هذا الملف ليس ملف تصميم صالحًا.';
+
+  @override
+  String styleExported(String file) {
+    return 'حُفظ التصميم في $file';
+  }
+
+  @override
+  String get styleExportFailed => 'تعذّر حفظ ملف التصميم.';
+
+  @override
+  String get styleFileType => 'ملف تصميم';
+
+  @override
+  String get stylePresetReadOnly => 'التصاميم الجاهزة للقراءة فقط. انسخ واحدًا لتعديله.';
+
+  @override
+  String get stylePreviewInvoice => 'فاتورة';
+
+  @override
+  String get stylePreviewContract => 'عقد';
+
+  @override
+  String get stylePreviewSample => 'معاينة على فاتورة تجريبية';
+
+  @override
+  String get stylePreviewOpenDoc => 'معاينة على المستند المفتوح';
+
+  @override
+  String get styleGroupColours => 'الألوان';
+
+  @override
+  String get styleGroupFont => 'الخط والصفحة';
+
+  @override
+  String get styleGroupHeader => 'الترويسة والشعار';
+
+  @override
+  String get styleGroupTable => 'الجدول';
+
+  @override
+  String get styleGroupTotals => 'الإجماليات';
+
+  @override
+  String get styleGroupBlocks => 'الأجزاء الظاهرة';
+
+  @override
+  String get styleGroupFooter => 'التذييل';
+
+  @override
+  String get colourPrimary => 'اللون الأساسي';
+
+  @override
+  String get colourAccent => 'لون التمييز';
+
+  @override
+  String get colourInk => 'لون النص';
+
+  @override
+  String get colourMuted => 'النص الثانوي';
+
+  @override
+  String get colourSurface => 'خلفية البطاقات';
+
+  @override
+  String get colourTableHeader => 'خلفية رأس الجدول';
+
+  @override
+  String get colourBorder => 'الخطوط والحدود';
+
+  @override
+  String get colourPick => 'اختيار لون';
+
+  @override
+  String get colourHexInvalid => 'اكتب ٦ خانات ست عشرية، مثل 0F766E';
+
+  @override
+  String contrastWarning(String pair, String ratio) {
+    return '$pair: التباين $ratio:1 أقل من 4.5:1، وقد تصعب قراءة النص.';
+  }
+
+  @override
+  String get contrastInkOnPage => 'النص على الصفحة';
+
+  @override
+  String get contrastMutedOnPage => 'النص الثانوي على الصفحة';
+
+  @override
+  String get contrastPrimaryOnPage => 'العناوين على الصفحة';
+
+  @override
+  String get contrastInkOnSurface => 'النص على خلفية البطاقات';
+
+  @override
+  String get contrastMutedOnSurface => 'النص الثانوي على خلفية البطاقات';
+
+  @override
+  String get contrastMutedOnTableHeader => 'عناوين الجدول';
+
+  @override
+  String get contrastWhiteOnInk => 'نص الإجمالي على شريطه الداكن';
+
+  @override
+  String get contrastWhiteOnPrimary => 'نص الإجمالي على شريطه الملوّن';
+
+  @override
+  String get fontFamily => 'نوع الخط';
+
+  @override
+  String get fontPlex => 'IBM Plex Sans Arabic';
+
+  @override
+  String get fontNaskh => 'Noto Naskh Arabic';
+
+  @override
+  String get fontBaseSize => 'حجم الخط الأساسي';
+
+  @override
+  String get fontScale => 'تكبير النص';
+
+  @override
+  String get paperSize => 'حجم الورق';
+
+  @override
+  String get paperA4 => 'A4';
+
+  @override
+  String get paperLetter => 'Letter';
+
+  @override
+  String get marginSide => 'الهامش الجانبي';
+
+  @override
+  String get marginTop => 'الهامش العلوي';
+
+  @override
+  String get marginBottom => 'الهامش السفلي';
+
+  @override
+  String pointsValue(String value) {
+    return '$value نقطة';
+  }
+
+  @override
+  String get headerStyleLabel => 'شكل الترويسة';
+
+  @override
+  String get headerBand => 'شريط';
+
+  @override
+  String get headerRule => 'خط';
+
+  @override
+  String get headerNone => 'بدون';
+
+  @override
+  String get logoLabel => 'الشعار';
+
+  @override
+  String get logoChoose => 'اختيار صورة…';
+
+  @override
+  String get logoRemove => 'إزالة الشعار';
+
+  @override
+  String get logoHint => 'PNG أو JPG، حتى 1 ميجابايت';
+
+  @override
+  String get logoRejected => 'لم تُقبل الصورة: يجب أن تكون PNG أو JPG بحجم 1 ميجابايت أو أقل.';
+
+  @override
+  String get logoImageType => 'صورة';
+
+  @override
+  String get logoSize => 'حجم الشعار';
+
+  @override
+  String get logoPosition => 'موضع الشعار';
+
+  @override
+  String get positionStart => 'البداية';
+
+  @override
+  String get positionCenter => 'الوسط';
+
+  @override
+  String get positionEnd => 'النهاية';
+
+  @override
+  String get showRole => 'المسمّى الوظيفي';
+
+  @override
+  String get showCity => 'المدينة';
+
+  @override
+  String get showContacts => 'بيانات التواصل';
+
+  @override
+  String get tableStyleLabel => 'شكل الجدول';
+
+  @override
+  String get tablePlain => 'بسيط';
+
+  @override
+  String get tableStriped => 'صفوف متناوبة';
+
+  @override
+  String get tableBordered => 'بحدود';
+
+  @override
+  String get totalsStyleLabel => 'شكل الإجماليات';
+
+  @override
+  String get totalsOutlined => 'إطار';
+
+  @override
+  String get totalsSolid => 'ملوّن';
+
+  @override
+  String get totalsPlain => 'بسيط';
+
+  @override
+  String get showVatRow => 'سطر ضريبة القيمة المضافة';
+
+  @override
+  String get showPaidStamp => 'ختم «مدفوعة»';
+
+  @override
+  String get blockHeader => 'الترويسة';
+
+  @override
+  String get blockParties => 'الأطراف';
+
+  @override
+  String get blockItems => 'البنود';
+
+  @override
+  String get blockTotals => 'الإجماليات';
+
+  @override
+  String get blockNotes => 'الملاحظات';
+
+  @override
+  String get blockFooter => 'التذييل';
+
+  @override
+  String get blockRequired => 'أساسي';
+
+  @override
+  String get blocksHint => 'اسحب الأجزاء لتغيير ترتيبها في المستند.';
+
+  @override
+  String get showPaymentCard => 'بطاقة بيانات الدفع';
+
+  @override
+  String get showPleaseQuote => '«يُرجى ذكر رقم الفاتورة عند الدفع»';
+
+  @override
+  String get showPageNumbers => 'أرقام الصفحات';
+
+  @override
+  String get showSignatureBoxes => 'خانات التوقيع في العقود';
+
+  @override
+  String get footerAr => 'نص التذييل بالعربية';
+
+  @override
+  String get footerEn => 'نص التذييل بالإنجليزية';
+
+  @override
+  String get docStyle => 'تصميم المستند';
+
+  @override
+  String get docStyleFollows => 'حسب العميل أو الإعدادات';
+
+  @override
+  String get docStyleEdit => 'تعديل التصاميم…';
+
+  @override
+  String get styleLockedInvoice => 'التصميم مثبّت لأن الفاتورة أُرسلت';
+
+  @override
+  String get styleLockedContract => 'التصميم مثبّت لأن العقد وُقِّع';
+
+  @override
+  String get stylesSettings => 'تصاميم المستندات';
+
+  @override
+  String get defaultInvoiceStyle => 'تصميم الفواتير الافتراضي';
+
+  @override
+  String get defaultContractStyle => 'تصميم العقود الافتراضي';
+
+  @override
+  String get openStyleEditor => 'فتح محرّر التصاميم';
+
+  @override
+  String get presetClassic => 'كلاسيكي';
+
+  @override
+  String get presetModern => 'عصري';
+
+  @override
+  String get presetMinimal => 'بسيط';
+
+  @override
+  String get presetBold => 'جريء';
+
+  @override
+  String get presetFormal => 'رسمي';
+
+  @override
+  String get presetBlank => 'أساسي';
+
+  @override
+  String get styleMoreActions => 'إجراءات التصميم';
 }

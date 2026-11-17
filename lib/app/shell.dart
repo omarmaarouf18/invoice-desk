@@ -16,6 +16,7 @@ import 'package:invoice_desk/features/library/library_page.dart';
 import 'package:invoice_desk/features/settings/settings_page.dart';
 import 'package:invoice_desk/features/sidebar/sidebar.dart';
 import 'package:invoice_desk/features/sidebar/sidebar_providers.dart';
+import 'package:invoice_desk/features/styles/styles_page.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
 import 'package:invoice_desk/widgets/common.dart';
@@ -128,6 +129,7 @@ class _Workspace extends ConsumerWidget {
     final Widget child = switch (ws) {
       Workspace.settings => const SettingsPage(),
       Workspace.library => const LibraryPage(),
+      Workspace.styles => const StylesPage(),
       Workspace.invoice when hasInvoice => const EditorPage(),
       Workspace.contract when hasContract => const ContractPage(),
       Workspace.invoice || Workspace.contract => const WelcomePane(),

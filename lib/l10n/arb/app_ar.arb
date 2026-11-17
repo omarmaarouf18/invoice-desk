@@ -1006,5 +1006,181 @@
   "digitStyleWestern": "أرقام غربية (123)",
   "digitStyleArabicIndic": "أرقام مشرقية (١٢٣)",
   "warnNoPaymentMethod": "أضف وسيلة دفع في الإعدادات",
-  "warnNoPaymentMethodHint": "لن تظهر بطاقة بيانات الدفع في الفاتورة حتى تضيف وسيلة دفع واحدة على الأقل."
+  "warnNoPaymentMethodHint": "لن تظهر بطاقة بيانات الدفع في الفاتورة حتى تضيف وسيلة دفع واحدة على الأقل.",
+  "stylesTitle": "تصميم المستندات",
+  "stylesSubtitle": "اختر شكل الفواتير والعقود، أو صمّم شكلك الخاص.",
+  "stylesPresets": "تصاميم جاهزة",
+  "stylesMine": "تصاميمي",
+  "stylesNoneYet": "لا توجد تصاميم خاصة بك بعد.",
+  "styleNewFromBlank": "تصميم جديد من «أساسي»",
+  "styleImport": "استيراد ملف تصميم…",
+  "styleDuplicate": "نسخ",
+  "styleDuplicateToCustomize": "انسخه لتعديله",
+  "styleRename": "إعادة التسمية",
+  "styleResetToPreset": "إرجاع إلى التصميم الأصلي",
+  "styleResetConfirm": "ستعود ألوان «{name}» وخطوطه وإعداداته إلى التصميم الأصلي، ويبقى الاسم والشعار.",
+  "@styleResetConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "styleReset": "إرجاع",
+  "styleExport": "تصدير ملف تصميم…",
+  "styleDelete": "حذف",
+  "styleDeleted": "نُقل «{name}» إلى المحذوفات",
+  "@styleDeleted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "styleCopyName": "{name} (نسخة)",
+  "@styleCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "styleNameLabel": "اسم التصميم",
+  "styleNewName": "تصميم جديد",
+  "styleImported": "استُورد «{name}»",
+  "@styleImported": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "styleImportFailed": "هذا الملف ليس ملف تصميم صالحًا.",
+  "styleExported": "حُفظ التصميم في {file}",
+  "@styleExported": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "styleExportFailed": "تعذّر حفظ ملف التصميم.",
+  "styleFileType": "ملف تصميم",
+  "stylePresetReadOnly": "التصاميم الجاهزة للقراءة فقط. انسخ واحدًا لتعديله.",
+  "stylePreviewInvoice": "فاتورة",
+  "stylePreviewContract": "عقد",
+  "stylePreviewSample": "معاينة على فاتورة تجريبية",
+  "stylePreviewOpenDoc": "معاينة على المستند المفتوح",
+  "styleGroupColours": "الألوان",
+  "styleGroupFont": "الخط والصفحة",
+  "styleGroupHeader": "الترويسة والشعار",
+  "styleGroupTable": "الجدول",
+  "styleGroupTotals": "الإجماليات",
+  "styleGroupBlocks": "الأجزاء الظاهرة",
+  "styleGroupFooter": "التذييل",
+  "colourPrimary": "اللون الأساسي",
+  "colourAccent": "لون التمييز",
+  "colourInk": "لون النص",
+  "colourMuted": "النص الثانوي",
+  "colourSurface": "خلفية البطاقات",
+  "colourTableHeader": "خلفية رأس الجدول",
+  "colourBorder": "الخطوط والحدود",
+  "colourPick": "اختيار لون",
+  "colourHexInvalid": "اكتب ٦ خانات ست عشرية، مثل 0F766E",
+  "contrastWarning": "{pair}: التباين {ratio}:1 أقل من 4.5:1، وقد تصعب قراءة النص.",
+  "@contrastWarning": {
+    "placeholders": {
+      "pair": {
+        "type": "String"
+      },
+      "ratio": {
+        "type": "String"
+      }
+    }
+  },
+  "contrastInkOnPage": "النص على الصفحة",
+  "contrastMutedOnPage": "النص الثانوي على الصفحة",
+  "contrastPrimaryOnPage": "العناوين على الصفحة",
+  "contrastInkOnSurface": "النص على خلفية البطاقات",
+  "contrastMutedOnSurface": "النص الثانوي على خلفية البطاقات",
+  "contrastMutedOnTableHeader": "عناوين الجدول",
+  "contrastWhiteOnInk": "نص الإجمالي على شريطه الداكن",
+  "contrastWhiteOnPrimary": "نص الإجمالي على شريطه الملوّن",
+  "fontFamily": "نوع الخط",
+  "fontPlex": "IBM Plex Sans Arabic",
+  "fontNaskh": "Noto Naskh Arabic",
+  "fontBaseSize": "حجم الخط الأساسي",
+  "fontScale": "تكبير النص",
+  "paperSize": "حجم الورق",
+  "paperA4": "A4",
+  "paperLetter": "Letter",
+  "marginSide": "الهامش الجانبي",
+  "marginTop": "الهامش العلوي",
+  "marginBottom": "الهامش السفلي",
+  "pointsValue": "{value} نقطة",
+  "@pointsValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "headerStyleLabel": "شكل الترويسة",
+  "headerBand": "شريط",
+  "headerRule": "خط",
+  "headerNone": "بدون",
+  "logoLabel": "الشعار",
+  "logoChoose": "اختيار صورة…",
+  "logoRemove": "إزالة الشعار",
+  "logoHint": "PNG أو JPG، حتى 1 ميجابايت",
+  "logoRejected": "لم تُقبل الصورة: يجب أن تكون PNG أو JPG بحجم 1 ميجابايت أو أقل.",
+  "logoImageType": "صورة",
+  "logoSize": "حجم الشعار",
+  "logoPosition": "موضع الشعار",
+  "positionStart": "البداية",
+  "positionCenter": "الوسط",
+  "positionEnd": "النهاية",
+  "showRole": "المسمّى الوظيفي",
+  "showCity": "المدينة",
+  "showContacts": "بيانات التواصل",
+  "tableStyleLabel": "شكل الجدول",
+  "tablePlain": "بسيط",
+  "tableStriped": "صفوف متناوبة",
+  "tableBordered": "بحدود",
+  "totalsStyleLabel": "شكل الإجماليات",
+  "totalsOutlined": "إطار",
+  "totalsSolid": "ملوّن",
+  "totalsPlain": "بسيط",
+  "showVatRow": "سطر ضريبة القيمة المضافة",
+  "showPaidStamp": "ختم «مدفوعة»",
+  "blockHeader": "الترويسة",
+  "blockParties": "الأطراف",
+  "blockItems": "البنود",
+  "blockTotals": "الإجماليات",
+  "blockNotes": "الملاحظات",
+  "blockFooter": "التذييل",
+  "blockRequired": "أساسي",
+  "blocksHint": "اسحب الأجزاء لتغيير ترتيبها في المستند.",
+  "showPaymentCard": "بطاقة بيانات الدفع",
+  "showPleaseQuote": "«يُرجى ذكر رقم الفاتورة عند الدفع»",
+  "showPageNumbers": "أرقام الصفحات",
+  "showSignatureBoxes": "خانات التوقيع في العقود",
+  "footerAr": "نص التذييل بالعربية",
+  "footerEn": "نص التذييل بالإنجليزية",
+  "docStyle": "تصميم المستند",
+  "docStyleFollows": "حسب العميل أو الإعدادات",
+  "docStyleEdit": "تعديل التصاميم…",
+  "styleLockedInvoice": "التصميم مثبّت لأن الفاتورة أُرسلت",
+  "styleLockedContract": "التصميم مثبّت لأن العقد وُقِّع",
+  "stylesSettings": "تصاميم المستندات",
+  "defaultInvoiceStyle": "تصميم الفواتير الافتراضي",
+  "defaultContractStyle": "تصميم العقود الافتراضي",
+  "openStyleEditor": "فتح محرّر التصاميم",
+  "presetClassic": "كلاسيكي",
+  "presetModern": "عصري",
+  "presetMinimal": "بسيط",
+  "presetBold": "جريء",
+  "presetFormal": "رسمي",
+  "presetBlank": "أساسي",
+  "styleMoreActions": "إجراءات التصميم"
 }

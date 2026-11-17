@@ -8,7 +8,6 @@
 - **Legacy lock gap (rule 8).** Invoices sent/paid and contracts signed **before v7** have no `style_snapshot`. Restored v1–v6 backups and demo rows are the same. Under the live chain, the first time the user picks a default style, those documents would change look. Fix, with no migration and no data rewrite: when the **stored** row is sent/paid/signed and has no snapshot, it resolves to Classic and counts as locked. Every v7 write path that commits a document already snapshots, so this only ever hits legacy rows. It matches ADR-0012's promise ("zero impact on sent, paid or signed documents"). It does not change what any existing document looks like today: they are all Classic now.
 - **`StyleRepository._isPresetId` misses `formal`.** A `style_id` of `preset_formal` falls through to the DB lookup, finds nothing, and resolves to the next fallback. Fix: delegate to `DocPreset`.
 - Document styles are not in «المحذوفات». "Delete (soft, like other entities)" means they must be: a new `TrashKind.style`.
-- The library page's back button uses `Icons.arrow_back`, which is wrong in LTR. Out of scope; noted under Leftovers.
 
 ## Screen layout — «تصميم المستندات» / "Document styles"
 
@@ -95,5 +94,4 @@ At widths below about 1180 px the inspector moves under the list as a tab, so th
 
 ## Leftovers
 
-- `features/library/library/template_widgets.dart` back button: `Icons.arrow_back` → `directionalIcon`. Phase 8.
 - Client preferred style (`clients.style_id`) has no UI yet. Natural home: the client sheet, Phase 6 or 8.

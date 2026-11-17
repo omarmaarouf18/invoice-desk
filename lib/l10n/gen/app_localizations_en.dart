@@ -1732,4 +1732,390 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get warnNoPaymentMethodHint => 'The payment details card will not appear on the invoice until at least one payment method is added.';
+
+  @override
+  String get stylesTitle => 'Document styles';
+
+  @override
+  String get stylesSubtitle => 'Choose how invoices and contracts look, or design your own.';
+
+  @override
+  String get stylesPresets => 'Ready-made';
+
+  @override
+  String get stylesMine => 'My styles';
+
+  @override
+  String get stylesNoneYet => 'You have no styles of your own yet.';
+
+  @override
+  String get styleNewFromBlank => 'New from Blank';
+
+  @override
+  String get styleImport => 'Import style file…';
+
+  @override
+  String get styleDuplicate => 'Duplicate';
+
+  @override
+  String get styleDuplicateToCustomize => 'Duplicate to customise';
+
+  @override
+  String get styleRename => 'Rename';
+
+  @override
+  String get styleResetToPreset => 'Reset to preset';
+
+  @override
+  String styleResetConfirm(String name) {
+    return '“$name” goes back to its preset’s colours, fonts and settings. Its name and logo stay.';
+  }
+
+  @override
+  String get styleReset => 'Reset';
+
+  @override
+  String get styleExport => 'Export style file…';
+
+  @override
+  String get styleDelete => 'Delete';
+
+  @override
+  String styleDeleted(String name) {
+    return '“$name” moved to the trash';
+  }
+
+  @override
+  String styleCopyName(String name) {
+    return '$name (copy)';
+  }
+
+  @override
+  String get styleNameLabel => 'Style name';
+
+  @override
+  String get styleNewName => 'New style';
+
+  @override
+  String styleImported(String name) {
+    return 'Imported “$name”';
+  }
+
+  @override
+  String get styleImportFailed => 'This file isn’t a valid style file.';
+
+  @override
+  String styleExported(String file) {
+    return 'Style saved to $file';
+  }
+
+  @override
+  String get styleExportFailed => 'Couldn’t save the style file.';
+
+  @override
+  String get styleFileType => 'Style file';
+
+  @override
+  String get stylePresetReadOnly => 'Ready-made styles are read-only. Duplicate one to change it.';
+
+  @override
+  String get stylePreviewInvoice => 'Invoice';
+
+  @override
+  String get stylePreviewContract => 'Contract';
+
+  @override
+  String get stylePreviewSample => 'Previewing on a sample invoice';
+
+  @override
+  String get stylePreviewOpenDoc => 'Previewing on the open document';
+
+  @override
+  String get styleGroupColours => 'Colours';
+
+  @override
+  String get styleGroupFont => 'Font & page';
+
+  @override
+  String get styleGroupHeader => 'Header & logo';
+
+  @override
+  String get styleGroupTable => 'Table';
+
+  @override
+  String get styleGroupTotals => 'Totals';
+
+  @override
+  String get styleGroupBlocks => 'Visible blocks';
+
+  @override
+  String get styleGroupFooter => 'Footer';
+
+  @override
+  String get colourPrimary => 'Primary';
+
+  @override
+  String get colourAccent => 'Accent';
+
+  @override
+  String get colourInk => 'Text';
+
+  @override
+  String get colourMuted => 'Secondary text';
+
+  @override
+  String get colourSurface => 'Card background';
+
+  @override
+  String get colourTableHeader => 'Table header background';
+
+  @override
+  String get colourBorder => 'Rules & borders';
+
+  @override
+  String get colourPick => 'Pick a colour';
+
+  @override
+  String get colourHexInvalid => 'Enter 6 hex digits, like 0F766E';
+
+  @override
+  String contrastWarning(String pair, String ratio) {
+    return '$pair: contrast $ratio:1 is below 4.5:1, so the text may be hard to read.';
+  }
+
+  @override
+  String get contrastInkOnPage => 'Text on the page';
+
+  @override
+  String get contrastMutedOnPage => 'Secondary text on the page';
+
+  @override
+  String get contrastPrimaryOnPage => 'Headings on the page';
+
+  @override
+  String get contrastInkOnSurface => 'Text on cards';
+
+  @override
+  String get contrastMutedOnSurface => 'Secondary text on cards';
+
+  @override
+  String get contrastMutedOnTableHeader => 'Table header labels';
+
+  @override
+  String get contrastWhiteOnInk => 'Total on its dark band';
+
+  @override
+  String get contrastWhiteOnPrimary => 'Total on its coloured band';
+
+  @override
+  String get fontFamily => 'Typeface';
+
+  @override
+  String get fontPlex => 'IBM Plex Sans Arabic';
+
+  @override
+  String get fontNaskh => 'Noto Naskh Arabic';
+
+  @override
+  String get fontBaseSize => 'Base size';
+
+  @override
+  String get fontScale => 'Text scale';
+
+  @override
+  String get paperSize => 'Paper size';
+
+  @override
+  String get paperA4 => 'A4';
+
+  @override
+  String get paperLetter => 'Letter';
+
+  @override
+  String get marginSide => 'Side margin';
+
+  @override
+  String get marginTop => 'Top margin';
+
+  @override
+  String get marginBottom => 'Bottom margin';
+
+  @override
+  String pointsValue(String value) {
+    return '$value pt';
+  }
+
+  @override
+  String get headerStyleLabel => 'Header style';
+
+  @override
+  String get headerBand => 'Band';
+
+  @override
+  String get headerRule => 'Rule';
+
+  @override
+  String get headerNone => 'None';
+
+  @override
+  String get logoLabel => 'Logo';
+
+  @override
+  String get logoChoose => 'Choose image…';
+
+  @override
+  String get logoRemove => 'Remove logo';
+
+  @override
+  String get logoHint => 'PNG or JPG, up to 1 MB';
+
+  @override
+  String get logoRejected => 'That image wasn’t accepted: it must be a PNG or JPG of 1 MB or less.';
+
+  @override
+  String get logoImageType => 'Image';
+
+  @override
+  String get logoSize => 'Logo size';
+
+  @override
+  String get logoPosition => 'Logo position';
+
+  @override
+  String get positionStart => 'Start';
+
+  @override
+  String get positionCenter => 'Centre';
+
+  @override
+  String get positionEnd => 'End';
+
+  @override
+  String get showRole => 'Your role';
+
+  @override
+  String get showCity => 'City';
+
+  @override
+  String get showContacts => 'Contact details';
+
+  @override
+  String get tableStyleLabel => 'Table style';
+
+  @override
+  String get tablePlain => 'Plain';
+
+  @override
+  String get tableStriped => 'Striped';
+
+  @override
+  String get tableBordered => 'Bordered';
+
+  @override
+  String get totalsStyleLabel => 'Totals style';
+
+  @override
+  String get totalsOutlined => 'Outlined';
+
+  @override
+  String get totalsSolid => 'Solid';
+
+  @override
+  String get totalsPlain => 'Plain';
+
+  @override
+  String get showVatRow => 'VAT row';
+
+  @override
+  String get showPaidStamp => '“Paid” stamp';
+
+  @override
+  String get blockHeader => 'Header';
+
+  @override
+  String get blockParties => 'Parties';
+
+  @override
+  String get blockItems => 'Items';
+
+  @override
+  String get blockTotals => 'Totals';
+
+  @override
+  String get blockNotes => 'Notes';
+
+  @override
+  String get blockFooter => 'Footer';
+
+  @override
+  String get blockRequired => 'Required';
+
+  @override
+  String get blocksHint => 'Drag the blocks to change their order in the document.';
+
+  @override
+  String get showPaymentCard => 'Payment details card';
+
+  @override
+  String get showPleaseQuote => '“Please quote the invoice number”';
+
+  @override
+  String get showPageNumbers => 'Page numbers';
+
+  @override
+  String get showSignatureBoxes => 'Signature boxes in contracts';
+
+  @override
+  String get footerAr => 'Footer text (Arabic)';
+
+  @override
+  String get footerEn => 'Footer text (English)';
+
+  @override
+  String get docStyle => 'Document style';
+
+  @override
+  String get docStyleFollows => 'Client or default';
+
+  @override
+  String get docStyleEdit => 'Edit styles…';
+
+  @override
+  String get styleLockedInvoice => 'The style is fixed because the invoice was sent';
+
+  @override
+  String get styleLockedContract => 'The style is fixed because the contract was signed';
+
+  @override
+  String get stylesSettings => 'Document styles';
+
+  @override
+  String get defaultInvoiceStyle => 'Default invoice style';
+
+  @override
+  String get defaultContractStyle => 'Default contract style';
+
+  @override
+  String get openStyleEditor => 'Open style editor';
+
+  @override
+  String get presetClassic => 'Classic';
+
+  @override
+  String get presetModern => 'Modern';
+
+  @override
+  String get presetMinimal => 'Minimal';
+
+  @override
+  String get presetBold => 'Bold';
+
+  @override
+  String get presetFormal => 'Formal';
+
+  @override
+  String get presetBlank => 'Blank';
+
+  @override
+  String get styleMoreActions => 'Style actions';
 }

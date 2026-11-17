@@ -6,9 +6,9 @@ import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart';
 import 'package:invoice_desk/features/pdf_render.dart';
+import 'package:invoice_desk/features/preview/pdf_pages_view.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/pdf/invoice_pdf.dart';
-import 'package:invoice_desk/theme/app_theme.dart';
 import 'package:printing/printing.dart';
 
 /// The real PDF, re-rendered 300 ms after the last edit.
@@ -84,28 +84,6 @@ class _PreviewPaneState extends ConsumerState<PreviewPane> {
         ),
       );
     }
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: PdfPreview(
-        build: build,
-        useActions: false,
-        allowPrinting: false,
-        allowSharing: false,
-        canChangeOrientation: false,
-        canChangePageFormat: false,
-        canDebug: false,
-        maxPageWidth: 820,
-        padding: const EdgeInsets.all(Space.l),
-        previewPageMargin: const EdgeInsets.only(bottom: Space.m),
-        scrollViewDecoration: BoxDecoration(
-          color: theme.colorScheme.surfaceContainerLowest,
-        ),
-        pdfPreviewPageDecoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: context.colors.border),
-        ),
-        loadingWidget: const SizedBox.shrink(),
-      ),
-    );
+    return PdfPagesView(render: build);
   }
 }

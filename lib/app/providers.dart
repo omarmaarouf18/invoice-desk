@@ -74,15 +74,25 @@ final themeModeProvider = NotifierProvider<ThemeModeNotifier, ThemeMode>(
 
 /// What the main pane shows. Invoice and contract editors keep their own
 /// buffers; switching between them flushes the one being left.
-enum Workspace { invoice, contract, settings, library }
+enum Workspace { invoice, contract, settings, library, styles }
 
 class WorkspaceNotifier extends Notifier<Workspace> {
+  Workspace? _previous;
+
   @override
   Workspace build() => Workspace.invoice;
+
+  /// Back to where the user came from (the style editor opens from
+  /// Settings or from a document editor); Settings when unknown.
+  void back() {
+    final to = _previous;
+    show(to == null || to == state ? Workspace.settings : to);
+  }
 
   /// Shows [w]; with [reveal] (the default: the user asked for it) the
   /// calendar steps aside so the workspace is visible.
   void show(Workspace w, {bool reveal = true}) {
+    if (w != state) _previous = state;
     state = w;
     if (reveal) ref.read(calendarModeProvider.notifier).set(false);
   }

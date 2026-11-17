@@ -2970,6 +2970,750 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'لن تظهر بطاقة بيانات الدفع في الفاتورة حتى تضيف وسيلة دفع واحدة على الأقل.'**
   String get warnNoPaymentMethodHint;
+
+  /// No description provided for @stylesTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصميم المستندات'**
+  String get stylesTitle;
+
+  /// No description provided for @stylesSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر شكل الفواتير والعقود، أو صمّم شكلك الخاص.'**
+  String get stylesSubtitle;
+
+  /// No description provided for @stylesPresets.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصاميم جاهزة'**
+  String get stylesPresets;
+
+  /// No description provided for @stylesMine.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصاميمي'**
+  String get stylesMine;
+
+  /// No description provided for @stylesNoneYet.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد تصاميم خاصة بك بعد.'**
+  String get stylesNoneYet;
+
+  /// No description provided for @styleNewFromBlank.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصميم جديد من «أساسي»'**
+  String get styleNewFromBlank;
+
+  /// No description provided for @styleImport.
+  ///
+  /// In ar, this message translates to:
+  /// **'استيراد ملف تصميم…'**
+  String get styleImport;
+
+  /// No description provided for @styleDuplicate.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسخ'**
+  String get styleDuplicate;
+
+  /// No description provided for @styleDuplicateToCustomize.
+  ///
+  /// In ar, this message translates to:
+  /// **'انسخه لتعديله'**
+  String get styleDuplicateToCustomize;
+
+  /// No description provided for @styleRename.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة التسمية'**
+  String get styleRename;
+
+  /// No description provided for @styleResetToPreset.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرجاع إلى التصميم الأصلي'**
+  String get styleResetToPreset;
+
+  /// No description provided for @styleResetConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'ستعود ألوان «{name}» وخطوطه وإعداداته إلى التصميم الأصلي، ويبقى الاسم والشعار.'**
+  String styleResetConfirm(String name);
+
+  /// No description provided for @styleReset.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرجاع'**
+  String get styleReset;
+
+  /// No description provided for @styleExport.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصدير ملف تصميم…'**
+  String get styleExport;
+
+  /// No description provided for @styleDelete.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف'**
+  String get styleDelete;
+
+  /// No description provided for @styleDeleted.
+  ///
+  /// In ar, this message translates to:
+  /// **'نُقل «{name}» إلى المحذوفات'**
+  String styleDeleted(String name);
+
+  /// No description provided for @styleCopyName.
+  ///
+  /// In ar, this message translates to:
+  /// **'{name} (نسخة)'**
+  String styleCopyName(String name);
+
+  /// No description provided for @styleNameLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم التصميم'**
+  String get styleNameLabel;
+
+  /// No description provided for @styleNewName.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصميم جديد'**
+  String get styleNewName;
+
+  /// No description provided for @styleImported.
+  ///
+  /// In ar, this message translates to:
+  /// **'استُورد «{name}»'**
+  String styleImported(String name);
+
+  /// No description provided for @styleImportFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذا الملف ليس ملف تصميم صالحًا.'**
+  String get styleImportFailed;
+
+  /// No description provided for @styleExported.
+  ///
+  /// In ar, this message translates to:
+  /// **'حُفظ التصميم في {file}'**
+  String styleExported(String file);
+
+  /// No description provided for @styleExportFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر حفظ ملف التصميم.'**
+  String get styleExportFailed;
+
+  /// No description provided for @styleFileType.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملف تصميم'**
+  String get styleFileType;
+
+  /// No description provided for @stylePresetReadOnly.
+  ///
+  /// In ar, this message translates to:
+  /// **'التصاميم الجاهزة للقراءة فقط. انسخ واحدًا لتعديله.'**
+  String get stylePresetReadOnly;
+
+  /// No description provided for @stylePreviewInvoice.
+  ///
+  /// In ar, this message translates to:
+  /// **'فاتورة'**
+  String get stylePreviewInvoice;
+
+  /// No description provided for @stylePreviewContract.
+  ///
+  /// In ar, this message translates to:
+  /// **'عقد'**
+  String get stylePreviewContract;
+
+  /// No description provided for @stylePreviewSample.
+  ///
+  /// In ar, this message translates to:
+  /// **'معاينة على فاتورة تجريبية'**
+  String get stylePreviewSample;
+
+  /// No description provided for @stylePreviewOpenDoc.
+  ///
+  /// In ar, this message translates to:
+  /// **'معاينة على المستند المفتوح'**
+  String get stylePreviewOpenDoc;
+
+  /// No description provided for @styleGroupColours.
+  ///
+  /// In ar, this message translates to:
+  /// **'الألوان'**
+  String get styleGroupColours;
+
+  /// No description provided for @styleGroupFont.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخط والصفحة'**
+  String get styleGroupFont;
+
+  /// No description provided for @styleGroupHeader.
+  ///
+  /// In ar, this message translates to:
+  /// **'الترويسة والشعار'**
+  String get styleGroupHeader;
+
+  /// No description provided for @styleGroupTable.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجدول'**
+  String get styleGroupTable;
+
+  /// No description provided for @styleGroupTotals.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإجماليات'**
+  String get styleGroupTotals;
+
+  /// No description provided for @styleGroupBlocks.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأجزاء الظاهرة'**
+  String get styleGroupBlocks;
+
+  /// No description provided for @styleGroupFooter.
+  ///
+  /// In ar, this message translates to:
+  /// **'التذييل'**
+  String get styleGroupFooter;
+
+  /// No description provided for @colourPrimary.
+  ///
+  /// In ar, this message translates to:
+  /// **'اللون الأساسي'**
+  String get colourPrimary;
+
+  /// No description provided for @colourAccent.
+  ///
+  /// In ar, this message translates to:
+  /// **'لون التمييز'**
+  String get colourAccent;
+
+  /// No description provided for @colourInk.
+  ///
+  /// In ar, this message translates to:
+  /// **'لون النص'**
+  String get colourInk;
+
+  /// No description provided for @colourMuted.
+  ///
+  /// In ar, this message translates to:
+  /// **'النص الثانوي'**
+  String get colourMuted;
+
+  /// No description provided for @colourSurface.
+  ///
+  /// In ar, this message translates to:
+  /// **'خلفية البطاقات'**
+  String get colourSurface;
+
+  /// No description provided for @colourTableHeader.
+  ///
+  /// In ar, this message translates to:
+  /// **'خلفية رأس الجدول'**
+  String get colourTableHeader;
+
+  /// No description provided for @colourBorder.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخطوط والحدود'**
+  String get colourBorder;
+
+  /// No description provided for @colourPick.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختيار لون'**
+  String get colourPick;
+
+  /// No description provided for @colourHexInvalid.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب ٦ خانات ست عشرية، مثل 0F766E'**
+  String get colourHexInvalid;
+
+  /// No description provided for @contrastWarning.
+  ///
+  /// In ar, this message translates to:
+  /// **'{pair}: التباين {ratio}:1 أقل من 4.5:1، وقد تصعب قراءة النص.'**
+  String contrastWarning(String pair, String ratio);
+
+  /// No description provided for @contrastInkOnPage.
+  ///
+  /// In ar, this message translates to:
+  /// **'النص على الصفحة'**
+  String get contrastInkOnPage;
+
+  /// No description provided for @contrastMutedOnPage.
+  ///
+  /// In ar, this message translates to:
+  /// **'النص الثانوي على الصفحة'**
+  String get contrastMutedOnPage;
+
+  /// No description provided for @contrastPrimaryOnPage.
+  ///
+  /// In ar, this message translates to:
+  /// **'العناوين على الصفحة'**
+  String get contrastPrimaryOnPage;
+
+  /// No description provided for @contrastInkOnSurface.
+  ///
+  /// In ar, this message translates to:
+  /// **'النص على خلفية البطاقات'**
+  String get contrastInkOnSurface;
+
+  /// No description provided for @contrastMutedOnSurface.
+  ///
+  /// In ar, this message translates to:
+  /// **'النص الثانوي على خلفية البطاقات'**
+  String get contrastMutedOnSurface;
+
+  /// No description provided for @contrastMutedOnTableHeader.
+  ///
+  /// In ar, this message translates to:
+  /// **'عناوين الجدول'**
+  String get contrastMutedOnTableHeader;
+
+  /// No description provided for @contrastWhiteOnInk.
+  ///
+  /// In ar, this message translates to:
+  /// **'نص الإجمالي على شريطه الداكن'**
+  String get contrastWhiteOnInk;
+
+  /// No description provided for @contrastWhiteOnPrimary.
+  ///
+  /// In ar, this message translates to:
+  /// **'نص الإجمالي على شريطه الملوّن'**
+  String get contrastWhiteOnPrimary;
+
+  /// No description provided for @fontFamily.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوع الخط'**
+  String get fontFamily;
+
+  /// No description provided for @fontPlex.
+  ///
+  /// In ar, this message translates to:
+  /// **'IBM Plex Sans Arabic'**
+  String get fontPlex;
+
+  /// No description provided for @fontNaskh.
+  ///
+  /// In ar, this message translates to:
+  /// **'Noto Naskh Arabic'**
+  String get fontNaskh;
+
+  /// No description provided for @fontBaseSize.
+  ///
+  /// In ar, this message translates to:
+  /// **'حجم الخط الأساسي'**
+  String get fontBaseSize;
+
+  /// No description provided for @fontScale.
+  ///
+  /// In ar, this message translates to:
+  /// **'تكبير النص'**
+  String get fontScale;
+
+  /// No description provided for @paperSize.
+  ///
+  /// In ar, this message translates to:
+  /// **'حجم الورق'**
+  String get paperSize;
+
+  /// No description provided for @paperA4.
+  ///
+  /// In ar, this message translates to:
+  /// **'A4'**
+  String get paperA4;
+
+  /// No description provided for @paperLetter.
+  ///
+  /// In ar, this message translates to:
+  /// **'Letter'**
+  String get paperLetter;
+
+  /// No description provided for @marginSide.
+  ///
+  /// In ar, this message translates to:
+  /// **'الهامش الجانبي'**
+  String get marginSide;
+
+  /// No description provided for @marginTop.
+  ///
+  /// In ar, this message translates to:
+  /// **'الهامش العلوي'**
+  String get marginTop;
+
+  /// No description provided for @marginBottom.
+  ///
+  /// In ar, this message translates to:
+  /// **'الهامش السفلي'**
+  String get marginBottom;
+
+  /// No description provided for @pointsValue.
+  ///
+  /// In ar, this message translates to:
+  /// **'{value} نقطة'**
+  String pointsValue(String value);
+
+  /// No description provided for @headerStyleLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'شكل الترويسة'**
+  String get headerStyleLabel;
+
+  /// No description provided for @headerBand.
+  ///
+  /// In ar, this message translates to:
+  /// **'شريط'**
+  String get headerBand;
+
+  /// No description provided for @headerRule.
+  ///
+  /// In ar, this message translates to:
+  /// **'خط'**
+  String get headerRule;
+
+  /// No description provided for @headerNone.
+  ///
+  /// In ar, this message translates to:
+  /// **'بدون'**
+  String get headerNone;
+
+  /// No description provided for @logoLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشعار'**
+  String get logoLabel;
+
+  /// No description provided for @logoChoose.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختيار صورة…'**
+  String get logoChoose;
+
+  /// No description provided for @logoRemove.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة الشعار'**
+  String get logoRemove;
+
+  /// No description provided for @logoHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'PNG أو JPG، حتى 1 ميجابايت'**
+  String get logoHint;
+
+  /// No description provided for @logoRejected.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم تُقبل الصورة: يجب أن تكون PNG أو JPG بحجم 1 ميجابايت أو أقل.'**
+  String get logoRejected;
+
+  /// No description provided for @logoImageType.
+  ///
+  /// In ar, this message translates to:
+  /// **'صورة'**
+  String get logoImageType;
+
+  /// No description provided for @logoSize.
+  ///
+  /// In ar, this message translates to:
+  /// **'حجم الشعار'**
+  String get logoSize;
+
+  /// No description provided for @logoPosition.
+  ///
+  /// In ar, this message translates to:
+  /// **'موضع الشعار'**
+  String get logoPosition;
+
+  /// No description provided for @positionStart.
+  ///
+  /// In ar, this message translates to:
+  /// **'البداية'**
+  String get positionStart;
+
+  /// No description provided for @positionCenter.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوسط'**
+  String get positionCenter;
+
+  /// No description provided for @positionEnd.
+  ///
+  /// In ar, this message translates to:
+  /// **'النهاية'**
+  String get positionEnd;
+
+  /// No description provided for @showRole.
+  ///
+  /// In ar, this message translates to:
+  /// **'المسمّى الوظيفي'**
+  String get showRole;
+
+  /// No description provided for @showCity.
+  ///
+  /// In ar, this message translates to:
+  /// **'المدينة'**
+  String get showCity;
+
+  /// No description provided for @showContacts.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيانات التواصل'**
+  String get showContacts;
+
+  /// No description provided for @tableStyleLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'شكل الجدول'**
+  String get tableStyleLabel;
+
+  /// No description provided for @tablePlain.
+  ///
+  /// In ar, this message translates to:
+  /// **'بسيط'**
+  String get tablePlain;
+
+  /// No description provided for @tableStriped.
+  ///
+  /// In ar, this message translates to:
+  /// **'صفوف متناوبة'**
+  String get tableStriped;
+
+  /// No description provided for @tableBordered.
+  ///
+  /// In ar, this message translates to:
+  /// **'بحدود'**
+  String get tableBordered;
+
+  /// No description provided for @totalsStyleLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'شكل الإجماليات'**
+  String get totalsStyleLabel;
+
+  /// No description provided for @totalsOutlined.
+  ///
+  /// In ar, this message translates to:
+  /// **'إطار'**
+  String get totalsOutlined;
+
+  /// No description provided for @totalsSolid.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملوّن'**
+  String get totalsSolid;
+
+  /// No description provided for @totalsPlain.
+  ///
+  /// In ar, this message translates to:
+  /// **'بسيط'**
+  String get totalsPlain;
+
+  /// No description provided for @showVatRow.
+  ///
+  /// In ar, this message translates to:
+  /// **'سطر ضريبة القيمة المضافة'**
+  String get showVatRow;
+
+  /// No description provided for @showPaidStamp.
+  ///
+  /// In ar, this message translates to:
+  /// **'ختم «مدفوعة»'**
+  String get showPaidStamp;
+
+  /// No description provided for @blockHeader.
+  ///
+  /// In ar, this message translates to:
+  /// **'الترويسة'**
+  String get blockHeader;
+
+  /// No description provided for @blockParties.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأطراف'**
+  String get blockParties;
+
+  /// No description provided for @blockItems.
+  ///
+  /// In ar, this message translates to:
+  /// **'البنود'**
+  String get blockItems;
+
+  /// No description provided for @blockTotals.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإجماليات'**
+  String get blockTotals;
+
+  /// No description provided for @blockNotes.
+  ///
+  /// In ar, this message translates to:
+  /// **'الملاحظات'**
+  String get blockNotes;
+
+  /// No description provided for @blockFooter.
+  ///
+  /// In ar, this message translates to:
+  /// **'التذييل'**
+  String get blockFooter;
+
+  /// No description provided for @blockRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'أساسي'**
+  String get blockRequired;
+
+  /// No description provided for @blocksHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسحب الأجزاء لتغيير ترتيبها في المستند.'**
+  String get blocksHint;
+
+  /// No description provided for @showPaymentCard.
+  ///
+  /// In ar, this message translates to:
+  /// **'بطاقة بيانات الدفع'**
+  String get showPaymentCard;
+
+  /// No description provided for @showPleaseQuote.
+  ///
+  /// In ar, this message translates to:
+  /// **'«يُرجى ذكر رقم الفاتورة عند الدفع»'**
+  String get showPleaseQuote;
+
+  /// No description provided for @showPageNumbers.
+  ///
+  /// In ar, this message translates to:
+  /// **'أرقام الصفحات'**
+  String get showPageNumbers;
+
+  /// No description provided for @showSignatureBoxes.
+  ///
+  /// In ar, this message translates to:
+  /// **'خانات التوقيع في العقود'**
+  String get showSignatureBoxes;
+
+  /// No description provided for @footerAr.
+  ///
+  /// In ar, this message translates to:
+  /// **'نص التذييل بالعربية'**
+  String get footerAr;
+
+  /// No description provided for @footerEn.
+  ///
+  /// In ar, this message translates to:
+  /// **'نص التذييل بالإنجليزية'**
+  String get footerEn;
+
+  /// No description provided for @docStyle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصميم المستند'**
+  String get docStyle;
+
+  /// No description provided for @docStyleFollows.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسب العميل أو الإعدادات'**
+  String get docStyleFollows;
+
+  /// No description provided for @docStyleEdit.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل التصاميم…'**
+  String get docStyleEdit;
+
+  /// No description provided for @styleLockedInvoice.
+  ///
+  /// In ar, this message translates to:
+  /// **'التصميم مثبّت لأن الفاتورة أُرسلت'**
+  String get styleLockedInvoice;
+
+  /// No description provided for @styleLockedContract.
+  ///
+  /// In ar, this message translates to:
+  /// **'التصميم مثبّت لأن العقد وُقِّع'**
+  String get styleLockedContract;
+
+  /// No description provided for @stylesSettings.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصاميم المستندات'**
+  String get stylesSettings;
+
+  /// No description provided for @defaultInvoiceStyle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصميم الفواتير الافتراضي'**
+  String get defaultInvoiceStyle;
+
+  /// No description provided for @defaultContractStyle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصميم العقود الافتراضي'**
+  String get defaultContractStyle;
+
+  /// No description provided for @openStyleEditor.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح محرّر التصاميم'**
+  String get openStyleEditor;
+
+  /// No description provided for @presetClassic.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلاسيكي'**
+  String get presetClassic;
+
+  /// No description provided for @presetModern.
+  ///
+  /// In ar, this message translates to:
+  /// **'عصري'**
+  String get presetModern;
+
+  /// No description provided for @presetMinimal.
+  ///
+  /// In ar, this message translates to:
+  /// **'بسيط'**
+  String get presetMinimal;
+
+  /// No description provided for @presetBold.
+  ///
+  /// In ar, this message translates to:
+  /// **'جريء'**
+  String get presetBold;
+
+  /// No description provided for @presetFormal.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسمي'**
+  String get presetFormal;
+
+  /// No description provided for @presetBlank.
+  ///
+  /// In ar, this message translates to:
+  /// **'أساسي'**
+  String get presetBlank;
+
+  /// No description provided for @styleMoreActions.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجراءات التصميم'**
+  String get styleMoreActions;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
