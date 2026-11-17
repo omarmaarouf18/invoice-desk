@@ -245,9 +245,9 @@ class StyleRepository with ClockedRepository {
   /// Permanently removes unreferenced assets created more than 24 hours ago.
   Future<int> purgeUnusedAssets() => at(() async {
     final cutoffMs = _nowMs - const Duration(hours: 24).inMilliseconds;
-    final assets = await (_db.select(_db.documentAssets)
-          ..where((a) => a.createdAt.isSmallerOrEqualValue(cutoffMs)))
-        .get();
+    final assets = await (_db.select(
+      _db.documentAssets,
+    )..where((a) => a.createdAt.isSmallerOrEqualValue(cutoffMs))).get();
     var purged = 0;
     for (final a in assets) {
       if (!await isAssetInUse(a.id)) {

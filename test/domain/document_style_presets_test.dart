@@ -48,7 +48,10 @@ void main() {
     });
 
     test('modern preset uses modern IBM Plex Sans Arabic font', () {
-      expect(DocPreset.modern.style.fontFamily, DocFontFamily.ibmPlexSansArabic);
+      expect(
+        DocPreset.modern.style.fontFamily,
+        DocFontFamily.ibmPlexSansArabic,
+      );
       expect(DocPreset.modern.style.tableStyle, TableStyle.striped);
       expect(DocPreset.modern.style.totalsStyle, TotalsStyle.solid);
     });

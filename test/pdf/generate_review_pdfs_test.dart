@@ -26,8 +26,8 @@ void main() {
       for (final lang in DocLanguage.values) {
         final data = sampleInvoiceData(language: lang);
         final bytes = await buildInvoicePdf(data, fonts, style: pdfStyle);
-        final file = File('$outDir/invoice-$presetName-${lang.name}.pdf');
-        file.writeAsBytesSync(bytes);
+        final file = File('$outDir/invoice-$presetName-${lang.name}.pdf')
+          ..writeAsBytesSync(bytes);
         expect(file.existsSync(), isTrue);
       }
 
@@ -35,8 +35,8 @@ void main() {
       for (final lang in [DocLanguage.ar, DocLanguage.en]) {
         final data = sampleContractData(language: lang);
         final bytes = await buildContractPdf(data, fonts, style: pdfStyle);
-        final file = File('$outDir/contract-$presetName-${lang.name}.pdf');
-        file.writeAsBytesSync(bytes);
+        final file = File('$outDir/contract-$presetName-${lang.name}.pdf')
+          ..writeAsBytesSync(bytes);
         expect(file.existsSync(), isTrue);
       }
     }
@@ -51,21 +51,22 @@ void main() {
       tableHeaderBg: 0xFFF1F5F9,
       border: 0xFFCBD5E1,
       fontFamily: DocFontFamily.notoNaskhArabic,
-      headerStyle: HeaderStyle.rule,
-      tableStyle: TableStyle.plain,
-      totalsStyle: TotalsStyle.outlined,
     );
     final formalPdfStyle = PdfStyle.fromDocumentStyle(formalStyleDoc);
 
     for (final lang in DocLanguage.values) {
       final data = sampleInvoiceData(language: lang);
       final bytes = await buildInvoicePdf(data, fonts, style: formalPdfStyle);
-      File('$outDir/invoice-formal-sample-${lang.name}.pdf').writeAsBytesSync(bytes);
+      File(
+        '$outDir/invoice-formal-sample-${lang.name}.pdf',
+      ).writeAsBytesSync(bytes);
     }
     for (final lang in [DocLanguage.ar, DocLanguage.en]) {
       final data = sampleContractData(language: lang);
       final bytes = await buildContractPdf(data, fonts, style: formalPdfStyle);
-      File('$outDir/contract-formal-sample-${lang.name}.pdf').writeAsBytesSync(bytes);
+      File(
+        '$outDir/contract-formal-sample-${lang.name}.pdf',
+      ).writeAsBytesSync(bytes);
     }
   });
 }

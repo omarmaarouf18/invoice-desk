@@ -28,7 +28,6 @@ enum DocPreset {
       surface: 0xFFF8FAFC,
       tableHeaderBg: 0xFFEFF6FF,
       border: 0xFFCBD5E1,
-      fontFamily: DocFontFamily.ibmPlexSansArabic,
       marginTop: 32,
       headerStyle: HeaderStyle.band,
       tableStyle: TableStyle.striped,
