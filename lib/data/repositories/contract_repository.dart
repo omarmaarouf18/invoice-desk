@@ -2,6 +2,7 @@ import 'package:clock/clock.dart';
 import 'package:invoice_desk/data/daos/contracts_dao.dart';
 import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/data/repositories/repository.dart';
+import 'package:invoice_desk/data/repositories/style_repository.dart';
 import 'package:invoice_desk/domain/contract_models.dart';
 import 'package:invoice_desk/domain/results.dart';
 
@@ -9,10 +10,16 @@ import 'package:invoice_desk/domain/results.dart';
 /// aggregate.
 class ContractRepository with ClockedRepository {
   /// Wraps [_db]; writes are stamped with [clock].
-  ContractRepository(this._db, {this.clock = const Clock()});
+  ContractRepository(
+    this._db, {
+    this.clock = const Clock(),
+    StyleRepository? styles,
+  }) : _styles = styles ?? StyleRepository(_db, clock: clock);
+
   final AppDatabase _db;
   @override
   final Clock clock;
+  final StyleRepository _styles;
 
   ContractsDao get _dao => _db.contractsDao;
 
@@ -40,10 +47,22 @@ class ContractRepository with ClockedRepository {
 
   /// Saves the aggregate atomically (clauses, scope, milestones replaced);
   /// [DuplicateNumber] when the number or series/year/seq is taken.
+  ///
+  /// Snapshots the resolved style when status is [ContractStatus.signed],
+  /// [ContractStatus.active], or [ContractStatus.completed] and not already
+  /// snapshotted (ADR-0012).
   Future<SaveResult> save(Contract c) => at(() async {
     try {
+      var toSave = c;
+      if ((toSave.status == ContractStatus.signed ||
+              toSave.status == ContractStatus.active ||
+              toSave.status == ContractStatus.completed) &&
+          (toSave.styleSnapshot == null || toSave.styleSnapshot!.isEmpty)) {
+        final style = await _styles.resolveForContract(toSave);
+        toSave = toSave.copyWith(styleSnapshot: style.toRawJson);
+      }
       // A user save adopts a demo row: it is real data from now on.
-      await _dao.saveContract(c.copyWith(isDemo: false));
+      await _dao.saveContract(toSave.copyWith(isDemo: false));
       return const Saved();
     } on DuplicateContractNumber catch (e) {
       return DuplicateNumber(e.number);

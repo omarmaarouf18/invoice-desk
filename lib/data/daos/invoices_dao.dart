@@ -180,6 +180,8 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
         notesEn: Value(inv.notesEn),
         notesAr: Value(inv.notesAr),
         language: Value(inv.language.code),
+        styleId: Value(inv.styleId),
+        styleSnapshot: Value(inv.styleSnapshot),
         scopeOn: Value(inv.scope.enabled),
         scopeTitle: Value(inv.scope.title),
         scopeOverview: Value(inv.scope.overview),
@@ -316,11 +318,18 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
         )..where((i) => i.deletedAt.isSmallerThanValue(cutoff))).go();
       });
 
-  Future<void> markPaid(String id, CalendarDate date) => transaction(() async {
+  Future<void> markPaid(
+    String id,
+    CalendarDate date, {
+    String? styleSnapshot,
+  }) => transaction(() async {
     await (update(invoices)..where((i) => i.id.equals(id))).write(
       InvoicesCompanion(
         status: const Value('paid'),
         paidDate: Value(date.toIso()),
+        styleSnapshot: styleSnapshot != null
+            ? Value(styleSnapshot)
+            : const Value.absent(),
         updatedAt: Value(_now()),
       ),
     );
@@ -367,6 +376,8 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
       r.language,
       fallback: DocLanguage.bilingual,
     ),
+    styleId: r.styleId,
+    styleSnapshot: r.styleSnapshot,
     scope: ScopePage(
       enabled: r.scopeOn,
       title: r.scopeTitle,

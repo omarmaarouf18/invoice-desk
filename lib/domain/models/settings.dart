@@ -28,6 +28,8 @@ class Settings {
     this.defaultJurisdiction = 'المحكمة الاقتصادية المختصة',
     this.defaultDocLanguage = DocLanguage.ar,
     this.docDigitStyle = DigitStyle.western,
+    this.defaultInvoiceStyleId,
+    this.defaultContractStyleId,
   });
 
   /// Printed on invoices; `{{provider.name}}`.
@@ -105,6 +107,12 @@ class Settings {
   /// digit style decides (schema v6).
   bool get contractWesternDigits => docDigitStyle == DigitStyle.western;
 
+  /// Default style ID for new invoices; null means classic preset.
+  final String? defaultInvoiceStyleId;
+
+  /// Default style ID for new contracts; null means classic preset.
+  final String? defaultContractStyleId;
+
   /// A name is set; the first-run checklist uses it.
   bool get hasProfile => name.trim().isNotEmpty;
 
@@ -134,6 +142,8 @@ class Settings {
     DocLanguage? defaultDocLanguage,
     DigitStyle? docDigitStyle,
     bool? contractWesternDigits,
+    String? Function()? defaultInvoiceStyleId,
+    String? Function()? defaultContractStyleId,
   }) => Settings(
     name: name ?? this.name,
     role: role ?? this.role,
@@ -157,6 +167,12 @@ class Settings {
     quotePrefix: quotePrefix ?? this.quotePrefix,
     defaultJurisdiction: defaultJurisdiction ?? this.defaultJurisdiction,
     defaultDocLanguage: defaultDocLanguage ?? this.defaultDocLanguage,
+    defaultInvoiceStyleId: defaultInvoiceStyleId != null
+        ? defaultInvoiceStyleId()
+        : this.defaultInvoiceStyleId,
+    defaultContractStyleId: defaultContractStyleId != null
+        ? defaultContractStyleId()
+        : this.defaultContractStyleId,
     // The old per-contract switch is the document digit style now: the
     // first one given wins.
     docDigitStyle:

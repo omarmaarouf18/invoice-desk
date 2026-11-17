@@ -31,6 +31,8 @@ class Contract {
     this.vars = const {},
     this.outOfScope = '',
     this.unlocked = false,
+    this.styleId,
+    this.styleSnapshot,
     this.history = const [],
     this.clauses = const [],
     this.scope = const [],
@@ -118,6 +120,12 @@ class Contract {
   /// A locked status was explicitly unlocked (logged in [history]).
   final bool unlocked;
 
+  /// Custom style ID overriding client or global default.
+  final String? styleId;
+
+  /// Frozen style JSON when signed or locked (ADR-0012).
+  final String? styleSnapshot;
+
   /// Oldest first.
   final List<ContractEvent> history;
 
@@ -180,6 +188,8 @@ class Contract {
     Map<String, String>? vars,
     String? outOfScope,
     bool? unlocked,
+    String? Function()? styleId,
+    String? Function()? styleSnapshot,
     List<ContractEvent>? history,
     List<ContractClause>? clauses,
     List<ScopeItem>? scope,
@@ -214,6 +224,9 @@ class Contract {
     vars: vars ?? this.vars,
     outOfScope: outOfScope ?? this.outOfScope,
     unlocked: unlocked ?? this.unlocked,
+    styleId: styleId != null ? styleId() : this.styleId,
+    styleSnapshot:
+        styleSnapshot != null ? styleSnapshot() : this.styleSnapshot,
     history: history ?? this.history,
     clauses: clauses ?? this.clauses,
     scope: scope ?? this.scope,

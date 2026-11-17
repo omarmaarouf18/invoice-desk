@@ -10,9 +10,11 @@ import 'package:invoice_desk/data/repositories/demo_repository.dart';
 import 'package:invoice_desk/data/repositories/invoice_repository.dart';
 import 'package:invoice_desk/data/repositories/library_repository.dart';
 import 'package:invoice_desk/data/repositories/settings_repository.dart';
+import 'package:invoice_desk/data/repositories/style_repository.dart';
 import 'package:invoice_desk/data/repositories/trash_repository.dart';
 import 'package:invoice_desk/domain/calendar/models.dart';
 import 'package:invoice_desk/domain/contract_models.dart';
+import 'package:invoice_desk/domain/custom_style.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/domain/trash.dart';
 
@@ -47,10 +49,18 @@ final clientRepositoryProvider = Provider<ClientRepository>(
   ),
 );
 
+final styleRepositoryProvider = Provider<StyleRepository>(
+  (ref) => StyleRepository(
+    ref.watch(databaseProvider),
+    clock: ref.watch(clockProvider),
+  ),
+);
+
 final invoiceRepositoryProvider = Provider<InvoiceRepository>(
   (ref) => InvoiceRepository(
     ref.watch(databaseProvider),
     clock: ref.watch(clockProvider),
+    styles: ref.watch(styleRepositoryProvider),
   ),
 );
 
@@ -58,6 +68,7 @@ final contractRepositoryProvider = Provider<ContractRepository>(
   (ref) => ContractRepository(
     ref.watch(databaseProvider),
     clock: ref.watch(clockProvider),
+    styles: ref.watch(styleRepositoryProvider),
   ),
 );
 
@@ -105,6 +116,11 @@ final contractsProvider = StreamProvider<List<Contract>>(
 /// The clause library (Settings → مكتبة البنود).
 final libraryProvider = StreamProvider<List<ClauseTemplate>>(
   (ref) => ref.watch(libraryRepositoryProvider).watchAll(),
+);
+
+/// User-created custom styles.
+final userStylesProvider = StreamProvider<List<CustomStyle>>(
+  (ref) => ref.watch(styleRepositoryProvider).watchUserStyles(),
 );
 
 /// "المحذوفات", newest deletion first.

@@ -145,6 +145,7 @@ class ClientsDao extends DatabaseAccessor<AppDatabase> with _$ClientsDaoMixin {
         representative: Value(c.representative.trim()),
         representativeTitle: Value(c.representativeTitle.trim()),
         preferredLanguage: Value(c.preferredLanguage?.code),
+        styleId: Value(c.styleId),
         isDemo: Value(c.isDemo),
         createdAt: existing?.createdAt ?? now,
         updatedAt: now,
@@ -178,6 +179,7 @@ class ClientsDao extends DatabaseAccessor<AppDatabase> with _$ClientsDaoMixin {
     preferredLanguage: r.preferredLanguage == null
         ? null
         : DocLanguage.fromCode(r.preferredLanguage),
+    styleId: r.styleId,
     isDemo: r.isDemo,
   );
 }

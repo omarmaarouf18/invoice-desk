@@ -49,6 +49,8 @@ class SettingsDao extends DatabaseAccessor<AppDatabase>
         contractWesternDigits: Value(s.contractWesternDigits),
         defaultDocLanguage: Value(s.defaultDocLanguage.code),
         docDigitStyle: Value(s.docDigitStyle.code),
+        defaultInvoiceStyleId: Value(s.defaultInvoiceStyleId),
+        defaultContractStyleId: Value(s.defaultContractStyleId),
       ),
     );
   });
@@ -79,5 +81,7 @@ class SettingsDao extends DatabaseAccessor<AppDatabase>
           defaultJurisdiction: r.defaultJurisdiction,
           defaultDocLanguage: DocLanguage.fromCode(r.defaultDocLanguage),
           docDigitStyle: DigitStyle.fromCode(r.docDigitStyle),
+          defaultInvoiceStyleId: r.defaultInvoiceStyleId,
+          defaultContractStyleId: r.defaultContractStyleId,
         );
 }

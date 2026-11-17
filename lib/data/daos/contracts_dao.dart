@@ -179,6 +179,8 @@ class ContractsDao extends DatabaseAccessor<AppDatabase>
         vars: Value(jsonEncode(c.vars)),
         outOfScope: Value(c.outOfScope),
         unlocked: Value(c.unlocked),
+        styleId: Value(c.styleId),
+        styleSnapshot: Value(c.styleSnapshot),
         history: Value(
           jsonEncode([for (final e in c.history) e.toJson()]),
         ),
@@ -303,6 +305,8 @@ class ContractsDao extends DatabaseAccessor<AppDatabase>
     vars: decodeStringMap(r.vars),
     outOfScope: r.outOfScope,
     unlocked: r.unlocked,
+    styleId: r.styleId,
+    styleSnapshot: r.styleSnapshot,
     history: _decodeHistory(r.history),
     clauses: [
       for (final x in cl)

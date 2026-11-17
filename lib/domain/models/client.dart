@@ -1,6 +1,7 @@
 part of '../models.dart';
 
 const _keepLanguage = Object();
+const _keepStyle = Object();
 
 @immutable
 /// Someone invoices and contracts are for.
@@ -20,6 +21,7 @@ class Client {
     this.representative = '',
     this.representativeTitle = '',
     this.preferredLanguage,
+    this.styleId,
     this.isDemo = false,
   });
 
@@ -63,6 +65,9 @@ class Client {
   /// preference; null means "follow the global default" (D7).
   final DocLanguage? preferredLanguage;
 
+  /// Custom style ID for this client's documents; null means "follow the global default".
+  final String? styleId;
+
   /// Part of the demo set (cleared when the user saves the client).
   final bool isDemo;
 
@@ -80,6 +85,7 @@ class Client {
     String? representative,
     String? representativeTitle,
     Object? preferredLanguage = _keepLanguage,
+    Object? styleId = _keepStyle,
     bool? isDemo,
   }) => Client(
     id: id,
@@ -97,6 +103,7 @@ class Client {
     preferredLanguage: identical(preferredLanguage, _keepLanguage)
         ? this.preferredLanguage
         : preferredLanguage as DocLanguage?,
+    styleId: identical(styleId, _keepStyle) ? this.styleId : styleId as String?,
     isDemo: isDemo ?? this.isDemo,
   );
 
@@ -116,6 +123,7 @@ class Client {
       other.representative == representative &&
       other.representativeTitle == representativeTitle &&
       other.preferredLanguage == preferredLanguage &&
+      other.styleId == styleId &&
       other.isDemo == isDemo;
 
   @override
@@ -133,6 +141,7 @@ class Client {
     representative,
     representativeTitle,
     preferredLanguage,
+    styleId,
     isDemo,
   );
 }

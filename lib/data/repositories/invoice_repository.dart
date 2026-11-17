@@ -3,6 +3,7 @@ import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/data/daos/invoices_dao.dart';
 import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/data/repositories/repository.dart';
+import 'package:invoice_desk/data/repositories/style_repository.dart';
 import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/domain/results.dart';
@@ -10,10 +11,16 @@ import 'package:invoice_desk/domain/results.dart';
 /// Invoices with their sections and items, saved as one aggregate.
 class InvoiceRepository with ClockedRepository {
   /// Wraps [_db]; writes are stamped with [clock].
-  InvoiceRepository(this._db, {this.clock = const Clock()});
+  InvoiceRepository(
+    this._db, {
+    this.clock = const Clock(),
+    StyleRepository? styles,
+  }) : _styles = styles ?? StyleRepository(_db, clock: clock);
+
   final AppDatabase _db;
   @override
   final Clock clock;
+  final StyleRepository _styles;
 
   InvoicesDao get _dao => _db.invoicesDao;
 
@@ -51,10 +58,20 @@ class InvoiceRepository with ClockedRepository {
 
   /// Saves the aggregate atomically; [DuplicateNumber] when the number or
   /// its year/sequence is taken.
+  ///
+  /// Snapshots the resolved style when status is [InvoiceStatus.sent] or
+  /// [InvoiceStatus.paid] and not already snapshotted (ADR-0012).
   Future<SaveResult> save(Invoice inv) => at(() async {
     try {
+      var toSave = inv;
+      if ((toSave.status == InvoiceStatus.sent ||
+              toSave.status == InvoiceStatus.paid) &&
+          (toSave.styleSnapshot == null || toSave.styleSnapshot!.isEmpty)) {
+        final style = await _styles.resolveForInvoice(toSave);
+        toSave = toSave.copyWith(styleSnapshot: style.toRawJson);
+      }
       // A user save adopts a demo row: it is real data from now on.
-      await _dao.saveInvoice(inv.copyWith(isDemo: false));
+      await _dao.saveInvoice(toSave.copyWith(isDemo: false));
       return const Saved();
     } on DuplicateInvoiceNumber catch (e) {
       return DuplicateNumber(e.number);
@@ -68,9 +85,17 @@ class InvoiceRepository with ClockedRepository {
   /// client is deleted.
   Future<void> undoDelete(String id) => at(() => _dao.undoDelete(id));
 
-  /// Status paid with [date] as the paid date.
-  Future<void> markPaid(String id, CalendarDate date) =>
-      at(() => _dao.markPaid(id, date));
+  /// Status paid with [date] as the paid date, snapshotting the resolved style if not already frozen.
+  Future<void> markPaid(String id, CalendarDate date) => at(() async {
+    final inv = await _dao.getById(id);
+    if (inv != null &&
+        (inv.styleSnapshot == null || inv.styleSnapshot!.isEmpty)) {
+      final style = await _styles.resolveForInvoice(inv);
+      await _dao.markPaid(id, date, styleSnapshot: style.toRawJson());
+    } else {
+      await _dao.markPaid(id, date);
+    }
+  });
 
   /// Undo of [markPaid]: sent again, paid date cleared.
   Future<void> markUnpaid(String id) => at(() => _dao.markUnpaid(id));
