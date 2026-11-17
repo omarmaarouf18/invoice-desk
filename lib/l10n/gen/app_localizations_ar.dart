@@ -2176,4 +2176,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsNoMatch => 'لا توجد إعدادات بهذا الاسم.';
+
+  @override
+  String get settingsInvoices => 'الفواتير';
 }

@@ -3774,6 +3774,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'لا توجد إعدادات بهذا الاسم.'**
   String get settingsNoMatch;
+
+  /// No description provided for @settingsInvoices.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفواتير'**
+  String get settingsInvoices;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

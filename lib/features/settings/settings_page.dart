@@ -129,7 +129,7 @@ class _SettingsFormState extends ConsumerState<_SettingsForm> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        _SettingsHeader(dirty: _dirty),
+                        _SettingsHeader(dirty: _dirty, section: section),
                         const SizedBox(height: Space.l),
                         ..._sectionCards(section),
                       ],

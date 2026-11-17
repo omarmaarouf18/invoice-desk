@@ -1240,5 +1240,6 @@
   },
   "settingsData": "Data & backups",
   "settingsSearchHint": "Search settings",
-  "settingsNoMatch": "No settings match."
+  "settingsNoMatch": "No settings match.",
+  "settingsInvoices": "Invoices"
 }

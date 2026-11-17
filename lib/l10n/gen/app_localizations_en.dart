@@ -2176,4 +2176,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsNoMatch => 'No settings match.';
+
+  @override
+  String get settingsInvoices => 'Invoices';
 }

@@ -56,9 +56,12 @@ class _SPair extends StatelessWidget {
 
 const _sgap = SizedBox(height: Space.m - 4);
 
+/// The section's title, the save state and Back. The profile section
+/// keeps the line that says its details print on every invoice.
 class _SettingsHeader extends ConsumerWidget {
-  const _SettingsHeader({required this.dirty});
+  const _SettingsHeader({required this.dirty, required this.section});
   final bool dirty;
+  final SettingsSection section;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -70,8 +73,15 @@ class _SettingsHeader extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(l.settingsTitle, style: theme.textTheme.headlineSmall),
-              Text(l.settingsSubtitle, style: theme.textTheme.bodySmall),
+              Semantics(
+                header: true,
+                child: Text(
+                  _sectionTitle(l, section),
+                  style: theme.textTheme.headlineSmall,
+                ),
+              ),
+              if (section == SettingsSection.profile)
+                Text(l.settingsSubtitle, style: theme.textTheme.bodySmall),
             ],
           ),
         ),

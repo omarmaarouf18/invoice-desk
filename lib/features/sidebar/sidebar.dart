@@ -13,6 +13,7 @@ import 'package:invoice_desk/features/contracts/contract_actions.dart';
 import 'package:invoice_desk/features/contracts/contract_controller.dart';
 import 'package:invoice_desk/features/contracts/contract_widgets.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart';
+import 'package:invoice_desk/features/settings/settings_section.dart';
 import 'package:invoice_desk/features/sidebar/sidebar_model.dart';
 import 'package:invoice_desk/features/sidebar/sidebar_providers.dart';
 import 'package:invoice_desk/features/trash/trash_view.dart';
@@ -111,11 +112,9 @@ class _SidebarHeader extends ConsumerWidget {
                       backgroundColor: theme.colorScheme.primaryContainer,
                     )
                   : null,
-              onPressed: () => ref
-                  .read(workspaceProvider.notifier)
-                  .show(
-                    onSettings ? Workspace.invoice : Workspace.settings,
-                  ),
+              onPressed: () => onSettings
+                  ? ref.read(workspaceProvider.notifier).show(Workspace.invoice)
+                  : openSettings(ref, SettingsSection.profile),
               icon: const Icon(Icons.person_outline, size: 18),
               label: Text(l.myProfile),
             ),

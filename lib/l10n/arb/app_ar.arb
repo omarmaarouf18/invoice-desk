@@ -1240,5 +1240,6 @@
   },
   "settingsData": "البيانات والنسخ الاحتياطية",
   "settingsSearchHint": "ابحث في الإعدادات",
-  "settingsNoMatch": "لا توجد إعدادات بهذا الاسم."
+  "settingsNoMatch": "لا توجد إعدادات بهذا الاسم.",
+  "settingsInvoices": "الفواتير"
 }

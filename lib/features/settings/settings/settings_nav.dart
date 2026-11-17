@@ -4,7 +4,7 @@ part of '../settings_page.dart';
 String _sectionTitle(AppLocalizations l, SettingsSection s) => switch (s) {
   SettingsSection.general => l.general,
   SettingsSection.profile => l.profile,
-  SettingsSection.invoices => l.invoicing,
+  SettingsSection.invoices => l.settingsInvoices,
   SettingsSection.contracts => l.contractsSettings,
   SettingsSection.payment => l.payment,
   SettingsSection.styles => l.stylesSettings,
@@ -34,6 +34,7 @@ List<String> _sectionKeywords(AppLocalizations l, SettingsSection s) => [
       l.website,
     ],
     SettingsSection.invoices => [
+      l.invoicing,
       l.invoicePrefix,
       l.defaultDueDays,
       l.defaultDocLanguage,
