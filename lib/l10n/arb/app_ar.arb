@@ -1183,5 +1183,59 @@
   "presetFormal": "رسمي",
   "presetBlank": "أساسي",
   "styleMoreActions": "إجراءات التصميم",
-  "previewFailed": "تعذّر عرض المعاينة. يمكنك تصدير الملف كالمعتاد."
+  "previewFailed": "تعذّر عرض المعاينة. يمكنك تصدير الملف كالمعتاد.",
+  "styleUsageDrafts": "{count, plural, =1{مسودة واحدة} =2{مسودتان} few{{count} مسودات} other{{count} مسودة}}",
+  "@styleUsageDrafts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "styleUsageClients": "{count, plural, =1{عميل واحد} =2{عميلان} few{{count} عملاء} other{{count} عميلًا}}",
+  "@styleUsageClients": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "styleUsageAnd": "{a} و{b}",
+  "@styleUsageAnd": {
+    "placeholders": {
+      "a": {
+        "type": "String"
+      },
+      "b": {
+        "type": "String"
+      }
+    }
+  },
+  "styleDeleteTitle": "حذف «{name}»؟",
+  "@styleDeleteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "styleDeleteInUse": "يستخدم هذا التصميم {usage}. بعد حذفه تعود إلى تصميم العميل، ثم التصميم الافتراضي، ثم «كلاسيكي».",
+  "@styleDeleteInUse": {
+    "placeholders": {
+      "usage": {
+        "type": "String"
+      }
+    }
+  },
+  "styleDeletedInUse": "نُقل «{name}» إلى المحذوفات، وكان يستخدمه {usage}.",
+  "@styleDeletedInUse": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "usage": {
+        "type": "String"
+      }
+    }
+  }
 }

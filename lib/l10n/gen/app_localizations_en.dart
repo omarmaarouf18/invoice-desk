@@ -2121,4 +2121,50 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get previewFailed => 'The preview couldn’t be shown. You can still export the file.';
+
+  @override
+  String styleUsageDrafts(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count drafts',
+      few: '$count drafts',
+      two: '2 drafts',
+      one: '1 draft',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String styleUsageClients(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count clients',
+      few: '$count clients',
+      two: '2 clients',
+      one: '1 client',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String styleUsageAnd(String a, String b) {
+    return '$a and $b';
+  }
+
+  @override
+  String styleDeleteTitle(String name) {
+    return 'Delete “$name”?';
+  }
+
+  @override
+  String styleDeleteInUse(String usage) {
+    return 'This style is used by $usage. Once it’s deleted they fall back to the client’s style, then the default style, then Classic.';
+  }
+
+  @override
+  String styleDeletedInUse(String name, String usage) {
+    return '“$name” moved to the trash; it was used by $usage.';
+  }
 }

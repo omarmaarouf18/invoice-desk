@@ -32,6 +32,22 @@ class ResolvedLook {
   final bool locked;
 }
 
+/// How many unfrozen documents and clients point at a style.
+@immutable
+class StyleUsage {
+  /// A count; both are ≥ 0.
+  const StyleUsage({this.drafts = 0, this.clients = 0});
+
+  /// Invoices and contracts whose look still follows the style.
+  final int drafts;
+
+  /// Clients whose preferred style it is.
+  final int clients;
+
+  /// Anything at all would change look if the style went away.
+  bool get isUsed => drafts > 0 || clients > 0;
+}
+
 /// Thrown when an uploaded logo asset is invalid (wrong format, corrupted, or too large).
 class InvalidAssetException implements Exception {
   /// Creates an exception with an explanatory [message].

@@ -107,6 +107,42 @@ extension StyleEditing on StyleRepository {
     }
   }
 
+  /// Who still follows style [id]: documents whose look is not frozen yet
+  /// (no snapshot, not sent/paid/signed) and clients that prefer it.
+  ///
+  /// Shown before a delete: once the style is gone, those documents fall
+  /// back along the chain (client style → default → Classic, ADR-0012).
+  /// Trashed documents and clients are not counted.
+  Future<StyleUsage> styleUsage(String id) async {
+    final invoices =
+        await (_db.select(_db.invoices)..where(
+              (i) =>
+                  i.styleId.equals(id) &
+                  i.deletedAt.isNull() &
+                  (i.styleSnapshot.isNull() | i.styleSnapshot.equals('')) &
+                  i.status.isNotIn(const ['sent', 'paid', 'void']),
+            ))
+            .get();
+    final contracts =
+        await (_db.select(_db.contracts)..where(
+              (c) =>
+                  c.styleId.equals(id) &
+                  c.deletedAt.isNull() &
+                  (c.styleSnapshot.isNull() | c.styleSnapshot.equals('')) &
+                  c.status.isNotIn(
+                    const ['signed', 'active', 'completed', 'cancelled'],
+                  ),
+            ))
+            .get();
+    final clients = await (_db.select(
+      _db.clients,
+    )..where((c) => c.styleId.equals(id) & c.deletedAt.isNull())).get();
+    return StyleUsage(
+      drafts: invoices.length + contracts.length,
+      clients: clients.length,
+    );
+  }
+
   /// Hard-deletes styles that have been in the trash longer than [age]
   /// (start-up housekeeping, like the other tables). Returns the count.
   Future<int> purgeDeletedStyles({Duration age = trashRetention}) =>

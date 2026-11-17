@@ -3720,6 +3720,42 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'تعذّر عرض المعاينة. يمكنك تصدير الملف كالمعتاد.'**
   String get previewFailed;
+
+  /// No description provided for @styleUsageDrafts.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =1{مسودة واحدة} =2{مسودتان} few{{count} مسودات} other{{count} مسودة}}'**
+  String styleUsageDrafts(int count);
+
+  /// No description provided for @styleUsageClients.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =1{عميل واحد} =2{عميلان} few{{count} عملاء} other{{count} عميلًا}}'**
+  String styleUsageClients(int count);
+
+  /// No description provided for @styleUsageAnd.
+  ///
+  /// In ar, this message translates to:
+  /// **'{a} و{b}'**
+  String styleUsageAnd(String a, String b);
+
+  /// No description provided for @styleDeleteTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف «{name}»؟'**
+  String styleDeleteTitle(String name);
+
+  /// No description provided for @styleDeleteInUse.
+  ///
+  /// In ar, this message translates to:
+  /// **'يستخدم هذا التصميم {usage}. بعد حذفه تعود إلى تصميم العميل، ثم التصميم الافتراضي، ثم «كلاسيكي».'**
+  String styleDeleteInUse(String usage);
+
+  /// No description provided for @styleDeletedInUse.
+  ///
+  /// In ar, this message translates to:
+  /// **'نُقل «{name}» إلى المحذوفات، وكان يستخدمه {usage}.'**
+  String styleDeletedInUse(String name, String usage);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -2121,4 +2121,50 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get previewFailed => 'تعذّر عرض المعاينة. يمكنك تصدير الملف كالمعتاد.';
+
+  @override
+  String styleUsageDrafts(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count مسودة',
+      few: '$count مسودات',
+      two: 'مسودتان',
+      one: 'مسودة واحدة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String styleUsageClients(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count عميلًا',
+      few: '$count عملاء',
+      two: 'عميلان',
+      one: 'عميل واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String styleUsageAnd(String a, String b) {
+    return '$a و$b';
+  }
+
+  @override
+  String styleDeleteTitle(String name) {
+    return 'حذف «$name»؟';
+  }
+
+  @override
+  String styleDeleteInUse(String usage) {
+    return 'يستخدم هذا التصميم $usage. بعد حذفه تعود إلى تصميم العميل، ثم التصميم الافتراضي، ثم «كلاسيكي».';
+  }
+
+  @override
+  String styleDeletedInUse(String name, String usage) {
+    return 'نُقل «$name» إلى المحذوفات، وكان يستخدمه $usage.';
+  }
 }

@@ -1183,5 +1183,59 @@
   "presetFormal": "Formal",
   "presetBlank": "Blank",
   "styleMoreActions": "Style actions",
-  "previewFailed": "The preview couldn’t be shown. You can still export the file."
+  "previewFailed": "The preview couldn’t be shown. You can still export the file.",
+  "styleUsageDrafts": "{count, plural, =1{1 draft} =2{2 drafts} few{{count} drafts} other{{count} drafts}}",
+  "@styleUsageDrafts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "styleUsageClients": "{count, plural, =1{1 client} =2{2 clients} few{{count} clients} other{{count} clients}}",
+  "@styleUsageClients": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "styleUsageAnd": "{a} and {b}",
+  "@styleUsageAnd": {
+    "placeholders": {
+      "a": {
+        "type": "String"
+      },
+      "b": {
+        "type": "String"
+      }
+    }
+  },
+  "styleDeleteTitle": "Delete “{name}”?",
+  "@styleDeleteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "styleDeleteInUse": "This style is used by {usage}. Once it’s deleted they fall back to the client’s style, then the default style, then Classic.",
+  "@styleDeleteInUse": {
+    "placeholders": {
+      "usage": {
+        "type": "String"
+      }
+    }
+  },
+  "styleDeletedInUse": "“{name}” moved to the trash; it was used by {usage}.",
+  "@styleDeletedInUse": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "usage": {
+        "type": "String"
+      }
+    }
+  }
 }

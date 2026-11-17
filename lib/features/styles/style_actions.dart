@@ -102,12 +102,49 @@ class StyleActions {
     await _repo.resetStyle(s.id);
   }
 
-  /// Moves [s] to the trash, with Undo.
+  /// "3 drafts and 1 client" for [u], or null when nothing uses it.
+  String? usageText(StyleUsage u) {
+    final parts = [
+      if (u.drafts > 0) l.styleUsageDrafts(u.drafts),
+      if (u.clients > 0) l.styleUsageClients(u.clients),
+    ];
+    if (parts.isEmpty) return null;
+    return parts.length == 1
+        ? parts.single
+        : l.styleUsageAnd(parts[0], parts[1]);
+  }
+
+  /// Moves [s] to the trash, with Undo. When drafts or clients use it,
+  /// asks first and says how many fall back (client → default → Classic).
   Future<void> delete(CustomStyle s) async {
     await _ctl.flush();
+    final usage = usageText(await _repo.styleUsage(s.id));
+    if (usage != null) {
+      if (!context.mounted) return;
+      final ok = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(l.styleDeleteTitle(s.name)),
+          content: Text(l.styleDeleteInUse(usage)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(l.cancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(l.styleDelete),
+            ),
+          ],
+        ),
+      );
+      if (!(ok ?? false)) return;
+    }
     await _repo.softDeleteUserStyle(s.id);
     showSnack(
-      l.styleDeleted(s.name),
+      usage == null
+          ? l.styleDeleted(s.name)
+          : l.styleDeletedInUse(s.name, usage),
       actions: [(l.undo, () => unawaited(_repo.undoDeleteUserStyle(s.id)))],
     );
   }
