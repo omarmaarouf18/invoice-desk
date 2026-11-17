@@ -5,6 +5,13 @@ All notable changes to Invoice Desk. The format follows [Keep a Changelog](https
 ## [Unreleased]
 
 ### Added
+- **Document style engine (ADR-0012).** Complete styling engine for invoices and contracts with 5 built-in presets (`Classic`, `Modern`, `Minimal`, `Bold`, `Blank`).
+  - `DocumentStyle` immutable value object supporting primary/accent colors, custom margins, typography selection, header bands, table layout styles (plain, striped, bordered), solid totals bars, and modular block visibility.
+  - Dedicated `document_assets` table (schema v7) for content-addressed, deduplicated image storage (logos $\le$ 1 MB with PNG/JPEG validation).
+  - Style resolution hierarchy: snapshot $\to$ document style $\to$ client preferred style $\to$ settings default $\to$ Classic.
+  - Automatic style snapshots: sent and paid invoices, and signed contracts, freeze their resolved style and logo in the exact same transaction, guaranteeing that historical documents never change appearance.
+  - Bundled Noto Naskh Arabic font with automatic IBM Plex Sans Arabic Latin fallback.
+  - 100% byte-identical Classic preservation backed by PDF goldens.
 - **Invoice document language (Arabic, English, Bilingual).** Invoices can now be rendered in single-language Arabic (full RTL layout, mirrored tables, Arabic labels and dates, configurable digits), single-language English, or bilingual (Arabic / English, byte-identical to previous releases).
   - Scope/handover page follows the chosen document language.
   - Document language selector in the invoice editor Details card, hiding irrelevant language fields for notes and section titles when a single language is chosen.

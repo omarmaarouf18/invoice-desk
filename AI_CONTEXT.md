@@ -15,18 +15,17 @@
 | 1 — Foundations | ✅ done. `DocLanguage`, `doc_format`, `DocLabels`, `PdfStyle.classic` (pixel-identical), `localeProvider` (ADR-0011) |
 | 2 — English UI + follow-ups | ✅ done. `app_en.arb`, ICU plurals (`0a67998`), auto-direction inputs (`c28ffd7`), fallback to English (`e1965fe`) |
 | 3 — Document language: invoices | ✅ done. Schema v6 (`627e6a0`), PDF builder (`baf5940`), UI/repos/settings (`d232ee4`), goldens (`fd8bd76`), Arabic PDF bug fixes (`96dc046`, `f4f0bd2`) |
-| 4 — Style engine (schema v7) | ⏳ starting (Noto Naskh approved; schema v7, PdfStyle, repositories) |
-| 5 — Style editor UI | — |
+| 4 — Style engine (schema v7) | ✅ done. Schema v7 (`c0a2150`), StyleRepository & snapshots (`7aad4c7`), PdfStyle builder refactoring (`12bc577`), preset goldens & overlap guards (`92ed4ea`), ADR-0012 |
+| 5 — Style editor UI | ⏳ starting (settings/editor style management, live preview, logo upload) |
 | 6 — Settings redesign | — |
 | 7 — Contracts in English + styles | — |
 | 8 — UX polish | — |
 
-## Next (Phase 4 — Document style engine: STY-01)
+## Next (Phase 5 — Style editor UI: STY-02)
 
-1. **Noto Naskh Arabic:** Download Regular, SemiBold, Bold from official Google Fonts repo to `assets/fonts/` with `OFL.txt`, and extend `rtl_word_gap_test.dart`.
-2. **Schema v7:** `document_styles` table, snapshotting styles on documents (ADR-0012). Write forward migration step from v6 to v7.
-3. **Style engine:** Extend `PdfStyle` with fonts, primary/secondary colors, logo image, geometry adjustments.
-4. **Style tests:** Migration test v6→v7, style repository tests, backwards compatibility.
+1. **Style editor UI:** Settings card for document styles with preset duplication, color/font/geometry pickers, and live PDF preview.
+2. **Logo upload:** Logo import with validation ($\le$ 1 MB, PNG/JPG) stored in `document_assets`.
+3. **Document style selector:** Style picker in invoice editor (and later contract editor), falling back to client preferred or global setting.
 
 ## Decided (do not reopen without the owner)
 
@@ -48,4 +47,4 @@
 
 ## ADR index
 
-0001 Flutter desktop · 0002 drift/SQLite · 0003 integer money · 0004 30-day soft delete · 0005 clause snapshots · 0006 `$ORIGIN` runpath · 0007 RPM in /opt · 0008 offline first · 0009 free desktop / paid encrypted sync · 0010 E2E-encrypted sync · 0011 document language model · 0012 document styles *(reserved, Phase 4)* · 0013 vendored `pdf` RTL fix
+0001 Flutter desktop · 0002 drift/SQLite · 0003 integer money · 0004 30-day soft delete · 0005 clause snapshots · 0006 `$ORIGIN` runpath · 0007 RPM in /opt · 0008 offline first · 0009 free desktop / paid encrypted sync · 0010 E2E-encrypted sync · 0011 document language model · 0012 document styles · 0013 vendored `pdf` RTL fix
