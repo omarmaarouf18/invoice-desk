@@ -13,9 +13,11 @@ import 'package:invoice_desk/data/repositories/settings_repository.dart';
 import 'package:invoice_desk/domain/calendar/models.dart';
 import 'package:invoice_desk/domain/doc_format.dart';
 import 'package:invoice_desk/domain/doc_language.dart';
+import 'package:invoice_desk/domain/document_style_presets.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/actions.dart';
 import 'package:invoice_desk/features/calendar/calendar_controller.dart';
+import 'package:invoice_desk/features/styles/style_picker.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/sync/sync.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
@@ -28,6 +30,7 @@ part 'settings/backup_card.dart';
 part 'settings/calendar_cards.dart';
 part 'settings/form_cards.dart';
 part 'settings/general_card.dart';
+part 'settings/styles_card.dart';
 part 'settings/sync_card.dart';
 
 class SettingsPage extends ConsumerWidget {
@@ -125,6 +128,8 @@ class _SettingsFormState extends ConsumerState<_SettingsForm> {
                 _InvoicingCard(s: s, update: _update),
                 cardGap,
                 _ContractsSettingsCard(s: s, update: _update),
+                cardGap,
+                _StylesSettingsCard(s: s, update: _update),
                 cardGap,
                 _PaymentCard(s: s, update: _update),
                 cardGap,

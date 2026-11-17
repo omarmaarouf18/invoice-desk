@@ -63,7 +63,7 @@ class DetailsCard extends ConsumerWidget {
           const SizedBox(height: Space.m - 4),
           const _Pair(
             _LanguagePicker(),
-            SizedBox.shrink(),
+            InvoiceStyleField(),
           ),
           const SizedBox(height: Space.m - 4),
           _StatusAndPaid(

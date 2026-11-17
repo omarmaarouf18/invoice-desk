@@ -13,6 +13,7 @@ import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/actions.dart';
 import 'package:invoice_desk/features/calendar/calendar_controller.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart';
+import 'package:invoice_desk/features/styles/document_style_fields.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
 import 'package:invoice_desk/widgets/common.dart';
