@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart';
+import 'package:invoice_desk/features/pdf_render.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/pdf/invoice_pdf.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
@@ -46,6 +47,7 @@ class _PreviewPaneState extends ConsumerState<PreviewPane> {
     final fonts = ref.read(pdfFontsProvider).value;
     if (inv == null || settings == null || fonts == null) return;
     final clients = ref.read(clientsProvider).value ?? const <Client>[];
+    final styles = ref.read(styleRepositoryProvider);
     final data = InvoicePdfData(
       invoice: inv,
       client: clients.where((c) => c.id == inv.clientId).firstOrNull,
@@ -53,7 +55,7 @@ class _PreviewPaneState extends ConsumerState<PreviewPane> {
     );
     setState(() {
       _data = data;
-      _build = (_) => buildInvoicePdf(data, fonts);
+      _build = (_) => renderInvoicePdf(styles, data, fonts);
     });
   }
 
@@ -70,7 +72,8 @@ class _PreviewPaneState extends ConsumerState<PreviewPane> {
       ..listen(editorProvider.select((s) => s.revision), (_, _) => _schedule())
       ..listen(settingsProvider, (_, _) => _schedule())
       ..listen(clientsProvider, (_, _) => _schedule())
-      ..listen(pdfFontsProvider, (_, _) => _schedule());
+      ..listen(pdfFontsProvider, (_, _) => _schedule())
+      ..listen(userStylesProvider, (_, _) => _schedule());
     final theme = Theme.of(context);
     final build = _build;
     if (build == null || _data == null) {

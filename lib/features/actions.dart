@@ -12,6 +12,7 @@ import 'package:invoice_desk/features/clients/client_dialog.dart';
 import 'package:invoice_desk/features/clients/client_removal_dialogs.dart';
 import 'package:invoice_desk/features/contracts/contract_controller.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart';
+import 'package:invoice_desk/features/pdf_render.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/pdf/invoice_pdf.dart';
 import 'package:path/path.dart' as p;
@@ -276,7 +277,8 @@ class AppActions {
     var path = location.path;
     if (!path.toLowerCase().endsWith('.pdf')) path = '$path.pdf';
     try {
-      final bytes = await buildInvoicePdf(
+      final bytes = await renderInvoicePdf(
+        ref.read(styleRepositoryProvider),
         InvoicePdfData(invoice: inv, client: client, settings: settings),
         fonts,
       );

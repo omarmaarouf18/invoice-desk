@@ -14,6 +14,7 @@ import 'package:invoice_desk/features/contracts/contract_controller.dart';
 import 'package:invoice_desk/features/contracts/contract_widgets.dart';
 import 'package:invoice_desk/features/contracts/new_contract_sheet.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart';
+import 'package:invoice_desk/features/pdf_render.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/pdf/contract_pdf.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
@@ -261,7 +262,8 @@ class ContractActions {
     var path = location.path;
     if (!path.toLowerCase().endsWith('.pdf')) path = '$path.pdf';
     try {
-      final bytes = await buildContractPdf(
+      final bytes = await renderContractPdf(
+        ref.read(styleRepositoryProvider),
         ContractPdfData(
           contract: c,
           client: client,

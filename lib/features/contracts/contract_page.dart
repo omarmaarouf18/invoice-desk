@@ -12,6 +12,7 @@ import 'package:invoice_desk/features/contracts/contract_controller.dart';
 import 'package:invoice_desk/features/contracts/contract_widgets.dart';
 import 'package:invoice_desk/features/editor/editor_page.dart'
     show SaveIndicator, sideBySideWidth;
+import 'package:invoice_desk/features/pdf_render.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/pdf/contract_pdf.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
@@ -281,7 +282,8 @@ class _ContractPreviewPaneState extends ConsumerState<ContractPreviewPane> {
       settings: settings,
       parent: contracts.where((x) => x.id == c.parentId).firstOrNull,
     );
-    setState(() => _build = (_) => buildContractPdf(data, fonts));
+    final styles = ref.read(styleRepositoryProvider);
+    setState(() => _build = (_) => renderContractPdf(styles, data, fonts));
   }
 
   void _schedule() {
@@ -300,7 +302,8 @@ class _ContractPreviewPaneState extends ConsumerState<ContractPreviewPane> {
       )
       ..listen(settingsProvider, (_, _) => _schedule())
       ..listen(clientsProvider, (_, _) => _schedule())
-      ..listen(pdfFontsProvider, (_, _) => _schedule());
+      ..listen(pdfFontsProvider, (_, _) => _schedule())
+      ..listen(userStylesProvider, (_, _) => _schedule());
     final theme = Theme.of(context);
     final build = _build;
     if (build == null) {
