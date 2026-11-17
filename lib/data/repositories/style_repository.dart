@@ -8,6 +8,25 @@ import 'package:invoice_desk/domain/custom_style.dart';
 import 'package:invoice_desk/domain/document_style.dart';
 import 'package:invoice_desk/domain/document_style_presets.dart';
 import 'package:invoice_desk/domain/models.dart';
+import 'package:meta/meta.dart';
+
+/// What a document prints with: the resolved style and its logo.
+@immutable
+class ResolvedLook {
+  /// A look; [logo] is null when the style has no logo or its asset is
+  /// missing (the PDF then simply has no logo).
+  const ResolvedLook({required this.style, this.logo, this.locked = false});
+
+  /// The style to render.
+  final DocumentStyle style;
+
+  /// The logo image bytes (PNG or JPEG), if any.
+  final Uint8List? logo;
+
+  /// The look is frozen: the document was sent, paid or signed, so the
+  /// editor shows the style as fixed and the picker is disabled.
+  final bool locked;
+}
 
 /// Thrown when an uploaded logo asset is invalid (wrong format, corrupted, or too large).
 class InvalidAssetException implements Exception {
@@ -90,20 +109,101 @@ class StyleRepository with ClockedRepository {
     return DocPreset.classic.style;
   }
 
-  /// Resolves style for [inv].
-  Future<DocumentStyle> resolveForInvoice(Invoice inv) => resolveStyle(
-    styleId: inv.styleId,
-    clientId: inv.clientId,
-    snapshotJson: inv.styleSnapshot,
+  /// Resolves style for [inv]; see [lookForInvoice] for the lock rules.
+  Future<DocumentStyle> resolveForInvoice(Invoice inv) async =>
+      (await lookForInvoice(inv, withLogo: false)).style;
+
+  /// Resolves style for [c]; see [lookForContract] for the lock rules.
+  Future<DocumentStyle> resolveForContract(Contract c) async =>
+      (await lookForContract(c, withLogo: false)).style;
+
+  /// The look [inv] prints with: its style, its logo bytes, and whether the
+  /// look is frozen.
+  ///
+  /// The snapshot is [inv]'s own, else the stored row's (the editor's copy
+  /// may predate the save that took it). A stored invoice that is sent,
+  /// paid or void with **no** snapshot predates styles (v1–v6, an old
+  /// backup, demo rows): it stays Classic and locked, so a later default
+  /// never restyles a document that was already sent (ADR-0012).
+  /// [withLogo] false skips the asset read (snapshots only need the id).
+  Future<ResolvedLook> lookForInvoice(
+    Invoice inv, {
+    bool withLogo = true,
+  }) async {
+    final row = await (_db.select(
+      _db.invoices,
+    )..where((i) => i.id.equals(inv.id))).getSingleOrNull();
+    return _look(
+      snapshot: _nonEmpty(inv.styleSnapshot) ?? _nonEmpty(row?.styleSnapshot),
+      legacyCommitted:
+          row != null && const {'sent', 'paid', 'void'}.contains(row.status),
+      live: () => resolveStyle(styleId: inv.styleId, clientId: inv.clientId),
+      withLogo: withLogo,
+    );
+  }
+
+  /// The look [c] prints with; the same rules as [lookForInvoice], where
+  /// signed, active, completed and cancelled count as committed.
+  Future<ResolvedLook> lookForContract(
+    Contract c, {
+    bool withLogo = true,
+  }) async {
+    final row = await (_db.select(
+      _db.contracts,
+    )..where((x) => x.id.equals(c.id))).getSingleOrNull();
+    return _look(
+      snapshot: _nonEmpty(c.styleSnapshot) ?? _nonEmpty(row?.styleSnapshot),
+      legacyCommitted:
+          row != null &&
+          const {
+            'signed',
+            'active',
+            'completed',
+            'cancelled',
+          }.contains(row.status),
+      live: () => resolveStyle(
+        styleId: c.styleId,
+        clientId: c.clientId,
+        isContract: true,
+      ),
+      withLogo: withLogo,
+    );
+  }
+
+  /// The look of a style that is not attached to a document (the style
+  /// editor's preview): [style] with its logo bytes, never locked.
+  Future<ResolvedLook> lookForStyle(DocumentStyle style) async => ResolvedLook(
+    style: style,
+    logo: style.logoAssetId == null ? null : await getAsset(style.logoAssetId!),
   );
 
-  /// Resolves style for [c].
-  Future<DocumentStyle> resolveForContract(Contract c) => resolveStyle(
-    styleId: c.styleId,
-    clientId: c.clientId,
-    snapshotJson: c.styleSnapshot,
-    isContract: true,
-  );
+  Future<ResolvedLook> _look({
+    required String? snapshot,
+    required bool legacyCommitted,
+    required Future<DocumentStyle> Function() live,
+    required bool withLogo,
+  }) async {
+    DocumentStyle? frozen;
+    if (snapshot != null) {
+      try {
+        frozen = DocumentStyle.fromRawJson(snapshot);
+      } on Object {
+        frozen = null; // Corrupt snapshot: fall through like resolveStyle.
+      }
+    }
+    final locked = frozen != null || legacyCommitted;
+    final style =
+        frozen ?? (legacyCommitted ? DocPreset.classic.style : await live());
+    final logoId = style.logoAssetId;
+    return ResolvedLook(
+      style: style,
+      logo: withLogo && logoId != null ? await getAsset(logoId) : null,
+      locked: locked,
+    );
+  }
+
+  static String? _nonEmpty(String? s) =>
+      s == null || s.trim().isEmpty ? null : s;
 
   Future<DocumentStyle?> _resolveStyleId(String id) async {
     // Built-in preset?
@@ -125,19 +225,8 @@ class StyleRepository with ClockedRepository {
     return null;
   }
 
-  bool _isPresetId(String id) => switch (id) {
-    'preset_classic' ||
-    'classic' ||
-    'preset_modern' ||
-    'modern' ||
-    'preset_minimal' ||
-    'minimal' ||
-    'preset_bold' ||
-    'bold' ||
-    'preset_blank' ||
-    'blank' => true,
-    _ => false,
-  };
+  bool _isPresetId(String id) =>
+      DocPreset.values.any((p) => p.id == id || p.name == id);
 
   // ---------------------------------------------------------------------------
   // Asset Storage (Logos)
