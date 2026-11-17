@@ -24,7 +24,7 @@ enum DocPreset {
       primary: 0xFF1D4ED8,
       accent: 0xFF2563EB,
       ink: 0xFF111827,
-      muted: 0xFF64748B,
+      muted: 0xFF475569,
       surface: 0xFFF8FAFC,
       tableHeaderBg: 0xFFEFF6FF,
       border: 0xFFCBD5E1,

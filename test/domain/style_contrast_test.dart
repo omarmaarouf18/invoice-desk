@@ -16,16 +16,9 @@ void main() {
     );
   });
 
-  test('every shipped preset passes, except the known Modern header', () {
+  test('every shipped preset passes every pair', () {
     for (final p in DocPreset.values) {
-      final pairs = contrastIssues(p.style).map((i) => i.pair);
-      // Modern's muted grey on its pale-blue table header is 4.37:1. A
-      // preset change alters existing drafts, so it waits for the owner
-      // (docs/worklog/STY-02.md, open question 3).
-      final known = p == DocPreset.modern
-          ? [ContrastPair.mutedOnTableHeader]
-          : <ContrastPair>[];
-      expect(pairs, known, reason: p.id);
+      expect(contrastIssues(p.style), isEmpty, reason: p.id);
     }
   });
 
