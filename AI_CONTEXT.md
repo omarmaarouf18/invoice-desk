@@ -16,16 +16,16 @@
 | 2 — English UI + follow-ups | ✅ done. `app_en.arb`, ICU plurals (`0a67998`), auto-direction inputs (`c28ffd7`), fallback to English (`e1965fe`) |
 | 3 — Document language: invoices | ✅ done. Schema v6 (`627e6a0`), PDF builder (`baf5940`), UI/repos/settings (`d232ee4`), goldens (`fd8bd76`), Arabic PDF bug fixes (`96dc046`, `f4f0bd2`) |
 | 4 — Style engine (schema v7) | ✅ done. Schema v7 (`c0a2150`), StyleRepository & snapshots (`7aad4c7`), PdfStyle builders (`12bc577`), ADR-0012; follow-ups: VAT row correctness, 24h asset grace period & trash retention, 6 distinct presets (Formal with Naskh, Bold/Modern with Plex), word-level font fallback and bidi paragraph context preservation in vendored pdf (`9f8d21c`), text bidi guard test (`e86c606`), updated preset goldens |
-| 5 — Style editor UI | ⏳ starting (settings/editor style management, live preview, logo upload) |
+| 5 — Style editor UI | ⏸ built, awaiting review. Page «تصميم المستندات» (`bd2767e`), pickers + lock notice + Settings defaults (`1c4b37c`), styles in previews/exports (`d7e6fe2`), legacy lock (`349a373`), JSON export/import + trash (`52768d0`), flow test + goldens. Pre-phase: Arabic runs never letter-spaced (`3a16598`) |
 | 6 — Settings redesign | — |
 | 7 — Contracts in English + styles | — |
 | 8 — UX polish | — |
 
-## Next (Phase 5 — Style editor UI: STY-02)
+## Next
 
-1. **Style editor UI:** Settings card for document styles with preset duplication, color/font/geometry pickers, and live PDF preview.
-2. **Logo upload:** Logo import with validation ($\le$ 1 MB, PNG/JPG) stored in `document_assets`.
-3. **Document style selector:** Style picker in invoice editor (and later contract editor), falling back to client preferred or global setting.
+1. **Owner review of Phase 5 (STY-02).** Open questions in `docs/worklog/STY-02.md` (Modern preset contrast, legacy lock).
+2. **Phase 6 — Settings redesign (SET-01):** sectioned navigation with search; the Document styles card moves into its section. Client preferred style (`clients.style_id`) still has no UI.
+3. **Phase 7 note (owner, 2026-11-17):** in English contracts, Arabic values with numbers must not wrap with the number alone on a line.
 
 ## Decided (do not reopen without the owner)
 

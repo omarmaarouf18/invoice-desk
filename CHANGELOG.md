@@ -5,7 +5,12 @@ All notable changes to Invoice Desk. The format follows [Keep a Changelog](https
 ## [Unreleased]
 
 ### Added
-- **Document style engine (ADR-0012).** Complete styling engine for invoices and contracts with 5 built-in presets (`Classic`, `Modern`, `Minimal`, `Bold`, `Blank`).
+- **Document style editor «تصميم المستندات».** A new page, opened from Settings or from the style picker in either document editor:
+  - the ready-made styles and your own, each with a small thumbnail; Duplicate, Rename, Reset to preset, Delete (to the trash, with Undo), and Export/Import as a `.json` file that carries the logo with it;
+  - a live PDF preview on the open invoice or contract, or on a fictional sample, in any document language;
+  - an inspector for colours (with a warning when text falls below 4.5:1 contrast), font and page, header and logo (PNG/JPG up to 1 MB), table, totals, which blocks print and in what order (drag to reorder), and footer text. Changes save themselves.
+  - Each invoice and contract now has a "Document style" picker. Once a document is sent, paid or signed its look is fixed and the picker says so. Settings has the default invoice and contract styles.
+- **Document style engine (ADR-0012).** Complete styling engine for invoices and contracts with 6 built-in presets (`Classic`, `Modern`, `Minimal`, `Bold`, `Formal`, `Blank`).
   - `DocumentStyle` immutable value object supporting primary/accent colors, custom margins, typography selection, header bands, table layout styles (plain, striped, bordered), solid totals bars, and modular block visibility.
   - Dedicated `document_assets` table (schema v7) for content-addressed, deduplicated image storage (logos $\le$ 1 MB with PNG/JPEG validation).
   - Style resolution hierarchy: snapshot $\to$ document style $\to$ client preferred style $\to$ settings default $\to$ Classic.
@@ -24,6 +29,10 @@ All notable changes to Invoice Desk. The format follows [Keep a Changelog](https
   - The interface language is independent of the language of a document: an Arabic invoice can be edited in an English app (ADR-0011).
 
 ### Fixed
+- **Previews and exported PDFs now use the document's style.** Until now every document printed in Classic whatever style it was given.
+- **Documents sent before styles existed keep their look.** An invoice sent or paid, or a contract signed, before this version (or restored from an older backup) stays Classic, whatever default style is chosen later.
+- **The Arabic title «فاتورة» is no longer spaced out.** Letter spacing pulled the joined Arabic letters apart in the title, the table headers and the paid stamp of Arabic invoices; it now applies to English text only.
+- **Deleted document styles are purged after 30 days, and unused logos after a day**, like the rest of the trash.
 - **A text field is now read in the direction of its text.** An Arabic line in an English screen — a description, a client name, a jurisdiction — used to be cut at its first word, because the paragraph was laid out from the left. Every free-text field now takes its direction from its first strong character and follows the interface only while it is empty; numbers, codes, dates and e-mail addresses keep their own direction. The field is also scrolled to the start of its text, so a long line written in the other direction is shown from its beginning.
 - **"1 invoices" in the English interface.** Every count is now written with its plural form: the sidebar says "1 invoice · 1 unpaid" instead of "1 invoices · 1 unpaid". The Arabic counts got the same treatment («فاتورة واحدة» instead of «1 فاتورة»), and a test fails the build when a count is written as a bare number.
 - **The calendar's month arrows point the wrong way.** "Previous" and "next" now follow the reading direction, so they are the right way round in Arabic and in English.

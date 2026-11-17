@@ -87,10 +87,21 @@ At widths below about 1180 px the inspector moves under the list as a tab, so th
 9. `test(STY-02)`: style editor goldens (ar light, en light), as their own commit.
 10. `docs(STY-02)`: CHANGELOG, ARCHITECTURE, ADR-0012 (legacy lock), AI_CONTEXT, this worklog.
 
+## Commits as built (2026-11-17)
+
+The plan's commits 5 and 6 landed as one (`bd2767e`): the logo and JSON actions share `style_actions.dart` with the rest of the page. Two fixes were found on the way and got their own commits: `c5f983c` (`DocumentStyle.fromJson` threw on wrong-typed fields, found by the style file fuzz test) and `c07ea4f` (PdfPreview's red error box, which the goldens would otherwise have locked).
+
+## Findings (build)
+
+- 2026-11-17 — Trashed styles were never purged and `purgeUnusedAssets` was never called. Both now run in start-up housekeeping.
+- 2026-11-17 — `ensureVisible` stops at the nearest Scrollable. Inside the inspector that is the non-scrolling reorderable block list, so the flow test drags the outer list itself.
+- 2026-11-17 — The flow test drives the Details-card picker through its `onChanged` and checks the export **bytes** from `renderInvoicePdf` (the function the Export button calls), not a file written through the save dialog: tests have no file-selector platform.
+
 ## Open questions
 
 1. Legacy committed documents with no snapshot: lock them to Classic (recommended, implemented), or backfill snapshots in a migration (a data rewrite, so a stop-and-ask)? — open, implemented as the recommendation.
 2. The default-style controls land in Settings now, before Phase 6, because without them there is no way to set a default. Phase 6 moves them. — open, implemented.
+3. The shipped **Modern** preset fails one contrast pair: muted #64748B on its table-header #EFF6FF is 4.37:1 (needs 4.5). So a copy of Modern shows a warning. Recommended: darken Modern's muted to #607089 (4.62:1 on the header, 5.03:1 on white; visually almost the same). This changes how existing Modern **drafts** look (sent ones are snapshotted), so it waits for the owner. The contrast test pins it as a known exception. — open.
 
 ## Leftovers
 

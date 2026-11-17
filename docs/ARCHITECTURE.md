@@ -61,6 +61,8 @@ lib/
     editor/                   invoice editor (controller, cards, sections table)
     contracts/                contract editor (controller, cards, actions, preview)
     library/                  clause library editor
+    styles/                   تصميم المستندات: style list, live preview, inspector, pickers
+    pdf_render.dart           the one place the UI turns a document + its resolved style into PDF bytes
     trash/                    المحذوفات
     calendar/                 التقويم: controller, month/week/agenda views, day panel, banners, actions
     settings/, clients/       settings page, client dialogs
@@ -178,9 +180,10 @@ CI fails if the schema changed without a new snapshot. Migrations run inside the
 - **Builders.** Each document is assembled by small builder extensions in `lib/pdf/invoice/` and `lib/pdf/contract/` (header, parties, tables, totals, signatures, footer).
 - **Look and labels.** Builders read colours and page geometry from a `PdfStyle` (`lib/pdf/pdf_style.dart`; `PdfStyle.classic` is the 0.4 look) and fixed labels from `DocLabels` (`lib/pdf/labels.dart`, Arabic and English). Document text never comes from ARB: a document's language is independent of the UI language ([ADR 0011](adr/0011-document-language-model.md)). Dates, clause headings, currency names and digits come from `lib/domain/doc_format.dart`.
 - **Goldens.** `test/pdf/goldens/*.txt` hold each sample document's page content streams, so any layout change shows up as a text diff.
-- **Arabic text.** Direction is chosen per run, with the font's normal word spacing. The `pdf` package is vendored with a one-line RTL fix (`third_party/pdf`, [ADR 0013](adr/0013-vendored-pdf-rtl-fix.md)): upstream mirrored words by their ink box, so words ending in ر or ز ran into the next word. `test/pdf/rtl_word_gap_test.dart` measures the gaps. A date ending in digits is laid out as two runs so its space survives bidi reordering.
+- **Arabic text.** Direction is chosen per run, with the font's normal word spacing. The `pdf` package is vendored with an RTL patch (`third_party/pdf`, [ADR 0013](adr/0013-vendored-pdf-rtl-fix.md)): upstream mirrored words by their ink box, so words ending in ر or ز ran into the next word, and its per-character font fallback reversed Latin tokens inside Arabic lines. Letter spacing is applied to Latin runs only; Arabic runs always use 0 (`test/pdf/arabic_letter_spacing_test.dart`). `test/pdf/rtl_word_gap_test.dart` measures the gaps. A date ending in digits is laid out as two runs so its space survives bidi reordering.
 - **Contract variables.** Resolved at render time by `VariableResolver` and never stored resolved; unresolved ones are drawn on an amber background.
-- **Preview.** The preview pane re-renders the real PDF 300 ms after the last edit.
+- **Preview.** The preview pane re-renders the real PDF 300 ms after the last edit. Previews and exports both go through `lib/features/pdf_render.dart`, which asks `StyleRepository.lookForInvoice/lookForContract` for the resolved style and logo, so what you see is what you export.
+- **Styles.** A document's look resolves snapshot → document style → client style → settings default → Classic ([ADR 0012](adr/0012-document-styles.md)). The style editor (`lib/features/styles/`) edits user styles through one `StyleEditorController` that autosaves 600 ms after the last change.
 
 ## Calendar
 
