@@ -107,6 +107,7 @@ Invoice? invoiceForMilestone({
   required CalendarDate today,
   required Settings settings,
   required String Function() newId,
+  DocLanguage? language,
 }) {
   final amount = milestoneAmounts(c.totalMinor, c.milestones)[index];
   if (amount <= 0) return null;
@@ -114,6 +115,7 @@ Invoice? invoiceForMilestone({
   return Invoice(
     id: newId(),
     clientId: c.clientId,
+    language: language ?? settings.defaultDocLanguage,
     number: formatInvoiceNumber(settings.invoicePrefix, today.year, seq),
     year: today.year,
     seq: seq,

@@ -5,6 +5,12 @@ All notable changes to Invoice Desk. The format follows [Keep a Changelog](https
 ## [Unreleased]
 
 ### Added
+- **Invoice document language (Arabic, English, Bilingual).** Invoices can now be rendered in single-language Arabic (full RTL layout, mirrored tables, Arabic labels and dates, configurable digits), single-language English, or bilingual (Arabic / English, byte-identical to previous releases).
+  - Scope/handover page follows the chosen document language.
+  - Document language selector in the invoice editor Details card, hiding irrelevant language fields for notes and section titles when a single language is chosen.
+  - Client preferred document language: each client can declare a preferred document language, automatically adopted by new invoices and milestones (D7).
+  - Global default document language and Arabic digit style (Western 123 vs Arabic-Indic ١٢٣) in Settings → Invoicing.
+  - Empty payment details card is hidden from invoice PDFs (B3), and an editor warning banner prompts the user to configure payment methods in Settings.
 - **English interface.** The whole app can be read in English. Settings → General picks Arabic, English or the system language, and the choice takes effect at once — text, reading direction (right-to-left in Arabic, left-to-right in English), dates and icons. It is remembered per machine.
   - A full English translation (`lib/l10n/arb/app_en.arb`), checked against the Arabic one by a parity test: a missing key, a changed placeholder or a missing plural branch fails the build.
   - The English screens are locked by their own goldens (sidebar and invoice editor, contract editor, calendar month view, settings), and every screen is checked at the largest text scale so no row overflows.

@@ -165,28 +165,115 @@ class _InvoicingCard extends StatelessWidget {
     return PanelCard(
       title: l.invoicing,
       icon: Icons.tag,
-      child: _SPair(
-        _SettingField(
-          update,
-          l.invoicePrefix,
-          s.invoicePrefix,
-          (x, v) => x.copyWith(
-            invoicePrefix: v.trim().isEmpty ? x.invoicePrefix : v.trim(),
+      child: Column(
+        children: [
+          _SPair(
+            _SettingField(
+              update,
+              l.invoicePrefix,
+              s.invoicePrefix,
+              (x, v) => x.copyWith(
+                invoicePrefix: v.trim().isEmpty ? x.invoicePrefix : v.trim(),
+              ),
+              dir: TextDirection.ltr,
+              hint: l.prefixHint,
+            ),
+            _SettingField(
+              update,
+              l.defaultDueDays,
+              '${s.defaultDueDays}',
+              (x, v) {
+                final d = parseIntInput(v);
+                return d == null || d > 3650
+                    ? x
+                    : x.copyWith(defaultDueDays: d);
+              },
+              dir: TextDirection.ltr,
+            ),
           ),
-          dir: TextDirection.ltr,
-          hint: l.prefixHint,
-        ),
-        _SettingField(
-          update,
-          l.defaultDueDays,
-          '${s.defaultDueDays}',
-          (x, v) {
-            final d = parseIntInput(v);
-            return d == null || d > 3650 ? x : x.copyWith(defaultDueDays: d);
-          },
-          dir: TextDirection.ltr,
-        ),
+          _sgap,
+          _SPair(
+            _DocLanguageDropdown(
+              value: s.defaultDocLanguage,
+              onChanged: (v) {
+                if (v != null) update((x) => x.copyWith(defaultDocLanguage: v));
+              },
+            ),
+            _DocDigitStyleDropdown(
+              value: s.docDigitStyle,
+              onChanged: (v) {
+                if (v != null) update((x) => x.copyWith(docDigitStyle: v));
+              },
+            ),
+          ),
+        ],
       ),
+    );
+  }
+}
+
+class _DocLanguageDropdown extends StatelessWidget {
+  const _DocLanguageDropdown({required this.value, required this.onChanged});
+  final DocLanguage value;
+  final ValueChanged<DocLanguage?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return DropdownButtonFormField<DocLanguage>(
+      key: ValueKey('default-doc-language-$value'),
+      isExpanded: true,
+      initialValue: value,
+      decoration: InputDecoration(
+        labelText: l.defaultDocLanguage,
+        helperText: l.defaultDocLanguageHint,
+      ),
+      items: [
+        DropdownMenuItem(
+          value: DocLanguage.ar,
+          child: Text(l.docLanguageAr, overflow: TextOverflow.ellipsis),
+        ),
+        DropdownMenuItem(
+          value: DocLanguage.bilingual,
+          child: Text(l.docLanguageBilingual, overflow: TextOverflow.ellipsis),
+        ),
+        DropdownMenuItem(
+          value: DocLanguage.en,
+          child: Text(l.docLanguageEn, overflow: TextOverflow.ellipsis),
+        ),
+      ],
+      onChanged: onChanged,
+    );
+  }
+}
+
+class _DocDigitStyleDropdown extends StatelessWidget {
+  const _DocDigitStyleDropdown({required this.value, required this.onChanged});
+  final DigitStyle value;
+  final ValueChanged<DigitStyle?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return DropdownButtonFormField<DigitStyle>(
+      key: ValueKey('doc-digit-style-$value'),
+      isExpanded: true,
+      initialValue: value,
+      decoration: InputDecoration(
+        labelText: l.docDigitStyle,
+        helperText: l.docDigitStyleHint,
+      ),
+      items: [
+        DropdownMenuItem(
+          value: DigitStyle.western,
+          child: Text(l.digitStyleWestern, overflow: TextOverflow.ellipsis),
+        ),
+        DropdownMenuItem(
+          value: DigitStyle.arabicIndic,
+          child: Text(l.digitStyleArabicIndic, overflow: TextOverflow.ellipsis),
+        ),
+      ],
+      onChanged: onChanged,
     );
   }
 }

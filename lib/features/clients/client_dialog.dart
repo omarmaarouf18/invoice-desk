@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart' show newId;
 import 'package:invoice_desk/l10n/l10n.dart';
@@ -39,6 +40,7 @@ class _ClientDialogState extends State<_ClientDialog> {
   late final _repTitle = TextEditingController(
     text: widget.client?.representativeTitle,
   );
+  late DocLanguage? _preferredLanguage = widget.client?.preferredLanguage;
   bool _showError = false;
 
   @override
@@ -78,6 +80,7 @@ class _ClientDialogState extends State<_ClientDialog> {
         address: _address.text.trim(),
         representative: _rep.text.trim(),
         representativeTitle: _repTitle.text.trim(),
+        preferredLanguage: _preferredLanguage,
       ),
     );
   }
@@ -134,6 +137,10 @@ class _ClientDialogState extends State<_ClientDialog> {
                   dir: TextDirection.ltr,
                   type: TextInputType.emailAddress,
                 ),
+              ),
+              _LanguageField(
+                value: _preferredLanguage,
+                onChanged: (v) => setState(() => _preferredLanguage = v),
               ),
               _LegalSection(
                 expanded:
@@ -258,4 +265,41 @@ class _DeleteButton extends StatelessWidget {
     icon: const Icon(Icons.delete_outline, size: 18),
     label: Text(context.l10n.menuDeleteClient),
   );
+}
+
+class _LanguageField extends StatelessWidget {
+  const _LanguageField({required this.value, required this.onChanged});
+  final DocLanguage? value;
+  final ValueChanged<DocLanguage?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return Padding(
+      padding: const EdgeInsetsDirectional.only(bottom: Space.m - 4),
+      child: DropdownButtonFormField<DocLanguage?>(
+        key: const ValueKey('client-preferred-language'),
+        initialValue: value,
+        decoration: InputDecoration(labelText: l.clientPreferredLanguage),
+        items: [
+          DropdownMenuItem(
+            child: Text(l.clientPreferredLanguageDefault),
+          ),
+          DropdownMenuItem(
+            value: DocLanguage.ar,
+            child: Text(l.docLanguageAr),
+          ),
+          DropdownMenuItem(
+            value: DocLanguage.bilingual,
+            child: Text(l.docLanguageBilingual),
+          ),
+          DropdownMenuItem(
+            value: DocLanguage.en,
+            child: Text(l.docLanguageEn),
+          ),
+        ],
+        onChanged: onChanged,
+      ),
+    );
+  }
 }

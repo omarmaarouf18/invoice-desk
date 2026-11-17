@@ -2886,6 +2886,90 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'يتبع البرنامج كل التطبيق هذه اللغة، بما في ذلك اتجاه القراءة.'**
   String get uiLanguageHint;
+
+  /// No description provided for @docLanguage.
+  ///
+  /// In ar, this message translates to:
+  /// **'لغة المستند'**
+  String get docLanguage;
+
+  /// No description provided for @docLanguageAr.
+  ///
+  /// In ar, this message translates to:
+  /// **'العربية'**
+  String get docLanguageAr;
+
+  /// No description provided for @docLanguageEn.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإنجليزية'**
+  String get docLanguageEn;
+
+  /// No description provided for @docLanguageBilingual.
+  ///
+  /// In ar, this message translates to:
+  /// **'ثنائي اللغة (عربي / إنجليزي)'**
+  String get docLanguageBilingual;
+
+  /// No description provided for @clientPreferredLanguage.
+  ///
+  /// In ar, this message translates to:
+  /// **'لغة المستندات المفضلة'**
+  String get clientPreferredLanguage;
+
+  /// No description provided for @clientPreferredLanguageDefault.
+  ///
+  /// In ar, this message translates to:
+  /// **'تتبع الإعدادات العامة'**
+  String get clientPreferredLanguageDefault;
+
+  /// No description provided for @defaultDocLanguage.
+  ///
+  /// In ar, this message translates to:
+  /// **'لغة المستندات الافتراضية'**
+  String get defaultDocLanguage;
+
+  /// No description provided for @defaultDocLanguageHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اللغة التي تبدأ بها المستندات الجديدة'**
+  String get defaultDocLanguageHint;
+
+  /// No description provided for @docDigitStyle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أرقام المستندات العربية'**
+  String get docDigitStyle;
+
+  /// No description provided for @docDigitStyleHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'طريقة كتابة الأرقام داخل النصوص العربية في ملفات الـ PDF'**
+  String get docDigitStyleHint;
+
+  /// No description provided for @digitStyleWestern.
+  ///
+  /// In ar, this message translates to:
+  /// **'أرقام غربية (123)'**
+  String get digitStyleWestern;
+
+  /// No description provided for @digitStyleArabicIndic.
+  ///
+  /// In ar, this message translates to:
+  /// **'أرقام مشرقية (١٢٣)'**
+  String get digitStyleArabicIndic;
+
+  /// No description provided for @warnNoPaymentMethod.
+  ///
+  /// In ar, this message translates to:
+  /// **'أضف وسيلة دفع في الإعدادات'**
+  String get warnNoPaymentMethod;
+
+  /// No description provided for @warnNoPaymentMethodHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'لن تظهر بطاقة بيانات الدفع في الفاتورة حتى تضيف وسيلة دفع واحدة على الأقل.'**
+  String get warnNoPaymentMethodHint;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

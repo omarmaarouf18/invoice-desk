@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/data/repositories/library_repository.dart';
 import 'package:invoice_desk/domain/contract_models.dart';
-import 'package:invoice_desk/features/contracts/contract_widgets.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart' show newId;
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/theme/app_theme.dart';

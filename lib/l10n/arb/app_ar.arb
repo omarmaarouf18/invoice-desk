@@ -992,5 +992,19 @@
   "uiLanguageSystem": "لغة النظام",
   "uiLanguageAr": "العربية",
   "uiLanguageEn": "English",
-  "uiLanguageHint": "يتبع البرنامج كل التطبيق هذه اللغة، بما في ذلك اتجاه القراءة."
+  "uiLanguageHint": "يتبع البرنامج كل التطبيق هذه اللغة، بما في ذلك اتجاه القراءة.",
+  "docLanguage": "لغة المستند",
+  "docLanguageAr": "العربية",
+  "docLanguageEn": "الإنجليزية",
+  "docLanguageBilingual": "ثنائي اللغة (عربي / إنجليزي)",
+  "clientPreferredLanguage": "لغة المستندات المفضلة",
+  "clientPreferredLanguageDefault": "تتبع الإعدادات العامة",
+  "defaultDocLanguage": "لغة المستندات الافتراضية",
+  "defaultDocLanguageHint": "اللغة التي تبدأ بها المستندات الجديدة",
+  "docDigitStyle": "أرقام المستندات العربية",
+  "docDigitStyleHint": "طريقة كتابة الأرقام داخل النصوص العربية في ملفات الـ PDF",
+  "digitStyleWestern": "أرقام غربية (123)",
+  "digitStyleArabicIndic": "أرقام مشرقية (١٢٣)",
+  "warnNoPaymentMethod": "أضف وسيلة دفع في الإعدادات",
+  "warnNoPaymentMethodHint": "لن تظهر بطاقة بيانات الدفع في الفاتورة حتى تضيف وسيلة دفع واحدة على الأقل."
 }

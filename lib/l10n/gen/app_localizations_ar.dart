@@ -1690,4 +1690,46 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get uiLanguageHint => 'يتبع البرنامج كل التطبيق هذه اللغة، بما في ذلك اتجاه القراءة.';
+
+  @override
+  String get docLanguage => 'لغة المستند';
+
+  @override
+  String get docLanguageAr => 'العربية';
+
+  @override
+  String get docLanguageEn => 'الإنجليزية';
+
+  @override
+  String get docLanguageBilingual => 'ثنائي اللغة (عربي / إنجليزي)';
+
+  @override
+  String get clientPreferredLanguage => 'لغة المستندات المفضلة';
+
+  @override
+  String get clientPreferredLanguageDefault => 'تتبع الإعدادات العامة';
+
+  @override
+  String get defaultDocLanguage => 'لغة المستندات الافتراضية';
+
+  @override
+  String get defaultDocLanguageHint => 'اللغة التي تبدأ بها المستندات الجديدة';
+
+  @override
+  String get docDigitStyle => 'أرقام المستندات العربية';
+
+  @override
+  String get docDigitStyleHint => 'طريقة كتابة الأرقام داخل النصوص العربية في ملفات الـ PDF';
+
+  @override
+  String get digitStyleWestern => 'أرقام غربية (123)';
+
+  @override
+  String get digitStyleArabicIndic => 'أرقام مشرقية (١٢٣)';
+
+  @override
+  String get warnNoPaymentMethod => 'أضف وسيلة دفع في الإعدادات';
+
+  @override
+  String get warnNoPaymentMethodHint => 'لن تظهر بطاقة بيانات الدفع في الفاتورة حتى تضيف وسيلة دفع واحدة على الأقل.';
 }

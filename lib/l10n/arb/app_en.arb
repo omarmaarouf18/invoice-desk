@@ -992,5 +992,19 @@
   "uiLanguageSystem": "System language",
   "uiLanguageAr": "العربية",
   "uiLanguageEn": "English",
-  "uiLanguageHint": "The whole app follows this choice, including the reading direction."
+  "uiLanguageHint": "The whole app follows this choice, including the reading direction.",
+  "docLanguage": "Document language",
+  "docLanguageAr": "Arabic",
+  "docLanguageEn": "English",
+  "docLanguageBilingual": "Bilingual (Arabic / English)",
+  "clientPreferredLanguage": "Preferred document language",
+  "clientPreferredLanguageDefault": "Follow global default",
+  "defaultDocLanguage": "Default document language",
+  "defaultDocLanguageHint": "The language new documents start in",
+  "docDigitStyle": "Digits in Arabic documents",
+  "docDigitStyleHint": "How digits appear inside Arabic text in exported PDFs",
+  "digitStyleWestern": "Western (123)",
+  "digitStyleArabicIndic": "Arabic-Indic (١٢٣)",
+  "warnNoPaymentMethod": "Add a payment method in Settings",
+  "warnNoPaymentMethodHint": "The payment details card will not appear on the invoice until at least one payment method is added."
 }

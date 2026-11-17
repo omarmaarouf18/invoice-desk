@@ -1690,4 +1690,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get uiLanguageHint => 'The whole app follows this choice, including the reading direction.';
+
+  @override
+  String get docLanguage => 'Document language';
+
+  @override
+  String get docLanguageAr => 'Arabic';
+
+  @override
+  String get docLanguageEn => 'English';
+
+  @override
+  String get docLanguageBilingual => 'Bilingual (Arabic / English)';
+
+  @override
+  String get clientPreferredLanguage => 'Preferred document language';
+
+  @override
+  String get clientPreferredLanguageDefault => 'Follow global default';
+
+  @override
+  String get defaultDocLanguage => 'Default document language';
+
+  @override
+  String get defaultDocLanguageHint => 'The language new documents start in';
+
+  @override
+  String get docDigitStyle => 'Digits in Arabic documents';
+
+  @override
+  String get docDigitStyleHint => 'How digits appear inside Arabic text in exported PDFs';
+
+  @override
+  String get digitStyleWestern => 'Western (123)';
+
+  @override
+  String get digitStyleArabicIndic => 'Arabic-Indic (١٢٣)';
+
+  @override
+  String get warnNoPaymentMethod => 'Add a payment method in Settings';
+
+  @override
+  String get warnNoPaymentMethodHint => 'The payment details card will not appear on the invoice until at least one payment method is added.';
 }

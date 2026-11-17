@@ -61,6 +61,11 @@ class DetailsCard extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: Space.m - 4),
+          const _Pair(
+            _LanguagePicker(),
+            SizedBox.shrink(),
+          ),
+          const SizedBox(height: Space.m - 4),
           _StatusAndPaid(
             status: status,
             paid: paid,
@@ -93,7 +98,7 @@ class _ClientPicker extends ConsumerWidget {
 
     Future<void> createInline() async {
       final c = await AppActions(ref, context).newClient();
-      if (c != null) _ctl(ref).edit((i) => i.copyWith(clientId: c.id));
+      if (c != null) _ctl(ref).setClient(c.id);
     }
 
     return LayoutBuilder(
@@ -116,7 +121,7 @@ class _ClientPicker extends ConsumerWidget {
                   DropdownMenuEntry(value: c.id, label: c.name),
               ],
               onSelected: (id) {
-                if (id != null) _ctl(ref).edit((i) => i.copyWith(clientId: id));
+                if (id != null) _ctl(ref).setClient(id);
               },
             ),
           ),
@@ -134,6 +139,39 @@ class _ClientPicker extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _LanguagePicker extends ConsumerWidget {
+  const _LanguagePicker();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
+    final lang = _watchInv(ref, (i) => i.language);
+    final ctl = _ctl(ref);
+    return DropdownButtonFormField<DocLanguage>(
+      key: ValueKey('invoice-language-$lang'),
+      initialValue: lang,
+      decoration: InputDecoration(labelText: l.docLanguage),
+      items: [
+        DropdownMenuItem(
+          value: DocLanguage.ar,
+          child: Text(l.docLanguageAr),
+        ),
+        DropdownMenuItem(
+          value: DocLanguage.bilingual,
+          child: Text(l.docLanguageBilingual),
+        ),
+        DropdownMenuItem(
+          value: DocLanguage.en,
+          child: Text(l.docLanguageEn),
+        ),
+      ],
+      onChanged: (v) {
+        if (v != null) ctl.setLanguage(v);
+      },
     );
   }
 }

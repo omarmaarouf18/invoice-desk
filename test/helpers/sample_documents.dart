@@ -2,6 +2,7 @@ import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/data/seed.dart'
     show defaultNotesAr, defaultNotesEn;
+import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/pdf/invoice_pdf.dart';
 
@@ -20,15 +21,22 @@ final Settings sampleInvoiceSettings = sampleSettings.copyWith(
 
 /// A two-currency invoice to Acme Studio, with Arabic text that used to run
 /// together (words ending in ر، ز، و، د).
-Invoice sampleInvoice({bool scope = false}) => Invoice(
+Invoice sampleInvoice({
+  bool scope = false,
+  DocLanguage language = DocLanguage.bilingual,
+  InvoiceStatus status = InvoiceStatus.sent,
+  CalendarDate? paidDate,
+}) => Invoice(
   id: 'sample-invoice',
   clientId: acme.id,
+  language: language,
   number: 'SS-2026-0001',
   year: 2026,
   seq: 1,
   issueDate: const CalendarDate(2026, 9, 14),
   dueDate: const CalendarDate(2026, 10, 14),
-  status: InvoiceStatus.sent,
+  status: status,
+  paidDate: paidDate,
   notesEn: defaultNotesEn,
   notesAr: defaultNotesAr,
   scope: scope
@@ -90,8 +98,18 @@ Invoice sampleInvoice({bool scope = false}) => Invoice(
   ],
 );
 
-InvoicePdfData sampleInvoiceData({bool scope = false}) => InvoicePdfData(
-  invoice: sampleInvoice(scope: scope),
+InvoicePdfData sampleInvoiceData({
+  bool scope = false,
+  DocLanguage language = DocLanguage.bilingual,
+  InvoiceStatus status = InvoiceStatus.sent,
+  CalendarDate? paidDate,
+}) => InvoicePdfData(
+  invoice: sampleInvoice(
+    scope: scope,
+    language: language,
+    status: status,
+    paidDate: paidDate,
+  ),
   client: acme.copyWith(city: 'Cairo, Egypt'),
   settings: sampleInvoiceSettings,
 );

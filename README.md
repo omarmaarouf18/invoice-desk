@@ -10,9 +10,10 @@
 
 ## Features
 
-- **Invoices.** Bilingual (Arabic/English) and multi-currency (EGP, USD, SAR, AED, EUR).
+- **Invoices.** Bilingual (Arabic/English), Arabic-only, English-only, and multi-currency (EGP, USD, SAR, AED, EUR).
+  - Invoices can be issued in Arabic, English, or bilingual, with client preferred language and global defaults.
   - Sections each have their own currency, and lines are one-time, monthly or annual.
-  - Optional VAT, plus an optional scope/handover page.
+  - Optional VAT, plus an optional scope/handover page following the invoice language.
   - Duplicate, renewal (recurring lines only) and mark as paid.
 - **Contracts and quotes** from a clause library you maintain (Settings → مكتبة البنود).
   - `{{variables}}` are filled from your profile, the client and the contract. Missing ones are highlighted and block sending.

@@ -55,11 +55,18 @@ class EditorPage extends ConsumerWidget {
   }
 }
 
-class _EditorBody extends StatelessWidget {
+class _EditorBody extends ConsumerWidget {
   const _EditorBody({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(settingsProvider).value;
+    final hasPayment =
+        settings != null &&
+        (settings.instapay.trim().isNotEmpty ||
+            settings.wallet.trim().isNotEmpty ||
+            settings.bankIban.trim().isNotEmpty);
+
     return FocusTraversalGroup(
       child: Scrollbar(
         child: SingleChildScrollView(
@@ -72,23 +79,85 @@ class _EditorBody extends StatelessWidget {
           child: Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 1080),
-              child: const Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  DetailsCard(),
-                  SizedBox(height: Space.m),
-                  SectionsCard(),
-                  SizedBox(height: Space.m),
-                  TotalsCard(),
-                  SizedBox(height: Space.m),
-                  NotesCard(),
-                  SizedBox(height: Space.m),
-                  ScopeCard(),
+                  if (settings != null && !hasPayment) ...[
+                    const _PaymentWarningBanner(),
+                    const SizedBox(height: Space.m),
+                  ],
+                  const DetailsCard(),
+                  const SizedBox(height: Space.m),
+                  const SectionsCard(),
+                  const SizedBox(height: Space.m),
+                  const TotalsCard(),
+                  const SizedBox(height: Space.m),
+                  const NotesCard(),
+                  const SizedBox(height: Space.m),
+                  const ScopeCard(),
                 ],
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _PaymentWarningBanner extends ConsumerWidget {
+  const _PaymentWarningBanner();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
+    final theme = Theme.of(context);
+    final amber = missingColors(context);
+    return Container(
+      key: const ValueKey('payment-warning-banner'),
+      padding: const EdgeInsetsDirectional.fromSTEB(
+        Space.m,
+        Space.s + 4,
+        Space.m,
+        Space.s + 4,
+      ),
+      decoration: BoxDecoration(
+        color: amber.bg,
+        borderRadius: BorderRadius.circular(Space.radiusSmall),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.payment_outlined, size: 20, color: amber.fg),
+          const SizedBox(width: Space.m - 4),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  l.warnNoPaymentMethod,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: amber.fg,
+                  ),
+                ),
+                Text(
+                  l.warnNoPaymentMethodHint,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: amber.fg.withValues(alpha: 0.85),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: Space.m),
+          FilledButton.tonal(
+            key: const ValueKey('open-settings-payment-warning'),
+            onPressed: () =>
+                ref.read(workspaceProvider.notifier).show(Workspace.settings),
+            child: Text(l.openSettings),
+          ),
+        ],
       ),
     );
   }

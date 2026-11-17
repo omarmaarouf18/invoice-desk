@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/core/digits.dart';
 import 'package:invoice_desk/core/money.dart';
+import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart';
 import 'package:invoice_desk/l10n/l10n.dart';

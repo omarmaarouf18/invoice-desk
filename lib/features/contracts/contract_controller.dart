@@ -409,6 +409,7 @@ class ContractController extends Notifier<ContractEditorState> {
     if (i < 0) return null;
     final m = c.milestones[i];
     final invoices = ref.read(invoiceRepositoryProvider);
+    final lang = await invoices.resolveLanguage(clientId: c.clientId);
     final inv = invoiceForMilestone(
       c: c,
       index: i,
@@ -416,6 +417,7 @@ class ContractController extends Notifier<ContractEditorState> {
       today: _today,
       settings: await ref.read(settingsRepositoryProvider).get(),
       newId: newId,
+      language: lang,
     );
     if (inv == null) return null;
     final number = inv.number;

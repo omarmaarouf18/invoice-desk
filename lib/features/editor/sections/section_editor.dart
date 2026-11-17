@@ -100,6 +100,11 @@ class _SectionHeader extends ConsumerWidget {
     final ctl = ref.read(editorProvider.notifier);
     final l = context.l10n;
     final theme = Theme.of(context);
+    final lang = ref.watch(
+      editorProvider.select(
+        (s) => s.invoice?.language ?? DocLanguage.bilingual,
+      ),
+    );
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -115,31 +120,35 @@ class _SectionHeader extends ConsumerWidget {
             ),
           ),
         ),
-        Expanded(
-          flex: 4,
-          child: SyncedTextField(
-            label: l.sectionTitleEn,
-            value: section.titleEn,
-            textDirection: TextDirection.ltr,
-            onChanged: (v) => ctl.editSection(
-              section.id,
-              (s) => s.copyWith(titleEn: v),
+        if (lang != DocLanguage.ar)
+          Expanded(
+            flex: 4,
+            child: SyncedTextField(
+              key: ValueKey('section-title-en-${section.id}'),
+              label: l.sectionTitleEn,
+              value: section.titleEn,
+              textDirection: TextDirection.ltr,
+              onChanged: (v) => ctl.editSection(
+                section.id,
+                (s) => s.copyWith(titleEn: v),
+              ),
             ),
           ),
-        ),
-        const SizedBox(width: Space.s),
-        Expanded(
-          flex: 3,
-          child: SyncedTextField(
-            label: l.sectionTitleAr,
-            value: section.titleAr,
-            textDirection: TextDirection.rtl,
-            onChanged: (v) => ctl.editSection(
-              section.id,
-              (s) => s.copyWith(titleAr: v),
+        if (lang == DocLanguage.bilingual) const SizedBox(width: Space.s),
+        if (lang != DocLanguage.en)
+          Expanded(
+            flex: lang == DocLanguage.ar ? 4 : 3,
+            child: SyncedTextField(
+              key: ValueKey('section-title-ar-${section.id}'),
+              label: l.sectionTitleAr,
+              value: section.titleAr,
+              textDirection: TextDirection.rtl,
+              onChanged: (v) => ctl.editSection(
+                section.id,
+                (s) => s.copyWith(titleAr: v),
+              ),
             ),
           ),
-        ),
         const SizedBox(width: Space.s),
         _CurrencyDropdown(
           value: section.currency,

@@ -6,32 +6,46 @@ class NotesCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
+    final lang = _watchInv(ref, (i) => i.language);
     final en = _watchInv(ref, (i) => i.notesEn);
     final ar = _watchInv(ref, (i) => i.notesAr);
     final ctl = _ctl(ref);
+
+    Widget enField() => SyncedTextField(
+      key: const ValueKey('notes-en'),
+      label: l.notesEn,
+      value: en,
+      minLines: 4,
+      maxLines: 10,
+      textDirection: TextDirection.ltr,
+      keyboardType: TextInputType.multiline,
+      onChanged: (v) => ctl.edit((i) => i.copyWith(notesEn: v)),
+    );
+
+    Widget arField() => SyncedTextField(
+      key: const ValueKey('notes-ar'),
+      label: l.notesAr,
+      value: ar,
+      minLines: 4,
+      maxLines: 10,
+      textDirection: TextDirection.rtl,
+      keyboardType: TextInputType.multiline,
+      onChanged: (v) => ctl.edit((i) => i.copyWith(notesAr: v)),
+    );
+
+    final Widget content;
+    if (lang == DocLanguage.ar) {
+      content = arField();
+    } else if (lang == DocLanguage.en) {
+      content = enField();
+    } else {
+      content = _Pair(enField(), arField());
+    }
+
     return PanelCard(
       title: l.cardNotes,
       icon: Icons.notes_outlined,
-      child: _Pair(
-        SyncedTextField(
-          label: l.notesEn,
-          value: en,
-          minLines: 4,
-          maxLines: 10,
-          textDirection: TextDirection.ltr,
-          keyboardType: TextInputType.multiline,
-          onChanged: (v) => ctl.edit((i) => i.copyWith(notesEn: v)),
-        ),
-        SyncedTextField(
-          label: l.notesAr,
-          value: ar,
-          minLines: 4,
-          maxLines: 10,
-          textDirection: TextDirection.rtl,
-          keyboardType: TextInputType.multiline,
-          onChanged: (v) => ctl.edit((i) => i.copyWith(notesAr: v)),
-        ),
-      ),
+      child: content,
     );
   }
 }

@@ -1,5 +1,7 @@
 part of '../models.dart';
 
+const _keepLanguage = Object();
+
 @immutable
 /// Someone invoices and contracts are for.
 class Client {
@@ -77,7 +79,7 @@ class Client {
     String? address,
     String? representative,
     String? representativeTitle,
-    DocLanguage? preferredLanguage,
+    Object? preferredLanguage = _keepLanguage,
     bool? isDemo,
   }) => Client(
     id: id,
@@ -92,7 +94,9 @@ class Client {
     address: address ?? this.address,
     representative: representative ?? this.representative,
     representativeTitle: representativeTitle ?? this.representativeTitle,
-    preferredLanguage: preferredLanguage ?? this.preferredLanguage,
+    preferredLanguage: identical(preferredLanguage, _keepLanguage)
+        ? this.preferredLanguage
+        : preferredLanguage as DocLanguage?,
     isDemo: isDemo ?? this.isDemo,
   );
 

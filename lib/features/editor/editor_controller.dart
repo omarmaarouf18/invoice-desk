@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/core/money.dart';
+import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:invoice_desk/domain/invoice_defaults.dart';
 import 'package:invoice_desk/domain/invoice_logic.dart';
 import 'package:invoice_desk/domain/models.dart';
@@ -132,6 +133,9 @@ class EditorController extends Notifier<EditorState> {
     final today = _today;
     final number = await _nextNumber(today.year, settings.invoicePrefix);
     final parsed = parseInvoiceNumber(number)!;
+    final lang = await ref
+        .read(invoiceRepositoryProvider)
+        .resolveLanguage(clientId: clientId);
     if (!ref.mounted) return;
     state = EditorState(
       isNew: true,
@@ -140,6 +144,7 @@ class EditorController extends Notifier<EditorState> {
       invoice: Invoice(
         id: newId(),
         clientId: clientId ?? '',
+        language: lang,
         number: number,
         year: parsed.year,
         seq: parsed.seq,
@@ -153,6 +158,27 @@ class EditorController extends Notifier<EditorState> {
     ref.read(workspaceProvider.notifier).show(Workspace.invoice);
     if (clientId != null) _schedule();
   }
+
+  /// Sets the client; on a new invoice with no custom language chosen,
+  /// adopts the client's preferred language if set (D7).
+  void setClient(String id) {
+    final client = ref
+        .read(clientsProvider)
+        .value
+        ?.where((c) => c.id == id)
+        .firstOrNull;
+    final prefLang = client?.preferredLanguage;
+    edit((inv) {
+      if (state.isNew && prefLang != null) {
+        return inv.copyWith(clientId: id, language: prefLang);
+      }
+      return inv.copyWith(clientId: id);
+    });
+  }
+
+  /// Sets the document language of the invoice.
+  void setLanguage(DocLanguage lang) =>
+      edit((inv) => inv.copyWith(language: lang));
 
   // ── Editing ─────────────────────────────────────────────────────────
   void edit(Invoice Function(Invoice inv) change) {

@@ -80,12 +80,6 @@ class ContractStatusChip extends StatelessWidget {
   }
 }
 
-/// Amber for unresolved variables, in both themes.
-({Color bg, Color fg}) missingColors(BuildContext context) =>
-    Theme.of(context).brightness == Brightness.dark
-    ? (bg: const Color(0xFF4A3A0A), fg: const Color(0xFFFFD27A))
-    : (bg: const Color(0xFFFFE8A3), fg: const Color(0xFF7A4A00));
-
 /// Clause text with `{{variables}}` drawn as chips: teal when resolved
 /// (showing the value), amber when missing (showing the name).
 class VariableText extends StatelessWidget {

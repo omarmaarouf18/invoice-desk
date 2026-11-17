@@ -3,6 +3,7 @@ import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/data/daos/invoices_dao.dart';
 import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/data/repositories/repository.dart';
+import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/domain/results.dart';
 
@@ -26,6 +27,20 @@ class InvoiceRepository with ClockedRepository {
 
   /// The invoice with [id], deleted or not; null when unknown or purged.
   Future<Invoice?> getById(String id) => _dao.getById(id);
+
+  /// Resolves the initial language of a new invoice for [clientId]:
+  /// client preferred language -> global settings default (D7).
+  Future<DocLanguage> resolveLanguage({String? clientId}) async {
+    if (clientId != null && clientId.isNotEmpty) {
+      final clients = await _db.clientsDao.getAll();
+      final client = clients.where((c) => c.id == clientId).firstOrNull;
+      if (client?.preferredLanguage != null) {
+        return client!.preferredLanguage!;
+      }
+    }
+    final s = await _db.settingsDao.get();
+    return s.defaultDocLanguage;
+  }
 
   /// Next free sequence in [year]; deleted invoices keep their numbers.
   Future<int> nextSeqFor(int year) => _dao.nextSeqFor(year);
