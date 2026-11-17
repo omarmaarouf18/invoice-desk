@@ -93,6 +93,9 @@ These are the recommended defaults; the owner has not confirmed them yet. **Impl
 | 2026-11-16 | Arabic invoice labels reworded (لعناية، يُرجى ذكر رقم الفاتورة عند الدفع، المجموع الفرعي، التكرار، غير مطبَّقة، محفظة إلكترونية، حساب بنكي (IBAN)، currency name in «المبالغ بـ…») |
 | 2026-11-16 | D8 amended: system language that is neither Arabic nor English falls back to **English** |
 | 2026-11-16 | Speed rules: full gate once per phase; timebox overflow polish to 30 min, leftovers go to Phase 8 |
+| 2026-11-17 | Phase 4 approved. Letter spacing applies to Latin runs only; every Arabic run uses 0 (fix before Phase 5, own commit) |
+| 2026-11-17 | Phase 7: in English contracts, Arabic values that contain numbers («سجل تجاري رقم 123456 القاهرة») must not wrap with the number alone on a line |
+| 2026-11-17 | Upstream `pdf` issue/PR: keep the text in ADR-0013 current with the patch; do not file it (owner decides) |
 
 ## 5. Phased plan
 

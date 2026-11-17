@@ -45,9 +45,9 @@ No new dependency is added, and nothing changes at runtime except where words ar
 
 ### Upstream report (prepared, not filed)
 
-**Title:** RTL text: words are mirrored by ink width instead of advance width, so Arabic words ending in ر/ز/و/د run into the next word
+The owner decides whether and when to file. The patch fixes two separate bugs, so they go upstream as **two issues**. Only the first one is ready as a PR.
 
-**Issue body:**
+**Issue 1 — title:** RTL text: words are mirrored by ink width instead of advance width, so Arabic words ending in ر/ز/و/د run into the next word
 
 > **Version:** pdf 3.13.1
 >
@@ -59,4 +59,25 @@ No new dependency is added, and nothing changes at runtime except where words ar
 >
 > **Test:** render an RTL line uncompressed, read each word's `Td` x and its glyph widths from `/W`, and check `x[i] - (x[i+1] + advance[i+1]) == spaceAdvance * fontSize`. It fails before the fix and passes after it.
 
-**PR description:** the same text, with the patch from `third_party/pdf/rtl-advance-width.patch` and the test above added to `pdf/test/`.
+**PR 1:** the text above, with only the `advanceWidth` hunks of `rtl-advance-width.patch` (the `_Span.advanceWidth` getter and the two `realign` branches) and the gap test added to `pdf/test/`.
+
+**Issue 2 — title:** RTL text with `fontFallback`: per-character fallback spans reverse LTR tokens and stop parentheses from mirroring
+
+> **Version:** pdf 3.13.1
+>
+> **What happens:** in a right-to-left `Text` whose primary font lacks some glyphs (e.g. Noto Naskh Arabic, which has no Latin letters) and which sets `fontFallback`:
+> - a Latin token inside the Arabic line is drawn reversed: "EGP" renders as "PGE", "SS-2026-0001" as "0001-2026-SS";
+> - paired parentheses around Arabic text are not mirrored: «(العميل)» renders as «)العميل(».
+>
+> **Why:** `_preProcessSpans` splits a `TextSpan` into one span per character (`text: [rune]`) at every rune the primary font lacks. Two things go wrong after that:
+> - The bidi pass (`logicalToVisual`) then runs on isolated characters. It loses the paragraph context it needs to resolve the run's direction and to mirror paired brackets.
+> - `_Line.realign` mirrors every span on an RTL line. A Latin word split across several fallback spans has its spans reversed, so its letters come out in reverse order.
+>
+> **Fix we use (not upstream-ready as-is):** keep each `TextSpan` whole during pre-processing, and resolve fallback inside the word. `_Word` gets a list of `_WordRun`s (one per font change), laid out left to right within the word, so `realign` moves the word as a unit and never reorders its runs.
+
+**Before a PR 2, the vendored version must be generalised.** It is fitted to this app's two bundled fonts and drops upstream behaviour:
+1. It no longer draws emoji bitmaps (`_addEmoji` is unused).
+2. It no longer draws the placeholder box for a rune that no font supports (`_addPlaceholder` is unused). The rune falls back to the primary font instead.
+3. It routes every ASCII rune (0x20–0x7E) of a word to the first Latin-capable fallback font when the word holds a Latin letter and the primary font has no "A". That rule is a heuristic for Naskh + Plex, not a general one.
+
+A PR 2 would restore 1 and 2 inside `_WordRun` and replace 3 with a per-rune `isRuneSupported` lookup. It would come with a test like `test/pdf/text_bidi_guard_test.dart`: render the line, map glyphs back through `/ToUnicode`, and assert that LTR tokens keep left-to-right order and that brackets are mirrored.

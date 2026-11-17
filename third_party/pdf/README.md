@@ -31,6 +31,13 @@ it through `dependency_overrides` in the root `pubspec.yaml`. Why: [ADR-0013](..
    via composite `_WordRun`s. Each word's internal glyph runs advance
    strictly left-to-right without being reversed by line-level span realign.
 
+   **Trade-off:** this part is fitted to the two bundled fonts. It drops
+   upstream's emoji bitmaps (`_addEmoji` is unused) and the placeholder box
+   for a rune no font supports (`_addPlaceholder` is unused). It also sends
+   every ASCII rune of a Latin-bearing word to the first Latin-capable
+   fallback when the primary font has no "A". None of this matters for
+   Invoice Desk's documents. ADR-0013 lists what an upstream PR would need.
+
 `test/pdf/rtl_word_gap_test.dart` measures the gaps and fails without the
 patch. `test/pdf/text_bidi_guard_test.dart` verifies LTR token order and
 Arabic parenthesis mirroring. `test/architecture/vendored_pdf_test.dart`
