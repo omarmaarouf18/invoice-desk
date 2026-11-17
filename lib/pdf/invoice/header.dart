@@ -14,75 +14,117 @@ extension _Header on _Builder {
       if (inv.contractRef.trim().isNotEmpty)
         (label.contractRef, inv.contractRef.trim()),
     ];
-    return pw.Row(
+    pw.Widget? logoWidget;
+    if (style.logoBytes != null) {
+      logoWidget = pw.Container(
+        constraints: pw.BoxConstraints(
+          maxWidth: style.logoSize,
+          maxHeight: style.logoSize,
+        ),
+        child: pw.Image(
+          pw.MemoryImage(style.logoBytes!),
+        ),
+      );
+    }
+
+    final nameCol = pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        pw.Expanded(
-          child: pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              t(s.name, style: st(size: 26, font: bold)),
-              if (s.role.isNotEmpty) ...[
-                pw.SizedBox(height: 2),
-                t(
-                  s.role,
-                  style: st(size: 11, font: semi, color: style.primary),
-                ),
-              ],
-              pw.SizedBox(height: 6),
-              if (s.city.isNotEmpty) t(s.city, style: st(color: style.muted)),
-              if (contacts.isNotEmpty)
-                t(contacts, style: st(color: style.muted)),
-            ],
+        if (logoWidget != null && style.logoPosition == LogoPosition.start) ...[
+          logoWidget,
+          pw.SizedBox(height: 8),
+        ],
+        t(s.name, style: st(size: 26, font: bold)),
+        if (s.role.isNotEmpty && style.showRole) ...[
+          pw.SizedBox(height: 2),
+          t(
+            s.role,
+            style: st(size: 11, font: semi, color: style.primary),
           ),
-        ),
-        pw.SizedBox(width: 24),
-        pw.Column(
+        ],
+        pw.SizedBox(height: 6),
+        if (s.city.isNotEmpty && style.showCity)
+          t(s.city, style: st(color: style.muted)),
+        if (contacts.isNotEmpty && style.showContacts)
+          t(contacts, style: st(color: style.muted)),
+      ],
+    );
+
+    final metaCol = pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.end,
+      children: [
+        if (logoWidget != null && style.logoPosition == LogoPosition.end) ...[
+          logoWidget,
+          pw.SizedBox(height: 8),
+        ],
+        pw.Row(
+          mainAxisSize: pw.MainAxisSize.min,
           crossAxisAlignment: pw.CrossAxisAlignment.end,
           children: [
-            pw.Row(
-              mainAxisSize: pw.MainAxisSize.min,
-              crossAxisAlignment: pw.CrossAxisAlignment.end,
-              children: [
-                t(label.invoice, style: st(size: 22, font: bold, spacing: 2)),
-                if (isBilingual) ...[
-                  pw.SizedBox(width: 8),
-                  t(
-                    labelAr.invoice,
-                    style: st(size: 15, font: semi, color: style.muted),
-                  ),
-                ],
-              ],
-            ),
-            pw.SizedBox(height: 8),
-            _metaTable(meta),
-            if (inv.status == InvoiceStatus.paid) ...[
-              pw.SizedBox(height: 8),
-              pw.Container(
-                padding: const pw.EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: pw.BoxDecoration(
-                  color: style.successSoft,
-                  border: pw.Border.all(color: style.success, width: 1.2),
-                  borderRadius: pw.BorderRadius.circular(4),
-                ),
-                child: t(
-                  '${label.paid} · ${docDate(inv.paidDate ?? inv.issueDate)}',
-                  style: st(
-                    size: 10,
-                    font: bold,
-                    color: style.success,
-                    spacing: 1,
-                  ),
-                ),
+            t(label.invoice, style: st(size: 22, font: bold, spacing: 2)),
+            if (isBilingual) ...[
+              pw.SizedBox(width: 8),
+              t(
+                labelAr.invoice,
+                style: st(size: 15, font: semi, color: style.muted),
               ),
             ],
           ],
         ),
+        pw.SizedBox(height: 8),
+        _metaTable(meta),
+        if (inv.status == InvoiceStatus.paid && style.showPaidStamp) ...[
+          pw.SizedBox(height: 8),
+          pw.Container(
+            padding: const pw.EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: 4,
+            ),
+            decoration: pw.BoxDecoration(
+              color: style.successSoft,
+              border: pw.Border.all(color: style.success, width: 1.2),
+              borderRadius: pw.BorderRadius.circular(4),
+            ),
+            child: t(
+              '${label.paid} · ${docDate(inv.paidDate ?? inv.issueDate)}',
+              style: st(
+                size: 10,
+                font: bold,
+                color: style.success,
+                spacing: 1,
+              ),
+            ),
+          ),
+        ],
       ],
     );
+
+    final content = pw.Row(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Expanded(child: nameCol),
+        if (logoWidget != null &&
+            style.logoPosition == LogoPosition.center) ...[
+          pw.SizedBox(width: 16),
+          logoWidget,
+        ],
+        pw.SizedBox(width: 24),
+        metaCol,
+      ],
+    );
+
+    if (style.headerStyle == HeaderStyle.band) {
+      return pw.Container(
+        padding: const pw.EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: pw.BoxDecoration(
+          color: style.surface,
+          borderRadius: pw.BorderRadius.circular(6),
+        ),
+        child: content,
+      );
+    }
+
+    return content;
   }
 
   /// The invoice number and the dates, as a two-column table. The columns
@@ -147,8 +189,10 @@ extension _Header on _Builder {
   pw.Widget parties() {
     final c = data.client;
     final contactLine = [
-      c?.phone ?? '',
-      c?.email ?? '',
+      if (style.showContacts) ...[
+        c?.phone ?? '',
+        c?.email ?? '',
+      ],
     ].where((e) => e.trim().isNotEmpty).join('  ·  ');
     final pay = _paymentMethods;
     final billedTo = card(
@@ -157,13 +201,13 @@ extension _Header on _Builder {
         t(c?.name ?? '—', style: st(size: 12, font: bold)),
         if ((c?.contact ?? '').trim().isNotEmpty)
           t(label.attn(c!.contact.trim()), style: st()),
-        if ((c?.city ?? '').trim().isNotEmpty)
+        if (style.showCity && (c?.city ?? '').trim().isNotEmpty)
           t(c!.city.trim(), style: st(color: style.muted)),
         if (contactLine.isNotEmpty)
           t(contactLine, style: st(color: style.muted)),
       ],
     );
-    if (pay.isEmpty) return billedTo;
+    if (pay.isEmpty || !style.showPaymentCard) return billedTo;
     return pw.Row(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
@@ -199,11 +243,13 @@ extension _Header on _Builder {
                     ),
                   ],
                 ),
-              if (pay.isNotEmpty) pw.SizedBox(height: 4),
-              t(
-                label.pleaseQuote(inv.number),
-                style: st(size: 8.5, color: style.muted),
-              ),
+              if (pay.isNotEmpty && style.showPleaseQuote) ...[
+                pw.SizedBox(height: 4),
+                t(
+                  label.pleaseQuote(inv.number),
+                  style: st(size: 8.5, color: style.muted),
+                ),
+              ],
             ],
           ),
         ),

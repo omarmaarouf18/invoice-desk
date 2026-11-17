@@ -2,9 +2,17 @@ part of '../invoice_pdf.dart';
 
 extension _Footer on _Builder {
   pw.Widget footer(pw.Context context) {
+    final customFooter = isArabic
+        ? (style.footerTextAr.isNotEmpty
+              ? style.footerTextAr
+              : style.footerTextEn)
+        : (style.footerTextEn.isNotEmpty
+              ? style.footerTextEn
+              : style.footerTextAr);
     final left = [
       s.name,
       s.website,
+      if (customFooter.isNotEmpty) customFooter,
     ].where((e) => e.trim().isNotEmpty).join(' · ');
     return pw.Directionality(
       textDirection: dir,
@@ -25,10 +33,16 @@ extension _Footer on _Builder {
                 align: isArabic ? startAlign : null,
               ),
             ),
-            t(
-              '${inv.number}  ·  ${label.pageOf(docNumber('${context.pageNumber}'), docNumber('${context.pagesCount}'))}',
-              style: st(size: 7.5, color: style.muted),
-            ),
+            if (style.showPageNumbers)
+              t(
+                '${inv.number}  ·  ${label.pageOf(docNumber('${context.pageNumber}'), docNumber('${context.pagesCount}'))}',
+                style: st(size: 7.5, color: style.muted),
+              )
+            else
+              t(
+                inv.number,
+                style: st(size: 7.5, color: style.muted),
+              ),
           ],
         ),
       ),

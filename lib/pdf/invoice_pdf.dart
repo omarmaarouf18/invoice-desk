@@ -4,6 +4,7 @@ import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/domain/doc_format.dart';
 import 'package:invoice_desk/domain/doc_language.dart';
+import 'package:invoice_desk/domain/document_style_enums.dart';
 import 'package:invoice_desk/domain/invoice_logic.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/pdf/labels.dart';
@@ -16,23 +17,57 @@ part 'invoice/totals.dart';
 part 'invoice/footer.dart';
 part 'invoice/scope_page.dart';
 
-/// Bundled IBM Plex Sans Arabic, as PDF fonts.
+/// Bundled fonts as PDF fonts (IBM Plex Sans Arabic and Noto Naskh Arabic).
 class PdfFonts {
-  PdfFonts({required this.regular, required this.semiBold, required this.bold});
+  PdfFonts({
+    required this.regular,
+    required this.semiBold,
+    required this.bold,
+    this.naskhRegular,
+    this.naskhSemiBold,
+    this.naskhBold,
+  });
 
   factory PdfFonts.fromBytes({
     required ByteData regular,
     required ByteData semiBold,
     required ByteData bold,
+    ByteData? naskhRegular,
+    ByteData? naskhSemiBold,
+    ByteData? naskhBold,
   }) => PdfFonts(
     regular: pw.Font.ttf(regular),
     semiBold: pw.Font.ttf(semiBold),
     bold: pw.Font.ttf(bold),
+    naskhRegular: naskhRegular != null ? pw.Font.ttf(naskhRegular) : null,
+    naskhSemiBold: naskhSemiBold != null ? pw.Font.ttf(naskhSemiBold) : null,
+    naskhBold: naskhBold != null ? pw.Font.ttf(naskhBold) : null,
   );
 
   final pw.Font regular;
   final pw.Font semiBold;
   final pw.Font bold;
+  final pw.Font? naskhRegular;
+  final pw.Font? naskhSemiBold;
+  final pw.Font? naskhBold;
+
+  pw.Font fontRegular(DocFontFamily family) =>
+      family == DocFontFamily.notoNaskhArabic && naskhRegular != null
+      ? naskhRegular!
+      : regular;
+
+  pw.Font fontSemiBold(DocFontFamily family) =>
+      family == DocFontFamily.notoNaskhArabic && naskhSemiBold != null
+      ? naskhSemiBold!
+      : semiBold;
+
+  pw.Font fontBold(DocFontFamily family) =>
+      family == DocFontFamily.notoNaskhArabic && naskhBold != null
+      ? naskhBold!
+      : bold;
+
+  List<pw.Font> fallbackFor(DocFontFamily family) =>
+      family == DocFontFamily.notoNaskhArabic ? [regular] : const [];
 }
 
 class InvoicePdfData {
@@ -90,17 +125,29 @@ pw.Document buildInvoiceDocument(
           pageTheme: b.pageTheme(b.dir),
           footer: b.footer,
           build: (_) => [
-            b.header(),
-            pw.SizedBox(height: 12),
-            pw.Container(height: 2, color: style.ink),
-            pw.SizedBox(height: 14),
-            b.parties(),
-            pw.SizedBox(height: 16),
-            for (final (i, s) in data.invoice.sections.indexed) ...[
-              ...b.section(i + 1, s),
-              pw.SizedBox(height: 8),
+            if (style.blockOrder.contains(DocBlock.header)) ...[
+              b.header(),
+              if (style.headerStyle == HeaderStyle.rule) ...[
+                pw.SizedBox(height: 12),
+                pw.Container(height: 2, color: style.ink),
+                pw.SizedBox(height: 14),
+              ] else if (style.headerStyle == HeaderStyle.band) ...[
+                pw.SizedBox(height: 16),
+              ] else ...[
+                pw.SizedBox(height: 14),
+              ],
             ],
-            b.bottom(),
+            if (style.blockOrder.contains(DocBlock.parties)) ...[
+              b.parties(),
+              pw.SizedBox(height: 16),
+            ],
+            if (style.blockOrder.contains(DocBlock.items)) ...[
+              for (final (i, s) in data.invoice.sections.indexed) ...[
+                ...b.section(i + 1, s),
+                pw.SizedBox(height: 8),
+              ],
+            ],
+            if (style.blockOrder.contains(DocBlock.totals)) b.bottom(),
           ],
         ),
       );
@@ -173,17 +220,24 @@ class _Builder {
   final Invoice inv;
   final Settings s;
 
+  pw.Font get fontRegular => fonts.fontRegular(style.fontFamily);
+  pw.Font get semi => fonts.fontSemiBold(style.fontFamily);
+  pw.Font get bold => fonts.fontBold(style.fontFamily);
+  List<pw.Font> get fontFallback => fonts.fallbackFor(style.fontFamily);
+
   pw.ThemeData get theme =>
       pw.ThemeData.withFont(
-        base: fonts.regular,
-        bold: fonts.bold,
+        base: fontRegular,
+        bold: bold,
+        fontFallback: fontFallback,
       ).copyWith(
         defaultTextStyle: pw.TextStyle(
-          font: fonts.regular,
-          fontBold: fonts.bold,
-          fontSize: 9.5,
+          font: fontRegular,
+          fontBold: bold,
+          fontFallback: fontFallback,
+          fontSize: style.baseSize * style.scale,
           color: style.ink,
-          lineSpacing: 1.5,
+          lineSpacing: style.lineSpacing,
         ),
       );
 
@@ -199,15 +253,15 @@ class _Builder {
     pw.Font? font,
     PdfColor? color,
     double? spacing,
+    List<pw.Font>? fontFallback,
   }) => pw.TextStyle(
-    font: font ?? fonts.regular,
-    fontSize: size,
+    font: font ?? fontRegular,
+    fontBold: bold,
+    fontFallback: fontFallback ?? this.fontFallback,
+    fontSize: size * style.scale,
     color: color ?? style.ink,
     letterSpacing: spacing,
   );
-
-  pw.Font get semi => fonts.semiBold;
-  pw.Font get bold => fonts.bold;
 
   /// Text that picks its own direction (Arabic → RTL).
   pw.Widget t(

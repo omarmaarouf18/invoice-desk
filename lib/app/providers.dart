@@ -40,10 +40,21 @@ final todayProvider = Provider<CalendarDate>(todayFrom);
 final pdfFontsProvider = FutureProvider<PdfFonts>((ref) async {
   Future<ByteData> f(String w) =>
       rootBundle.load('assets/fonts/IBMPlexSansArabic-$w.ttf');
+  Future<ByteData?> fn(String w) async {
+    try {
+      return await rootBundle.load('assets/fonts/NotoNaskhArabic-$w.ttf');
+    } on Object {
+      return null;
+    }
+  }
+
   return PdfFonts.fromBytes(
     regular: await f('Regular'),
     semiBold: await f('SemiBold'),
     bold: await f('Bold'),
+    naskhRegular: await fn('Regular'),
+    naskhSemiBold: await fn('SemiBold'),
+    naskhBold: await fn('Bold'),
   );
 });
 

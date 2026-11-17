@@ -46,13 +46,15 @@ extension _Totals on _Builder {
                     : '${docNumber('${i + 1}')} · ${_sectionName(sec)}',
                 docNumber(sec.subtotal.format()),
               ),
-          if (inv.vatOn)
-            line(
-              '${label.vat} (${docNumber(formatBpAsPercent(inv.vatRateBp))}%)',
-              docNumber(totals.vat.format(separator: '\n')),
-            )
-          else
-            line(label.vat, label.vatNotApplicable, color: style.muted),
+          if (style.showVatRow) ...[
+            if (inv.vatOn)
+              line(
+                '${label.vat} (${docNumber(formatBpAsPercent(inv.vatRateBp))}%)',
+                docNumber(totals.vat.format(separator: '\n')),
+              )
+            else
+              line(label.vat, label.vatNotApplicable, color: style.muted),
+          ],
           pw.SizedBox(height: 6),
           pw.Container(
             padding: const pw.EdgeInsets.symmetric(
@@ -60,7 +62,9 @@ extension _Totals on _Builder {
               vertical: 10,
             ),
             decoration: pw.BoxDecoration(
-              color: style.ink,
+              color: style.totalsStyle == TotalsStyle.solid
+                  ? style.primary
+                  : style.ink,
               borderRadius: const pw.BorderRadius.only(
                 bottomLeft: pw.Radius.circular(7),
                 bottomRight: pw.Radius.circular(7),
@@ -102,16 +106,19 @@ extension _Totals on _Builder {
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.stretch,
                 children: [
-                  if (en.isNotEmpty || ar.isNotEmpty) ...[
-                    blockLabel(label.notes, labelAr.notes),
-                    pw.SizedBox(height: 6),
+                  if (style.showNotes &&
+                      style.blockOrder.contains(DocBlock.notes)) ...[
+                    if (en.isNotEmpty || ar.isNotEmpty) ...[
+                      blockLabel(label.notes, labelAr.notes),
+                      pw.SizedBox(height: 6),
+                    ],
+                    if (en.isNotEmpty && !isArabic)
+                      bullets(en, pw.TextDirection.ltr),
+                    if (en.isNotEmpty && ar.isNotEmpty && !isArabic)
+                      pw.SizedBox(height: 6),
+                    if (ar.isNotEmpty && !isEnglish)
+                      bullets(ar, pw.TextDirection.rtl),
                   ],
-                  if (en.isNotEmpty && !isArabic)
-                    bullets(en, pw.TextDirection.ltr),
-                  if (en.isNotEmpty && ar.isNotEmpty && !isArabic)
-                    pw.SizedBox(height: 6),
-                  if (ar.isNotEmpty && !isEnglish)
-                    bullets(ar, pw.TextDirection.rtl),
                 ],
               ),
             ),

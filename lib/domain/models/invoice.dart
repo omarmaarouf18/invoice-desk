@@ -304,8 +304,7 @@ class Invoice {
     notesAr: notesAr ?? this.notesAr,
     language: language ?? this.language,
     styleId: styleId != null ? styleId() : this.styleId,
-    styleSnapshot:
-        styleSnapshot != null ? styleSnapshot() : this.styleSnapshot,
+    styleSnapshot: styleSnapshot != null ? styleSnapshot() : this.styleSnapshot,
     scope: scope ?? this.scope,
     sections: sections ?? this.sections,
     createdAt: createdAt ?? this.createdAt,

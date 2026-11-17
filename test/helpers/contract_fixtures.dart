@@ -15,10 +15,20 @@ PdfFonts loadPdfFonts() {
   ByteData f(String w) => ByteData.sublistView(
     File('assets/fonts/IBMPlexSansArabic-$w.ttf').readAsBytesSync(),
   );
+  ByteData? fn(String w) {
+    final file = File('assets/fonts/NotoNaskhArabic-$w.ttf');
+    return file.existsSync()
+        ? ByteData.sublistView(file.readAsBytesSync())
+        : null;
+  }
+
   return PdfFonts.fromBytes(
     regular: f('Regular'),
     semiBold: f('SemiBold'),
     bold: f('Bold'),
+    naskhRegular: fn('Regular'),
+    naskhSemiBold: fn('SemiBold'),
+    naskhBold: fn('Bold'),
   );
 }
 

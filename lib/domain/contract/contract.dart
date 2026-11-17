@@ -225,8 +225,7 @@ class Contract {
     outOfScope: outOfScope ?? this.outOfScope,
     unlocked: unlocked ?? this.unlocked,
     styleId: styleId != null ? styleId() : this.styleId,
-    styleSnapshot:
-        styleSnapshot != null ? styleSnapshot() : this.styleSnapshot,
+    styleSnapshot: styleSnapshot != null ? styleSnapshot() : this.styleSnapshot,
     history: history ?? this.history,
     clauses: clauses ?? this.clauses,
     scope: scope ?? this.scope,

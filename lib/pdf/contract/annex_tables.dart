@@ -31,21 +31,41 @@ extension _AnnexTables on _Builder {
     required Map<int, pw.TableColumnWidth> widths,
     required List<pw.Widget> head,
     required List<List<pw.Widget>> rows,
-  }) => pw.Table(
-    columnWidths: widths,
-    border: pw.TableBorder(
-      horizontalInside: pw.BorderSide(color: style.border, width: 0.6),
-      bottom: pw.BorderSide(color: style.border, width: 0.6),
-    ),
-    children: [
-      pw.TableRow(
-        repeat: true,
-        decoration: pw.BoxDecoration(color: style.surface),
-        children: head,
+  }) {
+    final headDecoration = pw.BoxDecoration(
+      color: style.tableStyle == TableStyle.plain
+          ? style.surface
+          : style.tableHeaderBg,
+    );
+    final border = switch (style.tableStyle) {
+      TableStyle.bordered => pw.TableBorder.all(
+        color: style.border,
+        width: 0.8,
       ),
-      for (final r in rows) pw.TableRow(children: r),
-    ],
-  );
+      _ => pw.TableBorder(
+        horizontalInside: pw.BorderSide(color: style.border, width: 0.6),
+        bottom: pw.BorderSide(color: style.border, width: 0.6),
+      ),
+    };
+    return pw.Table(
+      columnWidths: widths,
+      border: border,
+      children: [
+        pw.TableRow(
+          repeat: true,
+          decoration: headDecoration,
+          children: head,
+        ),
+        for (final (i, r) in rows.indexed)
+          pw.TableRow(
+            decoration: style.tableStyle == TableStyle.striped && i.isOdd
+                ? pw.BoxDecoration(color: style.surface)
+                : null,
+            children: r,
+          ),
+      ],
+    );
+  }
 
   List<pw.Widget> scopeAnnex() {
     final rows = c.scope.where((x) => !x.isBlank).toList();

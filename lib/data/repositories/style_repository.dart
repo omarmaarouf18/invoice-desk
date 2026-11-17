@@ -66,9 +66,10 @@ class StyleRepository with ClockedRepository {
 
     // 3. Client style ID
     if (clientId != null && clientId.trim().isNotEmpty) {
-      final client = await (_db.select(_db.clients)
-            ..where((c) => c.id.equals(clientId) & c.deletedAt.isNull()))
-          .getSingleOrNull();
+      final client =
+          await (_db.select(_db.clients)
+                ..where((c) => c.id.equals(clientId) & c.deletedAt.isNull()))
+              .getSingleOrNull();
       if (client?.styleId != null && client!.styleId!.trim().isNotEmpty) {
         final style = await _resolveStyleId(client.styleId!.trim());
         if (style != null) return style;
@@ -111,9 +112,9 @@ class StyleRepository with ClockedRepository {
     }
 
     // Custom user style from database?
-    final row = await (_db.select(_db.documentStyles)
-          ..where((s) => s.id.equals(id) & s.deletedAt.isNull()))
-        .getSingleOrNull();
+    final row = await (_db.select(
+      _db.documentStyles,
+    )..where((s) => s.id.equals(id) & s.deletedAt.isNull())).getSingleOrNull();
     if (row != null && row.json.isNotEmpty) {
       try {
         return DocumentStyle.fromRawJson(row.json);
@@ -197,9 +198,9 @@ class StyleRepository with ClockedRepository {
 
   /// Fetches the raw image bytes for [id], or null if not found.
   Future<Uint8List?> getAsset(String id) async {
-    final row = await (_db.select(_db.documentAssets)
-          ..where((a) => a.id.equals(id)))
-        .getSingleOrNull();
+    final row = await (_db.select(
+      _db.documentAssets,
+    )..where((a) => a.id.equals(id))).getSingleOrNull();
     return row?.bytes;
   }
 
@@ -207,24 +208,35 @@ class StyleRepository with ClockedRepository {
   /// invoice snapshot, or contract snapshot.
   Future<bool> isAssetInUse(String assetId) async {
     // 1. Check live custom styles
-    final inStyle = await (_db.select(_db.documentStyles)
-          ..where((s) => s.deletedAt.isNull() & s.json.like('%$assetId%'))
-          ..limit(1))
-        .getSingleOrNull();
+    final inStyle =
+        await (_db.select(_db.documentStyles)
+              ..where((s) => s.deletedAt.isNull() & s.json.like('%$assetId%'))
+              ..limit(1))
+            .getSingleOrNull();
     if (inStyle != null) return true;
 
     // 2. Check invoices (live or trashed, so restore preserves logo)
-    final inInvoice = await (_db.select(_db.invoices)
-          ..where((i) => i.styleSnapshot.isNotNull() & i.styleSnapshot.like('%$assetId%'))
-          ..limit(1))
-        .getSingleOrNull();
+    final inInvoice =
+        await (_db.select(_db.invoices)
+              ..where(
+                (i) =>
+                    i.styleSnapshot.isNotNull() &
+                    i.styleSnapshot.like('%$assetId%'),
+              )
+              ..limit(1))
+            .getSingleOrNull();
     if (inInvoice != null) return true;
 
     // 3. Check contracts (live or trashed)
-    final inContract = await (_db.select(_db.contracts)
-          ..where((c) => c.styleSnapshot.isNotNull() & c.styleSnapshot.like('%$assetId%'))
-          ..limit(1))
-        .getSingleOrNull();
+    final inContract =
+        await (_db.select(_db.contracts)
+              ..where(
+                (c) =>
+                    c.styleSnapshot.isNotNull() &
+                    c.styleSnapshot.like('%$assetId%'),
+              )
+              ..limit(1))
+            .getSingleOrNull();
     if (inContract != null) return true;
 
     return false;
@@ -236,7 +248,9 @@ class StyleRepository with ClockedRepository {
     var purged = 0;
     for (final a in assets) {
       if (!await isAssetInUse(a.id)) {
-        await (_db.delete(_db.documentAssets)..where((x) => x.id.equals(a.id))).go();
+        await (_db.delete(
+          _db.documentAssets,
+        )..where((x) => x.id.equals(a.id))).go();
         purged++;
       }
     }
@@ -248,51 +262,55 @@ class StyleRepository with ClockedRepository {
   // ---------------------------------------------------------------------------
 
   /// Watches all active (non-deleted) custom styles.
-  Stream<List<CustomStyle>> watchUserStyles() => (_db.select(_db.documentStyles)
-        ..where((s) => s.deletedAt.isNull())
-        ..orderBy([(s) => OrderingTerm.asc(s.name)]))
-      .watch()
-      .map((rows) => rows.map(_toModel).toList());
+  Stream<List<CustomStyle>> watchUserStyles() =>
+      (_db.select(_db.documentStyles)
+            ..where((s) => s.deletedAt.isNull())
+            ..orderBy([(s) => OrderingTerm.asc(s.name)]))
+          .watch()
+          .map((rows) => rows.map(_toModel).toList());
 
   /// Returns all active (non-deleted) custom styles.
   Future<List<CustomStyle>> getUserStyles() async {
-    final rows = await (_db.select(_db.documentStyles)
-          ..where((s) => s.deletedAt.isNull())
-          ..orderBy([(s) => OrderingTerm.asc(s.name)]))
-        .get();
+    final rows =
+        await (_db.select(_db.documentStyles)
+              ..where((s) => s.deletedAt.isNull())
+              ..orderBy([(s) => OrderingTerm.asc(s.name)]))
+            .get();
     return rows.map(_toModel).toList();
   }
 
   /// Fetches a custom style by [id].
   Future<CustomStyle?> getUserStyleById(String id) async {
-    final row = await (_db.select(_db.documentStyles)
-          ..where((s) => s.id.equals(id) & s.deletedAt.isNull()))
-        .getSingleOrNull();
+    final row = await (_db.select(
+      _db.documentStyles,
+    )..where((s) => s.id.equals(id) & s.deletedAt.isNull())).getSingleOrNull();
     return row != null ? _toModel(row) : null;
   }
 
   /// Saves or updates a custom style.
   Future<void> saveUserStyle(CustomStyle style) => at(() async {
-    final existing = await (_db.select(_db.documentStyles)
-          ..where((s) => s.id.equals(style.id)))
-        .getSingleOrNull();
+    final existing = await (_db.select(
+      _db.documentStyles,
+    )..where((s) => s.id.equals(style.id))).getSingleOrNull();
     final now = _nowMs;
 
-    await _db.into(_db.documentStyles).insertOnConflictUpdate(
-      DocumentStylesCompanion.insert(
-        id: style.id,
-        name: style.name.trim(),
-        kind: Value(style.kind),
-        basePreset: Value(style.basePreset),
-        json: Value(style.style.toRawJson()),
-        schemaVersion: Value(style.schemaVersion),
-        archived: Value(style.archived),
-        isDemo: Value(style.isDemo),
-        createdAt: existing?.createdAt ?? now,
-        updatedAt: now,
-        deletedAt: const Value(null),
-      ),
-    );
+    await _db
+        .into(_db.documentStyles)
+        .insertOnConflictUpdate(
+          DocumentStylesCompanion.insert(
+            id: style.id,
+            name: style.name.trim(),
+            kind: Value(style.kind),
+            basePreset: Value(style.basePreset),
+            json: Value(style.style.toRawJson()),
+            schemaVersion: Value(style.schemaVersion),
+            archived: Value(style.archived),
+            isDemo: Value(style.isDemo),
+            createdAt: existing?.createdAt ?? now,
+            updatedAt: now,
+            deletedAt: const Value(null),
+          ),
+        );
   });
 
   /// Soft-deletes a custom style.

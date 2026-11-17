@@ -23,6 +23,9 @@ extension _Footer on _Builder {
     final pages = s.contractWesternDigits
         ? '${context.pagesCount}'
         : arabicIndicDigits('${context.pagesCount}');
+    final customFooter = style.footerTextAr.isNotEmpty
+        ? style.footerTextAr
+        : style.footerTextEn;
     return pw.Container(
       margin: const pw.EdgeInsets.only(top: 12),
       padding: const pw.EdgeInsets.only(top: 6),
@@ -34,9 +37,18 @@ extension _Footer on _Builder {
           initials(labels.firstPartyInitials),
           pw.SizedBox(width: 6),
           initials(labels.secondPartyInitials),
+          if (customFooter.isNotEmpty) ...[
+            pw.SizedBox(width: 12),
+            t(customFooter, style: st(size: 7.5, color: style.muted)),
+          ],
           pw.Spacer(),
-          t(labels.pageOf(page, pages), style: st(size: 8, color: style.muted)),
-          pw.SizedBox(width: 12),
+          if (style.showPageNumbers) ...[
+            t(
+              labels.pageOf(page, pages),
+              style: st(size: 8, color: style.muted),
+            ),
+            pw.SizedBox(width: 12),
+          ],
           t(
             c.number,
             style: st(size: 8, font: semi, color: style.muted),

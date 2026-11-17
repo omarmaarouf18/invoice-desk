@@ -161,7 +161,11 @@ extension _Table on _Builder {
 
     final headRow = pw.TableRow(
       repeat: true,
-      decoration: pw.BoxDecoration(color: style.surface),
+      decoration: pw.BoxDecoration(
+        color: style.tableStyle == TableStyle.plain
+            ? style.surface
+            : style.tableHeaderBg,
+      ),
       children: isArabic
           ? [
               head(label.amount, end: true),
@@ -180,8 +184,11 @@ extension _Table on _Builder {
     );
 
     final bodyRows = [
-      for (final it in rows)
+      for (final (idx, it) in rows.indexed)
         pw.TableRow(
+          decoration: style.tableStyle == TableStyle.striped && idx.isOdd
+              ? pw.BoxDecoration(color: style.surface)
+              : null,
           children: isArabic
               ? [
                   amountCell(it),
@@ -200,6 +207,17 @@ extension _Table on _Builder {
         ),
     ];
 
+    final tableBorder = switch (style.tableStyle) {
+      TableStyle.bordered => pw.TableBorder.all(
+        color: style.border,
+        width: 0.8,
+      ),
+      _ => pw.TableBorder(
+        horizontalInside: pw.BorderSide(color: style.border, width: 0.6),
+        bottom: pw.BorderSide(color: style.border, width: 0.6),
+      ),
+    };
+
     return pw.Table(
       columnWidths: isArabic
           ? const {
@@ -216,10 +234,7 @@ extension _Table on _Builder {
               3: pw.FixedColumnWidth(34),
               4: pw.FixedColumnWidth(84),
             },
-      border: pw.TableBorder(
-        horizontalInside: pw.BorderSide(color: style.border, width: 0.6),
-        bottom: pw.BorderSide(color: style.border, width: 0.6),
-      ),
+      border: tableBorder,
       children: [headRow, ...bodyRows],
     );
   }

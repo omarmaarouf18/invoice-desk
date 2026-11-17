@@ -5,11 +5,17 @@ import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/domain/doc_language.dart';
+import 'package:invoice_desk/domain/document_style.dart';
 import 'package:invoice_desk/pdf/invoice_pdf.dart';
+import 'package:invoice_desk/pdf/pdf_style.dart';
 import '../helpers/legacy_seed.dart';
 
 ByteData _font(String w) => ByteData.sublistView(
   File('assets/fonts/IBMPlexSansArabic-$w.ttf').readAsBytesSync(),
+);
+
+ByteData _naskhFont(String w) => ByteData.sublistView(
+  File('assets/fonts/NotoNaskhArabic-$w.ttf').readAsBytesSync(),
 );
 
 void main() {
@@ -19,6 +25,9 @@ void main() {
     regular: _font('Regular'),
     semiBold: _font('SemiBold'),
     bold: _font('Bold'),
+    naskhRegular: _naskhFont('Regular'),
+    naskhSemiBold: _naskhFont('SemiBold'),
+    naskhBold: _naskhFont('Bold'),
   );
 
   setUpAll(() async {
@@ -123,4 +132,33 @@ void main() {
     expect(pages, 1);
     expect(bytes.length, greaterThan(10000));
   });
+
+  test(
+    'noto naskh renders mixed Arabic and Latin text without missing glyphs',
+    () async {
+      const textWithLatin = 'Acme Studio · hello@acme.example · 22,000.00';
+      final naskhStyle = PdfStyle.fromDocumentStyle(
+        const DocumentStyle(
+          fontFamily: DocFontFamily.notoNaskhArabic,
+        ),
+      );
+      final invWithLatin = InvoicePdfData(
+        invoice: data.invoice.copyWith(
+          notesAr: textWithLatin,
+        ),
+        client: data.client?.copyWith(
+          name: 'Acme Studio',
+          email: 'hello@acme.example',
+        ),
+        settings: data.settings.copyWith(
+          name: 'Acme Studio',
+          email: 'hello@acme.example',
+        ),
+      );
+      final doc = buildInvoiceDocument(invWithLatin, fonts, style: naskhStyle);
+      final bytes = await doc.save();
+      expect(bytes.length, greaterThan(10000));
+      expect(String.fromCharCodes(bytes.take(5)), '%PDF-');
+    },
+  );
 }

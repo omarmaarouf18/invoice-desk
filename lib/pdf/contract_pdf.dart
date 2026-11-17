@@ -5,6 +5,7 @@ import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/domain/contract_logic.dart';
 import 'package:invoice_desk/domain/contract_models.dart';
 import 'package:invoice_desk/domain/doc_language.dart';
+import 'package:invoice_desk/domain/document_style_enums.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/pdf/invoice_pdf.dart' show PdfFonts;
 import 'package:invoice_desk/pdf/labels.dart';
@@ -113,8 +114,10 @@ pw.Document buildContractDocument(
         footer: b.footer,
         build: (_) => [
           ...b.paymentAnnex(),
-          pw.SizedBox(height: 28),
-          b.signatures(),
+          if (style.showSignatureBoxes) ...[
+            pw.SizedBox(height: 28),
+            b.signatures(),
+          ],
         ],
       ),
     );
@@ -146,12 +149,22 @@ class _Builder {
   final Settings s;
   final VariableResolver resolver;
 
+  pw.Font get fontRegular => fonts.fontRegular(style.fontFamily);
+  pw.Font get semi => fonts.fontSemiBold(style.fontFamily);
+  pw.Font get bold => fonts.fontBold(style.fontFamily);
+  List<pw.Font> get fontFallback => fonts.fallbackFor(style.fontFamily);
+
   pw.ThemeData get theme =>
-      pw.ThemeData.withFont(base: fonts.regular, bold: fonts.bold).copyWith(
+      pw.ThemeData.withFont(
+        base: fontRegular,
+        bold: bold,
+        fontFallback: fontFallback,
+      ).copyWith(
         defaultTextStyle: pw.TextStyle(
-          font: fonts.regular,
-          fontBold: fonts.bold,
-          fontSize: 10.5,
+          font: fontRegular,
+          fontBold: bold,
+          fontFallback: fontFallback,
+          fontSize: 10.5 * style.scale,
           color: style.ink,
           lineSpacing: 3,
         ),
@@ -174,7 +187,8 @@ class _Builder {
           labels.draft,
           textDirection: pw.TextDirection.rtl,
           style: pw.TextStyle(
-            font: fonts.bold,
+            font: bold,
+            fontFallback: fontFallback,
             fontSize: 120,
             color: style.watermark,
           ),
@@ -187,9 +201,12 @@ class _Builder {
     double size = 10.5,
     pw.Font? font,
     PdfColor? color,
+    List<pw.Font>? fontFallback,
   }) => pw.TextStyle(
-    font: font ?? fonts.regular,
-    fontSize: size,
+    font: font ?? fontRegular,
+    fontBold: bold,
+    fontFallback: fontFallback ?? this.fontFallback,
+    fontSize: size * style.scale,
     color: color ?? style.ink,
   );
 
@@ -203,9 +220,6 @@ class _Builder {
       t('${d.year}', style: style),
     ],
   );
-
-  pw.Font get semi => fonts.semiBold;
-  pw.Font get bold => fonts.bold;
 
   /// Plain text: Arabic (or mixed) runs RTL, pure Latin runs LTR.
   pw.Widget t(String text, {pw.TextStyle? style, pw.TextAlign? align}) =>
