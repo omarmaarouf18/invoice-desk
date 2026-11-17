@@ -4,6 +4,7 @@ import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/domain/contract_logic.dart';
 import 'package:invoice_desk/domain/contract_models.dart';
+import 'package:invoice_desk/domain/doc_format.dart';
 import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:invoice_desk/domain/document_style_enums.dart';
 import 'package:invoice_desk/domain/models.dart';
@@ -24,6 +25,7 @@ class ContractPdfData {
     required this.client,
     required this.settings,
     this.parent,
+    this.language = DocLanguage.ar,
   });
 
   final Contract contract;
@@ -32,6 +34,9 @@ class ContractPdfData {
 
   /// The original, for an amendment.
   final Contract? parent;
+
+  /// Document language (defaults to Arabic, until Phase 7 adds it to DB).
+  final DocLanguage language;
 }
 
 /// `CT-2026-0001 - Acme Studio.pdf`
@@ -140,8 +145,8 @@ class _Builder {
   final PdfStyle style;
   final void Function(int page, int pages)? onFooter;
 
-  /// The contract's language: Arabic until contracts get one (phase 7).
-  DocLanguage get lang => DocLanguage.ar;
+  /// The contract's language (defaults to Arabic).
+  DocLanguage get lang => data.language;
 
   /// Fixed labels in [lang].
   DocLabels get labels => DocLabels.of(lang);
@@ -173,7 +178,7 @@ class _Builder {
   pw.PageTheme get pageTheme => pw.PageTheme(
     pageFormat: style.paper,
     margin: style.contractMargin,
-    textDirection: pw.TextDirection.rtl,
+    textDirection: lang.isRtl ? pw.TextDirection.rtl : pw.TextDirection.ltr,
     theme: theme,
     buildBackground: c.status == ContractStatus.draft ? _draftMark : null,
   );
@@ -185,7 +190,9 @@ class _Builder {
         angle: 0.6,
         child: pw.Text(
           labels.draft,
-          textDirection: pw.TextDirection.rtl,
+          textDirection: lang.isRtl
+              ? pw.TextDirection.rtl
+              : pw.TextDirection.ltr,
           style: pw.TextStyle(
             font: bold,
             fontFallback: fontFallback,
@@ -212,14 +219,16 @@ class _Builder {
 
   /// `15 فبراير 2027` as two runs in an RTL row: the PDF's bidi pass drops
   /// the space before a trailing number when it is one string.
-  pw.Widget date(CalendarDate d, pw.TextStyle style) => pw.Row(
-    mainAxisSize: pw.MainAxisSize.min,
-    children: [
-      t(formatArabicDayMonth(d), style: style),
-      pw.SizedBox(width: (style.fontSize ?? 10) * 0.3),
-      t('${d.year}', style: style),
-    ],
-  );
+  pw.Widget date(CalendarDate d, pw.TextStyle style) => lang.isRtl
+      ? pw.Row(
+          mainAxisSize: pw.MainAxisSize.min,
+          children: [
+            t(formatArabicDayMonth(d), style: style),
+            pw.SizedBox(width: (style.fontSize ?? 10) * 0.3),
+            t('${d.year}', style: style),
+          ],
+        )
+      : t(formatDocDate(d, lang), style: style);
 
   /// Plain text: Arabic (or mixed) runs RTL, pure Latin runs LTR.
   pw.Widget t(String text, {pw.TextStyle? style, pw.TextAlign? align}) =>
@@ -229,19 +238,20 @@ class _Builder {
         textAlign: align,
         textDirection: _latinOnly.hasMatch(text)
             ? pw.TextDirection.ltr
-            : pw.TextDirection.rtl,
+            : (lang.isRtl ? pw.TextDirection.rtl : pw.TextDirection.ltr),
       );
 
   /// Text with `{{variables}}` resolved; unresolved ones highlighted amber.
   pw.Widget rich(
     String text, {
     pw.TextStyle? style,
-    pw.TextAlign align = pw.TextAlign.justify,
+    pw.TextAlign? align,
   }) {
     final base = style ?? st();
+    final defaultAlign = lang.isRtl ? pw.TextAlign.justify : pw.TextAlign.left;
     return pw.RichText(
-      textDirection: pw.TextDirection.rtl,
-      textAlign: align,
+      textDirection: lang.isRtl ? pw.TextDirection.rtl : pw.TextDirection.ltr,
+      textAlign: align ?? defaultAlign,
       overflow: pw.TextOverflow.span,
       text: pw.TextSpan(
         style: base,

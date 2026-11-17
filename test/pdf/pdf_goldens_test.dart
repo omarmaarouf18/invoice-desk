@@ -15,9 +15,11 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/domain/doc_language.dart';
+import 'package:invoice_desk/domain/document_style_presets.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/pdf/contract_pdf.dart';
 import 'package:invoice_desk/pdf/invoice_pdf.dart';
+import 'package:invoice_desk/pdf/pdf_style.dart';
 
 import '../helpers/contract_fixtures.dart';
 import '../helpers/pdf_golden.dart';
@@ -85,4 +87,50 @@ void main() {
     expectPdfGolden(bytes, 'contract_sample');
     _writeSample('sample-contract.pdf', bytes);
   });
+
+  test('sample contract: en', () async {
+    final bytes = await buildContractPdf(
+      sampleContractData(language: DocLanguage.en),
+      fonts,
+    );
+    expectPdfGolden(bytes, 'contract_classic_en');
+  });
+
+  final nonClassicPresets = DocPreset.values.where(
+    (p) => p != DocPreset.classic,
+  );
+
+  for (final preset in nonClassicPresets) {
+    final pdfStyle = PdfStyle.fromDocumentStyle(preset.style);
+
+    // Invoices: ar, en, bilingual
+    for (final lang in DocLanguage.values) {
+      test(
+        'invoice preset: ${preset.nameEn.toLowerCase()}, ${lang.name}',
+        () async {
+          final data = sampleInvoiceData(language: lang);
+          final bytes = await buildInvoicePdf(data, fonts, style: pdfStyle);
+          expectPdfGolden(
+            bytes,
+            'invoice_${preset.nameEn.toLowerCase()}_${lang.name}',
+          );
+        },
+      );
+    }
+
+    // Contracts: ar, en
+    for (final lang in [DocLanguage.ar, DocLanguage.en]) {
+      test(
+        'contract preset: ${preset.nameEn.toLowerCase()}, ${lang.name}',
+        () async {
+          final data = sampleContractData(language: lang);
+          final bytes = await buildContractPdf(data, fonts, style: pdfStyle);
+          expectPdfGolden(
+            bytes,
+            'contract_${preset.nameEn.toLowerCase()}_${lang.name}',
+          );
+        },
+      );
+    }
+  }
 }

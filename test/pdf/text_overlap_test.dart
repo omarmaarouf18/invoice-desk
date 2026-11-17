@@ -5,9 +5,12 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/domain/doc_language.dart';
+import 'package:invoice_desk/domain/document_style.dart';
+import 'package:invoice_desk/domain/document_style_presets.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/pdf/contract_pdf.dart';
 import 'package:invoice_desk/pdf/invoice_pdf.dart';
+import 'package:invoice_desk/pdf/pdf_style.dart';
 
 import '../helpers/contract_fixtures.dart';
 import '../helpers/sample_documents.dart';
@@ -259,5 +262,46 @@ void main() {
       );
       expectNoOverlaps(bytes, 'sample_contract', minGap: -0.01);
     });
+
+    final nonClassicPresets = DocPreset.values.where(
+      (p) => p != DocPreset.classic,
+    );
+
+    for (final preset in nonClassicPresets) {
+      final pdfStyle = PdfStyle.fromDocumentStyle(preset.style);
+
+      for (final lang in DocLanguage.values) {
+        final minGap = preset.style.fontFamily == DocFontFamily.notoNaskhArabic
+            ? -0.01
+            : 1.5;
+        test(
+          'invoice preset ${preset.nameEn.toLowerCase()} $lang has no overlapping text',
+          () async {
+            final data = sampleInvoiceData(language: lang);
+            final bytes = await buildInvoicePdf(data, fonts, style: pdfStyle);
+            expectNoOverlaps(
+              bytes,
+              'invoice_${preset.nameEn.toLowerCase()}_${lang.name}',
+              minGap: minGap,
+            );
+          },
+        );
+      }
+
+      for (final lang in [DocLanguage.ar, DocLanguage.en]) {
+        test(
+          'contract preset ${preset.nameEn.toLowerCase()} $lang has no overlapping text',
+          () async {
+            final data = sampleContractData(language: lang);
+            final bytes = await buildContractPdf(data, fonts, style: pdfStyle);
+            expectNoOverlaps(
+              bytes,
+              'contract_${preset.nameEn.toLowerCase()}_${lang.name}',
+              minGap: -0.01,
+            );
+          },
+        );
+      }
+    }
   });
 }

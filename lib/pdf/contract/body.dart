@@ -12,7 +12,7 @@ extension _Body on _Builder {
     child: rich(
       text,
       style: st(size: 12, font: bold, color: style.primary),
-      align: pw.TextAlign.right,
+      align: lang.isRtl ? pw.TextAlign.right : pw.TextAlign.left,
     ),
   );
 
@@ -129,7 +129,12 @@ extension _Body on _Builder {
             padding: const pw.EdgeInsets.all(10),
             decoration: pw.BoxDecoration(
               border: pw.Border(
-                right: pw.BorderSide(color: style.primary, width: 2),
+                right: lang.isRtl
+                    ? pw.BorderSide(color: style.primary, width: 2)
+                    : pw.BorderSide.none,
+                left: !lang.isRtl
+                    ? pw.BorderSide(color: style.primary, width: 2)
+                    : pw.BorderSide.none,
               ),
             ),
             child: rich(c.closing, style: st(font: semi)),

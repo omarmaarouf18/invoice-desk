@@ -36,16 +36,16 @@ extension _Cover on _Builder {
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
               rich(
-                contractHeading(c, parent: data.parent),
+                contractHeading(c, parent: data.parent, lang: lang),
                 style: st(size: 20, font: bold),
-                align: pw.TextAlign.right,
+                align: lang.isRtl ? pw.TextAlign.right : pw.TextAlign.left,
               ),
               if (c.projectName.trim().isNotEmpty) ...[
                 pw.SizedBox(height: 2),
                 rich(
                   c.projectName,
                   style: st(size: 11.5, font: semi, color: style.primary),
-                  align: pw.TextAlign.right,
+                  align: lang.isRtl ? pw.TextAlign.right : pw.TextAlign.left,
                 ),
               ],
             ],

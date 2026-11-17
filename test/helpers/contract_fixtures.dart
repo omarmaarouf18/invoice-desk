@@ -8,6 +8,7 @@ import 'package:invoice_desk/domain/contract_logic.dart';
 import 'package:invoice_desk/domain/contract_models.dart';
 import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:invoice_desk/domain/models.dart';
+import 'package:invoice_desk/pdf/contract_pdf.dart';
 import 'package:invoice_desk/pdf/invoice_pdf.dart';
 
 /// Fonts straight from the asset files (no asset bundle needed).
@@ -169,3 +170,80 @@ Contract acmeContract({
 }
 
 Money get acmeTotal => const Money(18000000, Currency.egp);
+
+/// English version of Acme contract for English preset goldens.
+Contract acmeContractEn({
+  bool optionalOn = false,
+  ContractStatus status = ContractStatus.sent,
+}) => Contract(
+  id: 'contract-acme-en',
+  clientId: acme.id,
+  number: 'CT-2026-0001',
+  year: 2026,
+  seq: 1,
+  issueDate: const CalendarDate(2026, 11, 15),
+  templateName: 'Software Development Agreement',
+  title: 'Platform Development and Maintenance',
+  projectName: 'Acme Learning Platform',
+  projectSummary: 'Web platform and mobile application for managing courses.',
+  preamble: 'This Agreement is entered into by and between the parties.',
+  status: status,
+  jurisdiction: 'Cairo Economic Court',
+  totalMinor: 18000000,
+  outOfScope: 'Content creation\nHosting fees\nUnspecified integrations',
+  clauses: const [
+    ContractClause(
+      id: 'c1',
+      title: 'Scope of Services',
+      body: 'The Provider agrees to deliver the services specified in Annex 1.',
+    ),
+    ContractClause(
+      id: 'c2',
+      title: 'Fees and Payment',
+      body: 'The Client agrees to pay the fees outlined in Annex 2.',
+    ),
+  ],
+  scope: const [
+    ScopeItem(
+      id: 's1',
+      phase: 'Phase 1',
+      item: 'Design',
+      description: 'Initial UI/UX prototypes for key flows',
+      acceptance: 'Written approval from Client',
+    ),
+    ScopeItem(
+      id: 's2',
+      phase: 'Phase 2',
+      item: 'Development',
+      description: 'Frontend and backend implementation',
+      acceptance: 'Successful test runs on staging',
+    ),
+  ],
+  milestones: const [
+    PaymentMilestone(
+      id: 'm1',
+      label: 'Upfront deposit',
+      percentBp: 5000,
+      trigger: 'Upon signing',
+    ),
+    PaymentMilestone(
+      id: 'm2',
+      label: 'Final payment',
+      percentBp: 5000,
+      trigger: 'Upon delivery',
+      dueDate: CalendarDate(2027, 2, 15),
+    ),
+  ],
+);
+
+ContractPdfData sampleContractData({
+  DocLanguage language = DocLanguage.ar,
+  ContractStatus status = ContractStatus.sent,
+}) => ContractPdfData(
+  contract: language == DocLanguage.en
+      ? acmeContractEn(status: status)
+      : acmeContract(status: status),
+  client: acme,
+  settings: sampleSettings,
+  language: language,
+);
