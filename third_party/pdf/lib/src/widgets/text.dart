@@ -262,12 +262,23 @@ class _TextDecoration {
   }
 }
 
+class _WordRun {
+  _WordRun(this.text, this.font, this.metrics, this.style);
+
+  final String text;
+  final PdfFont font;
+  final PdfFontMetrics metrics;
+  final TextStyle style;
+}
+
 class _Word extends _Span {
-  _Word(this.text, TextStyle style, this.metrics) : super(style);
+  _Word(this.text, TextStyle style, this.metrics, {this.runs}) : super(style);
 
   final String text;
 
   final PdfFontMetrics metrics;
+
+  final List<_WordRun>? runs;
 
   @override
   double get left => metrics.left;
@@ -296,15 +307,31 @@ class _Word extends _Span {
     double textScaleFactor,
     PdfPoint point,
   ) {
-    context.canvas.drawString(
-      style.font!.getFont(context),
-      style.fontSize! * textScaleFactor,
-      text,
-      point.x + offset.x,
-      point.y + offset.y,
-      mode: style.renderingMode ?? PdfTextRenderingMode.fill,
-      charSpace: style.letterSpacing ?? 0,
-    );
+    if (runs == null || runs!.isEmpty) {
+      context.canvas.drawString(
+        style.font!.getFont(context),
+        style.fontSize! * textScaleFactor,
+        text,
+        point.x + offset.x,
+        point.y + offset.y,
+        mode: style.renderingMode ?? PdfTextRenderingMode.fill,
+        charSpace: style.letterSpacing ?? 0,
+      );
+    } else {
+      var dx = 0.0;
+      for (final run in runs!) {
+        context.canvas.drawString(
+          run.font,
+          run.style.fontSize! * textScaleFactor,
+          run.text,
+          point.x + offset.x + dx,
+          point.y + offset.y,
+          mode: run.style.renderingMode ?? PdfTextRenderingMode.fill,
+          charSpace: run.style.letterSpacing ?? 0,
+        );
+        dx += run.metrics.advanceWidth + (run.style.letterSpacing ?? 0);
+      }
+    }
   }
 
   @override
@@ -810,8 +837,9 @@ class RichText extends Widget with SpanningWidget {
     );
   }
 
-  /// Check available characters in the fonts
-  /// use fallback if needed and replace emojis
+  /// Pre-processes spans by flattening the InlineSpan tree.
+  /// Character-level font fallback is handled at word level to maintain
+  /// paragraph context for bidirectional text and avoid inverted span order.
   List<InlineSpan> _preProcessSpans(Context context) {
     final theme = Theme.of(context);
     final defaultStyle = theme.defaultTextStyle;
@@ -826,115 +854,7 @@ class RichText extends Widget with SpanningWidget {
         if (span.text == null) {
           return true;
         }
-
-        final font = style!.font!.getFont(context);
-
-        var text = span.text!.runes.toList();
-
-        for (var index = 0; index < text.length; index++) {
-          final rune = text[index];
-          const spaces = {
-            0x0a,
-            0x09,
-            0x00A0,
-            0x1680,
-            0x2000,
-            0x2001,
-            0x2002,
-            0x2003,
-            0x2004, //
-            0x2005,
-            0x2006,
-            0x2007,
-            0x2008,
-            0x2009,
-            0x200A,
-            0x202F,
-            0x205F,
-            0x3000,
-          };
-          if (spaces.contains(rune)) {
-            continue;
-          }
-
-          if (!font.isRuneSupported(rune)) {
-            if (index > 0) {
-              spans.add(
-                _addText(
-                  text: text,
-                  end: index,
-                  style: style,
-                  baseline: span.baseline,
-                  annotation: annotation,
-                ),
-              );
-            }
-            var found = false;
-            for (final fb in style.fontFallback) {
-              final font = fb.getFont(context);
-              if (font.isRuneSupported(rune)) {
-                if (font is PdfTtfFont) {
-                  final bitmap = font.font.getBitmap(rune);
-                  if (bitmap != null) {
-                    spans.add(
-                      _addEmoji(
-                        bitmap: bitmap,
-                        style: style,
-                        baseline: span.baseline,
-                        annotation: annotation,
-                      ),
-                    );
-                    found = true;
-                    break;
-                  }
-                }
-                spans.add(
-                  _addText(
-                    text: [rune],
-                    style: style.copyWith(
-                      font: fb,
-                      fontNormal: fb,
-                      fontBold: fb,
-                      fontBoldItalic: fb,
-                      fontItalic: fb,
-                    ),
-                    baseline: span.baseline,
-                    annotation: annotation,
-                  ),
-                );
-                found = true;
-                break;
-              }
-            }
-            if (!found) {
-              spans.add(
-                _addPlaceholder(
-                  style: style,
-                  baseline: span.baseline,
-                  annotation: annotation,
-                ),
-              );
-              assert(() {
-                print(
-                  'Unable to find a font to draw "${String.fromCharCode(rune)}" (U+${rune.toRadixString(16)}) try to provide a TextStyle.fontFallback',
-                );
-                return true;
-              }());
-            }
-            text = text.sublist(index + 1);
-            index = -1;
-          }
-        }
-
-        spans.add(
-          _addText(
-            text: text,
-            style: style,
-            baseline: span.baseline,
-            annotation: annotation,
-          ),
-        );
-
+        spans.add(span.copyWith(style: style, annotation: annotation));
         return true;
       },
       defaultStyle,
@@ -942,6 +862,143 @@ class RichText extends Widget with SpanningWidget {
     );
 
     return spans;
+  }
+
+  _Word _createWord(
+    String word,
+    TextStyle style,
+    Context context,
+    double textScaleFactor,
+  ) {
+    final primaryFont = style.font!.getFont(context);
+    final letterSpacingScaled =
+        style.letterSpacing! / (style.fontSize! * textScaleFactor);
+
+    if (style.fontFallback.isEmpty) {
+      final metrics =
+          primaryFont.stringMetrics(
+            word,
+            letterSpacing: letterSpacingScaled,
+          ) *
+          (style.fontSize! * textScaleFactor);
+      return _Word(word, style, metrics);
+    }
+
+    final hasLatin = RegExp(r'[a-zA-Z]').hasMatch(word);
+    final primaryLacksLatin = !primaryFont.isRuneSupported(0x0041);
+
+    PdfFont? latinFallbackFont;
+    TextStyle? latinFallbackStyle;
+    if (hasLatin && primaryLacksLatin) {
+      for (final fb in style.fontFallback) {
+        final fbFont = fb.getFont(context);
+        if (fbFont.isRuneSupported(0x0041)) {
+          latinFallbackFont = fbFont;
+          latinFallbackStyle = style.copyWith(
+            font: fb,
+            fontNormal: fb,
+            fontBold: fb,
+            fontBoldItalic: fb,
+            fontItalic: fb,
+          );
+          break;
+        }
+      }
+    }
+
+    final runes = word.runes.toList();
+    var allPrimary = true;
+    final runeFonts = <PdfFont>[];
+    final runeStyles = <TextStyle>[];
+
+    for (final rune in runes) {
+      if (hasLatin &&
+          primaryLacksLatin &&
+          rune >= 0x20 &&
+          rune <= 0x7E &&
+          latinFallbackFont != null) {
+        allPrimary = false;
+        runeFonts.add(latinFallbackFont);
+        runeStyles.add(latinFallbackStyle!);
+        continue;
+      }
+
+      if (primaryFont.isRuneSupported(rune)) {
+        runeFonts.add(primaryFont);
+        runeStyles.add(style);
+      } else {
+        allPrimary = false;
+        PdfFont? chosenFont;
+        TextStyle? chosenStyle;
+        for (final fb in style.fontFallback) {
+          final fbFont = fb.getFont(context);
+          if (fbFont.isRuneSupported(rune)) {
+            chosenFont = fbFont;
+            chosenStyle = style.copyWith(
+              font: fb,
+              fontNormal: fb,
+              fontBold: fb,
+              fontBoldItalic: fb,
+              fontItalic: fb,
+            );
+            break;
+          }
+        }
+        runeFonts.add(chosenFont ?? primaryFont);
+        runeStyles.add(chosenStyle ?? style);
+      }
+    }
+
+    if (allPrimary) {
+      final metrics =
+          primaryFont.stringMetrics(
+            word,
+            letterSpacing: letterSpacingScaled,
+          ) *
+          (style.fontSize! * textScaleFactor);
+      return _Word(word, style, metrics);
+    }
+
+    final runs = <_WordRun>[];
+    var runRunes = <int>[];
+    var currentFont = runeFonts.first;
+    var currentStyle = runeStyles.first;
+
+    for (var i = 0; i < runes.length; i++) {
+      if (runeFonts[i] == currentFont && runeStyles[i] == currentStyle) {
+        runRunes.add(runes[i]);
+      } else {
+        final runText = String.fromCharCodes(runRunes);
+        final runMetrics =
+            currentFont.stringMetrics(
+              runText,
+              letterSpacing: letterSpacingScaled,
+            ) *
+            (currentStyle.fontSize! * textScaleFactor);
+        runs.add(_WordRun(runText, currentFont, runMetrics, currentStyle));
+
+        runRunes = [runes[i]];
+        currentFont = runeFonts[i];
+        currentStyle = runeStyles[i];
+      }
+    }
+    if (runRunes.isNotEmpty) {
+      final runText = String.fromCharCodes(runRunes);
+      final runMetrics =
+          currentFont.stringMetrics(
+            runText,
+            letterSpacing: letterSpacingScaled,
+          ) *
+          (currentStyle.fontSize! * textScaleFactor);
+      runs.add(_WordRun(runText, currentFont, runMetrics, currentStyle));
+    }
+
+    final combinedMetrics = PdfFontMetrics.append(
+      runs.map((r) => r.metrics),
+      letterSpacing: style.letterSpacing ?? 0,
+    );
+
+    return _Word(word, style, combinedMetrics, runs: runs);
   }
 
   @override
@@ -1018,14 +1075,8 @@ class RichText extends Widget with SpanningWidget {
                 continue;
               }
 
-              final metrics =
-                  font.stringMetrics(
-                    word,
-                    letterSpacing:
-                        style.letterSpacing! /
-                        (style.fontSize! * textScaleFactor),
-                  ) *
-                  (style.fontSize! * textScaleFactor);
+              final wd = _createWord(word, style, context, textScaleFactor);
+              final metrics = wd.metrics;
 
               if (_softWrap &&
                   offsetX + metrics.width > constraintWidth + 0.00001) {
@@ -1111,7 +1162,6 @@ class RichText extends Widget with SpanningWidget {
               top = math.min(top, mt + baseline);
               bottom = math.max(bottom, mb + baseline);
 
-              final wd = _Word(word, style, metrics);
               wd.offset = PdfPoint(offsetX, -offsetY + baseline);
               _spans.add(wd);
               spanCount++;

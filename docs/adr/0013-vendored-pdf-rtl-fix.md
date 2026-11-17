@@ -17,11 +17,13 @@ Writing our own RTL paragraph widget would mean porting the shaper and a line br
 
 ## Decision
 
-- Vendor `pdf` 3.13.1 unchanged in `third_party/pdf` (`lib/`, `LICENSE`, `pubspec.yaml`; Apache-2.0) and resolve it through `dependency_overrides`. Pin `pdf: 3.13.1` in `dependencies`.
-- Apply one patch, kept as `third_party/pdf/rtl-advance-width.patch`: add `_Span.advanceWidth` (the pen advance for words, `width` otherwise) and mirror RTL words with it, for both `TextAlign.justify` and the other alignments.
+- Apply two targeted fixes in `third_party/pdf/rtl-advance-width.patch`:
+  1. Add `_Span.advanceWidth` (the pen advance for words, `width` otherwise) and mirror RTL words with it, for both `TextAlign.justify` and the other alignments.
+  2. Preserve `TextSpan` trees during pre-processing so bidi processing has full paragraph context (fixing unmirrored parentheses `(` and `)`), and handle font fallback at the word level via `_WordRun` so LTR tokens inside RTL lines are not reversed by `_Line.realign`.
 - Go back to the font's normal word spacing (`wordSpacing` default) in the invoice and contract builders.
 - Guard it:
   - `test/pdf/rtl_word_gap_test.dart` reads word positions and glyph widths back out of the PDF. It checks that every gap after ر/ز/و/د is exactly one space, for three weights at 8–26 pt. It fails on the unpatched package.
+  - `test/pdf/text_bidi_guard_test.dart` asserts that known LTR tokens ("EGP", "SS-2026-0001", "studio.example.com", "acme-booking.example.com") maintain LTR glyph order and that Arabic parentheses are properly mirrored.
   - `test/architecture/vendored_pdf_test.dart` fails if `pubspec.lock` resolves `pdf` from anywhere else, if the vendored version, the pin and the override disagree, or if a patch line is missing.
   - PDF content goldens (`test/pdf/goldens/`) lock the full layout.
 - `third_party/` is excluded from analysis. Coverage and the size check only look at `lib/`.
