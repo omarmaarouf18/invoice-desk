@@ -99,9 +99,15 @@ The plan's commits 5 and 6 landed as one (`bd2767e`): the logo and JSON actions 
 
 ## Open questions
 
-1. Legacy committed documents with no snapshot: lock them to Classic (recommended, implemented), or backfill snapshots in a migration (a data rewrite, so a stop-and-ask)? — open, implemented as the recommendation.
-2. The default-style controls land in Settings now, before Phase 6, because without them there is no way to set a default. Phase 6 moves them. — open, implemented.
-3. The shipped **Modern** preset fails one contrast pair: muted #64748B on its table-header #EFF6FF is 4.37:1 (needs 4.5). So a copy of Modern shows a warning. Recommended: darken Modern's muted to #607089 (4.62:1 on the header, 5.03:1 on white; visually almost the same). This changes how existing Modern **drafts** look (sent ones are snapshotted), so it waits for the owner. The contrast test pins it as a known exception. — open.
+1. Legacy committed documents with no snapshot: lock them to Classic (recommended, implemented), or backfill snapshots in a migration (a data rewrite, so a stop-and-ask)? — answered 2026-11-17: approved.
+2. The default-style controls land in Settings now, before Phase 6, because without them there is no way to set a default. Phase 6 moves them. — answered 2026-11-17: approved.
+3. The shipped **Modern** preset fails one contrast pair: muted #64748B on its table-header #EFF6FF is 4.37:1 (needs 4.5). So a copy of Modern shows a warning. Recommended: darken Modern's muted to #607089 (4.62:1 on the header, 5.03:1 on white; visually almost the same). This changes how existing Modern **drafts** look (sent ones are snapshotted), so it waits for the owner. — answered 2026-11-17: fix the preset, no exception. Modern's muted is now #475569 (`98d6483`, goldens `e6e69e6`).
+
+## Review fixes (2026-11-17)
+
+- Preview language dropdown shows the language in use (`b44dc24`).
+- Bold is «بارز» in the UI, guarded by a name-parity test (`9c39f13`).
+- Deleting a style in use says how many drafts and clients fall back; fallback documented in ADR-0012 and tested (`9ed8367`).
 
 ## Leftovers
 

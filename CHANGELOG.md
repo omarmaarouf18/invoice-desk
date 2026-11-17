@@ -9,6 +9,7 @@ All notable changes to Invoice Desk. The format follows [Keep a Changelog](https
   - the ready-made styles and your own, each with a small thumbnail; Duplicate, Rename, Reset to preset, Delete (to the trash, with Undo), and Export/Import as a `.json` file that carries the logo with it;
   - a live PDF preview on the open invoice or contract, or on a fictional sample, in any document language;
   - an inspector for colours (with a warning when text falls below 4.5:1 contrast), font and page, header and logo (PNG/JPG up to 1 MB), table, totals, which blocks print and in what order (drag to reorder), and footer text. Changes save themselves.
+  - Deleting a style that drafts or clients use says how many first; they fall back to the client's style, then the default, then Classic.
   - Each invoice and contract now has a "Document style" picker. Once a document is sent, paid or signed its look is fixed and the picker says so. Settings has the default invoice and contract styles.
 - **Document style engine (ADR-0012).** Complete styling engine for invoices and contracts with 6 built-in presets (`Classic`, `Modern`, `Minimal`, `Bold`, `Formal`, `Blank`).
   - `DocumentStyle` immutable value object supporting primary/accent colors, custom margins, typography selection, header bands, table layout styles (plain, striped, bordered), solid totals bars, and modular block visibility.
