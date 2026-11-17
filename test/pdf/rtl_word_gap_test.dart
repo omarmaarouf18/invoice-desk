@@ -68,42 +68,51 @@ Future<String> _render(pw.Font font, String text, double size) async {
 }
 
 void main() {
-  for (final weight in ['Regular', 'SemiBold', 'Bold']) {
-    final bytes = ByteData.sublistView(
-      File('assets/fonts/IBMPlexSansArabic-$weight.ttf').readAsBytesSync(),
-    );
-    final font = pw.Font.ttf(bytes);
-    final space = _spaceAdvance(bytes);
+  const families = [
+    (name: 'IBM Plex Sans Arabic', filePrefix: 'IBMPlexSansArabic'),
+    (name: 'Noto Naskh Arabic', filePrefix: 'NotoNaskhArabic'),
+  ];
 
-    for (final size in [8.0, 9.5, 14.0, 26.0]) {
-      test('IBM Plex Sans Arabic $weight ${size}pt: every RTL gap is one '
-          'space', () async {
-        for (final phrase in _phrases) {
-          final pdf = await _render(font, phrase, size);
-          final widths = _widths(pdf);
-          final runs = _runs(pdf);
-          expect(runs, hasLength(phrase.split(' ').length), reason: phrase);
-          // Runs are written in logical order: each next word sits to the
-          // left of the previous one.
-          for (var i = 0; i + 1 < runs.length; i++) {
-            final right = runs[i];
-            final left = runs[i + 1];
-            final leftAdvance =
-                left.cids.fold<double>(0, (a, c) => a + widths[c]) /
-                1000 *
-                size;
-            final gap = right.x - (left.x + leftAdvance);
-            // /W widths are rounded to 1/1000 em per glyph; the bug moves
-            // a gap by 0.05–0.15 em, far outside this tolerance.
-            final tolerance = 0.0006 * size * left.cids.length + 0.01;
-            expect(
-              gap,
-              closeTo(space * size, tolerance),
-              reason: '"$phrase", gap after word ${i + 1}',
-            );
-          }
-        }
-      });
+  for (final family in families) {
+    for (final weight in ['Regular', 'SemiBold', 'Bold']) {
+      final bytes = ByteData.sublistView(
+        File('assets/fonts/${family.filePrefix}-$weight.ttf').readAsBytesSync(),
+      );
+      final font = pw.Font.ttf(bytes);
+      final space = _spaceAdvance(bytes);
+
+      for (final size in [8.0, 9.5, 14.0, 26.0]) {
+        test(
+          '${family.name} $weight ${size}pt: every RTL gap is one space',
+          () async {
+            for (final phrase in _phrases) {
+              final pdf = await _render(font, phrase, size);
+              final widths = _widths(pdf);
+              final runs = _runs(pdf);
+              expect(runs, hasLength(phrase.split(' ').length), reason: phrase);
+              // Runs are written in logical order: each next word sits to the
+              // left of the previous one.
+              for (var i = 0; i + 1 < runs.length; i++) {
+                final right = runs[i];
+                final left = runs[i + 1];
+                final leftAdvance =
+                    left.cids.fold<double>(0, (a, c) => a + widths[c]) /
+                    1000 *
+                    size;
+                final gap = right.x - (left.x + leftAdvance);
+                // /W widths are rounded to 1/1000 em per glyph; the bug moves
+                // a gap by 0.05–0.15 em, far outside this tolerance.
+                final tolerance = 0.0006 * size * left.cids.length + 0.01;
+                expect(
+                  gap,
+                  closeTo(space * size, tolerance),
+                  reason: '"$phrase", gap after word ${i + 1}',
+                );
+              }
+            }
+          },
+        );
+      }
     }
   }
 }
