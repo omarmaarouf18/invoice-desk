@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -6,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:invoice_desk/domain/document_style.dart';
+import 'package:invoice_desk/domain/document_style_presets.dart';
 import 'package:invoice_desk/pdf/invoice_pdf.dart';
 import 'package:invoice_desk/pdf/pdf_style.dart';
 import '../helpers/legacy_seed.dart';
@@ -161,4 +163,110 @@ void main() {
       expect(String.fromCharCodes(bytes.take(5)), '%PDF-');
     },
   );
+
+  test('blank preset with vatOn prints the VAT line and amount', () async {
+    final invWithVat = data.invoice.copyWith(
+      vatOn: true,
+      vatRateBp: 1400, // 14%
+    );
+    final blankStyle = PdfStyle.fromDocumentStyle(DocPreset.blank.style);
+    expect(blankStyle.showVatRow, isFalse);
+
+    // 1. Without vatOn: Blank preset hides VAT row
+    final docNoVat = buildInvoiceDocument(
+      InvoicePdfData(
+        invoice: data.invoice.copyWith(vatOn: false),
+        client: data.client,
+        settings: data.settings,
+      ),
+      fonts,
+      style: blankStyle,
+    );
+    final bytesNoVat = await docNoVat.save();
+    final textNoVat = _extractPdfText(bytesNoVat);
+    expect(textNoVat, isNot(contains('3,080 EGP')));
+    expect(textNoVat, isNot(contains('35.77')));
+
+    // 2. With vatOn: Blank preset must print VAT line and amount
+    final docWithVat = buildInvoiceDocument(
+      InvoicePdfData(
+        invoice: invWithVat,
+        client: data.client,
+        settings: data.settings,
+      ),
+      fonts,
+      style: blankStyle,
+    );
+    final bytesWithVat = await docWithVat.save();
+    final textWithVat = _extractPdfText(bytesWithVat);
+    expect(textWithVat, contains('3,080 EGP'));
+    expect(textWithVat, contains('35.77'));
+  });
+}
+
+Map<String, String> _parseCMap(Uint8List bytes) {
+  final raw = latin1.decode(bytes);
+  final map = <String, String>{};
+  for (final m in RegExp(
+    r'\d+\s+0\s+obj\s*<<((?:(?!>>\s*stream|endobj).)*)>>\s*stream\r?\n',
+    dotAll: true,
+  ).allMatches(raw)) {
+    final end = raw.indexOf('endstream', m.end);
+    var streamBytes = bytes.sublist(m.end, end);
+    if (m.group(1)!.contains('/FlateDecode')) {
+      streamBytes = Uint8List.fromList(ZLibCodec().decode(streamBytes));
+    }
+    final decoded = latin1.decode(streamBytes);
+    if (decoded.contains('begincmap')) {
+      for (final charMatch in RegExp(
+        r'<([0-9a-fA-F]+)>\s*<([0-9a-fA-F]+)>',
+      ).allMatches(decoded)) {
+        final cid = charMatch.group(1)!.toUpperCase().padLeft(4, '0');
+        final uniHex = charMatch.group(2)!;
+        final charCodes = [
+          for (var i = 0; i < uniHex.length; i += 4)
+            int.parse(uniHex.substring(i, i + 4), radix: 16),
+        ];
+        map[cid] = String.fromCharCodes(charCodes);
+      }
+    }
+  }
+  return map;
+}
+
+List<String> _extractStreams(Uint8List bytes) {
+  final raw = latin1.decode(bytes);
+  final streams = <String>[];
+  for (final m in RegExp(
+    r'\d+\s+0\s+obj\s*<<((?:(?!>>\s*stream|endobj).)*)>>\s*stream\r?\n',
+    dotAll: true,
+  ).allMatches(raw)) {
+    final dict = m.group(1)!;
+    if (RegExp('/Type|/Subtype|/Length1').hasMatch(dict)) continue;
+    final end = raw.indexOf('endstream', m.end);
+    var streamBytes = bytes.sublist(m.end, end);
+    if (dict.contains('/FlateDecode')) {
+      streamBytes = Uint8List.fromList(ZLibCodec().decode(streamBytes));
+    }
+    final decoded = latin1.decode(streamBytes);
+    if (!decoded.contains('begincmap')) streams.add(decoded);
+  }
+  return streams;
+}
+
+String _extractPdfText(Uint8List bytes) {
+  final cmap = _parseCMap(bytes);
+  final streams = _extractStreams(bytes);
+  final text = StringBuffer();
+  for (final s in streams) {
+    for (final m in RegExp(r'\[<([0-9a-fA-F]+)>\]\s*TJ').allMatches(s)) {
+      final hex = m.group(1)!;
+      for (var i = 0; i < hex.length; i += 4) {
+        final cid = hex.substring(i, i + 4).toUpperCase().padLeft(4, '0');
+        text.write(cmap[cid] ?? '');
+      }
+      text.write(' ');
+    }
+  }
+  return text.toString();
 }

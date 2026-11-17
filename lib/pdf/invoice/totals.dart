@@ -46,15 +46,13 @@ extension _Totals on _Builder {
                     : '${docNumber('${i + 1}')} · ${_sectionName(sec)}',
                 docNumber(sec.subtotal.format()),
               ),
-          if (style.showVatRow) ...[
-            if (inv.vatOn)
-              line(
-                '${label.vat} (${docNumber(formatBpAsPercent(inv.vatRateBp))}%)',
-                docNumber(totals.vat.format(separator: '\n')),
-              )
-            else
-              line(label.vat, label.vatNotApplicable, color: style.muted),
-          ],
+          if (inv.vatOn)
+            line(
+              '${label.vat} (${docNumber(formatBpAsPercent(inv.vatRateBp))}%)',
+              docNumber(totals.vat.format(separator: '\n')),
+            )
+          else if (style.showVatRow)
+            line(label.vat, label.vatNotApplicable, color: style.muted),
           pw.SizedBox(height: 6),
           pw.Container(
             padding: const pw.EdgeInsets.symmetric(
