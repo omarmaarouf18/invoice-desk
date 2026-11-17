@@ -354,4 +354,88 @@ void main() {
     expect(s.docDigitStyle, DigitStyle.western);
     expect(s.contractWesternDigits, isTrue);
   });
+
+  test(
+    'v6 → v7: document assets and document styles are created and sync-ready',
+    () async {
+      final schema = await verifier.schemaAt(6);
+      insertV1Data(schema.rawDatabase);
+      schema.rawDatabase.execute(
+        "UPDATE invoices SET language = 'ar'",
+      );
+      final db = AppDatabase(schema.newConnection());
+      addTearDown(db.close);
+      await verifier.migrateAndValidate(db, AppDatabase.currentSchemaVersion);
+
+      Future<int> one(String sql) async =>
+          (await db.customSelect(sql).getSingle()).data.values.first! as int;
+
+      // Existing rows retain null style references.
+      final inv = (await db.invoicesDao.getAll()).single;
+      expect(inv.language, DocLanguage.ar);
+
+      final rawInv = await db
+          .customSelect(
+            "SELECT style_id, style_snapshot FROM invoices WHERE id = 'i1'",
+          )
+          .getSingle();
+      expect(rawInv.read<String?>('style_id'), null);
+      expect(rawInv.read<String?>('style_snapshot'), null);
+
+      final rawClient = await db
+          .customSelect(
+            "SELECT style_id FROM clients WHERE id = 'c1'",
+          )
+          .getSingle();
+      expect(rawClient.read<String?>('style_id'), null);
+
+      final rawSettings = await db
+          .customSelect(
+            'SELECT default_invoice_style_id, default_contract_style_id '
+            'FROM settings WHERE id = 1',
+          )
+          .getSingle();
+      expect(rawSettings.read<String?>('default_invoice_style_id'), null);
+      expect(rawSettings.read<String?>('default_contract_style_id'), null);
+
+      // Sync triggers on document_styles bump rev and write to outbox.
+      await db.customStatement(
+        'INSERT INTO document_styles (id, name, kind, base_preset, json, '
+        'schema_version, created_at, updated_at) '
+        'VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        ['s1', 'Custom Style', 'any', 'classic', '{}', 1, 100, 100],
+      );
+      expect(await one("SELECT rev FROM document_styles WHERE id = 's1'"), 1);
+      expect(
+        await one(
+          "SELECT COUNT(*) FROM outbox WHERE entity = 'document_styles' "
+          "AND row_id = 's1'",
+        ),
+        1,
+      );
+
+      // Sync triggers on document_assets bump rev and write to outbox.
+      await db.customStatement(
+        'INSERT INTO document_assets (id, mime, bytes, created_at) '
+        'VALUES (?, ?, ?, ?)',
+        [
+          'hash123',
+          'image/png',
+          Uint8List.fromList([1, 2, 3]),
+          100,
+        ],
+      );
+      expect(
+        await one("SELECT rev FROM document_assets WHERE id = 'hash123'"),
+        1,
+      );
+      expect(
+        await one(
+          "SELECT COUNT(*) FROM outbox WHERE entity = 'document_assets' "
+          "AND row_id = 'hash123'",
+        ),
+        1,
+      );
+    },
+  );
 }

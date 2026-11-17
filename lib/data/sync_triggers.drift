@@ -1,5 +1,6 @@
 import 'tables.dart';
 import 'tables_calendar.dart';
+import 'tables_styles.dart';
 
 -- v4: every insert and update of a syncable row bumps its `rev` and records
 -- the change in `outbox` (one row per entity row, latest revision), in the
@@ -229,4 +230,39 @@ BEGIN
   DELETE FROM outbox WHERE entity = 'reminders' AND row_id = NEW.id;
   INSERT INTO outbox (entity, row_id, rev, changed_at)
   VALUES ('reminders', NEW.id, OLD.rev + 1, NEW.updated_at);
+END;
+
+-- v7: document assets (logos) and custom document styles
+CREATE TRIGGER document_assets_sync_insert AFTER INSERT ON document_assets
+BEGIN
+  UPDATE document_assets SET rev = NEW.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'document_assets' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('document_assets', NEW.id, NEW.rev + 1, NEW.created_at);
+END;
+
+CREATE TRIGGER document_assets_sync_update AFTER UPDATE ON document_assets
+WHEN NEW.rev = OLD.rev
+BEGIN
+  UPDATE document_assets SET rev = OLD.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'document_assets' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('document_assets', NEW.id, OLD.rev + 1, NEW.created_at);
+END;
+
+CREATE TRIGGER document_styles_sync_insert AFTER INSERT ON document_styles
+BEGIN
+  UPDATE document_styles SET rev = NEW.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'document_styles' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('document_styles', NEW.id, NEW.rev + 1, NEW.updated_at);
+END;
+
+CREATE TRIGGER document_styles_sync_update AFTER UPDATE ON document_styles
+WHEN NEW.rev = OLD.rev
+BEGIN
+  UPDATE document_styles SET rev = OLD.rev + 1 WHERE id = NEW.id;
+  DELETE FROM outbox WHERE entity = 'document_styles' AND row_id = NEW.id;
+  INSERT INTO outbox (entity, row_id, rev, changed_at)
+  VALUES ('document_styles', NEW.id, OLD.rev + 1, NEW.updated_at);
 END;

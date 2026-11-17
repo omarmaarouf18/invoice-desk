@@ -13,6 +13,7 @@ import 'package:invoice_desk/data/db.steps.dart';
 import 'package:invoice_desk/data/seed.dart';
 import 'package:invoice_desk/data/tables.dart';
 import 'package:invoice_desk/data/tables_calendar.dart';
+import 'package:invoice_desk/data/tables_styles.dart';
 import 'package:uuid/uuid.dart';
 
 part 'db.g.dart';
@@ -36,6 +37,8 @@ typedef Seeder = Future<void> Function(AppDatabase db);
     Outbox,
     Postponements,
     Reminders,
+    DocumentAssets,
+    DocumentStyles,
   ],
   daos: [
     SettingsDao,
@@ -72,7 +75,7 @@ class AppDatabase extends _$AppDatabase {
   /// What [seedOnCreate] runs.
   final Seeder seeder;
 
-  static const currentSchemaVersion = 6;
+  static const currentSchemaVersion = 7;
 
   @override
   int get schemaVersion => currentSchemaVersion;
@@ -306,6 +309,30 @@ class AppDatabase extends _$AppDatabase {
         'UPDATE settings SET doc_digit_style = ? WHERE contract_western_digits = ?',
         ['arabic_indic', 0],
       );
+    },
+    // v7: document assets (logos) and custom document styles (ADR-0012).
+    // Existing documents retain null style_id (resolving to default / Classic).
+    from6To7: (m, schema) async {
+      await m.create(schema.documentAssets);
+      await m.create(schema.documentStyles);
+      await m.addColumn(schema.invoices, schema.invoices.styleId);
+      await m.addColumn(schema.invoices, schema.invoices.styleSnapshot);
+      await m.addColumn(schema.contracts, schema.contracts.styleId);
+      await m.addColumn(schema.contracts, schema.contracts.styleSnapshot);
+      await m.addColumn(schema.clients, schema.clients.styleId);
+      await m.addColumn(schema.settings, schema.settings.defaultInvoiceStyleId);
+      await m.addColumn(
+        schema.settings,
+        schema.settings.defaultContractStyleId,
+      );
+      for (final t in [
+        schema.documentAssetsSyncInsert,
+        schema.documentAssetsSyncUpdate,
+        schema.documentStylesSyncInsert,
+        schema.documentStylesSyncUpdate,
+      ]) {
+        await m.create(t);
+      }
     },
   );
 

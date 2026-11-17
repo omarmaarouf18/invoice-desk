@@ -307,6 +307,28 @@ class $AppSettingsTable extends AppSettings
     requiredDuringInsert: false,
     defaultValue: const Constant('western'),
   );
+  static const VerificationMeta _defaultInvoiceStyleIdMeta =
+      const VerificationMeta('defaultInvoiceStyleId');
+  @override
+  late final GeneratedColumn<String> defaultInvoiceStyleId =
+      GeneratedColumn<String>(
+        'default_invoice_style_id',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _defaultContractStyleIdMeta =
+      const VerificationMeta('defaultContractStyleId');
+  @override
+  late final GeneratedColumn<String> defaultContractStyleId =
+      GeneratedColumn<String>(
+        'default_contract_style_id',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _deviceIdMeta = const VerificationMeta(
     'deviceId',
   );
@@ -359,6 +381,8 @@ class $AppSettingsTable extends AppSettings
     contractWesternDigits,
     defaultDocLanguage,
     docDigitStyle,
+    defaultInvoiceStyleId,
+    defaultContractStyleId,
     deviceId,
     updatedAt,
   ];
@@ -557,6 +581,24 @@ class $AppSettingsTable extends AppSettings
         ),
       );
     }
+    if (data.containsKey('default_invoice_style_id')) {
+      context.handle(
+        _defaultInvoiceStyleIdMeta,
+        defaultInvoiceStyleId.isAcceptableOrUnknown(
+          data['default_invoice_style_id']!,
+          _defaultInvoiceStyleIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('default_contract_style_id')) {
+      context.handle(
+        _defaultContractStyleIdMeta,
+        defaultContractStyleId.isAcceptableOrUnknown(
+          data['default_contract_style_id']!,
+          _defaultContractStyleIdMeta,
+        ),
+      );
+    }
     if (data.containsKey('device_id')) {
       context.handle(
         _deviceIdMeta,
@@ -682,6 +724,14 @@ class $AppSettingsTable extends AppSettings
         DriftSqlType.string,
         data['${effectivePrefix}doc_digit_style'],
       )!,
+      defaultInvoiceStyleId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}default_invoice_style_id'],
+      ),
+      defaultContractStyleId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}default_contract_style_id'],
+      ),
       deviceId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}device_id'],
@@ -736,6 +786,8 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
   /// How digits are printed in Arabic document text (D6): `western` or
   /// `arabic_indic`. It takes over `contractWesternDigits`.
   final String docDigitStyle;
+  final String? defaultInvoiceStyleId;
+  final String? defaultContractStyleId;
 
   /// Random UUID of this installation, generated once.
   final String deviceId;
@@ -767,6 +819,8 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
     required this.contractWesternDigits,
     required this.defaultDocLanguage,
     required this.docDigitStyle,
+    this.defaultInvoiceStyleId,
+    this.defaultContractStyleId,
     required this.deviceId,
     required this.updatedAt,
   });
@@ -803,6 +857,14 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
     map['contract_western_digits'] = Variable<bool>(contractWesternDigits);
     map['default_doc_language'] = Variable<String>(defaultDocLanguage);
     map['doc_digit_style'] = Variable<String>(docDigitStyle);
+    if (!nullToAbsent || defaultInvoiceStyleId != null) {
+      map['default_invoice_style_id'] = Variable<String>(defaultInvoiceStyleId);
+    }
+    if (!nullToAbsent || defaultContractStyleId != null) {
+      map['default_contract_style_id'] = Variable<String>(
+        defaultContractStyleId,
+      );
+    }
     map['device_id'] = Variable<String>(deviceId);
     map['updated_at'] = Variable<int>(updatedAt);
     return map;
@@ -840,6 +902,12 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
       contractWesternDigits: Value(contractWesternDigits),
       defaultDocLanguage: Value(defaultDocLanguage),
       docDigitStyle: Value(docDigitStyle),
+      defaultInvoiceStyleId: defaultInvoiceStyleId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(defaultInvoiceStyleId),
+      defaultContractStyleId: defaultContractStyleId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(defaultContractStyleId),
       deviceId: Value(deviceId),
       updatedAt: Value(updatedAt),
     );
@@ -885,6 +953,12 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
         json['defaultDocLanguage'],
       ),
       docDigitStyle: serializer.fromJson<String>(json['docDigitStyle']),
+      defaultInvoiceStyleId: serializer.fromJson<String?>(
+        json['defaultInvoiceStyleId'],
+      ),
+      defaultContractStyleId: serializer.fromJson<String?>(
+        json['defaultContractStyleId'],
+      ),
       deviceId: serializer.fromJson<String>(json['deviceId']),
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
     );
@@ -919,6 +993,12 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
       'contractWesternDigits': serializer.toJson<bool>(contractWesternDigits),
       'defaultDocLanguage': serializer.toJson<String>(defaultDocLanguage),
       'docDigitStyle': serializer.toJson<String>(docDigitStyle),
+      'defaultInvoiceStyleId': serializer.toJson<String?>(
+        defaultInvoiceStyleId,
+      ),
+      'defaultContractStyleId': serializer.toJson<String?>(
+        defaultContractStyleId,
+      ),
       'deviceId': serializer.toJson<String>(deviceId),
       'updatedAt': serializer.toJson<int>(updatedAt),
     };
@@ -951,6 +1031,8 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
     bool? contractWesternDigits,
     String? defaultDocLanguage,
     String? docDigitStyle,
+    Value<String?> defaultInvoiceStyleId = const Value.absent(),
+    Value<String?> defaultContractStyleId = const Value.absent(),
     String? deviceId,
     int? updatedAt,
   }) => SettingsRow(
@@ -980,6 +1062,12 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
     contractWesternDigits: contractWesternDigits ?? this.contractWesternDigits,
     defaultDocLanguage: defaultDocLanguage ?? this.defaultDocLanguage,
     docDigitStyle: docDigitStyle ?? this.docDigitStyle,
+    defaultInvoiceStyleId: defaultInvoiceStyleId.present
+        ? defaultInvoiceStyleId.value
+        : this.defaultInvoiceStyleId,
+    defaultContractStyleId: defaultContractStyleId.present
+        ? defaultContractStyleId.value
+        : this.defaultContractStyleId,
     deviceId: deviceId ?? this.deviceId,
     updatedAt: updatedAt ?? this.updatedAt,
   );
@@ -1031,6 +1119,12 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
       docDigitStyle: data.docDigitStyle.present
           ? data.docDigitStyle.value
           : this.docDigitStyle,
+      defaultInvoiceStyleId: data.defaultInvoiceStyleId.present
+          ? data.defaultInvoiceStyleId.value
+          : this.defaultInvoiceStyleId,
+      defaultContractStyleId: data.defaultContractStyleId.present
+          ? data.defaultContractStyleId.value
+          : this.defaultContractStyleId,
       deviceId: data.deviceId.present ? data.deviceId.value : this.deviceId,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -1065,6 +1159,8 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
           ..write('contractWesternDigits: $contractWesternDigits, ')
           ..write('defaultDocLanguage: $defaultDocLanguage, ')
           ..write('docDigitStyle: $docDigitStyle, ')
+          ..write('defaultInvoiceStyleId: $defaultInvoiceStyleId, ')
+          ..write('defaultContractStyleId: $defaultContractStyleId, ')
           ..write('deviceId: $deviceId, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -1099,6 +1195,8 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
     contractWesternDigits,
     defaultDocLanguage,
     docDigitStyle,
+    defaultInvoiceStyleId,
+    defaultContractStyleId,
     deviceId,
     updatedAt,
   ]);
@@ -1132,6 +1230,8 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
           other.contractWesternDigits == this.contractWesternDigits &&
           other.defaultDocLanguage == this.defaultDocLanguage &&
           other.docDigitStyle == this.docDigitStyle &&
+          other.defaultInvoiceStyleId == this.defaultInvoiceStyleId &&
+          other.defaultContractStyleId == this.defaultContractStyleId &&
           other.deviceId == this.deviceId &&
           other.updatedAt == this.updatedAt);
 }
@@ -1163,6 +1263,8 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
   final Value<bool> contractWesternDigits;
   final Value<String> defaultDocLanguage;
   final Value<String> docDigitStyle;
+  final Value<String?> defaultInvoiceStyleId;
+  final Value<String?> defaultContractStyleId;
   final Value<String> deviceId;
   final Value<int> updatedAt;
   const AppSettingsCompanion({
@@ -1192,6 +1294,8 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
     this.contractWesternDigits = const Value.absent(),
     this.defaultDocLanguage = const Value.absent(),
     this.docDigitStyle = const Value.absent(),
+    this.defaultInvoiceStyleId = const Value.absent(),
+    this.defaultContractStyleId = const Value.absent(),
     this.deviceId = const Value.absent(),
     this.updatedAt = const Value.absent(),
   });
@@ -1222,6 +1326,8 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
     this.contractWesternDigits = const Value.absent(),
     this.defaultDocLanguage = const Value.absent(),
     this.docDigitStyle = const Value.absent(),
+    this.defaultInvoiceStyleId = const Value.absent(),
+    this.defaultContractStyleId = const Value.absent(),
     this.deviceId = const Value.absent(),
     this.updatedAt = const Value.absent(),
   });
@@ -1252,6 +1358,8 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
     Expression<bool>? contractWesternDigits,
     Expression<String>? defaultDocLanguage,
     Expression<String>? docDigitStyle,
+    Expression<String>? defaultInvoiceStyleId,
+    Expression<String>? defaultContractStyleId,
     Expression<String>? deviceId,
     Expression<int>? updatedAt,
   }) {
@@ -1286,6 +1394,10 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
       if (defaultDocLanguage != null)
         'default_doc_language': defaultDocLanguage,
       if (docDigitStyle != null) 'doc_digit_style': docDigitStyle,
+      if (defaultInvoiceStyleId != null)
+        'default_invoice_style_id': defaultInvoiceStyleId,
+      if (defaultContractStyleId != null)
+        'default_contract_style_id': defaultContractStyleId,
       if (deviceId != null) 'device_id': deviceId,
       if (updatedAt != null) 'updated_at': updatedAt,
     });
@@ -1318,6 +1430,8 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
     Value<bool>? contractWesternDigits,
     Value<String>? defaultDocLanguage,
     Value<String>? docDigitStyle,
+    Value<String?>? defaultInvoiceStyleId,
+    Value<String?>? defaultContractStyleId,
     Value<String>? deviceId,
     Value<int>? updatedAt,
   }) {
@@ -1349,6 +1463,10 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
           contractWesternDigits ?? this.contractWesternDigits,
       defaultDocLanguage: defaultDocLanguage ?? this.defaultDocLanguage,
       docDigitStyle: docDigitStyle ?? this.docDigitStyle,
+      defaultInvoiceStyleId:
+          defaultInvoiceStyleId ?? this.defaultInvoiceStyleId,
+      defaultContractStyleId:
+          defaultContractStyleId ?? this.defaultContractStyleId,
       deviceId: deviceId ?? this.deviceId,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -1439,6 +1557,16 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
     if (docDigitStyle.present) {
       map['doc_digit_style'] = Variable<String>(docDigitStyle.value);
     }
+    if (defaultInvoiceStyleId.present) {
+      map['default_invoice_style_id'] = Variable<String>(
+        defaultInvoiceStyleId.value,
+      );
+    }
+    if (defaultContractStyleId.present) {
+      map['default_contract_style_id'] = Variable<String>(
+        defaultContractStyleId.value,
+      );
+    }
     if (deviceId.present) {
       map['device_id'] = Variable<String>(deviceId.value);
     }
@@ -1477,6 +1605,8 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
           ..write('contractWesternDigits: $contractWesternDigits, ')
           ..write('defaultDocLanguage: $defaultDocLanguage, ')
           ..write('docDigitStyle: $docDigitStyle, ')
+          ..write('defaultInvoiceStyleId: $defaultInvoiceStyleId, ')
+          ..write('defaultContractStyleId: $defaultContractStyleId, ')
           ..write('deviceId: $deviceId, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -2049,6 +2179,17 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, ClientRow> {
         type: DriftSqlType.string,
         requiredDuringInsert: false,
       );
+  static const VerificationMeta _styleIdMeta = const VerificationMeta(
+    'styleId',
+  );
+  @override
+  late final GeneratedColumn<String> styleId = GeneratedColumn<String>(
+    'style_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     rev,
@@ -2069,6 +2210,7 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, ClientRow> {
     representativeTitle,
     isDemo,
     preferredLanguage,
+    styleId,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2204,6 +2346,12 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, ClientRow> {
         ),
       );
     }
+    if (data.containsKey('style_id')) {
+      context.handle(
+        _styleIdMeta,
+        styleId.isAcceptableOrUnknown(data['style_id']!, _styleIdMeta),
+      );
+    }
     return context;
   }
 
@@ -2285,6 +2433,10 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, ClientRow> {
         DriftSqlType.string,
         data['${effectivePrefix}preferred_language'],
       ),
+      styleId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}style_id'],
+      ),
     );
   }
 
@@ -2324,6 +2476,9 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
   /// v6: the language their documents are written in; null means "follow
   /// the global default" (D7).
   final String? preferredLanguage;
+
+  /// v7: preferred document style ID; null means follow resolution (D7).
+  final String? styleId;
   const ClientRow({
     required this.rev,
     required this.id,
@@ -2343,6 +2498,7 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
     required this.representativeTitle,
     required this.isDemo,
     this.preferredLanguage,
+    this.styleId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2368,6 +2524,9 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
     map['is_demo'] = Variable<bool>(isDemo);
     if (!nullToAbsent || preferredLanguage != null) {
       map['preferred_language'] = Variable<String>(preferredLanguage);
+    }
+    if (!nullToAbsent || styleId != null) {
+      map['style_id'] = Variable<String>(styleId);
     }
     return map;
   }
@@ -2396,6 +2555,9 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
       preferredLanguage: preferredLanguage == null && nullToAbsent
           ? const Value.absent()
           : Value(preferredLanguage),
+      styleId: styleId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(styleId),
     );
   }
 
@@ -2427,6 +2589,7 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
       preferredLanguage: serializer.fromJson<String?>(
         json['preferredLanguage'],
       ),
+      styleId: serializer.fromJson<String?>(json['styleId']),
     );
   }
   @override
@@ -2451,6 +2614,7 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
       'representativeTitle': serializer.toJson<String>(representativeTitle),
       'isDemo': serializer.toJson<bool>(isDemo),
       'preferredLanguage': serializer.toJson<String?>(preferredLanguage),
+      'styleId': serializer.toJson<String?>(styleId),
     };
   }
 
@@ -2473,6 +2637,7 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
     String? representativeTitle,
     bool? isDemo,
     Value<String?> preferredLanguage = const Value.absent(),
+    Value<String?> styleId = const Value.absent(),
   }) => ClientRow(
     rev: rev ?? this.rev,
     id: id ?? this.id,
@@ -2494,6 +2659,7 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
     preferredLanguage: preferredLanguage.present
         ? preferredLanguage.value
         : this.preferredLanguage,
+    styleId: styleId.present ? styleId.value : this.styleId,
   );
   ClientRow copyWithCompanion(ClientsCompanion data) {
     return ClientRow(
@@ -2523,6 +2689,7 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
       preferredLanguage: data.preferredLanguage.present
           ? data.preferredLanguage.value
           : this.preferredLanguage,
+      styleId: data.styleId.present ? data.styleId.value : this.styleId,
     );
   }
 
@@ -2546,7 +2713,8 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
           ..write('representative: $representative, ')
           ..write('representativeTitle: $representativeTitle, ')
           ..write('isDemo: $isDemo, ')
-          ..write('preferredLanguage: $preferredLanguage')
+          ..write('preferredLanguage: $preferredLanguage, ')
+          ..write('styleId: $styleId')
           ..write(')'))
         .toString();
   }
@@ -2571,6 +2739,7 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
     representativeTitle,
     isDemo,
     preferredLanguage,
+    styleId,
   );
   @override
   bool operator ==(Object other) =>
@@ -2593,7 +2762,8 @@ class ClientRow extends DataClass implements Insertable<ClientRow> {
           other.representative == this.representative &&
           other.representativeTitle == this.representativeTitle &&
           other.isDemo == this.isDemo &&
-          other.preferredLanguage == this.preferredLanguage);
+          other.preferredLanguage == this.preferredLanguage &&
+          other.styleId == this.styleId);
 }
 
 class ClientsCompanion extends UpdateCompanion<ClientRow> {
@@ -2615,6 +2785,7 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
   final Value<String> representativeTitle;
   final Value<bool> isDemo;
   final Value<String?> preferredLanguage;
+  final Value<String?> styleId;
   final Value<int> rowid;
   const ClientsCompanion({
     this.rev = const Value.absent(),
@@ -2635,6 +2806,7 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
     this.representativeTitle = const Value.absent(),
     this.isDemo = const Value.absent(),
     this.preferredLanguage = const Value.absent(),
+    this.styleId = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ClientsCompanion.insert({
@@ -2656,6 +2828,7 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
     this.representativeTitle = const Value.absent(),
     this.isDemo = const Value.absent(),
     this.preferredLanguage = const Value.absent(),
+    this.styleId = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        name = Value(name),
@@ -2680,6 +2853,7 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
     Expression<String>? representativeTitle,
     Expression<bool>? isDemo,
     Expression<String>? preferredLanguage,
+    Expression<String>? styleId,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -2702,6 +2876,7 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
         'representative_title': representativeTitle,
       if (isDemo != null) 'is_demo': isDemo,
       if (preferredLanguage != null) 'preferred_language': preferredLanguage,
+      if (styleId != null) 'style_id': styleId,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -2725,6 +2900,7 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
     Value<String>? representativeTitle,
     Value<bool>? isDemo,
     Value<String?>? preferredLanguage,
+    Value<String?>? styleId,
     Value<int>? rowid,
   }) {
     return ClientsCompanion(
@@ -2746,6 +2922,7 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
       representativeTitle: representativeTitle ?? this.representativeTitle,
       isDemo: isDemo ?? this.isDemo,
       preferredLanguage: preferredLanguage ?? this.preferredLanguage,
+      styleId: styleId ?? this.styleId,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2807,6 +2984,9 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
     if (preferredLanguage.present) {
       map['preferred_language'] = Variable<String>(preferredLanguage.value);
     }
+    if (styleId.present) {
+      map['style_id'] = Variable<String>(styleId.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -2834,6 +3014,7 @@ class ClientsCompanion extends UpdateCompanion<ClientRow> {
           ..write('representativeTitle: $representativeTitle, ')
           ..write('isDemo: $isDemo, ')
           ..write('preferredLanguage: $preferredLanguage, ')
+          ..write('styleId: $styleId, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -3111,6 +3292,28 @@ class $InvoicesTable extends Invoices
     requiredDuringInsert: false,
     defaultValue: const Constant('bilingual'),
   );
+  static const VerificationMeta _styleIdMeta = const VerificationMeta(
+    'styleId',
+  );
+  @override
+  late final GeneratedColumn<String> styleId = GeneratedColumn<String>(
+    'style_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _styleSnapshotMeta = const VerificationMeta(
+    'styleSnapshot',
+  );
+  @override
+  late final GeneratedColumn<String> styleSnapshot = GeneratedColumn<String>(
+    'style_snapshot',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _isDemoMeta = const VerificationMeta('isDemo');
   @override
   late final GeneratedColumn<bool> isDemo = GeneratedColumn<bool>(
@@ -3171,6 +3374,8 @@ class $InvoicesTable extends Invoices
     scopeWarranty,
     deletedAt,
     language,
+    styleId,
+    styleSnapshot,
     isDemo,
     createdAt,
     updatedAt,
@@ -3350,6 +3555,21 @@ class $InvoicesTable extends Invoices
         language.isAcceptableOrUnknown(data['language']!, _languageMeta),
       );
     }
+    if (data.containsKey('style_id')) {
+      context.handle(
+        _styleIdMeta,
+        styleId.isAcceptableOrUnknown(data['style_id']!, _styleIdMeta),
+      );
+    }
+    if (data.containsKey('style_snapshot')) {
+      context.handle(
+        _styleSnapshotMeta,
+        styleSnapshot.isAcceptableOrUnknown(
+          data['style_snapshot']!,
+          _styleSnapshotMeta,
+        ),
+      );
+    }
     if (data.containsKey('is_demo')) {
       context.handle(
         _isDemoMeta,
@@ -3477,6 +3697,14 @@ class $InvoicesTable extends Invoices
         DriftSqlType.string,
         data['${effectivePrefix}language'],
       )!,
+      styleId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}style_id'],
+      ),
+      styleSnapshot: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}style_snapshot'],
+      ),
       isDemo: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}is_demo'],
@@ -3530,6 +3758,12 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
   /// look (ADR-0011).
   final String language;
 
+  /// v7: document style ID (preset or custom style); null means follow resolution.
+  final String? styleId;
+
+  /// v7: immutable style JSON snapshot taken when sent or paid (D3, ADR-0012).
+  final String? styleSnapshot;
+
   /// v5: demo row (removed with the demo set; cleared on user edits).
   final bool isDemo;
   final int createdAt;
@@ -3558,6 +3792,8 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
     required this.scopeWarranty,
     this.deletedAt,
     required this.language,
+    this.styleId,
+    this.styleSnapshot,
     required this.isDemo,
     required this.createdAt,
     required this.updatedAt,
@@ -3592,6 +3828,12 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
       map['deleted_at'] = Variable<int>(deletedAt);
     }
     map['language'] = Variable<String>(language);
+    if (!nullToAbsent || styleId != null) {
+      map['style_id'] = Variable<String>(styleId);
+    }
+    if (!nullToAbsent || styleSnapshot != null) {
+      map['style_snapshot'] = Variable<String>(styleSnapshot);
+    }
     map['is_demo'] = Variable<bool>(isDemo);
     map['created_at'] = Variable<int>(createdAt);
     map['updated_at'] = Variable<int>(updatedAt);
@@ -3627,6 +3869,12 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
           ? const Value.absent()
           : Value(deletedAt),
       language: Value(language),
+      styleId: styleId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(styleId),
+      styleSnapshot: styleSnapshot == null && nullToAbsent
+          ? const Value.absent()
+          : Value(styleSnapshot),
       isDemo: Value(isDemo),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
@@ -3662,6 +3910,8 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
       scopeWarranty: serializer.fromJson<String>(json['scopeWarranty']),
       deletedAt: serializer.fromJson<int?>(json['deletedAt']),
       language: serializer.fromJson<String>(json['language']),
+      styleId: serializer.fromJson<String?>(json['styleId']),
+      styleSnapshot: serializer.fromJson<String?>(json['styleSnapshot']),
       isDemo: serializer.fromJson<bool>(json['isDemo']),
       createdAt: serializer.fromJson<int>(json['createdAt']),
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
@@ -3694,6 +3944,8 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
       'scopeWarranty': serializer.toJson<String>(scopeWarranty),
       'deletedAt': serializer.toJson<int?>(deletedAt),
       'language': serializer.toJson<String>(language),
+      'styleId': serializer.toJson<String?>(styleId),
+      'styleSnapshot': serializer.toJson<String?>(styleSnapshot),
       'isDemo': serializer.toJson<bool>(isDemo),
       'createdAt': serializer.toJson<int>(createdAt),
       'updatedAt': serializer.toJson<int>(updatedAt),
@@ -3724,6 +3976,8 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
     String? scopeWarranty,
     Value<int?> deletedAt = const Value.absent(),
     String? language,
+    Value<String?> styleId = const Value.absent(),
+    Value<String?> styleSnapshot = const Value.absent(),
     bool? isDemo,
     int? createdAt,
     int? updatedAt,
@@ -3751,6 +4005,10 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
     scopeWarranty: scopeWarranty ?? this.scopeWarranty,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
     language: language ?? this.language,
+    styleId: styleId.present ? styleId.value : this.styleId,
+    styleSnapshot: styleSnapshot.present
+        ? styleSnapshot.value
+        : this.styleSnapshot,
     isDemo: isDemo ?? this.isDemo,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
@@ -3790,6 +4048,10 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
           : this.scopeWarranty,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
       language: data.language.present ? data.language.value : this.language,
+      styleId: data.styleId.present ? data.styleId.value : this.styleId,
+      styleSnapshot: data.styleSnapshot.present
+          ? data.styleSnapshot.value
+          : this.styleSnapshot,
       isDemo: data.isDemo.present ? data.isDemo.value : this.isDemo,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
@@ -3822,6 +4084,8 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
           ..write('scopeWarranty: $scopeWarranty, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('language: $language, ')
+          ..write('styleId: $styleId, ')
+          ..write('styleSnapshot: $styleSnapshot, ')
           ..write('isDemo: $isDemo, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
@@ -3854,6 +4118,8 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
     scopeWarranty,
     deletedAt,
     language,
+    styleId,
+    styleSnapshot,
     isDemo,
     createdAt,
     updatedAt,
@@ -3885,6 +4151,8 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
           other.scopeWarranty == this.scopeWarranty &&
           other.deletedAt == this.deletedAt &&
           other.language == this.language &&
+          other.styleId == this.styleId &&
+          other.styleSnapshot == this.styleSnapshot &&
           other.isDemo == this.isDemo &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
@@ -3914,6 +4182,8 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
   final Value<String> scopeWarranty;
   final Value<int?> deletedAt;
   final Value<String> language;
+  final Value<String?> styleId;
+  final Value<String?> styleSnapshot;
   final Value<bool> isDemo;
   final Value<int> createdAt;
   final Value<int> updatedAt;
@@ -3942,6 +4212,8 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
     this.scopeWarranty = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.language = const Value.absent(),
+    this.styleId = const Value.absent(),
+    this.styleSnapshot = const Value.absent(),
     this.isDemo = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -3971,6 +4243,8 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
     this.scopeWarranty = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.language = const Value.absent(),
+    this.styleId = const Value.absent(),
+    this.styleSnapshot = const Value.absent(),
     this.isDemo = const Value.absent(),
     required int createdAt,
     required int updatedAt,
@@ -4009,6 +4283,8 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
     Expression<String>? scopeWarranty,
     Expression<int>? deletedAt,
     Expression<String>? language,
+    Expression<String>? styleId,
+    Expression<String>? styleSnapshot,
     Expression<bool>? isDemo,
     Expression<int>? createdAt,
     Expression<int>? updatedAt,
@@ -4038,6 +4314,8 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
       if (scopeWarranty != null) 'scope_warranty': scopeWarranty,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (language != null) 'language': language,
+      if (styleId != null) 'style_id': styleId,
+      if (styleSnapshot != null) 'style_snapshot': styleSnapshot,
       if (isDemo != null) 'is_demo': isDemo,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
@@ -4069,6 +4347,8 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
     Value<String>? scopeWarranty,
     Value<int?>? deletedAt,
     Value<String>? language,
+    Value<String?>? styleId,
+    Value<String?>? styleSnapshot,
     Value<bool>? isDemo,
     Value<int>? createdAt,
     Value<int>? updatedAt,
@@ -4098,6 +4378,8 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
       scopeWarranty: scopeWarranty ?? this.scopeWarranty,
       deletedAt: deletedAt ?? this.deletedAt,
       language: language ?? this.language,
+      styleId: styleId ?? this.styleId,
+      styleSnapshot: styleSnapshot ?? this.styleSnapshot,
       isDemo: isDemo ?? this.isDemo,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -4177,6 +4459,12 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
     if (language.present) {
       map['language'] = Variable<String>(language.value);
     }
+    if (styleId.present) {
+      map['style_id'] = Variable<String>(styleId.value);
+    }
+    if (styleSnapshot.present) {
+      map['style_snapshot'] = Variable<String>(styleSnapshot.value);
+    }
     if (isDemo.present) {
       map['is_demo'] = Variable<bool>(isDemo.value);
     }
@@ -4218,6 +4506,8 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
           ..write('scopeWarranty: $scopeWarranty, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('language: $language, ')
+          ..write('styleId: $styleId, ')
+          ..write('styleSnapshot: $styleSnapshot, ')
           ..write('isDemo: $isDemo, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
@@ -7172,6 +7462,28 @@ class $ContractsTable extends Contracts
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _styleIdMeta = const VerificationMeta(
+    'styleId',
+  );
+  @override
+  late final GeneratedColumn<String> styleId = GeneratedColumn<String>(
+    'style_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _styleSnapshotMeta = const VerificationMeta(
+    'styleSnapshot',
+  );
+  @override
+  late final GeneratedColumn<String> styleSnapshot = GeneratedColumn<String>(
+    'style_snapshot',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _isDemoMeta = const VerificationMeta('isDemo');
   @override
   late final GeneratedColumn<bool> isDemo = GeneratedColumn<bool>(
@@ -7238,6 +7550,8 @@ class $ContractsTable extends Contracts
     unlocked,
     history,
     deletedAt,
+    styleId,
+    styleSnapshot,
     isDemo,
     createdAt,
     updatedAt,
@@ -7463,6 +7777,21 @@ class $ContractsTable extends Contracts
         deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
       );
     }
+    if (data.containsKey('style_id')) {
+      context.handle(
+        _styleIdMeta,
+        styleId.isAcceptableOrUnknown(data['style_id']!, _styleIdMeta),
+      );
+    }
+    if (data.containsKey('style_snapshot')) {
+      context.handle(
+        _styleSnapshotMeta,
+        styleSnapshot.isAcceptableOrUnknown(
+          data['style_snapshot']!,
+          _styleSnapshotMeta,
+        ),
+      );
+    }
     if (data.containsKey('is_demo')) {
       context.handle(
         _isDemoMeta,
@@ -7614,6 +7943,14 @@ class $ContractsTable extends Contracts
         DriftSqlType.int,
         data['${effectivePrefix}deleted_at'],
       ),
+      styleId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}style_id'],
+      ),
+      styleSnapshot: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}style_snapshot'],
+      ),
       isDemo: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}is_demo'],
@@ -7682,6 +8019,12 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
   final String history;
   final int? deletedAt;
 
+  /// v7: document style ID (preset or custom style); null means follow resolution.
+  final String? styleId;
+
+  /// v7: immutable style JSON snapshot taken when signed (D3, ADR-0012).
+  final String? styleSnapshot;
+
   /// v5: demo row (removed with the demo set; cleared on user edits).
   final bool isDemo;
   final int createdAt;
@@ -7716,6 +8059,8 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
     required this.unlocked,
     required this.history,
     this.deletedAt,
+    this.styleId,
+    this.styleSnapshot,
     required this.isDemo,
     required this.createdAt,
     required this.updatedAt,
@@ -7761,6 +8106,12 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
     map['history'] = Variable<String>(history);
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    if (!nullToAbsent || styleId != null) {
+      map['style_id'] = Variable<String>(styleId);
+    }
+    if (!nullToAbsent || styleSnapshot != null) {
+      map['style_snapshot'] = Variable<String>(styleSnapshot);
     }
     map['is_demo'] = Variable<bool>(isDemo);
     map['created_at'] = Variable<int>(createdAt);
@@ -7809,6 +8160,12 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(deletedAt),
+      styleId: styleId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(styleId),
+      styleSnapshot: styleSnapshot == null && nullToAbsent
+          ? const Value.absent()
+          : Value(styleSnapshot),
       isDemo: Value(isDemo),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
@@ -7850,6 +8207,8 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
       unlocked: serializer.fromJson<bool>(json['unlocked']),
       history: serializer.fromJson<String>(json['history']),
       deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+      styleId: serializer.fromJson<String?>(json['styleId']),
+      styleSnapshot: serializer.fromJson<String?>(json['styleSnapshot']),
       isDemo: serializer.fromJson<bool>(json['isDemo']),
       createdAt: serializer.fromJson<int>(json['createdAt']),
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
@@ -7888,6 +8247,8 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
       'unlocked': serializer.toJson<bool>(unlocked),
       'history': serializer.toJson<String>(history),
       'deletedAt': serializer.toJson<int?>(deletedAt),
+      'styleId': serializer.toJson<String?>(styleId),
+      'styleSnapshot': serializer.toJson<String?>(styleSnapshot),
       'isDemo': serializer.toJson<bool>(isDemo),
       'createdAt': serializer.toJson<int>(createdAt),
       'updatedAt': serializer.toJson<int>(updatedAt),
@@ -7924,6 +8285,8 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
     bool? unlocked,
     String? history,
     Value<int?> deletedAt = const Value.absent(),
+    Value<String?> styleId = const Value.absent(),
+    Value<String?> styleSnapshot = const Value.absent(),
     bool? isDemo,
     int? createdAt,
     int? updatedAt,
@@ -7957,6 +8320,10 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
     unlocked: unlocked ?? this.unlocked,
     history: history ?? this.history,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    styleId: styleId.present ? styleId.value : this.styleId,
+    styleSnapshot: styleSnapshot.present
+        ? styleSnapshot.value
+        : this.styleSnapshot,
     isDemo: isDemo ?? this.isDemo,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
@@ -8008,6 +8375,10 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
       unlocked: data.unlocked.present ? data.unlocked.value : this.unlocked,
       history: data.history.present ? data.history.value : this.history,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      styleId: data.styleId.present ? data.styleId.value : this.styleId,
+      styleSnapshot: data.styleSnapshot.present
+          ? data.styleSnapshot.value
+          : this.styleSnapshot,
       isDemo: data.isDemo.present ? data.isDemo.value : this.isDemo,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
@@ -8046,6 +8417,8 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
           ..write('unlocked: $unlocked, ')
           ..write('history: $history, ')
           ..write('deletedAt: $deletedAt, ')
+          ..write('styleId: $styleId, ')
+          ..write('styleSnapshot: $styleSnapshot, ')
           ..write('isDemo: $isDemo, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
@@ -8084,6 +8457,8 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
     unlocked,
     history,
     deletedAt,
+    styleId,
+    styleSnapshot,
     isDemo,
     createdAt,
     updatedAt,
@@ -8121,6 +8496,8 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
           other.unlocked == this.unlocked &&
           other.history == this.history &&
           other.deletedAt == this.deletedAt &&
+          other.styleId == this.styleId &&
+          other.styleSnapshot == this.styleSnapshot &&
           other.isDemo == this.isDemo &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
@@ -8156,6 +8533,8 @@ class ContractsCompanion extends UpdateCompanion<ContractRow> {
   final Value<bool> unlocked;
   final Value<String> history;
   final Value<int?> deletedAt;
+  final Value<String?> styleId;
+  final Value<String?> styleSnapshot;
   final Value<bool> isDemo;
   final Value<int> createdAt;
   final Value<int> updatedAt;
@@ -8190,6 +8569,8 @@ class ContractsCompanion extends UpdateCompanion<ContractRow> {
     this.unlocked = const Value.absent(),
     this.history = const Value.absent(),
     this.deletedAt = const Value.absent(),
+    this.styleId = const Value.absent(),
+    this.styleSnapshot = const Value.absent(),
     this.isDemo = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -8225,6 +8606,8 @@ class ContractsCompanion extends UpdateCompanion<ContractRow> {
     this.unlocked = const Value.absent(),
     this.history = const Value.absent(),
     this.deletedAt = const Value.absent(),
+    this.styleId = const Value.absent(),
+    this.styleSnapshot = const Value.absent(),
     this.isDemo = const Value.absent(),
     required int createdAt,
     required int updatedAt,
@@ -8271,6 +8654,8 @@ class ContractsCompanion extends UpdateCompanion<ContractRow> {
     Expression<bool>? unlocked,
     Expression<String>? history,
     Expression<int>? deletedAt,
+    Expression<String>? styleId,
+    Expression<String>? styleSnapshot,
     Expression<bool>? isDemo,
     Expression<int>? createdAt,
     Expression<int>? updatedAt,
@@ -8306,6 +8691,8 @@ class ContractsCompanion extends UpdateCompanion<ContractRow> {
       if (unlocked != null) 'unlocked': unlocked,
       if (history != null) 'history': history,
       if (deletedAt != null) 'deleted_at': deletedAt,
+      if (styleId != null) 'style_id': styleId,
+      if (styleSnapshot != null) 'style_snapshot': styleSnapshot,
       if (isDemo != null) 'is_demo': isDemo,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
@@ -8343,6 +8730,8 @@ class ContractsCompanion extends UpdateCompanion<ContractRow> {
     Value<bool>? unlocked,
     Value<String>? history,
     Value<int?>? deletedAt,
+    Value<String?>? styleId,
+    Value<String?>? styleSnapshot,
     Value<bool>? isDemo,
     Value<int>? createdAt,
     Value<int>? updatedAt,
@@ -8378,6 +8767,8 @@ class ContractsCompanion extends UpdateCompanion<ContractRow> {
       unlocked: unlocked ?? this.unlocked,
       history: history ?? this.history,
       deletedAt: deletedAt ?? this.deletedAt,
+      styleId: styleId ?? this.styleId,
+      styleSnapshot: styleSnapshot ?? this.styleSnapshot,
       isDemo: isDemo ?? this.isDemo,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -8475,6 +8866,12 @@ class ContractsCompanion extends UpdateCompanion<ContractRow> {
     if (deletedAt.present) {
       map['deleted_at'] = Variable<int>(deletedAt.value);
     }
+    if (styleId.present) {
+      map['style_id'] = Variable<String>(styleId.value);
+    }
+    if (styleSnapshot.present) {
+      map['style_snapshot'] = Variable<String>(styleSnapshot.value);
+    }
     if (isDemo.present) {
       map['is_demo'] = Variable<bool>(isDemo.value);
     }
@@ -8522,6 +8919,8 @@ class ContractsCompanion extends UpdateCompanion<ContractRow> {
           ..write('unlocked: $unlocked, ')
           ..write('history: $history, ')
           ..write('deletedAt: $deletedAt, ')
+          ..write('styleId: $styleId, ')
+          ..write('styleSnapshot: $styleSnapshot, ')
           ..write('isDemo: $isDemo, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
@@ -11903,6 +12302,1092 @@ class RemindersCompanion extends UpdateCompanion<ReminderRow> {
   }
 }
 
+class $DocumentAssetsTable extends DocumentAssets
+    with TableInfo<$DocumentAssetsTable, DocumentAssetRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DocumentAssetsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _mimeMeta = const VerificationMeta('mime');
+  @override
+  late final GeneratedColumn<String> mime = GeneratedColumn<String>(
+    'mime',
+    aliasedName,
+    false,
+    check: () => mime.isIn(const ['image/png', 'image/jpeg']),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _bytesMeta = const VerificationMeta('bytes');
+  @override
+  late final GeneratedColumn<Uint8List> bytes = GeneratedColumn<Uint8List>(
+    'bytes',
+    aliasedName,
+    false,
+    type: DriftSqlType.blob,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [rev, id, mime, bytes, createdAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'document_assets';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<DocumentAssetRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('mime')) {
+      context.handle(
+        _mimeMeta,
+        mime.isAcceptableOrUnknown(data['mime']!, _mimeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_mimeMeta);
+    }
+    if (data.containsKey('bytes')) {
+      context.handle(
+        _bytesMeta,
+        bytes.isAcceptableOrUnknown(data['bytes']!, _bytesMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_bytesMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  DocumentAssetRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DocumentAssetRow(
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      mime: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mime'],
+      )!,
+      bytes: attachedDatabase.typeMapping.read(
+        DriftSqlType.blob,
+        data['${effectivePrefix}bytes'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $DocumentAssetsTable createAlias(String alias) {
+    return $DocumentAssetsTable(attachedDatabase, alias);
+  }
+
+  @override
+  bool get isStrict => true;
+}
+
+class DocumentAssetRow extends DataClass
+    implements Insertable<DocumentAssetRow> {
+  final int rev;
+
+  /// Hex SHA-256 hash of the asset bytes.
+  final String id;
+
+  /// Media type: `image/png` or `image/jpeg`.
+  final String mime;
+
+  /// Binary image payload (PNG/JPEG ≤ 1 MB).
+  final Uint8List bytes;
+
+  /// Creation epoch in UTC milliseconds.
+  final int createdAt;
+  const DocumentAssetRow({
+    required this.rev,
+    required this.id,
+    required this.mime,
+    required this.bytes,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['rev'] = Variable<int>(rev);
+    map['id'] = Variable<String>(id);
+    map['mime'] = Variable<String>(mime);
+    map['bytes'] = Variable<Uint8List>(bytes);
+    map['created_at'] = Variable<int>(createdAt);
+    return map;
+  }
+
+  DocumentAssetsCompanion toCompanion(bool nullToAbsent) {
+    return DocumentAssetsCompanion(
+      rev: Value(rev),
+      id: Value(id),
+      mime: Value(mime),
+      bytes: Value(bytes),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory DocumentAssetRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DocumentAssetRow(
+      rev: serializer.fromJson<int>(json['rev']),
+      id: serializer.fromJson<String>(json['id']),
+      mime: serializer.fromJson<String>(json['mime']),
+      bytes: serializer.fromJson<Uint8List>(json['bytes']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'rev': serializer.toJson<int>(rev),
+      'id': serializer.toJson<String>(id),
+      'mime': serializer.toJson<String>(mime),
+      'bytes': serializer.toJson<Uint8List>(bytes),
+      'createdAt': serializer.toJson<int>(createdAt),
+    };
+  }
+
+  DocumentAssetRow copyWith({
+    int? rev,
+    String? id,
+    String? mime,
+    Uint8List? bytes,
+    int? createdAt,
+  }) => DocumentAssetRow(
+    rev: rev ?? this.rev,
+    id: id ?? this.id,
+    mime: mime ?? this.mime,
+    bytes: bytes ?? this.bytes,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  DocumentAssetRow copyWithCompanion(DocumentAssetsCompanion data) {
+    return DocumentAssetRow(
+      rev: data.rev.present ? data.rev.value : this.rev,
+      id: data.id.present ? data.id.value : this.id,
+      mime: data.mime.present ? data.mime.value : this.mime,
+      bytes: data.bytes.present ? data.bytes.value : this.bytes,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DocumentAssetRow(')
+          ..write('rev: $rev, ')
+          ..write('id: $id, ')
+          ..write('mime: $mime, ')
+          ..write('bytes: $bytes, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(rev, id, mime, $driftBlobEquality.hash(bytes), createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DocumentAssetRow &&
+          other.rev == this.rev &&
+          other.id == this.id &&
+          other.mime == this.mime &&
+          $driftBlobEquality.equals(other.bytes, this.bytes) &&
+          other.createdAt == this.createdAt);
+}
+
+class DocumentAssetsCompanion extends UpdateCompanion<DocumentAssetRow> {
+  final Value<int> rev;
+  final Value<String> id;
+  final Value<String> mime;
+  final Value<Uint8List> bytes;
+  final Value<int> createdAt;
+  final Value<int> rowid;
+  const DocumentAssetsCompanion({
+    this.rev = const Value.absent(),
+    this.id = const Value.absent(),
+    this.mime = const Value.absent(),
+    this.bytes = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  DocumentAssetsCompanion.insert({
+    this.rev = const Value.absent(),
+    required String id,
+    required String mime,
+    required Uint8List bytes,
+    required int createdAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       mime = Value(mime),
+       bytes = Value(bytes),
+       createdAt = Value(createdAt);
+  static Insertable<DocumentAssetRow> custom({
+    Expression<int>? rev,
+    Expression<String>? id,
+    Expression<String>? mime,
+    Expression<Uint8List>? bytes,
+    Expression<int>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (rev != null) 'rev': rev,
+      if (id != null) 'id': id,
+      if (mime != null) 'mime': mime,
+      if (bytes != null) 'bytes': bytes,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  DocumentAssetsCompanion copyWith({
+    Value<int>? rev,
+    Value<String>? id,
+    Value<String>? mime,
+    Value<Uint8List>? bytes,
+    Value<int>? createdAt,
+    Value<int>? rowid,
+  }) {
+    return DocumentAssetsCompanion(
+      rev: rev ?? this.rev,
+      id: id ?? this.id,
+      mime: mime ?? this.mime,
+      bytes: bytes ?? this.bytes,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (mime.present) {
+      map['mime'] = Variable<String>(mime.value);
+    }
+    if (bytes.present) {
+      map['bytes'] = Variable<Uint8List>(bytes.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DocumentAssetsCompanion(')
+          ..write('rev: $rev, ')
+          ..write('id: $id, ')
+          ..write('mime: $mime, ')
+          ..write('bytes: $bytes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $DocumentStylesTable extends DocumentStyles
+    with TableInfo<$DocumentStylesTable, DocumentStyleRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DocumentStylesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    check: () => ComparableExpr(
+      StringExpressionOperators(name).trim().length,
+    ).isBiggerThanValue(0),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _kindMeta = const VerificationMeta('kind');
+  @override
+  late final GeneratedColumn<String> kind = GeneratedColumn<String>(
+    'kind',
+    aliasedName,
+    false,
+    check: () => kind.isIn(const ['invoice', 'contract', 'any']),
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('any'),
+  );
+  static const VerificationMeta _basePresetMeta = const VerificationMeta(
+    'basePreset',
+  );
+  @override
+  late final GeneratedColumn<String> basePreset = GeneratedColumn<String>(
+    'base_preset',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('classic'),
+  );
+  static const VerificationMeta _jsonMeta = const VerificationMeta('json');
+  @override
+  late final GeneratedColumn<String> json = GeneratedColumn<String>(
+    'json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _schemaVersionMeta = const VerificationMeta(
+    'schemaVersion',
+  );
+  @override
+  late final GeneratedColumn<int> schemaVersion = GeneratedColumn<int>(
+    'schema_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _archivedMeta = const VerificationMeta(
+    'archived',
+  );
+  @override
+  late final GeneratedColumn<bool> archived = GeneratedColumn<bool>(
+    'archived',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("archived" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _isDemoMeta = const VerificationMeta('isDemo');
+  @override
+  late final GeneratedColumn<bool> isDemo = GeneratedColumn<bool>(
+    'is_demo',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_demo" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    rev,
+    id,
+    name,
+    kind,
+    basePreset,
+    json,
+    schemaVersion,
+    archived,
+    isDemo,
+    createdAt,
+    updatedAt,
+    deletedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'document_styles';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<DocumentStyleRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('kind')) {
+      context.handle(
+        _kindMeta,
+        kind.isAcceptableOrUnknown(data['kind']!, _kindMeta),
+      );
+    }
+    if (data.containsKey('base_preset')) {
+      context.handle(
+        _basePresetMeta,
+        basePreset.isAcceptableOrUnknown(data['base_preset']!, _basePresetMeta),
+      );
+    }
+    if (data.containsKey('json')) {
+      context.handle(
+        _jsonMeta,
+        json.isAcceptableOrUnknown(data['json']!, _jsonMeta),
+      );
+    }
+    if (data.containsKey('schema_version')) {
+      context.handle(
+        _schemaVersionMeta,
+        schemaVersion.isAcceptableOrUnknown(
+          data['schema_version']!,
+          _schemaVersionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('archived')) {
+      context.handle(
+        _archivedMeta,
+        archived.isAcceptableOrUnknown(data['archived']!, _archivedMeta),
+      );
+    }
+    if (data.containsKey('is_demo')) {
+      context.handle(
+        _isDemoMeta,
+        isDemo.isAcceptableOrUnknown(data['is_demo']!, _isDemoMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  DocumentStyleRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DocumentStyleRow(
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      kind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kind'],
+      )!,
+      basePreset: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}base_preset'],
+      )!,
+      json: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}json'],
+      )!,
+      schemaVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}schema_version'],
+      )!,
+      archived: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}archived'],
+      )!,
+      isDemo: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_demo'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
+  }
+
+  @override
+  $DocumentStylesTable createAlias(String alias) {
+    return $DocumentStylesTable(attachedDatabase, alias);
+  }
+
+  @override
+  bool get isStrict => true;
+}
+
+class DocumentStyleRow extends DataClass
+    implements Insertable<DocumentStyleRow> {
+  final int rev;
+
+  /// UUID of this custom style.
+  final String id;
+
+  /// User-facing display name.
+  final String name;
+
+  /// Applicable document types: `invoice`, `contract`, or `any`.
+  final String kind;
+
+  /// Starting preset identifier (`classic`, `modern`, `minimal`, `bold`, `blank`).
+  final String basePreset;
+
+  /// JSON serialization of the resolved [DocumentStyle].
+  final String json;
+
+  /// Schema version of the style JSON for forward compatibility.
+  final int schemaVersion;
+
+  /// Whether the style is archived / hidden from pickers.
+  final bool archived;
+
+  /// Demo data flag.
+  final bool isDemo;
+
+  /// Creation epoch in UTC milliseconds.
+  final int createdAt;
+
+  /// Last modification epoch in UTC milliseconds.
+  final int updatedAt;
+
+  /// Soft deletion timestamp; null for active styles.
+  final int? deletedAt;
+  const DocumentStyleRow({
+    required this.rev,
+    required this.id,
+    required this.name,
+    required this.kind,
+    required this.basePreset,
+    required this.json,
+    required this.schemaVersion,
+    required this.archived,
+    required this.isDemo,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['rev'] = Variable<int>(rev);
+    map['id'] = Variable<String>(id);
+    map['name'] = Variable<String>(name);
+    map['kind'] = Variable<String>(kind);
+    map['base_preset'] = Variable<String>(basePreset);
+    map['json'] = Variable<String>(json);
+    map['schema_version'] = Variable<int>(schemaVersion);
+    map['archived'] = Variable<bool>(archived);
+    map['is_demo'] = Variable<bool>(isDemo);
+    map['created_at'] = Variable<int>(createdAt);
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  DocumentStylesCompanion toCompanion(bool nullToAbsent) {
+    return DocumentStylesCompanion(
+      rev: Value(rev),
+      id: Value(id),
+      name: Value(name),
+      kind: Value(kind),
+      basePreset: Value(basePreset),
+      json: Value(json),
+      schemaVersion: Value(schemaVersion),
+      archived: Value(archived),
+      isDemo: Value(isDemo),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory DocumentStyleRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DocumentStyleRow(
+      rev: serializer.fromJson<int>(json['rev']),
+      id: serializer.fromJson<String>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      kind: serializer.fromJson<String>(json['kind']),
+      basePreset: serializer.fromJson<String>(json['basePreset']),
+      json: serializer.fromJson<String>(json['json']),
+      schemaVersion: serializer.fromJson<int>(json['schemaVersion']),
+      archived: serializer.fromJson<bool>(json['archived']),
+      isDemo: serializer.fromJson<bool>(json['isDemo']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'rev': serializer.toJson<int>(rev),
+      'id': serializer.toJson<String>(id),
+      'name': serializer.toJson<String>(name),
+      'kind': serializer.toJson<String>(kind),
+      'basePreset': serializer.toJson<String>(basePreset),
+      'json': serializer.toJson<String>(json),
+      'schemaVersion': serializer.toJson<int>(schemaVersion),
+      'archived': serializer.toJson<bool>(archived),
+      'isDemo': serializer.toJson<bool>(isDemo),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  DocumentStyleRow copyWith({
+    int? rev,
+    String? id,
+    String? name,
+    String? kind,
+    String? basePreset,
+    String? json,
+    int? schemaVersion,
+    bool? archived,
+    bool? isDemo,
+    int? createdAt,
+    int? updatedAt,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => DocumentStyleRow(
+    rev: rev ?? this.rev,
+    id: id ?? this.id,
+    name: name ?? this.name,
+    kind: kind ?? this.kind,
+    basePreset: basePreset ?? this.basePreset,
+    json: json ?? this.json,
+    schemaVersion: schemaVersion ?? this.schemaVersion,
+    archived: archived ?? this.archived,
+    isDemo: isDemo ?? this.isDemo,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  DocumentStyleRow copyWithCompanion(DocumentStylesCompanion data) {
+    return DocumentStyleRow(
+      rev: data.rev.present ? data.rev.value : this.rev,
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      basePreset: data.basePreset.present
+          ? data.basePreset.value
+          : this.basePreset,
+      json: data.json.present ? data.json.value : this.json,
+      schemaVersion: data.schemaVersion.present
+          ? data.schemaVersion.value
+          : this.schemaVersion,
+      archived: data.archived.present ? data.archived.value : this.archived,
+      isDemo: data.isDemo.present ? data.isDemo.value : this.isDemo,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DocumentStyleRow(')
+          ..write('rev: $rev, ')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('kind: $kind, ')
+          ..write('basePreset: $basePreset, ')
+          ..write('json: $json, ')
+          ..write('schemaVersion: $schemaVersion, ')
+          ..write('archived: $archived, ')
+          ..write('isDemo: $isDemo, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    rev,
+    id,
+    name,
+    kind,
+    basePreset,
+    json,
+    schemaVersion,
+    archived,
+    isDemo,
+    createdAt,
+    updatedAt,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DocumentStyleRow &&
+          other.rev == this.rev &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.kind == this.kind &&
+          other.basePreset == this.basePreset &&
+          other.json == this.json &&
+          other.schemaVersion == this.schemaVersion &&
+          other.archived == this.archived &&
+          other.isDemo == this.isDemo &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt);
+}
+
+class DocumentStylesCompanion extends UpdateCompanion<DocumentStyleRow> {
+  final Value<int> rev;
+  final Value<String> id;
+  final Value<String> name;
+  final Value<String> kind;
+  final Value<String> basePreset;
+  final Value<String> json;
+  final Value<int> schemaVersion;
+  final Value<bool> archived;
+  final Value<bool> isDemo;
+  final Value<int> createdAt;
+  final Value<int> updatedAt;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const DocumentStylesCompanion({
+    this.rev = const Value.absent(),
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.basePreset = const Value.absent(),
+    this.json = const Value.absent(),
+    this.schemaVersion = const Value.absent(),
+    this.archived = const Value.absent(),
+    this.isDemo = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  DocumentStylesCompanion.insert({
+    this.rev = const Value.absent(),
+    required String id,
+    required String name,
+    this.kind = const Value.absent(),
+    this.basePreset = const Value.absent(),
+    this.json = const Value.absent(),
+    this.schemaVersion = const Value.absent(),
+    this.archived = const Value.absent(),
+    this.isDemo = const Value.absent(),
+    required int createdAt,
+    required int updatedAt,
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       name = Value(name),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<DocumentStyleRow> custom({
+    Expression<int>? rev,
+    Expression<String>? id,
+    Expression<String>? name,
+    Expression<String>? kind,
+    Expression<String>? basePreset,
+    Expression<String>? json,
+    Expression<int>? schemaVersion,
+    Expression<bool>? archived,
+    Expression<bool>? isDemo,
+    Expression<int>? createdAt,
+    Expression<int>? updatedAt,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (rev != null) 'rev': rev,
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (kind != null) 'kind': kind,
+      if (basePreset != null) 'base_preset': basePreset,
+      if (json != null) 'json': json,
+      if (schemaVersion != null) 'schema_version': schemaVersion,
+      if (archived != null) 'archived': archived,
+      if (isDemo != null) 'is_demo': isDemo,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  DocumentStylesCompanion copyWith({
+    Value<int>? rev,
+    Value<String>? id,
+    Value<String>? name,
+    Value<String>? kind,
+    Value<String>? basePreset,
+    Value<String>? json,
+    Value<int>? schemaVersion,
+    Value<bool>? archived,
+    Value<bool>? isDemo,
+    Value<int>? createdAt,
+    Value<int>? updatedAt,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return DocumentStylesCompanion(
+      rev: rev ?? this.rev,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      kind: kind ?? this.kind,
+      basePreset: basePreset ?? this.basePreset,
+      json: json ?? this.json,
+      schemaVersion: schemaVersion ?? this.schemaVersion,
+      archived: archived ?? this.archived,
+      isDemo: isDemo ?? this.isDemo,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(kind.value);
+    }
+    if (basePreset.present) {
+      map['base_preset'] = Variable<String>(basePreset.value);
+    }
+    if (json.present) {
+      map['json'] = Variable<String>(json.value);
+    }
+    if (schemaVersion.present) {
+      map['schema_version'] = Variable<int>(schemaVersion.value);
+    }
+    if (archived.present) {
+      map['archived'] = Variable<bool>(archived.value);
+    }
+    if (isDemo.present) {
+      map['is_demo'] = Variable<bool>(isDemo.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DocumentStylesCompanion(')
+          ..write('rev: $rev, ')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('kind: $kind, ')
+          ..write('basePreset: $basePreset, ')
+          ..write('json: $json, ')
+          ..write('schemaVersion: $schemaVersion, ')
+          ..write('archived: $archived, ')
+          ..write('isDemo: $isDemo, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -12028,6 +13513,24 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final Trigger remindersSyncUpdate = Trigger(
     'CREATE TRIGGER reminders_sync_update AFTER UPDATE ON reminders WHEN NEW.rev = OLD.rev BEGIN UPDATE reminders SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'reminders\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'reminders\', NEW.id, OLD.rev + 1, NEW.updated_at);END',
     'reminders_sync_update',
+  );
+  late final $DocumentAssetsTable documentAssets = $DocumentAssetsTable(this);
+  late final Trigger documentAssetsSyncInsert = Trigger(
+    'CREATE TRIGGER document_assets_sync_insert AFTER INSERT ON document_assets BEGIN UPDATE document_assets SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'document_assets\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'document_assets\', NEW.id, NEW.rev + 1, NEW.created_at);END',
+    'document_assets_sync_insert',
+  );
+  late final Trigger documentAssetsSyncUpdate = Trigger(
+    'CREATE TRIGGER document_assets_sync_update AFTER UPDATE ON document_assets WHEN NEW.rev = OLD.rev BEGIN UPDATE document_assets SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'document_assets\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'document_assets\', NEW.id, OLD.rev + 1, NEW.created_at);END',
+    'document_assets_sync_update',
+  );
+  late final $DocumentStylesTable documentStyles = $DocumentStylesTable(this);
+  late final Trigger documentStylesSyncInsert = Trigger(
+    'CREATE TRIGGER document_styles_sync_insert AFTER INSERT ON document_styles BEGIN UPDATE document_styles SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'document_styles\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'document_styles\', NEW.id, NEW.rev + 1, NEW.updated_at);END',
+    'document_styles_sync_insert',
+  );
+  late final Trigger documentStylesSyncUpdate = Trigger(
+    'CREATE TRIGGER document_styles_sync_update AFTER UPDATE ON document_styles WHEN NEW.rev = OLD.rev BEGIN UPDATE document_styles SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'document_styles\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'document_styles\', NEW.id, OLD.rev + 1, NEW.updated_at);END',
+    'document_styles_sync_update',
   );
   late final Index postponementsEntity = Index(
     'postponements_entity',
@@ -12160,6 +13663,12 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     reminders,
     remindersSyncInsert,
     remindersSyncUpdate,
+    documentAssets,
+    documentAssetsSyncInsert,
+    documentAssetsSyncUpdate,
+    documentStyles,
+    documentStylesSyncInsert,
+    documentStylesSyncUpdate,
     postponementsEntity,
     remindersDate,
     invoicesClient,
@@ -12534,6 +14043,50 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
+        'document_assets',
+        limitUpdateKind: UpdateKind.insert,
+      ),
+      result: [
+        TableUpdate('document_assets', kind: UpdateKind.update),
+        TableUpdate('outbox', kind: UpdateKind.delete),
+        TableUpdate('outbox', kind: UpdateKind.insert),
+      ],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'document_assets',
+        limitUpdateKind: UpdateKind.update,
+      ),
+      result: [
+        TableUpdate('document_assets', kind: UpdateKind.update),
+        TableUpdate('outbox', kind: UpdateKind.delete),
+        TableUpdate('outbox', kind: UpdateKind.insert),
+      ],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'document_styles',
+        limitUpdateKind: UpdateKind.insert,
+      ),
+      result: [
+        TableUpdate('document_styles', kind: UpdateKind.update),
+        TableUpdate('outbox', kind: UpdateKind.delete),
+        TableUpdate('outbox', kind: UpdateKind.insert),
+      ],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'document_styles',
+        limitUpdateKind: UpdateKind.update,
+      ),
+      result: [
+        TableUpdate('document_styles', kind: UpdateKind.update),
+        TableUpdate('outbox', kind: UpdateKind.delete),
+        TableUpdate('outbox', kind: UpdateKind.insert),
+      ],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
         'clients',
         limitUpdateKind: UpdateKind.update,
       ),
@@ -12598,6 +14151,8 @@ typedef $$AppSettingsTableCreateCompanionBuilder =
       Value<bool> contractWesternDigits,
       Value<String> defaultDocLanguage,
       Value<String> docDigitStyle,
+      Value<String?> defaultInvoiceStyleId,
+      Value<String?> defaultContractStyleId,
       Value<String> deviceId,
       Value<int> updatedAt,
     });
@@ -12629,6 +14184,8 @@ typedef $$AppSettingsTableUpdateCompanionBuilder =
       Value<bool> contractWesternDigits,
       Value<String> defaultDocLanguage,
       Value<String> docDigitStyle,
+      Value<String?> defaultInvoiceStyleId,
+      Value<String?> defaultContractStyleId,
       Value<String> deviceId,
       Value<int> updatedAt,
     });
@@ -12769,6 +14326,16 @@ class $$AppSettingsTableFilterComposer
 
   ColumnFilters<String> get docDigitStyle => $composableBuilder(
     column: $table.docDigitStyle,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get defaultInvoiceStyleId => $composableBuilder(
+    column: $table.defaultInvoiceStyleId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get defaultContractStyleId => $composableBuilder(
+    column: $table.defaultContractStyleId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -12922,6 +14489,16 @@ class $$AppSettingsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get defaultInvoiceStyleId => $composableBuilder(
+    column: $table.defaultInvoiceStyleId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get defaultContractStyleId => $composableBuilder(
+    column: $table.defaultContractStyleId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get deviceId => $composableBuilder(
     column: $table.deviceId,
     builder: (column) => ColumnOrderings(column),
@@ -13040,6 +14617,16 @@ class $$AppSettingsTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get defaultInvoiceStyleId => $composableBuilder(
+    column: $table.defaultInvoiceStyleId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get defaultContractStyleId => $composableBuilder(
+    column: $table.defaultContractStyleId,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get deviceId =>
       $composableBuilder(column: $table.deviceId, builder: (column) => column);
 
@@ -13104,6 +14691,8 @@ class $$AppSettingsTableTableManager
                 Value<bool> contractWesternDigits = const Value.absent(),
                 Value<String> defaultDocLanguage = const Value.absent(),
                 Value<String> docDigitStyle = const Value.absent(),
+                Value<String?> defaultInvoiceStyleId = const Value.absent(),
+                Value<String?> defaultContractStyleId = const Value.absent(),
                 Value<String> deviceId = const Value.absent(),
                 Value<int> updatedAt = const Value.absent(),
               }) => AppSettingsCompanion(
@@ -13133,6 +14722,8 @@ class $$AppSettingsTableTableManager
                 contractWesternDigits: contractWesternDigits,
                 defaultDocLanguage: defaultDocLanguage,
                 docDigitStyle: docDigitStyle,
+                defaultInvoiceStyleId: defaultInvoiceStyleId,
+                defaultContractStyleId: defaultContractStyleId,
                 deviceId: deviceId,
                 updatedAt: updatedAt,
               ),
@@ -13164,6 +14755,8 @@ class $$AppSettingsTableTableManager
                 Value<bool> contractWesternDigits = const Value.absent(),
                 Value<String> defaultDocLanguage = const Value.absent(),
                 Value<String> docDigitStyle = const Value.absent(),
+                Value<String?> defaultInvoiceStyleId = const Value.absent(),
+                Value<String?> defaultContractStyleId = const Value.absent(),
                 Value<String> deviceId = const Value.absent(),
                 Value<int> updatedAt = const Value.absent(),
               }) => AppSettingsCompanion.insert(
@@ -13193,6 +14786,8 @@ class $$AppSettingsTableTableManager
                 contractWesternDigits: contractWesternDigits,
                 defaultDocLanguage: defaultDocLanguage,
                 docDigitStyle: docDigitStyle,
+                defaultInvoiceStyleId: defaultInvoiceStyleId,
+                defaultContractStyleId: defaultContractStyleId,
                 deviceId: deviceId,
                 updatedAt: updatedAt,
               ),
@@ -13447,6 +15042,7 @@ typedef $$ClientsTableCreateCompanionBuilder =
       Value<String> representativeTitle,
       Value<bool> isDemo,
       Value<String?> preferredLanguage,
+      Value<String?> styleId,
       Value<int> rowid,
     });
 typedef $$ClientsTableUpdateCompanionBuilder =
@@ -13469,6 +15065,7 @@ typedef $$ClientsTableUpdateCompanionBuilder =
       Value<String> representativeTitle,
       Value<bool> isDemo,
       Value<String?> preferredLanguage,
+      Value<String?> styleId,
       Value<int> rowid,
     });
 
@@ -13627,6 +15224,11 @@ class $$ClientsTableFilterComposer
 
   ColumnFilters<String> get preferredLanguage => $composableBuilder(
     column: $table.preferredLanguage,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get styleId => $composableBuilder(
+    column: $table.styleId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -13804,6 +15406,11 @@ class $$ClientsTableOrderingComposer
     column: $table.preferredLanguage,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get styleId => $composableBuilder(
+    column: $table.styleId,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ClientsTableAnnotationComposer
@@ -13876,6 +15483,9 @@ class $$ClientsTableAnnotationComposer
     column: $table.preferredLanguage,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get styleId =>
+      $composableBuilder(column: $table.styleId, builder: (column) => column);
 
   Expression<T> invoicesRefs<T extends Object>(
     Expression<T> Function($$InvoicesTableAnnotationComposer a) f,
@@ -14003,6 +15613,7 @@ class $$ClientsTableTableManager
                 Value<String> representativeTitle = const Value.absent(),
                 Value<bool> isDemo = const Value.absent(),
                 Value<String?> preferredLanguage = const Value.absent(),
+                Value<String?> styleId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ClientsCompanion(
                 rev: rev,
@@ -14023,6 +15634,7 @@ class $$ClientsTableTableManager
                 representativeTitle: representativeTitle,
                 isDemo: isDemo,
                 preferredLanguage: preferredLanguage,
+                styleId: styleId,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -14045,6 +15657,7 @@ class $$ClientsTableTableManager
                 Value<String> representativeTitle = const Value.absent(),
                 Value<bool> isDemo = const Value.absent(),
                 Value<String?> preferredLanguage = const Value.absent(),
+                Value<String?> styleId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ClientsCompanion.insert(
                 rev: rev,
@@ -14065,6 +15678,7 @@ class $$ClientsTableTableManager
                 representativeTitle: representativeTitle,
                 isDemo: isDemo,
                 preferredLanguage: preferredLanguage,
+                styleId: styleId,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -14202,6 +15816,8 @@ typedef $$InvoicesTableCreateCompanionBuilder =
       Value<String> scopeWarranty,
       Value<int?> deletedAt,
       Value<String> language,
+      Value<String?> styleId,
+      Value<String?> styleSnapshot,
       Value<bool> isDemo,
       required int createdAt,
       required int updatedAt,
@@ -14232,6 +15848,8 @@ typedef $$InvoicesTableUpdateCompanionBuilder =
       Value<String> scopeWarranty,
       Value<int?> deletedAt,
       Value<String> language,
+      Value<String?> styleId,
+      Value<String?> styleSnapshot,
       Value<bool> isDemo,
       Value<int> createdAt,
       Value<int> updatedAt,
@@ -14415,6 +16033,16 @@ class $$InvoicesTableFilterComposer
 
   ColumnFilters<String> get language => $composableBuilder(
     column: $table.language,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get styleId => $composableBuilder(
+    column: $table.styleId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get styleSnapshot => $composableBuilder(
+    column: $table.styleSnapshot,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -14626,6 +16254,16 @@ class $$InvoicesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get styleId => $composableBuilder(
+    column: $table.styleId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get styleSnapshot => $composableBuilder(
+    column: $table.styleSnapshot,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<bool> get isDemo => $composableBuilder(
     column: $table.isDemo,
     builder: (column) => ColumnOrderings(column),
@@ -14749,6 +16387,14 @@ class $$InvoicesTableAnnotationComposer
 
   GeneratedColumn<String> get language =>
       $composableBuilder(column: $table.language, builder: (column) => column);
+
+  GeneratedColumn<String> get styleId =>
+      $composableBuilder(column: $table.styleId, builder: (column) => column);
+
+  GeneratedColumn<String> get styleSnapshot => $composableBuilder(
+    column: $table.styleSnapshot,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<bool> get isDemo =>
       $composableBuilder(column: $table.isDemo, builder: (column) => column);
@@ -14889,6 +16535,8 @@ class $$InvoicesTableTableManager
                 Value<String> scopeWarranty = const Value.absent(),
                 Value<int?> deletedAt = const Value.absent(),
                 Value<String> language = const Value.absent(),
+                Value<String?> styleId = const Value.absent(),
+                Value<String?> styleSnapshot = const Value.absent(),
                 Value<bool> isDemo = const Value.absent(),
                 Value<int> createdAt = const Value.absent(),
                 Value<int> updatedAt = const Value.absent(),
@@ -14917,6 +16565,8 @@ class $$InvoicesTableTableManager
                 scopeWarranty: scopeWarranty,
                 deletedAt: deletedAt,
                 language: language,
+                styleId: styleId,
+                styleSnapshot: styleSnapshot,
                 isDemo: isDemo,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
@@ -14947,6 +16597,8 @@ class $$InvoicesTableTableManager
                 Value<String> scopeWarranty = const Value.absent(),
                 Value<int?> deletedAt = const Value.absent(),
                 Value<String> language = const Value.absent(),
+                Value<String?> styleId = const Value.absent(),
+                Value<String?> styleSnapshot = const Value.absent(),
                 Value<bool> isDemo = const Value.absent(),
                 required int createdAt,
                 required int updatedAt,
@@ -14975,6 +16627,8 @@ class $$InvoicesTableTableManager
                 scopeWarranty: scopeWarranty,
                 deletedAt: deletedAt,
                 language: language,
+                styleId: styleId,
+                styleSnapshot: styleSnapshot,
                 isDemo: isDemo,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
@@ -16931,6 +18585,8 @@ typedef $$ContractsTableCreateCompanionBuilder =
       Value<bool> unlocked,
       Value<String> history,
       Value<int?> deletedAt,
+      Value<String?> styleId,
+      Value<String?> styleSnapshot,
       Value<bool> isDemo,
       required int createdAt,
       required int updatedAt,
@@ -16967,6 +18623,8 @@ typedef $$ContractsTableUpdateCompanionBuilder =
       Value<bool> unlocked,
       Value<String> history,
       Value<int?> deletedAt,
+      Value<String?> styleId,
+      Value<String?> styleSnapshot,
       Value<bool> isDemo,
       Value<int> createdAt,
       Value<int> updatedAt,
@@ -17212,6 +18870,16 @@ class $$ContractsTableFilterComposer
 
   ColumnFilters<int> get deletedAt => $composableBuilder(
     column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get styleId => $composableBuilder(
+    column: $table.styleId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get styleSnapshot => $composableBuilder(
+    column: $table.styleSnapshot,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -17496,6 +19164,16 @@ class $$ContractsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get styleId => $composableBuilder(
+    column: $table.styleId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get styleSnapshot => $composableBuilder(
+    column: $table.styleSnapshot,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<bool> get isDemo => $composableBuilder(
     column: $table.isDemo,
     builder: (column) => ColumnOrderings(column),
@@ -17663,6 +19341,14 @@ class $$ContractsTableAnnotationComposer
 
   GeneratedColumn<int> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get styleId =>
+      $composableBuilder(column: $table.styleId, builder: (column) => column);
+
+  GeneratedColumn<String> get styleSnapshot => $composableBuilder(
+    column: $table.styleSnapshot,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<bool> get isDemo =>
       $composableBuilder(column: $table.isDemo, builder: (column) => column);
@@ -17859,6 +19545,8 @@ class $$ContractsTableTableManager
                 Value<bool> unlocked = const Value.absent(),
                 Value<String> history = const Value.absent(),
                 Value<int?> deletedAt = const Value.absent(),
+                Value<String?> styleId = const Value.absent(),
+                Value<String?> styleSnapshot = const Value.absent(),
                 Value<bool> isDemo = const Value.absent(),
                 Value<int> createdAt = const Value.absent(),
                 Value<int> updatedAt = const Value.absent(),
@@ -17893,6 +19581,8 @@ class $$ContractsTableTableManager
                 unlocked: unlocked,
                 history: history,
                 deletedAt: deletedAt,
+                styleId: styleId,
+                styleSnapshot: styleSnapshot,
                 isDemo: isDemo,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
@@ -17929,6 +19619,8 @@ class $$ContractsTableTableManager
                 Value<bool> unlocked = const Value.absent(),
                 Value<String> history = const Value.absent(),
                 Value<int?> deletedAt = const Value.absent(),
+                Value<String?> styleId = const Value.absent(),
+                Value<String?> styleSnapshot = const Value.absent(),
                 Value<bool> isDemo = const Value.absent(),
                 required int createdAt,
                 required int updatedAt,
@@ -17963,6 +19655,8 @@ class $$ContractsTableTableManager
                 unlocked: unlocked,
                 history: history,
                 deletedAt: deletedAt,
+                styleId: styleId,
+                styleSnapshot: styleSnapshot,
                 isDemo: isDemo,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
@@ -20317,6 +22011,573 @@ typedef $$RemindersTableProcessedTableManager =
       ReminderRow,
       PrefetchHooks Function({bool clientId})
     >;
+typedef $$DocumentAssetsTableCreateCompanionBuilder =
+    DocumentAssetsCompanion Function({
+      Value<int> rev,
+      required String id,
+      required String mime,
+      required Uint8List bytes,
+      required int createdAt,
+      Value<int> rowid,
+    });
+typedef $$DocumentAssetsTableUpdateCompanionBuilder =
+    DocumentAssetsCompanion Function({
+      Value<int> rev,
+      Value<String> id,
+      Value<String> mime,
+      Value<Uint8List> bytes,
+      Value<int> createdAt,
+      Value<int> rowid,
+    });
+
+class $$DocumentAssetsTableFilterComposer
+    extends Composer<_$AppDatabase, $DocumentAssetsTable> {
+  $$DocumentAssetsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get rev => $composableBuilder(
+    column: $table.rev,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get mime => $composableBuilder(
+    column: $table.mime,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<Uint8List> get bytes => $composableBuilder(
+    column: $table.bytes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$DocumentAssetsTableOrderingComposer
+    extends Composer<_$AppDatabase, $DocumentAssetsTable> {
+  $$DocumentAssetsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get rev => $composableBuilder(
+    column: $table.rev,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get mime => $composableBuilder(
+    column: $table.mime,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<Uint8List> get bytes => $composableBuilder(
+    column: $table.bytes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$DocumentAssetsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $DocumentAssetsTable> {
+  $$DocumentAssetsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get rev =>
+      $composableBuilder(column: $table.rev, builder: (column) => column);
+
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get mime =>
+      $composableBuilder(column: $table.mime, builder: (column) => column);
+
+  GeneratedColumn<Uint8List> get bytes =>
+      $composableBuilder(column: $table.bytes, builder: (column) => column);
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+}
+
+class $$DocumentAssetsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $DocumentAssetsTable,
+          DocumentAssetRow,
+          $$DocumentAssetsTableFilterComposer,
+          $$DocumentAssetsTableOrderingComposer,
+          $$DocumentAssetsTableAnnotationComposer,
+          $$DocumentAssetsTableCreateCompanionBuilder,
+          $$DocumentAssetsTableUpdateCompanionBuilder,
+          (
+            DocumentAssetRow,
+            BaseReferences<
+              _$AppDatabase,
+              $DocumentAssetsTable,
+              DocumentAssetRow
+            >,
+          ),
+          DocumentAssetRow,
+          PrefetchHooks Function()
+        > {
+  $$DocumentAssetsTableTableManager(
+    _$AppDatabase db,
+    $DocumentAssetsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$DocumentAssetsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$DocumentAssetsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$DocumentAssetsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> rev = const Value.absent(),
+                Value<String> id = const Value.absent(),
+                Value<String> mime = const Value.absent(),
+                Value<Uint8List> bytes = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DocumentAssetsCompanion(
+                rev: rev,
+                id: id,
+                mime: mime,
+                bytes: bytes,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> rev = const Value.absent(),
+                required String id,
+                required String mime,
+                required Uint8List bytes,
+                required int createdAt,
+                Value<int> rowid = const Value.absent(),
+              }) => DocumentAssetsCompanion.insert(
+                rev: rev,
+                id: id,
+                mime: mime,
+                bytes: bytes,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$DocumentAssetsTable, DocumentAssetRow>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $DocumentAssetsTable,
+                    DocumentAssetRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$DocumentAssetsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $DocumentAssetsTable,
+      DocumentAssetRow,
+      $$DocumentAssetsTableFilterComposer,
+      $$DocumentAssetsTableOrderingComposer,
+      $$DocumentAssetsTableAnnotationComposer,
+      $$DocumentAssetsTableCreateCompanionBuilder,
+      $$DocumentAssetsTableUpdateCompanionBuilder,
+      (
+        DocumentAssetRow,
+        BaseReferences<_$AppDatabase, $DocumentAssetsTable, DocumentAssetRow>,
+      ),
+      DocumentAssetRow,
+      PrefetchHooks Function()
+    >;
+typedef $$DocumentStylesTableCreateCompanionBuilder =
+    DocumentStylesCompanion Function({
+      Value<int> rev,
+      required String id,
+      required String name,
+      Value<String> kind,
+      Value<String> basePreset,
+      Value<String> json,
+      Value<int> schemaVersion,
+      Value<bool> archived,
+      Value<bool> isDemo,
+      required int createdAt,
+      required int updatedAt,
+      Value<int?> deletedAt,
+      Value<int> rowid,
+    });
+typedef $$DocumentStylesTableUpdateCompanionBuilder =
+    DocumentStylesCompanion Function({
+      Value<int> rev,
+      Value<String> id,
+      Value<String> name,
+      Value<String> kind,
+      Value<String> basePreset,
+      Value<String> json,
+      Value<int> schemaVersion,
+      Value<bool> archived,
+      Value<bool> isDemo,
+      Value<int> createdAt,
+      Value<int> updatedAt,
+      Value<int?> deletedAt,
+      Value<int> rowid,
+    });
+
+class $$DocumentStylesTableFilterComposer
+    extends Composer<_$AppDatabase, $DocumentStylesTable> {
+  $$DocumentStylesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get rev => $composableBuilder(
+    column: $table.rev,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get basePreset => $composableBuilder(
+    column: $table.basePreset,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get json => $composableBuilder(
+    column: $table.json,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get schemaVersion => $composableBuilder(
+    column: $table.schemaVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get archived => $composableBuilder(
+    column: $table.archived,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isDemo => $composableBuilder(
+    column: $table.isDemo,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$DocumentStylesTableOrderingComposer
+    extends Composer<_$AppDatabase, $DocumentStylesTable> {
+  $$DocumentStylesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get rev => $composableBuilder(
+    column: $table.rev,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get basePreset => $composableBuilder(
+    column: $table.basePreset,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get json => $composableBuilder(
+    column: $table.json,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get schemaVersion => $composableBuilder(
+    column: $table.schemaVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get archived => $composableBuilder(
+    column: $table.archived,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isDemo => $composableBuilder(
+    column: $table.isDemo,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$DocumentStylesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $DocumentStylesTable> {
+  $$DocumentStylesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get rev =>
+      $composableBuilder(column: $table.rev, builder: (column) => column);
+
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get kind =>
+      $composableBuilder(column: $table.kind, builder: (column) => column);
+
+  GeneratedColumn<String> get basePreset => $composableBuilder(
+    column: $table.basePreset,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get json =>
+      $composableBuilder(column: $table.json, builder: (column) => column);
+
+  GeneratedColumn<int> get schemaVersion => $composableBuilder(
+    column: $table.schemaVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get archived =>
+      $composableBuilder(column: $table.archived, builder: (column) => column);
+
+  GeneratedColumn<bool> get isDemo =>
+      $composableBuilder(column: $table.isDemo, builder: (column) => column);
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+}
+
+class $$DocumentStylesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $DocumentStylesTable,
+          DocumentStyleRow,
+          $$DocumentStylesTableFilterComposer,
+          $$DocumentStylesTableOrderingComposer,
+          $$DocumentStylesTableAnnotationComposer,
+          $$DocumentStylesTableCreateCompanionBuilder,
+          $$DocumentStylesTableUpdateCompanionBuilder,
+          (
+            DocumentStyleRow,
+            BaseReferences<
+              _$AppDatabase,
+              $DocumentStylesTable,
+              DocumentStyleRow
+            >,
+          ),
+          DocumentStyleRow,
+          PrefetchHooks Function()
+        > {
+  $$DocumentStylesTableTableManager(
+    _$AppDatabase db,
+    $DocumentStylesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$DocumentStylesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$DocumentStylesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$DocumentStylesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> rev = const Value.absent(),
+                Value<String> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> kind = const Value.absent(),
+                Value<String> basePreset = const Value.absent(),
+                Value<String> json = const Value.absent(),
+                Value<int> schemaVersion = const Value.absent(),
+                Value<bool> archived = const Value.absent(),
+                Value<bool> isDemo = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DocumentStylesCompanion(
+                rev: rev,
+                id: id,
+                name: name,
+                kind: kind,
+                basePreset: basePreset,
+                json: json,
+                schemaVersion: schemaVersion,
+                archived: archived,
+                isDemo: isDemo,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> rev = const Value.absent(),
+                required String id,
+                required String name,
+                Value<String> kind = const Value.absent(),
+                Value<String> basePreset = const Value.absent(),
+                Value<String> json = const Value.absent(),
+                Value<int> schemaVersion = const Value.absent(),
+                Value<bool> archived = const Value.absent(),
+                Value<bool> isDemo = const Value.absent(),
+                required int createdAt,
+                required int updatedAt,
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DocumentStylesCompanion.insert(
+                rev: rev,
+                id: id,
+                name: name,
+                kind: kind,
+                basePreset: basePreset,
+                json: json,
+                schemaVersion: schemaVersion,
+                archived: archived,
+                isDemo: isDemo,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$DocumentStylesTable, DocumentStyleRow>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $DocumentStylesTable,
+                    DocumentStyleRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$DocumentStylesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $DocumentStylesTable,
+      DocumentStyleRow,
+      $$DocumentStylesTableFilterComposer,
+      $$DocumentStylesTableOrderingComposer,
+      $$DocumentStylesTableAnnotationComposer,
+      $$DocumentStylesTableCreateCompanionBuilder,
+      $$DocumentStylesTableUpdateCompanionBuilder,
+      (
+        DocumentStyleRow,
+        BaseReferences<_$AppDatabase, $DocumentStylesTable, DocumentStyleRow>,
+      ),
+      DocumentStyleRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -20349,4 +22610,8 @@ class $AppDatabaseManager {
       $$PostponementsTableTableManager(_db, _db.postponements);
   $$RemindersTableTableManager get reminders =>
       $$RemindersTableTableManager(_db, _db.reminders);
+  $$DocumentAssetsTableTableManager get documentAssets =>
+      $$DocumentAssetsTableTableManager(_db, _db.documentAssets);
+  $$DocumentStylesTableTableManager get documentStyles =>
+      $$DocumentStylesTableTableManager(_db, _db.documentStyles);
 }

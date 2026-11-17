@@ -52,6 +52,10 @@ class AppSettings extends Table with SyncRev {
     const Constant('western'),
   )();
 
+  // v7: document styles (default invoice and contract style IDs).
+  TextColumn get defaultInvoiceStyleId => text().nullable()();
+  TextColumn get defaultContractStyleId => text().nullable()();
+
   // v4: sync.
   /// Random UUID of this installation, generated once.
   TextColumn get deviceId => text().withDefault(const Constant(''))();
@@ -96,6 +100,9 @@ class Clients extends Table with SyncRev {
   /// the global default" (D7).
   TextColumn get preferredLanguage => text().nullable()();
 
+  /// v7: preferred document style ID; null means follow resolution (D7).
+  TextColumn get styleId => text().nullable()();
+
   @override
   Set<Column<Object>> get primaryKey => {id};
 
@@ -138,6 +145,12 @@ class Invoices extends Table with SyncRev {
   /// `bilingual`. Existing invoices get `bilingual`, so they keep their
   /// look (ADR-0011).
   TextColumn get language => text().withDefault(const Constant('bilingual'))();
+
+  /// v7: document style ID (preset or custom style); null means follow resolution.
+  TextColumn get styleId => text().nullable()();
+
+  /// v7: immutable style JSON snapshot taken when sent or paid (D3, ADR-0012).
+  TextColumn get styleSnapshot => text().nullable()();
 
   /// v5: demo row (removed with the demo set; cleared on user edits).
   BoolColumn get isDemo => boolean().withDefault(const Constant(false))();
@@ -316,6 +329,12 @@ class Contracts extends Table with SyncRev {
   /// JSON list of `{at, event}` entries (unlocks, status changes).
   TextColumn get history => text().withDefault(const Constant('[]'))();
   IntColumn get deletedAt => integer().nullable()();
+
+  /// v7: document style ID (preset or custom style); null means follow resolution.
+  TextColumn get styleId => text().nullable()();
+
+  /// v7: immutable style JSON snapshot taken when signed (D3, ADR-0012).
+  TextColumn get styleSnapshot => text().nullable()();
 
   /// v5: demo row (removed with the demo set; cleared on user edits).
   BoolColumn get isDemo => boolean().withDefault(const Constant(false))();
