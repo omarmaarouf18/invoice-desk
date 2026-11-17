@@ -12999,7 +12999,7 @@ class DocumentStyleRow extends DataClass
   /// Starting preset identifier (`classic`, `modern`, `minimal`, `bold`, `blank`).
   final String basePreset;
 
-  /// JSON serialization of the resolved [DocumentStyle].
+  /// JSON serialization of the resolved DocumentStyle.
   final String json;
 
   /// Schema version of the style JSON for forward compatibility.
