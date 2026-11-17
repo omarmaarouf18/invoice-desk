@@ -14,22 +14,19 @@
 | 0 — Arabic PDF word gaps (B1) | ✅ done. `pdf` vendored + patched (ADR-0013); gap regression test; samples regenerated from fictional data |
 | 1 — Foundations | ✅ done. `DocLanguage`, `doc_format`, `DocLabels`, `PdfStyle.classic` (pixel-identical), `localeProvider` (ADR-0011) |
 | 2 — English UI + follow-ups | ✅ done. `app_en.arb`, ICU plurals (`0a67998`), auto-direction inputs (`c28ffd7`), fallback to English (`e1965fe`) |
-| 3 — Document language: invoices | ⏳ in progress. Schema v6 (`627e6a0`), PDF builder ar/en/bilingual layouts (`baf5940`). Editor, client dialog, settings & tests pending |
-| 4 — Style engine (schema v7) | — |
+| 3 — Document language: invoices | ✅ done. Schema v6 (`627e6a0`), PDF builder (`baf5940`), UI/repositories/settings/tests/samples (`d232ee4`), goldens (`fd8bd76`) |
+| 4 — Style engine (schema v7) | ⏳ next (needs owner answer on Noto Naskh font) |
 | 5 — Style editor UI | — |
 | 6 — Settings redesign | — |
 | 7 — Contracts in English + styles | — |
 | 8 — UX polish | — |
 
-## Next (Phase 3 remaining)
+## Next (Phase 4 — Document style engine)
 
-1. **Resolution & repositories:** new invoices inherit client preferred language, then settings default (`ar`) (D7); duplicate and renewal paths.
-2. **Editor:** language picker in Details card; hide irrelevant `titleEn/titleAr` and `notesEn/notesAr` for single-language invoices.
-3. **Client dialog:** preferred document language selector (empty = follow default).
-4. **Settings:** default document language and digit style controls.
-5. **B3 warning:** editor banner when payment card is empty («أضف وسيلة دفع في الإعدادات» / "Add a payment method in Settings").
-6. **Tests:** PDF goldens (3 langs × paid/unpaid × with/without scope page), widget tests for editor/dialog, repository test for D7.
-7. **Docs & samples:** CHANGELOG, README, regenerate `docs/` sample PDFs (Arabic, English, bilingual).
+1. **Owner decision:** Confirm approval on bundled Noto Naskh Arabic (from an official source with OFL license).
+2. **Schema v7:** `document_styles` table, snapshotting styles on documents (ADR-0012). Write forward migration step from v6 to v7.
+3. **Style engine:** Extend `PdfStyle` with fonts, primary/secondary colors, logo image, geometry adjustments.
+4. **Style tests:** Migration test v6→v7, style repository tests, backwards compatibility.
 
 ## Decided (do not reopen without the owner)
 
