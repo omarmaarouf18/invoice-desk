@@ -74,7 +74,11 @@ void main() {
         () => db.clientsDao.softDelete('empty'),
       );
       final all = await trash.entries();
-      expect(all.map((e) => e.kind).toSet(), TrashKind.values.toSet());
+      expect(all.map((e) => e.kind).toSet(), {
+        TrashKind.client,
+        TrashKind.invoice,
+        TrashKind.contract,
+      });
       // Newest deletion first.
       expect(all.first.label, 'Empty Co');
       final inv = only(all, TrashKind.invoice);

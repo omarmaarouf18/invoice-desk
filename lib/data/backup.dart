@@ -5,6 +5,7 @@ import 'package:drift/drift.dart' show Variable;
 import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/data/app_paths.dart';
 import 'package:invoice_desk/data/db.dart';
+import 'package:invoice_desk/data/repositories/style_repository.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqlite3/sqlite3.dart' as sql;
 
@@ -251,5 +252,8 @@ Future<File?> startupHousekeeping(AppDatabase db, AppPaths paths) async {
   await db.clientsDao.purgeDeleted();
   await db.libraryDao.purgeDeleted();
   await db.calendarDao.purge();
+  final styles = StyleRepository(db);
+  await styles.purgeDeletedStyles();
+  await styles.purgeUnusedAssets();
   return BackupService(db, paths: paths).backupIfDue();
 }

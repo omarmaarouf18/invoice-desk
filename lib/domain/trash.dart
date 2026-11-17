@@ -14,6 +14,10 @@ enum TrashKind {
 
   /// A contract with its parts and the amendments deleted with it.
   contract,
+
+  /// A user document style («تصميم المستند»). Documents that pointed at it
+  /// fall back along the resolution chain while it is in the trash.
+  style,
 }
 
 /// One soft-deleted row, as "المحذوفات" lists it.

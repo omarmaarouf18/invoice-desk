@@ -109,6 +109,7 @@ class TrashRow extends ConsumerWidget {
                 TrashKind.client => Icons.person_outline,
                 TrashKind.invoice => Icons.receipt_long_outlined,
                 TrashKind.contract => Icons.gavel_outlined,
+                TrashKind.style => Icons.palette_outlined,
               },
               size: 18,
               color: muted,

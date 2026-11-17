@@ -6,9 +6,9 @@ import 'package:invoice_desk/data/backup.dart';
 import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/domain/trash.dart';
 
-/// "المحذوفات": lists soft-deleted clients, invoices and contracts, restores
-/// them within the database guards, and deletes them for good (after a
-/// `before-purge-…` backup).
+/// "المحذوفات": lists soft-deleted clients, invoices, contracts and document
+/// styles, restores them within the database guards, and deletes them for
+/// good (after a `before-purge-…` backup).
 class TrashRepository {
   /// [_backups] writes the `before-purge-…` file before any hard delete;
   /// [clock] stamps restores.
@@ -26,7 +26,12 @@ class TrashRepository {
       .customSelect(
         // Its own SQL text: drift shares watch streams by query.
         'SELECT 1 AS trash_tick',
-        readsFrom: {_db.clients, _db.invoices, _db.contracts},
+        readsFrom: {
+          _db.clients,
+          _db.invoices,
+          _db.contracts,
+          _db.documentStyles,
+        },
       )
       .watch()
       .asyncMap((_) => entries());
@@ -71,6 +76,15 @@ class TrashRepository {
         _db.contracts,
       )..where((t) => t.deletedAt.isNotNull())).get())
         doc(TrashKind.contract, k.id, k.number, k.deletedAt!, k.clientId),
+      for (final s in await (_db.select(
+        _db.documentStyles,
+      )..where((t) => t.deletedAt.isNotNull())).get())
+        TrashEntry(
+          kind: TrashKind.style,
+          id: s.id,
+          label: s.name,
+          deletedAt: s.deletedAt!,
+        ),
     ]..sort((a, b) => b.deletedAt.compareTo(a.deletedAt));
     return out;
   }
@@ -92,6 +106,18 @@ class TrashRepository {
               () => _db.clientsDao.undoDeleteWithDocuments(e.id, stamp),
             );
             return Restored(1 + docs);
+          case TrashKind.style:
+            final n =
+                await (_db.update(_db.documentStyles)..where(
+                      (t) => t.id.equals(e.id) & t.deletedAt.isNotNull(),
+                    ))
+                    .write(
+                      DocumentStylesCompanion(
+                        deletedAt: const Value(null),
+                        updatedAt: Value(_nowMs),
+                      ),
+                    );
+            return n == 0 ? const NotInTrash() : const Restored(1);
           case TrashKind.invoice || TrashKind.contract:
             final owner = await _clientRow(e.clientId!);
             if (owner?.deletedAt != null) {
@@ -164,6 +190,12 @@ class TrashRepository {
     final backup = await _backups.backupBefore('purge');
     await _db.transaction(() async {
       switch (e.kind) {
+        case TrashKind.style:
+          // Its logo asset is left to the unused-asset purge.
+          await (_db.delete(_db.documentStyles)..where(
+                (t) => t.id.equals(e.id) & t.deletedAt.isNotNull(),
+              ))
+              .go();
         case TrashKind.invoice:
           await (_db.delete(_db.invoices)..where(
                 (t) => t.id.equals(e.id) & t.deletedAt.isNotNull(),
@@ -206,6 +238,9 @@ class TrashRepository {
       )..where((t) => t.deletedAt.isNotNull())).go();
       await (_db.delete(
         _db.clients,
+      )..where((t) => t.deletedAt.isNotNull())).go();
+      await (_db.delete(
+        _db.documentStyles,
       )..where((t) => t.deletedAt.isNotNull())).go();
     });
     return backup;

@@ -8,7 +8,11 @@ import 'package:invoice_desk/domain/custom_style.dart';
 import 'package:invoice_desk/domain/document_style.dart';
 import 'package:invoice_desk/domain/document_style_presets.dart';
 import 'package:invoice_desk/domain/models.dart';
+import 'package:invoice_desk/domain/style_file.dart';
+import 'package:invoice_desk/domain/trash.dart';
 import 'package:meta/meta.dart';
+
+part 'style_editing.dart';
 
 /// What a document prints with: the resolved style and its logo.
 @immutable
