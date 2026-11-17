@@ -18,7 +18,7 @@ extension _Totals on _Builder {
           t(
             v,
             style: st(font: semi, color: color),
-            align: pw.TextAlign.right,
+            align: endAlign,
           ),
         ],
       ),
@@ -37,16 +37,16 @@ extension _Totals on _Builder {
           if (multi)
             for (final (i, sec) in inv.sections.indexed)
               line(
-                '${i + 1} · ${sec.titleEn.trim().isEmpty ? sec.currency.code : sec.titleEn.trim()}',
-                sec.subtotal.format(),
+                '${docNumber('${i + 1}')} · ${_sectionName(sec)}',
+                docNumber(sec.subtotal.format()),
               ),
           if (inv.vatOn)
             line(
-              '${labelEn.vat} (${formatBpAsPercent(inv.vatRateBp)}%)',
-              totals.vat.format(separator: '\n'),
+              '${label.vat} (${docNumber(formatBpAsPercent(inv.vatRateBp))}%)',
+              docNumber(totals.vat.format(separator: '\n')),
             )
           else
-            line(labelEn.vat, labelEn.vatNotApplicable, color: style.muted),
+            line(label.vat, label.vatNotApplicable, color: style.muted),
           pw.SizedBox(height: 6),
           pw.Container(
             padding: const pw.EdgeInsets.symmetric(
@@ -63,35 +63,18 @@ extension _Totals on _Builder {
             child: pw.Row(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Expanded(
-                  child: pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      t(
-                        labelEn.totalDue,
-                        style: st(size: 10, font: bold, color: style.onInk),
-                      ),
-                      t(
-                        labelAr.totalDue,
-                        style: st(
-                          size: 8,
-                          color: style.onInkMuted,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                pw.Expanded(child: _totalLabel()),
                 pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.end,
                   children: [
                     for (final m in totals.total.nonZero)
                       t(
-                        m.format(),
+                        docNumber(m.format()),
                         style: st(size: 13, font: bold, color: style.onInk),
                       ),
                     if (totals.total.isEmpty)
                       t(
-                        '0',
+                        docNumber('0'),
                         style: st(size: 13, font: bold, color: style.onInk),
                       ),
                   ],
@@ -114,12 +97,15 @@ extension _Totals on _Builder {
                 crossAxisAlignment: pw.CrossAxisAlignment.stretch,
                 children: [
                   if (en.isNotEmpty || ar.isNotEmpty) ...[
-                    bilingualLabel(labelEn.notes, labelAr.notes),
+                    blockLabel(label.notes, labelAr.notes),
                     pw.SizedBox(height: 6),
                   ],
-                  if (en.isNotEmpty) bullets(en, pw.TextDirection.ltr),
-                  if (en.isNotEmpty && ar.isNotEmpty) pw.SizedBox(height: 6),
-                  if (ar.isNotEmpty) bullets(ar, pw.TextDirection.rtl),
+                  if (en.isNotEmpty && !isArabic)
+                    bullets(en, pw.TextDirection.ltr),
+                  if (en.isNotEmpty && ar.isNotEmpty && !isArabic)
+                    pw.SizedBox(height: 6),
+                  if (ar.isNotEmpty && !isEnglish)
+                    bullets(ar, pw.TextDirection.rtl),
                 ],
               ),
             ),
@@ -129,17 +115,37 @@ extension _Totals on _Builder {
               children: [
                 totalsBox,
                 pw.SizedBox(height: 6),
-                t(
-                  labelEn.dueBy(
-                    formatDocDate(inv.effectiveDueDate, DocLanguage.en),
+                if (!isArabic)
+                  t(
+                    label.dueBy(docDate(inv.effectiveDueDate)),
+                    style: st(font: semi),
                   ),
-                  style: st(font: semi),
-                ),
-                arabicDueLine(),
+                if (!isEnglish) arabicDueLine(),
               ],
             ),
           ],
         ),
+      ],
+    );
+  }
+
+  /// The label of the total: the language's own, with the Arabic one as a
+  /// small secondary label in a bilingual document.
+  pw.Widget _totalLabel() {
+    if (!isBilingual) {
+      return t(
+        label.totalDue,
+        style: st(size: 10, font: bold, color: style.onInk),
+      );
+    }
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        t(
+          label.totalDue,
+          style: st(size: 10, font: bold, color: style.onInk),
+        ),
+        t(labelAr.totalDue, style: st(size: 8, color: style.onInkMuted)),
       ],
     );
   }
@@ -152,9 +158,9 @@ extension _Totals on _Builder {
       'مستحقة',
       'السداد',
       'في',
-      '${d.day}',
+      docNumber('${d.day}'),
       formatArabicDate(d).split(' ')[1],
-      '${d.year}',
+      docNumber('${d.year}'),
     ];
     return pw.Directionality(
       textDirection: pw.TextDirection.rtl,

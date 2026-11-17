@@ -6,6 +6,7 @@ import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/data/library_seed.dart';
 import 'package:invoice_desk/domain/contract_logic.dart';
 import 'package:invoice_desk/domain/contract_models.dart';
+import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/pdf/invoice_pdf.dart';
 
@@ -30,6 +31,7 @@ const sampleSettings = Settings(
   legalName: 'استوديو نموذج للبرمجيات',
   nationalIdOrRegistry: 'سجل تجاري رقم 000000',
   address: 'المنصورة، الدقهلية',
+  docDigitStyle: DigitStyle.arabicIndic,
 );
 
 const acme = Client(

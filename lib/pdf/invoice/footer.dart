@@ -7,7 +7,7 @@ extension _Footer on _Builder {
       s.website,
     ].where((e) => e.trim().isNotEmpty).join(' · ');
     return pw.Directionality(
-      textDirection: pw.TextDirection.ltr,
+      textDirection: dir,
       child: pw.Container(
         margin: const pw.EdgeInsets.only(top: 12),
         padding: const pw.EdgeInsets.only(top: 6),
@@ -22,7 +22,7 @@ extension _Footer on _Builder {
               child: t(left, style: st(size: 7.5, color: style.muted)),
             ),
             t(
-              '${inv.number}  ·  ${labelEn.pageOf('${context.pageNumber}', '${context.pagesCount}')}',
+              '${inv.number}  ·  ${label.pageOf(docNumber('${context.pageNumber}'), docNumber('${context.pagesCount}'))}',
               style: st(size: 7.5, color: style.muted),
             ),
           ],

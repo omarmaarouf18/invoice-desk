@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:invoice_desk/data/db.dart';
+import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:invoice_desk/pdf/invoice_pdf.dart';
 import '../helpers/legacy_seed.dart';
 
@@ -88,5 +89,38 @@ void main() {
       ),
     );
     expect(pages, greaterThan(1));
+  });
+
+  test('arabic invoice renders with Arabic labels and dates', () async {
+    final arData = InvoicePdfData(
+      invoice: data.invoice.copyWith(language: DocLanguage.ar),
+      client: data.client,
+      settings: data.settings.copyWith(docDigitStyle: DigitStyle.arabicIndic),
+    );
+    final (bytes, pages) = await render(arData);
+    expect(pages, 1);
+    expect(bytes.length, greaterThan(10000));
+  });
+
+  test('english invoice renders without Arabic secondaries', () async {
+    final enData = InvoicePdfData(
+      invoice: data.invoice.copyWith(language: DocLanguage.en),
+      client: data.client,
+      settings: data.settings,
+    );
+    final (bytes, pages) = await render(enData);
+    expect(pages, 1);
+    expect(bytes.length, greaterThan(10000));
+  });
+
+  test('empty payment methods omits payment card', () async {
+    final noPayData = InvoicePdfData(
+      invoice: data.invoice,
+      client: data.client,
+      settings: data.settings.copyWith(instapay: '', wallet: '', bankIban: ''),
+    );
+    final (bytes, pages) = await render(noPayData);
+    expect(pages, 1);
+    expect(bytes.length, greaterThan(10000));
   });
 }

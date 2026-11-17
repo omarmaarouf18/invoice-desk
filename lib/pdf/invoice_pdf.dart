@@ -87,7 +87,7 @@ pw.Document buildInvoiceDocument(
         theme: b.theme,
       )..addPage(
         pw.MultiPage(
-          pageTheme: b.pageTheme(pw.TextDirection.ltr),
+          pageTheme: b.pageTheme(b.dir),
           footer: b.footer,
           build: (_) => [
             b.header(),
@@ -107,7 +107,7 @@ pw.Document buildInvoiceDocument(
   if (data.invoice.scope.enabled) {
     doc.addPage(
       pw.MultiPage(
-        pageTheme: b.pageTheme(pw.TextDirection.rtl),
+        pageTheme: b.pageTheme(b.scopeDir),
         footer: b.footer,
         build: (_) => b.scopePage(),
       ),
@@ -119,7 +119,8 @@ pw.Document buildInvoiceDocument(
 class _Builder {
   _Builder(this.data, this.fonts, this.style)
     : inv = data.invoice,
-      s = data.settings;
+      s = data.settings,
+      lang = data.invoice.language;
 
   final InvoicePdfData data;
   final PdfFonts fonts;
@@ -127,11 +128,48 @@ class _Builder {
   /// Colours and page geometry.
   final PdfStyle style;
 
-  /// Main labels (an invoice is bilingual until document languages land).
-  DocLabels get labelEn => DocLabels.en;
+  /// The language the document is written in: the page, the labels and the
+  /// dates follow it, and it has nothing to do with the language of the
+  /// interface (ADR-0011).
+  final DocLanguage lang;
 
-  /// Secondary Arabic labels and the Arabic scope page.
+  /// The labels of the document's language; English for a bilingual one.
+  DocLabels get label => DocLabels.of(lang);
+
+  /// The Arabic labels: the main ones of an Arabic invoice, the small
+  /// secondary ones of a bilingual one.
   DocLabels get labelAr => DocLabels.ar;
+
+  /// The reading direction of the page.
+  pw.TextDirection get dir =>
+      lang.isRtl ? pw.TextDirection.rtl : pw.TextDirection.ltr;
+
+  /// The direction of the scope page: an Arabic one for an Arabic or a
+  /// bilingual invoice, an English one for an English invoice.
+  pw.TextDirection get scopeDir =>
+      lang == DocLanguage.en ? pw.TextDirection.ltr : pw.TextDirection.rtl;
+
+  /// The digits of the Arabic text.
+  DigitStyle get digits => s.docDigitStyle;
+
+  /// The document prints the Arabic secondary labels.
+  bool get isBilingual => lang == DocLanguage.bilingual;
+
+  /// The document is written in Arabic only.
+  bool get isArabic => lang == DocLanguage.ar;
+
+  /// The document is written in English only.
+  bool get isEnglish => lang == DocLanguage.en;
+
+  /// A label hugs the reading start: the left of an English page, the
+  /// right of an Arabic one.
+  pw.TextAlign get startAlign =>
+      lang.isRtl ? pw.TextAlign.right : pw.TextAlign.start;
+
+  /// A value hugs the reading end.
+  pw.TextAlign get endAlign =>
+      lang.isRtl ? pw.TextAlign.left : pw.TextAlign.right;
+
   final Invoice inv;
   final Settings s;
 
@@ -183,6 +221,31 @@ class _Builder {
     textAlign: align,
     textDirection: dir ?? _dirOf(text),
   );
+
+  /// The label of a block: the language's own, with the Arabic one as a
+  /// small secondary label in a bilingual document.
+  pw.Widget blockLabel(String en, String ar, {PdfColor? color}) {
+    final c = color ?? style.muted;
+    if (isBilingual) return bilingualLabel(en, ar, color: c);
+    return isArabic
+        ? t(
+            ar,
+            style: st(size: 8, font: semi, color: c),
+          )
+        : t(
+            en,
+            style: st(size: 7.5, font: bold, color: c, spacing: 0.8),
+          );
+  }
+
+  /// The date as the document prints it: the Arabic date and the
+  /// configured digits in an Arabic document, the English one otherwise.
+  String docDate(CalendarDate d) => formatDocDate(d, lang, digits: digits);
+
+  /// A number in the document's digits: the Arabic text uses the
+  /// configured style, the English text always uses Western digits.
+  String docNumber(String text) =>
+      isArabic ? applyDigitStyle(text, digits) : text;
 
   /// Latin label + Arabic label, e.g. `BILLED TO · العميل`.
   pw.Widget bilingualLabel(String en, String ar, {PdfColor? color}) {
