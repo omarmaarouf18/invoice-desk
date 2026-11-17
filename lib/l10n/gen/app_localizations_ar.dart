@@ -2108,7 +2108,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get presetMinimal => 'بسيط';
 
   @override
-  String get presetBold => 'جريء';
+  String get presetBold => 'بارز';
 
   @override
   String get presetFormal => 'رسمي';

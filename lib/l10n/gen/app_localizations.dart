@@ -3694,7 +3694,7 @@ abstract class AppLocalizations {
   /// No description provided for @presetBold.
   ///
   /// In ar, this message translates to:
-  /// **'جريء'**
+  /// **'بارز'**
   String get presetBold;
 
   /// No description provided for @presetFormal.
