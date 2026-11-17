@@ -96,6 +96,10 @@ These are the recommended defaults; the owner has not confirmed them yet. **Impl
 | 2026-11-17 | Phase 4 approved. Letter spacing applies to Latin runs only; every Arabic run uses 0 (fix before Phase 5, own commit) |
 | 2026-11-17 | Phase 7: in English contracts, Arabic values that contain numbers («سجل تجاري رقم 123456 القاهرة») must not wrap with the number alone on a line |
 | 2026-11-17 | Upstream `pdf` issue/PR: keep the text in ADR-0013 current with the patch; do not file it (owner decides) |
+| 2026-11-17 | STY-02 approved. Committed documents without a snapshot resolve to Classic and count as locked. Default styles live in Settings ahead of Phase 6 |
+| 2026-11-17 | Modern preset: darken its secondary text so every text/background pair passes 4.5:1; no pinned exception |
+| 2026-11-17 | Bold's Arabic name is «بارز». Deleting a style that drafts or clients use says how many in the confirm/undo message |
+| 2026-11-17 | Phase 8: add a colour palette/picker next to the hex fields in the style inspector |
 
 ## 5. Phased plan
 
@@ -257,6 +261,7 @@ Work phase by phase. At the end of each phase:
 
 - **B4:** replace the 1500 px threshold with a draggable split pane (min editor 560 px, min preview 380 px). Remember the ratio in `UiPrefs`. Side by side from ~1200 px.
 - **B5:** in calendar chips, put the number first inside a bidi isolate and use end-truncation.
+- **Colour picker (owner, 2026-11-17):** in the style inspector, a real colour picker next to each hex field. Today there is only a small swatch that opens a fixed 12-colour palette.
 - **Banners:** merge the two stacked ones («أكمل بياناتك», «اليوم: …») into one notification strip with an item count.
 - **First-run onboarding.** Steps:
   1. language;
