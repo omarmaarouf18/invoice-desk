@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Builds the macOS release and packages it as dist/InvoiceDesk-macOS.dmg
-# (macos-14 runner). Flutter release builds are universal (arm64 + x86_64);
+# (macos-15 runner). Flutter release builds are universal (arm64 + x86_64);
 # the architectures found are printed and written to dist/macos-archs.txt.
 #
 # Signing and notarization run only when every Apple secret is set

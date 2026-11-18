@@ -25,7 +25,7 @@ Agents never push, tag or publish; the commands in this file are the owner's.
    | arch | `archlinux:latest` container | `makepkg` from the tarball, as a non-root user | `namcap` |
    | install (×4) | `ubuntu:22.04`, `debian:12`, `fedora:latest`, `archlinux:latest` containers | — | install the package, launch headless 15 s, remove (`scripts/smoke_linux.sh`) |
    | windows | `windows-2022` | Inno Setup `.exe`, portable `.zip`, `.msix`; optional SignPath signing | bundled-DLL check; silent install → launch → uninstall, zip launch (`scripts/smoke_windows.ps1`) |
-   | macos | `macos-14` | universal `.app` → `.dmg`; optional Developer ID signing + notarization | `codesign`/`spctl` when signed; mount → launch → quit (`scripts/smoke_macos.sh`) |
+   | macos | `macos-15` | universal `.app` → `.dmg`; optional Developer ID signing + notarization | `codesign`/`spctl` when signed; mount → launch → quit (`scripts/smoke_macos.sh`) |
 
 3. **publish** downloads the release assets, writes `SHA256SUMS.txt` and `latest.json`, adds build-provenance attestations for every asset, optionally GPG-signs the checksums, and creates the **published** release with the CHANGELOG section as its notes. Then, optionally, it calls the portfolio deploy hook and opens a winget PR.
 

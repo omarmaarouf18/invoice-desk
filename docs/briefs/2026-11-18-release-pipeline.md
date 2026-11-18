@@ -218,3 +218,4 @@ Flutter can't cross-compile desktop apps: Windows builds need Windows, macOS bui
 |---|---|
 | 2026-11-18 | A local hook blocks `flutter create`; the owner chose to run it in a visible Terminal tab in a scratch folder and copy only `macos/` in. |
 | 2026-11-18 | Merge every branch into one `dev` branch and keep it; old branches deleted locally and on GitHub, PRs #1–#3 closed. `main` follows `dev` by fast-forward. |
+| 2026-11-18 | macOS builds on `macos-15`: GitHub no longer accepts `macos-14` (the first `main` run was cancelled with "configuration not supported"). |

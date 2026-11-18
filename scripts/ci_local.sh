@@ -113,7 +113,7 @@ fi
 case "$(uname -s)" in
   MINGW*|MSYS*|CYGWIN*) step "build windows" flutter build windows --release ;;
   Darwin) step "build macos" flutter build macos --release ;;
-  *) skip "build windows/macos" "CI-only (runs on windows-2022 / macos-14)" ;;
+  *) skip "build windows/macos" "CI-only (runs on windows-2022 / macos-15)" ;;
 esac
 
 printf '\n\033[1m══ ci_local summary ══\033[0m\n'
