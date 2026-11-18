@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invoice_desk/app/locale.dart';
+import 'package:invoice_desk/app/machine_prefs.dart';
 import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/app/shell.dart';
 import 'package:invoice_desk/features/actions.dart';
@@ -17,6 +18,10 @@ class InvoiceDeskApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final machine = ref.watch(machinePrefsProvider);
+    // Teal is the built-in palette itself, not a re-derived one.
+    final accent = machine.accent == UiAccent.teal ? null : machine.accent.seed;
+    final compact = machine.density == UiDensity.compact;
     return MaterialApp(
       title: 'Invoice Desk',
       debugShowCheckedModeBanner: false,
@@ -30,8 +35,16 @@ class InvoiceDeskApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       themeMode: ref.watch(themeModeProvider),
-      theme: buildTheme(Brightness.light),
-      darkTheme: buildTheme(Brightness.dark),
+      theme: buildTheme(
+        Brightness.light,
+        accent: accent,
+        compact: compact,
+      ),
+      darkTheme: buildTheme(
+        Brightness.dark,
+        accent: accent,
+        compact: compact,
+      ),
       themeAnimationDuration: Space.motion,
       home: home,
     );

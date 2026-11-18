@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invoice_desk/app/providers.dart';
+import 'package:invoice_desk/app/shortcuts.dart';
 import 'package:invoice_desk/features/actions.dart';
 import 'package:invoice_desk/features/calendar/banners.dart';
 import 'package:invoice_desk/features/calendar/calendar_page.dart';
@@ -54,36 +54,34 @@ class Shell extends ConsumerWidget {
       }
     }
 
-    SingleActivator ctrl(LogicalKeyboardKey k, {bool shift = false}) =>
-        SingleActivator(k, control: true, shift: shift);
-
     return CallbackShortcuts(
-      bindings: {
-        ctrl(LogicalKeyboardKey.keyN): a.newInvoice,
-        ctrl(LogicalKeyboardKey.keyN, shift: true): () =>
-            unawaited(a.newClient()),
-        ctrl(LogicalKeyboardKey.keyK, shift: true): () =>
-            unawaited(ca.newContract()),
-        ctrl(LogicalKeyboardKey.keyC, shift: true): () => ref
-            .read(calendarModeProvider.notifier)
-            .set(!ref.read(calendarModeProvider)),
-        ctrl(LogicalKeyboardKey.keyK): focusSearch,
-        ctrl(LogicalKeyboardKey.keyF): focusSearch,
-        ctrl(LogicalKeyboardKey.keyS): () => onContract()
-            ? unawaited(ref.read(contractProvider.notifier).flush())
-            : a.save(),
-        ctrl(LogicalKeyboardKey.keyE): () => unawaited(
-          onContract() ? ca.exportPdf() : a.exportPdf(),
-        ),
-        ctrl(LogicalKeyboardKey.keyD): () => unawaited(
-          onContract() ? ca.duplicate() : a.duplicate(),
-        ),
-        ctrl(LogicalKeyboardKey.keyR): () => unawaited(a.renew()),
-        ctrl(LogicalKeyboardKey.digit1): () =>
-            ref.read(previewTabProvider.notifier).set(false),
-        ctrl(LogicalKeyboardKey.digit2): () =>
-            ref.read(previewTabProvider.notifier).set(true),
-      },
+      bindings: shortcutBindings(
+        (s) => switch (s) {
+          AppShortcut.newInvoice => a.newInvoice,
+          AppShortcut.newClient => () => unawaited(a.newClient()),
+          AppShortcut.newContract => () => unawaited(ca.newContract()),
+          AppShortcut.toggleCalendar =>
+            () => ref
+                .read(calendarModeProvider.notifier)
+                .set(!ref.read(calendarModeProvider)),
+          AppShortcut.search || AppShortcut.find => focusSearch,
+          AppShortcut.save =>
+            () => onContract()
+                ? unawaited(ref.read(contractProvider.notifier).flush())
+                : a.save(),
+          AppShortcut.exportPdf => () => unawaited(
+            onContract() ? ca.exportPdf() : a.exportPdf(),
+          ),
+          AppShortcut.duplicate => () => unawaited(
+            onContract() ? ca.duplicate() : a.duplicate(),
+          ),
+          AppShortcut.renew => () => unawaited(a.renew()),
+          AppShortcut.editTab =>
+            () => ref.read(previewTabProvider.notifier).set(false),
+          AppShortcut.previewTab =>
+            () => ref.read(previewTabProvider.notifier).set(true),
+        },
+      ),
       child: Focus(
         autofocus: true,
         child: Scaffold(

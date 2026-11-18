@@ -125,17 +125,24 @@ TextTheme _textTheme(Color ink, Color muted) {
   );
 }
 
-ThemeData buildTheme(Brightness brightness) {
+/// The app theme. [accent] null is the built-in teal palette, exactly;
+/// another colour re-derives only the primary family from it. [compact]
+/// false gives controls standard Material spacing.
+ThemeData buildTheme(
+  Brightness brightness, {
+  Color? accent,
+  bool compact = true,
+}) {
   final dark = brightness == Brightness.dark;
   final colors = dark ? AppColors.dark : AppColors.light;
-  final accent = dark ? _tealDark : _teal;
+  final teal = dark ? _tealDark : _teal;
   final surface = dark ? const Color(0xFF111A27) : Colors.white;
   final background = dark ? const Color(0xFF0B121D) : const Color(0xFFF6F8FA);
   final ink = dark ? const Color(0xFFE6EBF1) : _ink;
 
-  final scheme = ColorScheme(
+  final base = ColorScheme(
     brightness: brightness,
-    primary: accent,
+    primary: teal,
     onPrimary: dark ? const Color(0xFF00201C) : Colors.white,
     primaryContainer: dark ? const Color(0xFF113F3A) : const Color(0xFFD6F1EE),
     onPrimaryContainer: dark
@@ -165,6 +172,7 @@ ThemeData buildTheme(Brightness brightness) {
     onInverseSurface: dark ? _ink : Colors.white,
     inversePrimary: dark ? _teal : _tealDark,
   );
+  final scheme = accent == null ? base : _withAccent(base, accent);
 
   final text = _textTheme(ink, colors.muted);
   final radius = BorderRadius.circular(Space.radiusSmall);
@@ -182,7 +190,7 @@ ThemeData buildTheme(Brightness brightness) {
     scaffoldBackgroundColor: background,
     canvasColor: surface,
     dividerColor: colors.border,
-    visualDensity: VisualDensity.compact,
+    visualDensity: compact ? VisualDensity.compact : VisualDensity.standard,
     materialTapTargetSize: MaterialTapTargetSize.padded,
     splashFactory: NoSplash.splashFactory,
     extensions: [colors],
@@ -211,7 +219,7 @@ ThemeData buildTheme(Brightness brightness) {
       border: inputBorder,
       enabledBorder: inputBorder,
       focusedBorder: inputBorder.copyWith(
-        borderSide: BorderSide(color: accent, width: 1.5),
+        borderSide: BorderSide(color: scheme.primary, width: 1.5),
       ),
       errorBorder: inputBorder.copyWith(
         borderSide: BorderSide(color: scheme.error),
@@ -222,7 +230,7 @@ ThemeData buildTheme(Brightness brightness) {
       prefixIconConstraints: const BoxConstraints(minWidth: 36, minHeight: 36),
       suffixIconConstraints: const BoxConstraints(minWidth: 36, minHeight: 36),
       labelStyle: text.bodyMedium?.copyWith(color: colors.muted),
-      floatingLabelStyle: text.bodyMedium?.copyWith(color: accent),
+      floatingLabelStyle: text.bodyMedium?.copyWith(color: scheme.primary),
       hintStyle: text.bodyMedium?.copyWith(color: colors.muted),
       errorStyle: text.bodySmall?.copyWith(color: scheme.error),
     ),
@@ -240,7 +248,7 @@ ThemeData buildTheme(Brightness brightness) {
         border: inputBorder,
         enabledBorder: inputBorder,
         focusedBorder: inputBorder.copyWith(
-          borderSide: BorderSide(color: accent, width: 1.5),
+          borderSide: BorderSide(color: scheme.primary, width: 1.5),
         ),
         errorBorder: inputBorder.copyWith(
           borderSide: BorderSide(color: scheme.error),
@@ -352,7 +360,8 @@ ThemeData buildTheme(Brightness brightness) {
             s.contains(WidgetState.selected) ? scheme.onPrimary : colors.muted,
       ),
       trackColor: WidgetStateProperty.resolveWith(
-        (s) => s.contains(WidgetState.selected) ? accent : colors.subtle,
+        (s) =>
+            s.contains(WidgetState.selected) ? scheme.primary : colors.subtle,
       ),
       trackOutlineColor: WidgetStatePropertyAll(colors.border),
     ),
@@ -374,3 +383,18 @@ ThemeData buildTheme(Brightness brightness) {
     Theme.of(context).brightness == Brightness.dark
     ? (bg: const Color(0xFF4A3A0A), fg: const Color(0xFFFFD27A))
     : (bg: const Color(0xFFFFE8A3), fg: const Color(0xFF7A4A00));
+
+/// [base] with its primary family taken from [seed] (Material tonal
+/// palette); surfaces, text and status colours stay the app's own.
+ColorScheme _withAccent(ColorScheme base, Color seed) {
+  final s = ColorScheme.fromSeed(seedColor: seed, brightness: base.brightness);
+  return base.copyWith(
+    primary: s.primary,
+    onPrimary: s.onPrimary,
+    primaryContainer: s.primaryContainer,
+    onPrimaryContainer: s.onPrimaryContainer,
+    secondaryContainer: s.primaryContainer,
+    onSecondaryContainer: s.onPrimaryContainer,
+    inversePrimary: s.inversePrimary,
+  );
+}

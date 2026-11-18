@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:invoice_desk/account/account.dart';
 import 'package:invoice_desk/app/app.dart';
 import 'package:invoice_desk/app/locale.dart';
+import 'package:invoice_desk/app/machine_prefs.dart';
 import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/app/ui_prefs.dart';
 import 'package:invoice_desk/data/app_paths.dart';
@@ -54,6 +55,7 @@ Future<ProviderContainer> pumpShell(
   ThemeMode mode = ThemeMode.light,
   Size size = const Size(1440, 900),
   UiLanguage language = UiLanguage.ar,
+  MachinePrefs? machine,
 }) async {
   tester.view
     ..physicalSize = size
@@ -62,6 +64,7 @@ Future<ProviderContainer> pumpShell(
   final prefs = UiPrefs.memory()
     ..themeMode = mode
     ..uiLanguage = language.name;
+  if (machine != null) prefs.machine = machine.toJson();
   final container = ProviderContainer(
     overrides: [
       databaseProvider.overrideWithValue(db),

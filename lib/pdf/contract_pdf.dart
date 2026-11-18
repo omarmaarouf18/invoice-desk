@@ -39,14 +39,6 @@ class ContractPdfData {
   final DocLanguage language;
 }
 
-/// `CT-2026-0001 - Acme Studio.pdf`
-String contractFileName(Contract c, Client? client) {
-  final name = (client?.name ?? '')
-      .replaceAll(RegExp(r'[\\/:*?"<>|]'), '')
-      .trim();
-  return name.isEmpty ? '${c.number}.pdf' : '${c.number} - $name.pdf';
-}
-
 /// The document heading: `عقد تطوير منصة`, `عرض سعر …`, `ملحق تعديل …`,
 /// in [lang] (Arabic unless given).
 String contractHeading(

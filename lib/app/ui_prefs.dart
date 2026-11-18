@@ -47,6 +47,13 @@ class UiPrefs {
   set uiLanguage(String? v) => _set('uiLanguage', v);
 
   /// Top-level switch: the calendar instead of invoices & contracts.
+  /// Machine-only Settings (SET-01), see `MachinePrefs`: a JSON map.
+  Map<String, Object?> get machine => switch (_data['machine']) {
+    final Map<String, Object?> m => m,
+    _ => const {},
+  };
+  set machine(Map<String, Object?> v) => _set('machine', v);
+
   /// The Settings section last shown (a `SettingsSection` name).
   String? get settingsSection => _data['settingsSection'] as String?;
   set settingsSection(String? v) => _set('settingsSection', v);

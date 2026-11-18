@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:invoice_desk/app/machine_prefs.dart';
 import 'package:invoice_desk/app/providers.dart';
 import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/domain/invoice_logic.dart';
@@ -266,9 +267,11 @@ class AppActions {
     final settings = await ref.read(settingsRepositoryProvider).get();
     final fonts = await ref.read(pdfFontsProvider.future);
     final prefs = ref.read(uiPrefsProvider);
+    final machine = ref.read(machinePrefsProvider);
     final location = await getSaveLocation(
-      suggestedName: invoiceFileName(inv, client),
-      initialDirectory: prefs.lastExportDir,
+      suggestedName:
+          '${pdfFileName(machine.pdfNamePattern, number: inv.number, client: client?.name ?? '', date: inv.issueDate.toIso())}.pdf',
+      initialDirectory: machine.exportFolder ?? prefs.lastExportDir,
       acceptedTypeGroups: const [
         XTypeGroup(label: 'PDF', extensions: ['pdf']),
       ],
@@ -288,6 +291,7 @@ class AppActions {
       return showSnack(l.exportFailed);
     }
     prefs.lastExportDir = p.dirname(path);
+    if (machine.openAfterExport) openPath(path);
     showSnack(
       l.exportedPdf(p.basename(path)),
       duration: const Duration(seconds: 8),

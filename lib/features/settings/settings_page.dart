@@ -5,7 +5,9 @@ import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invoice_desk/app/locale.dart';
+import 'package:invoice_desk/app/machine_prefs.dart';
 import 'package:invoice_desk/app/providers.dart';
+import 'package:invoice_desk/app/shortcuts.dart';
 import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/data/backup.dart';
@@ -33,6 +35,7 @@ part 'settings/calendar_cards.dart';
 part 'settings/form_cards.dart';
 part 'settings/general_card.dart';
 part 'settings/invoice_options_cards.dart';
+part 'settings/machine_cards.dart';
 part 'settings/settings_nav.dart';
 part 'settings/styles_card.dart';
 part 'settings/sync_card.dart';
@@ -150,7 +153,11 @@ class _SettingsFormState extends ConsumerState<_SettingsForm> {
   List<Widget> _sectionCards(SettingsSection section) {
     final s = _draft;
     final cards = switch (section) {
-      SettingsSection.general => const [_GeneralCard(), _AppearanceCard()],
+      SettingsSection.general => const [
+        _GeneralCard(),
+        _AppearanceCard(),
+        _ThisMachineCard(),
+      ],
       SettingsSection.profile => [_ProfileCard(s: s, update: _update)],
       SettingsSection.invoices => [
         _InvoicingCard(s: s, update: _update),
@@ -170,10 +177,11 @@ class _SettingsFormState extends ConsumerState<_SettingsForm> {
           settings: s,
           onDirChanged: (d) => _update((x) => x.copyWith(backupDir: d)),
         ),
+        const _PdfExportCard(),
         const _DemoCard(),
       ],
       SettingsSection.sync => const [_SyncCard()],
-      SettingsSection.about => const [_AboutCard()],
+      SettingsSection.about => const [_AboutCard(), _ShortcutsCard()],
     };
     return [
       for (final (i, c) in cards.indexed) ...[

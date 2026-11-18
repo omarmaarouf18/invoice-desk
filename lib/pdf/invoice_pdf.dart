@@ -82,16 +82,6 @@ class InvoicePdfData {
   final Settings settings;
 }
 
-/// `OM-2026-0001 - EL METR Academy.pdf`
-String invoiceFileName(Invoice invoice, Client? client) {
-  final name = (client?.name ?? '')
-      .replaceAll(RegExp(r'[\\/:*?"<>|]'), '')
-      .trim();
-  return name.isEmpty
-      ? '${invoice.number}.pdf'
-      : '${invoice.number} - $name.pdf';
-}
-
 final _arabic = RegExp(
   r'[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]',
 );

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invoice_desk/account/account.dart';
 import 'package:invoice_desk/app/desktop_notifier.dart';
+import 'package:invoice_desk/app/machine_prefs.dart';
 import 'package:invoice_desk/app/ui_prefs.dart';
 import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/data/providers.dart';
@@ -100,8 +101,15 @@ class WorkspaceNotifier extends Notifier<Workspace> {
 
 /// The top-level switch: الفواتير والعقود | التقويم, remembered.
 class CalendarModeNotifier extends Notifier<bool> {
+  /// Remembered, unless Settings asks to always start in the calendar.
   @override
-  bool build() => ref.read(uiPrefsProvider).calendarMode;
+  bool build() {
+    final prefs = ref.read(uiPrefsProvider);
+    final always =
+        MachinePrefs.fromJson(prefs.machine).startupView ==
+        StartupView.calendar;
+    return always || prefs.calendarMode;
+  }
 
   // ignore: avoid_positional_boolean_parameters, simple toggle
   void set(bool on) {
