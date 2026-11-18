@@ -13,6 +13,7 @@ import 'package:invoice_desk/data/db.steps.dart';
 import 'package:invoice_desk/data/seed.dart';
 import 'package:invoice_desk/data/tables.dart';
 import 'package:invoice_desk/data/tables_calendar.dart';
+import 'package:invoice_desk/data/tables_settings.dart';
 import 'package:invoice_desk/data/tables_styles.dart';
 import 'package:uuid/uuid.dart';
 

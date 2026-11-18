@@ -2,7 +2,7 @@ import 'package:clock/clock.dart';
 import 'package:drift/drift.dart';
 import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/data/db.dart';
-import 'package:invoice_desk/data/tables.dart';
+import 'package:invoice_desk/data/tables_settings.dart';
 import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:invoice_desk/domain/models.dart';
 
