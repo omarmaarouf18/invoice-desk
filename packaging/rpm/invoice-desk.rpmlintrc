@@ -1,0 +1,19 @@
+# rpmlint filters for the prebuilt Flutter bundle. Each one is a decision,
+# not noise; anything not listed here fails the packaging job.
+# /opt layout with a /usr/bin symlink (ADR-0007).
+addFilter("E: dir-or-file-in-opt")
+# $ORIGIN-relative RUNPATHs only; package_linux.sh refuses anything else (ADR-0006).
+addFilter("E: binary-or-shlib-defines-rpath")
+# Flutter engine/plugin/AOT libraries are dlopen()ed private files, shipped as
+# Flutter builds them: no SONAME, not executable, not stripped, no GNU hash.
+addFilter("E: invalid-soname")
+addFilter("W: no-soname")
+addFilter("E: shared-library-not-executable")
+addFilter("W: unstripped-binary-or-object")
+addFilter("W: missing-gnu-hash-section")
+# Flutter copies the same shader into two asset paths.
+addFilter("W: files-duplicate .*/flutter_assets/.*")
+# Stable asset name without the version (release decision R3).
+addFilter("W: non-coherent-filename invoice-desk.x86_64.rpm")
+# No open-source licence has been chosen (owner decision); fonts are OFL-1.1.
+addFilter("W: invalid-license LicenseRef-Proprietary")

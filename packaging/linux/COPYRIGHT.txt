@@ -1,0 +1,7 @@
+Invoice Desk
+Copyright (c) 2026 Omar Maarouf. All rights reserved.
+
+No licence is granted beyond running the distributed binaries.
+
+The bundled fonts are under the SIL Open Font License 1.1; their licence
+texts ship next to them in data/flutter_assets/assets/fonts/.

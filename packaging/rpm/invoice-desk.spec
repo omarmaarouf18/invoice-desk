@@ -17,10 +17,13 @@ Release:        1
 Summary:        Bilingual (Arabic/English) desktop invoicing for freelancers
 License:        LicenseRef-Proprietary AND OFL-1.1
 URL:            https://github.com/omarmaarouf18/invoice-desk
-Source0:        invoice-desk-%{version}-linux-x64.tar.gz
+Source0:        invoice-desk-linux-x64.tar.gz
 ExclusiveArch:  x86_64
 
 Requires:       gtk3
+# dlopen()ed by the Flutter engine at start-up (not visible to rpm's dependency scan)
+Requires:       libEGL.so.1()(64bit)
+Requires:       libGLESv2.so.2()(64bit)
 Requires:       hicolor-icon-theme
 
 %description
@@ -39,8 +42,12 @@ install -d %{buildroot}%{_bindir}
 ln -s /opt/invoice-desk/invoice_desk %{buildroot}%{_bindir}/invoice-desk
 install -Dm 0644 invoice-desk.desktop \
   %{buildroot}%{_datadir}/applications/invoice-desk.desktop
-install -Dm 0644 invoice-desk.png \
-  %{buildroot}%{_datadir}/icons/hicolor/256x256/apps/invoice-desk.png
+for size in 48 64 128 256; do
+  install -Dm 0644 icons/invoice-desk-${size}.png \
+    %{buildroot}%{_datadir}/icons/hicolor/${size}x${size}/apps/invoice-desk.png
+done
+install -d %{buildroot}%{_mandir}/man1
+gzip -9n -c invoice-desk.1 > %{buildroot}%{_mandir}/man1/invoice-desk.1.gz
 
 %post
 if [ -x %{_bindir}/update-desktop-database ]; then
@@ -64,7 +71,9 @@ fi
 /opt/invoice-desk
 %{_bindir}/invoice-desk
 %{_datadir}/applications/invoice-desk.desktop
-%{_datadir}/icons/hicolor/256x256/apps/invoice-desk.png
+%{_datadir}/icons/hicolor/*/apps/invoice-desk.png
+%{_mandir}/man1/invoice-desk.1*
+%license COPYRIGHT.txt
 
 %changelog
 * Mon Nov 16 2026 Omar Maarouf <omarmaarouf18@users.noreply.github.com> - 0.4.0-1

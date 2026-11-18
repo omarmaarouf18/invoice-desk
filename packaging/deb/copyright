@@ -1,0 +1,17 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Invoice Desk
+Upstream-Contact: Omar Maarouf <omarmaarouf18@users.noreply.github.com>
+Source: https://github.com/omarmaarouf18/invoice-desk
+
+Files: *
+Copyright: 2026 Omar Maarouf
+License: LicenseRef-Proprietary
+ All rights reserved. No licence is granted beyond running the
+ distributed binaries.
+
+Files: opt/invoice-desk/data/flutter_assets/assets/fonts/*
+Copyright: IBM Corp. (IBM Plex Sans Arabic); The Noto Project Authors (Noto Naskh Arabic)
+License: OFL-1.1
+ The full licence texts ship next to the fonts, in
+ /opt/invoice-desk/data/flutter_assets/assets/fonts/OFL.txt and
+ NotoNaskhArabic-OFL.txt.

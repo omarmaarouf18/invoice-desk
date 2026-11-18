@@ -1,0 +1,17 @@
+Package: invoice-desk
+Version: @VERSION@
+Architecture: amd64
+Maintainer: Omar Maarouf <omarmaarouf18@users.noreply.github.com>
+Installed-Size: @SIZE@
+Depends: @DEPENDS@
+Recommends: libnotify-bin, xdg-utils
+Section: misc
+Priority: optional
+Homepage: https://github.com/omarmaarouf18/invoice-desk
+Description: Bilingual (Arabic/English) desktop invoicing for freelancers
+ Invoice Desk keeps every client, invoice, contract and quote in one offline
+ SQLite database, with an Arabic right-to-left or English interface,
+ bilingual documents and vector A4 PDF export.
+ .
+ User data lives in the home directory and is never touched by installing,
+ upgrading or removing this package.

@@ -1,0 +1,41 @@
+# Maintainer: Omar Maarouf <omarmaarouf18 at users dot noreply dot github dot com>
+#
+# AUR-ready binary package built from the release tarball. The release
+# pipeline (scripts/package_arch.sh) fills pkgver and sha256sums for each
+# release and uploads the filled PKGBUILD and .SRCINFO as a workflow
+# artifact; the committed values are those of the last release prepared.
+pkgname=invoice-desk-bin
+pkgver=0.4.0
+pkgrel=1
+pkgdesc='Bilingual (Arabic/English) desktop invoicing for freelancers'
+arch=('x86_64')
+url='https://github.com/omarmaarouf18/invoice-desk'
+license=('LicenseRef-Proprietary' 'OFL-1.1')
+depends=('gtk3' 'glib2' 'glibc' 'libgcc' 'libstdc++' 'pango' 'cairo' 'harfbuzz' 'gdk-pixbuf2' 'at-spi2-core' 'fontconfig' 'libepoxy' 'libglvnd' 'hicolor-icon-theme')
+optdepends=('libnotify: desktop reminders'
+            'xdg-utils: open exported files')
+provides=('invoice-desk')
+conflicts=('invoice-desk')
+options=('!strip' '!debug')
+source=("invoice-desk-${pkgver}-linux-x64.tar.gz::${url}/releases/download/v${pkgver}/invoice-desk-linux-x64.tar.gz")
+sha256sums=('SKIP')
+
+package() {
+  cd "invoice-desk-${pkgver}-linux-x64"
+  install -d "${pkgdir}/opt/invoice-desk"
+  cp -a invoice_desk lib data "${pkgdir}/opt/invoice-desk/"
+  install -d "${pkgdir}/usr/bin"
+  ln -s /opt/invoice-desk/invoice_desk "${pkgdir}/usr/bin/invoice-desk"
+  install -Dm644 invoice-desk.desktop "${pkgdir}/usr/share/applications/invoice-desk.desktop"
+  local size
+  for size in 48 64 128 256; do
+    install -Dm644 "icons/invoice-desk-${size}.png" \
+      "${pkgdir}/usr/share/icons/hicolor/${size}x${size}/apps/invoice-desk.png"
+  done
+  install -Dm644 invoice-desk.1 "${pkgdir}/usr/share/man/man1/invoice-desk.1"
+  install -Dm644 COPYRIGHT.txt "${pkgdir}/usr/share/licenses/${pkgname}/COPYRIGHT"
+  install -Dm644 data/flutter_assets/assets/fonts/OFL.txt \
+    "${pkgdir}/usr/share/licenses/${pkgname}/OFL-IBMPlexSansArabic.txt"
+  install -Dm644 data/flutter_assets/assets/fonts/NotoNaskhArabic-OFL.txt \
+    "${pkgdir}/usr/share/licenses/${pkgname}/OFL-NotoNaskhArabic.txt"
+}

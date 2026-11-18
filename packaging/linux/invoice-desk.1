@@ -1,0 +1,19 @@
+.TH INVOICE-DESK 1 "2026-11-18" "Invoice Desk" "User Commands"
+.SH NAME
+invoice-desk \- bilingual (Arabic/English) desktop invoicing for freelancers
+.SH SYNOPSIS
+.B invoice-desk
+.SH DESCRIPTION
+Invoice Desk keeps clients, invoices, contracts and quotes in one offline
+SQLite database and exports vector A4 PDFs. It has no account, no cloud and
+no network access.
+.SH ENVIRONMENT
+.TP
+.B INVOICE_DESK_DATA_DIR
+Use this folder for the database, settings and default backups instead of
+the per-user data folder. Useful for trying the app on throwaway data.
+.SH FILES
+.TP
+.I ~/.local/share/me.omarmaarouf.invoice_desk/
+The database, settings and default backups. Installing, upgrading or
+removing the package never touches it.

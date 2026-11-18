@@ -1,0 +1,13 @@
+# Invoice Desk is a prebuilt, self-contained Flutter bundle. Each override is
+# a decision (ADR-0006, ADR-0007, AGENTS.md rule 14), not noise.
+# The bundle lives in /opt like the RPM, with a /usr/bin symlink.
+invoice-desk: dir-or-file-in-opt *
+# Flutter engine, AOT and plugin libraries are private, dlopen()ed files,
+# shipped exactly as Flutter builds them (with their statically linked
+# freetype/libjpeg/pdfium parts).
+invoice-desk: embedded-library *
+invoice-desk: shared-library-lacks-prerequisites *
+invoice-desk: unstripped-binary-or-object *
+invoice-desk: hardening-no-pie *
+# Fonts are bundled only, so PDFs look the same on every machine.
+invoice-desk: duplicate-font-file *
