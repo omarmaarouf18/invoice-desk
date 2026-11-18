@@ -59,6 +59,23 @@ String formatDocDate(
     ? applyDigitStyle(formatArabicDate(d), digits)
     : formatInvoiceDate(d);
 
+/// The date as a document prints it in [format]: [formatDocDate] for
+/// [DocDateFormat.long]; `14/09/2026` for [DocDateFormat.numeric], with
+/// [digits] applied in Arabic documents only.
+String formatDocDateAs(
+  CalendarDate d,
+  DocLanguage lang,
+  DocDateFormat format, {
+  DigitStyle digits = DigitStyle.western,
+}) {
+  if (format == DocDateFormat.long) {
+    return formatDocDate(d, lang, digits: digits);
+  }
+  String two(int n) => n.toString().padLeft(2, '0');
+  final text = '${two(d.day)}/${two(d.month)}/${d.year}';
+  return lang == DocLanguage.ar ? applyDigitStyle(text, digits) : text;
+}
+
 /// Day and month only: `14 سبتمبر` / `14 Sep`.
 String formatDocDayMonth(
   CalendarDate d,
@@ -170,3 +187,49 @@ String formatDocMoney(
   '${formatAmount(minor, c)} ${currencyName(c, lang)}',
   digits,
 );
+
+// ── Currency display ──────────────────────────────────────────────────────
+
+/// The Arabic symbol written after an amount in an Arabic document under
+/// [CurrencyDisplay.local]; null for currencies printed with `$` / `€`.
+String? arabicCurrencySymbol(Currency c) => switch (c) {
+  Currency.egp => 'ج.م',
+  Currency.sar => 'ر.س',
+  Currency.aed => 'د.إ',
+  Currency.usd || Currency.eur => null,
+};
+
+/// [minor] in [c] as a document prints it, before digit styling.
+///
+/// [CurrencyDisplay.code] is exactly [formatMoney] (every document before
+/// schema v8). [CurrencyDisplay.local] writes `22,000 ج.م` in Arabic
+/// documents and falls back to the code rule in English and bilingual ones.
+/// [CurrencyDisplay.symbol] prefixes `$` / `€` and uses the code otherwise.
+String formatDocCurrency(
+  int minor,
+  Currency c,
+  DocLanguage lang,
+  CurrencyDisplay display,
+) {
+  final arabic = display == CurrencyDisplay.local && lang == DocLanguage.ar;
+  final local = arabic ? arabicCurrencySymbol(c) : null;
+  if (local == null) return formatMoney(minor, c);
+  final sign = minor < 0 ? '-' : '';
+  return '$sign${formatAmount(minor.abs(), c)} $local';
+}
+
+/// Per-currency totals as [formatDocCurrency] writes each one, never summed
+/// across currencies.
+String formatDocCurrencyBag(
+  MoneyBag bag,
+  DocLanguage lang,
+  CurrencyDisplay display, {
+  String separator = ' + ',
+  String empty = '0',
+}) {
+  final list = bag.nonZero;
+  if (list.isEmpty) return empty;
+  return list
+      .map((m) => formatDocCurrency(m.minor, m.currency, lang, display))
+      .join(separator);
+}

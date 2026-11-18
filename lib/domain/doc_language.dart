@@ -59,6 +59,51 @@ enum DigitStyle {
       code == arabicIndic.code ? arabicIndic : western;
 }
 
+/// How dates are printed on documents (Settings → Invoices). Stored as
+/// [code].
+enum DocDateFormat {
+  /// `14 Sep 2026` / `14 سبتمبر 2026`: the default, and every document
+  /// before schema v8.
+  long('long'),
+
+  /// `14/09/2026`, day first in every language.
+  numeric('numeric');
+
+  const DocDateFormat(this.code);
+
+  /// Storage value.
+  final String code;
+
+  /// [code] back to a format; unknown or null is [long].
+  static DocDateFormat fromCode(String? code) =>
+      code == numeric.code ? numeric : long;
+}
+
+/// How a currency is written next to an amount on documents. Stored as
+/// [code].
+enum CurrencyDisplay {
+  /// `22,000 EGP`, `$255.50`: the default, and every document before
+  /// schema v8.
+  code('code'),
+
+  /// Arabic symbols in Arabic documents (`22,000 ج.م`, `ر.س`, `د.إ`; `$`
+  /// and `€` as they are); English and bilingual documents use [code].
+  local('local'),
+
+  /// `$` / `€` where the currency has a symbol, else the code.
+  symbol('symbol');
+
+  const CurrencyDisplay(this.dbValue);
+
+  /// Storage value.
+  final String dbValue;
+
+  /// [value] back to a display; unknown or null is [CurrencyDisplay.code].
+  static CurrencyDisplay fromDb(String? value) =>
+      CurrencyDisplay.values.where((d) => d.dbValue == value).firstOrNull ??
+      CurrencyDisplay.code;
+}
+
 /// Resolves the language a new document starts in (D7): the document's own
 /// choice, else the client's preference, else the global default.
 DocLanguage resolveDocLanguage({
