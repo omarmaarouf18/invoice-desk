@@ -79,12 +79,17 @@ else
   skip "osv-scanner" "not installed (CI downloads v2.0.2, checksum-pinned)"
 fi
 step "licences (no GPL/AGPL shipped)" dart run tool/check_licenses.dart
+if command -v actionlint >/dev/null; then
+  step "workflows (actionlint)" actionlint
+else
+  skip "actionlint" "not installed (go install github.com/rhysd/actionlint/cmd/actionlint@latest)"
+fi
 
 # 7. build & package (Linux)
 if [[ $PACKAGE == 1 ]]; then
-  step "package (tarball, AppImage, RPM, RUNPATH guard)" ./scripts/package_linux.sh
+  step "package (tarball, AppImage, RPM, deb, RUNPATH guard)" ./scripts/package_linux.sh
   if command -v rpmlint >/dev/null && ls dist/*.rpm >/dev/null 2>&1; then
-    rpmlint dist/*.rpm >"$LOG/rpmlint.txt" 2>&1 || true
+    rpmlint -r packaging/rpm/invoice-desk.rpmlintrc dist/*.rpm >"$LOG/rpmlint.txt" 2>&1 || true
     results+=("INFO  rpmlint: $(tail -n 1 "$LOG/rpmlint.txt")")
   fi
   smoke() {

@@ -1,9 +1,13 @@
 name: CI
 
-# Required on main (ruleset "protect-main"): quality, tests, build-linux.
+# Required on main (ruleset "protect-main"): quality, tests, build.
+# Every branch and PR: quality, codegen, schema, tests + coverage, goldens,
+# security and a Linux build with a smoke run. Pushes to main also build and
+# smoke-test every package for every target (package.yml) as 14-day
+# artifacts, so a release is never the first time a package is built.
 on:
   push:
-    branches: [main, release-packaging]
+    branches: ["**"]
   pull_request:
 
 permissions:
@@ -166,71 +170,43 @@ jobs:
 
   build-linux:
     name: build
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-      - name: Linux build and packaging dependencies
+      - name: Linux build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev \
-            liblzma-dev patchelf rpm rpmlint xvfb file desktop-file-utils
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev xvfb xauth
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
       - run: flutter pub get
-      - name: Build and package (tarball, AppImage, RPM; RUNPATH guard inside)
-        env:
-          APPIMAGE_EXTRACT_AND_RUN: "1"
-        run: ./scripts/package_linux.sh
-      - name: rpmlint (report only; known categories are accepted, see ADR 0006/0007)
-        run: rpmlint dist/*.rpm | tee rpmlint.txt || true
-      - name: Smoke run (10 s, temp data dir, fail on Dart exceptions)
+      - run: flutter build linux --release
+      - name: Smoke run (15 s, temp data dir, fail on Dart exceptions)
         run: |
           T=$(mktemp -d)
-          INVOICE_DESK_DATA_DIR=$T timeout 10 xvfb-run -a build/linux/x64/release/bundle/invoice_desk > smoke.log 2>&1 || true
+          set +e
+          INVOICE_DESK_DATA_DIR=$T xvfb-run -a timeout -s TERM 15 build/linux/x64/release/bundle/invoice_desk > smoke.log 2>&1
+          rc=$?
+          set -e
           cat smoke.log
+          test "$rc" -eq 124 || { echo "::error::app exited early (exit $rc)"; exit 1; }
           test -f "$T/invoice_desk.sqlite" || { echo "::error::database was not created"; exit 1; }
           if grep -E "Unhandled Exception|\[ERROR:flutter|Exception caught by" smoke.log; then
             echo "::error::Dart exception during smoke run"; exit 1
           fi
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: linux-packages
-          path: |
-            dist/*.tar.gz
-            dist/*.AppImage
-            dist/*.rpm
-            dist/SHA256SUMS.txt
-            rpmlint.txt
-          retention-days: 7
 
-  build-windows:
-    name: build (windows)
-    runs-on: windows-2022
-    timeout-minutes: 40
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: stable
-          cache: true
-      - run: flutter pub get
-      - run: flutter build windows --release
-
-  build-macos:
-    name: build (macos)
-    runs-on: macos-14
-    timeout-minutes: 40
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: stable
-          cache: true
-      - run: flutter pub get
-      - run: flutter build macos --release
+  packages:
+    name: packages
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      actions: read
+    uses: ./.github/workflows/package.yml
+    with:
+      sign: false
+      retention-days: 14
+    secrets: inherit

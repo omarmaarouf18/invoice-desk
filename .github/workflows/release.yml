@@ -1,72 +1,193 @@
 name: Release
 
+# The owner pushes a vX.Y.Z tag on main; everything after that is automatic
+# (docs/RELEASING.md). Nothing is published unless verify, every package
+# build and every smoke test pass. workflow_dispatch with dry_run=true (the
+# default) runs everything except creating the release; dry_run=false is
+# only accepted when dispatched on a tag (to re-run a failed release).
 on:
   push:
     tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Build, sign, check and attest, but do not create the release
+        type: boolean
+        default: true
 
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
 
 env:
   FLUTTER_VERSION: "3.44.6"
 
 jobs:
-  linux:
-    name: linux-release
+  verify:
+    name: verify
     runs-on: ubuntu-24.04
-    timeout-minutes: 40
+    timeout-minutes: 15
+    outputs:
+      version: ${{ steps.check.outputs.version }}
+      tag: ${{ steps.check.outputs.tag }}
+      dry_run: ${{ steps.check.outputs.dry_run }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-
-      - name: Install Linux build and packaging dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev \
-            rpm desktop-file-utils file patchelf
-
+        with:
+          fetch-depth: 0
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
-
-      - name: Set version from tag
-        id: version
-        run: |
-          tag="${GITHUB_REF_NAME}"
-          version="${tag#v}"
-          [[ "${version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "tag ${tag} is not vX.Y.Z"; exit 1; }
-          sed -i "s/^version:.*/version: ${version}+${GITHUB_RUN_NUMBER}/" pubspec.yaml
-          grep '^version:' pubspec.yaml
-          echo "version=${version}" >> "$GITHUB_OUTPUT"
-
       - run: flutter pub get
-
-      - name: Validate desktop file
-        run: desktop-file-validate packaging/linux/invoice-desk.desktop
-
-      - name: Build and package (tarball, AppImage, RPM, checksums)
+      - name: Tag, pubspec, CHANGELOG and main
+        id: check
         env:
-          VERSION: ${{ steps.version.outputs.version }}
-          BUILD_NUMBER: ${{ github.run_number }}
-        run: ./scripts/package_linux.sh
+          EVENT: ${{ github.event_name }}
+          DRY_RUN_INPUT: ${{ inputs.dry_run }}
+        run: |
+          if [[ "$EVENT" == "push" ]]; then
+            dry_run=false
+          else
+            dry_run="$DRY_RUN_INPUT"
+          fi
+          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
+            tag="$GITHUB_REF_NAME"
+          elif [[ "$dry_run" == "true" ]]; then
+            # A dry run on a branch rehearses the release of its pubspec version.
+            tag="v$(sed -n 's/^version:[[:space:]]*\([0-9.]*\).*/\1/p' pubspec.yaml)"
+          else
+            echo "::error::a real release needs a tag: push vX.Y.Z on main (dispatch dry_run=false only from a tag)"
+            exit 1
+          fi
+          version="$(dart tool/release.dart verify --tag "$tag")"
+          git fetch --quiet origin main
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main || {
+            echo "::error::$GITHUB_SHA is not on main; tag a commit that main contains"
+            exit 1
+          }
+          {
+            echo "version=$version"
+            echo "tag=$tag"
+            echo "dry_run=$dry_run"
+          } >> "$GITHUB_OUTPUT"
+          echo "Release $tag (version $version), dry run: $dry_run" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Upload packaging logs
-        if: always()
+  package:
+    name: package
+    needs: verify
+    permissions:
+      contents: read
+      actions: read
+    uses: ./.github/workflows/package.yml
+    with:
+      sign: true
+      retention-days: 7
+    secrets: inherit
+
+  publish:
+    name: publish
+    needs: [verify, package]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write # create the release
+      id-token: write # attestations
+      attestations: write
+    env:
+      VERSION: ${{ needs.verify.outputs.version }}
+      TAG: ${{ needs.verify.outputs.tag }}
+      DRY_RUN: ${{ needs.verify.outputs.dry_run }}
+      HAS_GPG: ${{ secrets.GPG_PRIVATE_KEY != '' }}
+      HAS_PORTFOLIO_HOOK: ${{ secrets.PORTFOLIO_DEPLOY_HOOK != '' }}
+      HAS_WINGET: ${{ secrets.WINGET_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          pattern: pkg-*
+          merge-multiple: true
+          path: dist
+      - name: SHA256SUMS.txt, latest.json and release notes
+        run: |
+          cd dist
+          sha256sum -- * > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+          cd ..
+          dart tool/release.dart manifest --dir dist --version "$VERSION" \
+            --repo "$GITHUB_REPOSITORY" --date "$(date -u +%F)"
+          dart tool/release.dart notes --version "$VERSION" > notes.md
+          {
+            echo "## Invoice Desk $VERSION"
+            echo
+            cat notes.md
+            echo
+            echo '```'
+            cat dist/SHA256SUMS.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Sign the checksums (GPG, optional)
+        if: env.HAS_GPG == 'true'
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          export GNUPGHOME="$RUNNER_TEMP/gnupg"
+          mkdir -m 700 "$GNUPGHOME"
+          printf '%s\n' "$GPG_PRIVATE_KEY" | gpg --batch --quiet --import
+          gpg --batch --yes --armor --detach-sign --output dist/SHA256SUMS.txt.asc dist/SHA256SUMS.txt
+          gpg --batch --verify dist/SHA256SUMS.txt.asc dist/SHA256SUMS.txt
+          rm -rf "$GNUPGHOME"
+      - name: Build provenance attestations
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: |
+            dist/InvoiceDesk-Setup-x64.exe
+            dist/InvoiceDesk-Windows-x64.zip
+            dist/InvoiceDesk-macOS.dmg
+            dist/invoice-desk_amd64.deb
+            dist/invoice-desk.x86_64.rpm
+            dist/invoice-desk-x86_64.pkg.tar.zst
+            dist/InvoiceDesk-x86_64.AppImage
+            dist/invoice-desk-linux-x64.tar.gz
+      - name: Keep what would be published (dry run)
+        if: env.DRY_RUN == 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: packaging-logs
-          path: dist/stage/*.log
-          if-no-files-found: ignore
-
-      - name: Create draft release
+          name: release-preview
+          path: |
+            dist/
+            notes.md
+          retention-days: 7
+      - name: Create the published release
+        if: env.DRY_RUN != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-          VERSION: ${{ steps.version.outputs.version }}
         run: |
-          files=()
-          for f in dist/*.tar.gz dist/*.AppImage dist/*.rpm dist/SHA256SUMS.txt; do
-            [[ -f "$f" ]] && files+=("$f")
-          done
-          gh release create "${GITHUB_REF_NAME}" "${files[@]}" \
-            --draft --title "Invoice Desk ${VERSION}" --generate-notes
+          gh release create "$TAG" dist/* \
+            --verify-tag --latest \
+            --title "Invoice Desk $VERSION" \
+            --notes-file notes.md
+          echo "Published https://github.com/$GITHUB_REPOSITORY/releases/tag/$TAG" >> "$GITHUB_STEP_SUMMARY"
+      - name: Portfolio deploy hook (optional)
+        if: env.DRY_RUN != 'true' && env.HAS_PORTFOLIO_HOOK == 'true'
+        env:
+          HOOK: ${{ secrets.PORTFOLIO_DEPLOY_HOOK }}
+        run: curl -fsS -X POST --max-time 30 -o /dev/null "$HOOK"
+      - name: winget pull request (optional)
+        if: env.DRY_RUN != 'true' && env.HAS_WINGET == 'true'
+        uses: vedantmgoyal9/winget-releaser@b7370d4d152efdce803a26cc6ca9eee58cb2ad54 # v2
+        with:
+          identifier: OmarMaarouf.InvoiceDesk
+          installers-regex: 'InvoiceDesk-Setup-x64\.exe$'
+          release-tag: ${{ needs.verify.outputs.tag }}
+          token: ${{ secrets.WINGET_TOKEN }}

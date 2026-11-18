@@ -1,0 +1,245 @@
+name: Package
+
+# Builds and smoke-tests every package for every target (docs/RELEASING.md).
+# Called by ci.yml on pushes to main (unsigned, artifacts only) and by
+# release.yml (signed when the secrets exist). Never publishes anything.
+#
+# Artifacts:
+#   pkg-linux, pkg-arch, pkg-windows, pkg-macos   the release assets
+#   windows-msix                                  Store submission only
+#   aur-pkgbuild                                  filled PKGBUILD + .SRCINFO
+on:
+  workflow_call:
+    inputs:
+      sign:
+        description: Sign (SignPath, Apple) when the secrets exist
+        type: boolean
+        default: false
+      retention-days:
+        type: number
+        default: 14
+
+permissions:
+  contents: read
+
+env:
+  FLUTTER_VERSION: "3.44.6"
+
+jobs:
+  linux:
+    name: linux packages
+    # glibc 2.35: runs on Debian 12 / Ubuntu 22.04 and newer (decision R4).
+    runs-on: ubuntu-22.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Build and packaging dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev \
+            patchelf rpm rpmlint dpkg-dev lintian desktop-file-utils file xvfb xauth
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Validate desktop file
+        run: desktop-file-validate packaging/linux/invoice-desk.desktop
+      - name: Build once, package tarball, AppImage, RPM and deb
+        env:
+          MAX_GLIBC: "2.35"
+          APPIMAGE_EXTRACT_AND_RUN: "1"
+        run: ./scripts/package_linux.sh
+      - name: Every Linux asset was built
+        run: |
+          for f in invoice-desk-linux-x64.tar.gz InvoiceDesk-x86_64.AppImage invoice-desk.x86_64.rpm invoice-desk_amd64.deb; do
+            test -s "dist/$f" || { echo "::error::missing dist/$f"; exit 1; }
+          done
+      - name: rpmlint (accepted findings are filtered in the rpmlintrc)
+        run: rpmlint -r packaging/rpm/invoice-desk.rpmlintrc dist/invoice-desk.x86_64.rpm
+      - name: lintian (accepted findings are package overrides)
+        run: lintian --fail-on error,warning dist/invoice-desk_amd64.deb
+      - name: Smoke run (tarball)
+        run: ./scripts/smoke_linux.sh dist/invoice-desk-linux-x64.tar.gz
+      - name: Smoke run (AppImage)
+        run: ./scripts/smoke_linux.sh dist/InvoiceDesk-x86_64.AppImage
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: pkg-linux
+          path: |
+            dist/invoice-desk-linux-x64.tar.gz
+            dist/InvoiceDesk-x86_64.AppImage
+            dist/invoice-desk.x86_64.rpm
+            dist/invoice-desk_amd64.deb
+          if-no-files-found: error
+          retention-days: ${{ inputs.retention-days }}
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: failure()
+        with:
+          name: linux-packaging-logs
+          path: dist/stage/*.log
+          if-no-files-found: ignore
+          retention-days: ${{ inputs.retention-days }}
+
+  arch:
+    name: arch package
+    needs: linux
+    runs-on: ubuntu-24.04
+    container: archlinux:latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: pkg-linux
+          path: dist
+      - name: makepkg (as a non-root user) and namcap
+        run: bash scripts/package_arch.sh dist
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: pkg-arch
+          path: dist/invoice-desk-x86_64.pkg.tar.zst
+          if-no-files-found: error
+          retention-days: ${{ inputs.retention-days }}
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: aur-pkgbuild
+          path: |
+            dist/aur/PKGBUILD
+            dist/aur/.SRCINFO
+          include-hidden-files: true
+          retention-days: ${{ inputs.retention-days }}
+
+  linux-install:
+    name: install ${{ matrix.image }}
+    needs: [linux, arch]
+    runs-on: ubuntu-24.04
+    container: ${{ matrix.image }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { image: "ubuntu:22.04", package: invoice-desk_amd64.deb }
+          - { image: "debian:12", package: invoice-desk_amd64.deb }
+          - { image: "fedora:latest", package: invoice-desk.x86_64.rpm }
+          - { image: "archlinux:latest", package: invoice-desk-x86_64.pkg.tar.zst }
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          pattern: pkg-{linux,arch}
+          merge-multiple: true
+          path: dist
+      - name: Install, launch headless, remove
+        run: bash scripts/smoke_linux.sh "dist/${{ matrix.package }}"
+
+  windows:
+    name: windows packages
+    runs-on: windows-2022
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      actions: read # SignPath downloads the unsigned artifact
+    env:
+      HAS_SIGNPATH: ${{ inputs.sign && secrets.SIGNPATH_API_TOKEN != '' && vars.SIGNPATH_ORGANIZATION_ID != '' }}
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Build once; installer, portable zip, MSIX
+        env:
+          MSIX_IDENTITY_NAME: ${{ vars.MSIX_IDENTITY_NAME }}
+          MSIX_PUBLISHER: ${{ vars.MSIX_PUBLISHER }}
+          MSIX_PUBLISHER_DISPLAY_NAME: ${{ vars.MSIX_PUBLISHER_DISPLAY_NAME }}
+        run: ./scripts/package_windows.ps1
+
+      # ── optional code signing (decision R6) ─────────────────────────────
+      - name: Upload the unsigned installer for SignPath
+        id: unsigned
+        if: env.HAS_SIGNPATH == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: windows-unsigned
+          path: dist/InvoiceDesk-Setup-x64.exe
+          retention-days: 1
+      - name: Sign with SignPath
+        if: env.HAS_SIGNPATH == 'true'
+        uses: signpath/github-action-submit-signing-request@c92b958760219087e01f8d67a1669ed57afe2627 # v2
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+          signing-policy-slug: ${{ vars.SIGNPATH_SIGNING_POLICY_SLUG }}
+          github-artifact-id: ${{ steps.unsigned.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: dist-signed
+      - name: Use the signed installer
+        if: env.HAS_SIGNPATH == 'true'
+        run: |
+          Copy-Item dist-signed/InvoiceDesk-Setup-x64.exe dist/InvoiceDesk-Setup-x64.exe -Force
+          $sig = Get-AuthenticodeSignature dist/InvoiceDesk-Setup-x64.exe
+          if ($sig.Status -ne 'Valid') { throw "signature status: $($sig.Status)" }
+          Write-Host "signed by $($sig.SignerCertificate.Subject)"
+      - name: Unsigned
+        if: env.HAS_SIGNPATH != 'true'
+        run: Write-Host 'SignPath not configured or signing not requested; the installer ships unsigned.'
+
+      - name: Smoke test (silent install, launch, uninstall; portable zip)
+        run: ./scripts/smoke_windows.ps1 -Installer dist/InvoiceDesk-Setup-x64.exe -Zip dist/InvoiceDesk-Windows-x64.zip
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: pkg-windows
+          path: |
+            dist/InvoiceDesk-Setup-x64.exe
+            dist/InvoiceDesk-Windows-x64.zip
+          if-no-files-found: error
+          retention-days: ${{ inputs.retention-days }}
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: windows-msix
+          path: dist/InvoiceDesk-x64.msix
+          if-no-files-found: error
+          retention-days: ${{ inputs.retention-days }}
+
+  macos:
+    name: macos package
+    runs-on: macos-14
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Build, sign + notarize when the Apple secrets exist, dmg
+        env:
+          MACOS_CERT_P12_BASE64: ${{ inputs.sign && secrets.MACOS_CERT_P12_BASE64 || '' }}
+          MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
+          MACOS_KEYCHAIN_PASSWORD: ${{ secrets.MACOS_KEYCHAIN_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
+          APPLE_API_KEY_P8_BASE64: ${{ secrets.APPLE_API_KEY_P8_BASE64 }}
+        run: ./scripts/package_macos.sh
+      - name: Remove the temporary keychain and key files
+        if: always()
+        run: ./scripts/package_macos.sh --cleanup
+      - name: Smoke test (mount, launch, quit)
+        run: ./scripts/smoke_macos.sh dist/InvoiceDesk-macOS.dmg
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: pkg-macos
+          path: dist/InvoiceDesk-macOS.dmg
+          if-no-files-found: error
+          retention-days: ${{ inputs.retention-days }}
