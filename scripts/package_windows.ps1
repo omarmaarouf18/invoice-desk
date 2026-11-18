@@ -48,7 +48,10 @@ if (-not $dumpbin) { throw 'dumpbin.exe not found' }
 # ── app-local VC++ runtime ─────────────────────────────────────────────
 Copy-Item "$($crt.FullName)\*.dll" $bundle -Force
 Write-Host "==> VC++ runtime from $($crt.FullName)"
-if (-not (Test-Path (Join-Path $bundle 'sqlite3.dll'))) { throw 'sqlite3.dll is missing from the bundle' }
+if (-not (Test-Path (Join-Path $bundle 'sqlite3.dll'))) {
+  Get-ChildItem $bundle -Recurse -Filter *.dll | ForEach-Object { Write-Host "bundle: $($_.FullName.Substring($bundle.Length))" }
+  throw 'sqlite3.dll is missing from the bundle (native assets not installed? see windows/CMakeLists.txt)'
+}
 
 # ── every imported DLL is bundled or part of Windows ───────────────────
 $bundled = @{}
