@@ -48,7 +48,7 @@
 
 ## Schema v8 (all on `settings`, defaults keep today's behaviour)
 
-`invoice_number_pattern` TEXT `'{PREFIX}-{YYYY}-{SEQ:4}'` · `number_yearly_reset` BOOL `true` · `default_vat_on` BOOL `false` · `default_vat_rate_bp` INT `1400` · `tax_registration_no` TEXT `''` · `date_format` TEXT `'long'` · `default_currency` TEXT `'EGP'` · `currency_display` TEXT `'code'`. Q1 may add one nullable `format_snapshot` TEXT column to `invoices` and `contracts`.
+`invoice_number_pattern` TEXT `'{PREFIX}-{YYYY}-{SEQ:4}'` · `number_yearly_reset` BOOL `true` · `default_vat_on` BOOL `false` · `default_vat_rate_bp` INT `1400` · `tax_registration_no` TEXT `''` · `date_format` TEXT `'long'` · `default_currency` TEXT `'EGP'` · `currency_display` TEXT `'code'`. Q1 added one nullable `issue_snapshot` TEXT column to `invoices` and `contracts`.
 
 The full ritual applies: a drift step, `make-migrations` with the snapshot, a v7→v8 migration test, a regenerated DATA_MODEL.md, and backups from v1–v7 must still restore.
 
@@ -69,12 +69,26 @@ The full ritual applies: a drift step, `make-migrations` with the snapshot, a v7
 
 - 2026-11-17 — Commit 1 done: `689145f` navigation + search, `489def5` header/label/My details fixes, `e1542cf` golden. Stopped before commit 2 to get Q1–Q3 answered, since schema v8 (commit 3) depends on Q1.
 
+## Commits as built (2026-11-18)
+
+`689145f` navigation · `489def5` header fixes · `e1542cf` golden · `6e6ebf0` date/currency formats · `3022ebd` schema v8 · `5b508df` issue snapshots + ADR-0014 · `6003f4a` settings table split · `79e7ab5` numbering/VAT/currency/formats UI · `5ad2449` client style · `a99273f` per-machine settings + shortcuts · `8d4b15b` goldens.
+
+## Findings (build)
+
+- 2026-11-18 — A stale editor copy (taken before the save that froze the document) used to write `style_snapshot = NULL` back, and the next save re-froze the **live** style. `DocumentSnapshots` now keeps stored snapshots, for both kinds.
+- 2026-11-18 — `currency display = code` (today) already prints USD and EUR with their symbol (`$255.50`). Under the owner's definitions, `code` and `symbol` therefore print the same thing for every currency we support. Both are kept as specified; see open question 4.
+- 2026-11-18 — Moving a table into its own file needs it imported by `sync_triggers.drift`, or drift_dev's `make-migrations` crashes with a null check.
+- 2026-11-18 — The backup compatibility test stopped at v5; it now restores v6 and v7 backups too.
+
 ## Open questions
 
-1. **Document-format settings vs rule 8.** Date format, currency display and tax registration number print on documents but live in settings, so changing one would re-render already-sent invoices differently. Recommended: freeze them at the same moment as the style. Add one nullable `format_snapshot` TEXT (JSON: date format, currency display, tax number, digit style) on `invoices` and `contracts`, written in the same transaction as `style_snapshot`. Committed documents without one render as today (long date, currency code, no tax number). The alternative is to accept that these three follow live settings, like the profile and payment details do today. — **open, blocks commits 3 and 6.**
-2. **Currency display options.** Recommended meaning: `code` = `22,000 EGP` (today); `local` = `22,000 ج.م` in Arabic documents and the code in English ones; `symbol` = `$255.50` where a symbol exists, else the code. — open, blocks commit 6.
-3. Digit style (D6) is already a DB setting that prints on documents and has the same rule-8 exposure. If Q1 is accepted, it goes into the same snapshot. — open.
+1. **Document-format settings vs rule 8.** Date format, currency display and tax registration number print on documents but live in settings, so changing one would re-render already-sent invoices differently. Recommended: freeze them at the same moment as the style. Add one nullable `format_snapshot` TEXT (JSON: date format, currency display, tax number, digit style) on `invoices` and `contracts`, written in the same transaction as `style_snapshot`. Committed documents without one render as today (long date, currency code, no tax number). The alternative is to accept that these three follow live settings, like the profile and payment details do today. — answered 2026-11-18: freeze, widened to provider + payment + client block + formats, one versioned `issue_snapshot` (ADR-0014). Built.
+2. **Currency display options.** Recommended meaning: `code` = `22,000 EGP` (today); `local` = `22,000 ج.م` in Arabic documents and the code in English ones; `symbol` = `$255.50` where a symbol exists, else the code. — answered 2026-11-18 (bilingual uses the English rule). Built.
+3. Digit style (D6) is already a DB setting that prints on documents and has the same rule-8 exposure. — answered 2026-11-18: in the same snapshot. Built.
+
+4. **`code` vs `symbol` currency display.** As defined, both print `22,000 EGP` and `$255.50`, so the choice does nothing today. Recommended: make `code` strictly ISO everywhere (`255.50 USD`) for new documents only; committed ones keep their snapshot. That changes how USD/EUR drafts look, so it needs your ruling. Alternatively drop `symbol`. — open.
+5. Density: the app was already compact, so "compact" is the default and "comfortable" is the new option. — FYI.
 
 ## Leftovers
 
-- Client preferred style (`clients.style_id`) still has no UI. Its natural home is the client dialog; Phase 8 unless the owner wants it here.
+- ~~Client preferred style~~ done in `5ad2449` (owner, 2026-11-18).

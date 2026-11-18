@@ -45,11 +45,12 @@ The rule is enforced by `test/architecture/layering_test.dart`. Size limits (no 
 lib/
   main.dart, bootstrap.dart   window setup, data folder, DB open/migrate, provider overrides,
                               start-up housekeeping (purge + daily backup), DB-error screen
-  app/                        app widget, shell (sidebar + workspace, shortcuts), UI providers, ui_prefs
+  app/                        app widget, shell (sidebar + workspace), shortcuts (one AppShortcut table),
+                              UI providers, ui_prefs, machine_prefs (density, accent, start-up, PDF export)
   core/                       Money/MoneyBag (minor units), CalendarDate, digit folding
   domain/                     models, invoice/contract rules, results, trash, contract_ops
   data/
-    tables.dart, triggers.drift, db.dart, db.steps.dart   schema + migrations
+    tables*.dart, *.drift, db.dart, db.steps.dart   schema + migrations (settings in tables_settings.dart)
     daos/                     drift queries per aggregate
     repositories/             what the UI uses
     providers.dart            DB seam, repositories, live read models
@@ -139,7 +140,7 @@ Contract milestones split the total by **largest remainder**, so percentages tha
 
 ## Numbering
 
-- Invoices are `<prefix>-<year>-<seq:0000>`. The next sequence is the year's maximum plus one, deleted invoices included, so a number is never reused. A hand-typed free-form number keeps its text and gets an unused sequence.
+- Invoices follow the pattern in Settings → Invoices, `{PREFIX}-{YYYY}-{SEQ:4}` by default (`OM-2026-0001`); tokens `{PREFIX}`, `{YYYY}`, `{YY}`, `{SEQ}`/`{SEQ:n}`. The next sequence is the year's maximum plus one, or the maximum over all years when yearly reset is off, deleted invoices included, so a number is never reused. New documents get their number, year and sequence from `InvoiceRepository.nextNumber`; existing numbers are never rewritten. A pattern that could repeat numbers (no `{SEQ}`, or a yearly reset without a year) is refused in Settings and falls back to the default. A hand-typed free-form number keeps its text and gets an unused sequence.
 - Contracts are `CT-…` and quotes `QT-…`, with separate sequences. Amendments reuse the original's series, year and sequence with an `-A<n>` suffix.
 - Uniqueness is enforced by the database (`UNIQUE(number)` and composite keys), not only by the UI.
 
@@ -183,6 +184,8 @@ CI fails if the schema changed without a new snapshot. Migrations run inside the
 - **Arabic text.** Direction is chosen per run, with the font's normal word spacing. The `pdf` package is vendored with an RTL patch (`third_party/pdf`, [ADR 0013](adr/0013-vendored-pdf-rtl-fix.md)): upstream mirrored words by their ink box, so words ending in ر or ز ran into the next word, and its per-character font fallback reversed Latin tokens inside Arabic lines. Letter spacing is applied to Latin runs only; Arabic runs always use 0 (`test/pdf/arabic_letter_spacing_test.dart`). `test/pdf/rtl_word_gap_test.dart` measures the gaps. A date ending in digits is laid out as two runs so its space survives bidi reordering.
 - **Contract variables.** Resolved at render time by `VariableResolver` and never stored resolved; unresolved ones are drawn on an amber background.
 - **Preview.** The preview pane re-renders the real PDF 300 ms after the last edit. Previews and exports both go through `lib/features/pdf_render.dart`, which asks `StyleRepository.lookForInvoice/lookForContract` for the resolved style and logo, so what you see is what you export.
+- **Issue snapshots.** When a document is committed (sent, paid, signed), `DocumentSnapshots` also freezes what it printed from outside itself: provider block, payment methods, client block, date format, currency display and digit style (`issue_snapshot`, [ADR 0014](adr/0014-issue-snapshots.md)). `pdf_render.dart` overlays `Settings` and `Client` from it before the builders run. Documents committed before v8 have none and render from live data.
+- **Formats.** Dates print `long` (`14 Sep 2026`) or `numeric` (`14/09/2026`); amounts print with the currency `code` (today), `local` Arabic symbols in Arabic documents, or `symbol` (`lib/domain/doc_format.dart`). The tax registration number prints with the provider block when set.
 - **Styles.** A document's look resolves snapshot → document style → client style → settings default → Classic ([ADR 0012](adr/0012-document-styles.md)). The style editor (`lib/features/styles/`) edits user styles through one `StyleEditorController` that autosaves 600 ms after the last change.
 
 ## Calendar

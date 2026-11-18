@@ -100,6 +100,9 @@ These are the recommended defaults; the owner has not confirmed them yet. **Impl
 | 2026-11-17 | Modern preset: darken its secondary text so every text/background pair passes 4.5:1; no pinned exception |
 | 2026-11-17 | Bold's Arabic name is «بارز». Deleting a style that drafts or clients use says how many in the confirm/undo message |
 | 2026-11-17 | Phase 8: add a colour palette/picker next to the hex fields in the style inspector |
+| 2026-11-18 | SET-01 Q1: freeze provider, payment, client block and formats in one versioned `issue_snapshot` on invoices and contracts, written with the style snapshot; documents committed before v8 keep rendering from live data (ADR-0014) |
+| 2026-11-18 | SET-01 Q2: currency display `code` (today, default) / `local` (ج.م، ر.س، د.إ in Arabic documents; $ / € as is; code in English and bilingual) / `symbol` ($ / € where they exist, else code) |
+| 2026-11-18 | SET-01 Q3: digit style goes in the same snapshot. Client preferred style gets a picker in the client dialog now |
 
 ## 5. Phased plan
 

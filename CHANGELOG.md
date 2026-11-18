@@ -5,6 +5,11 @@ All notable changes to Invoice Desk. The format follows [Keep a Changelog](https
 ## [Unreleased]
 
 ### Added
+- **Settings, redesigned.** Settings is now ten sections in a list with search (it also finds control names, e.g. "IBAN" finds Payment), and remembers the last section. Other screens open the right section.
+  - **Invoices:** a numbering pattern (`{PREFIX}-{YYYY}-{SEQ:4}` by default) with yearly reset and a "next number" preview; VAT on/off and rate for new invoices; tax registration number (printed with your details when set); date format (`14 Sep 2026` or `14/09/2026`); default currency; currency display (code, Arabic symbols in Arabic documents, or symbol).
+  - **This computer:** density, accent colour and start-up view; PDF file-name pattern, export folder and "open after export"; a keyboard shortcuts reference.
+  - **Clients** can have a preferred document style.
+- **Sent, paid and signed documents keep what they printed** (ADR-0014). Your details, payment methods, the client's details and the document formats are frozen when a document is committed, so a new IBAN or address never changes an invoice that was already sent. Drafts follow every change; documents committed before this version keep following Settings, as before.
 - **Document style editor «تصميم المستندات».** A new page, opened from Settings or from the style picker in either document editor:
   - the ready-made styles and your own, each with a small thumbnail; Duplicate, Rename, Reset to preset, Delete (to the trash, with Undo), and Export/Import as a `.json` file that carries the logo with it;
   - a live PDF preview on the open invoice or contract, or on a fictional sample, in any document language;

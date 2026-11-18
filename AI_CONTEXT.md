@@ -5,7 +5,7 @@
 
 ## State (as of 2026-11-17)
 
-- **Released:** 0.4.0 on `main` (calendar, postponements, demo data, schema v5).
+- **Released:** 0.4.0 on `main` (calendar, postponements, demo data, schema v5). The branch is at **schema v8**.
 - **Active branch:** `feat/bilingual-styles`. Nothing on it is pushed; the owner pushes.
 - **Active brief:** `docs/briefs/2026-11-16-bilingual-styles.md`, with phases 0–8 (bilingual UI, bilingual documents, document styles, settings, UX).
 
@@ -17,15 +17,14 @@
 | 3 — Document language: invoices | ✅ done. Schema v6 (`627e6a0`), PDF builder (`baf5940`), UI/repos/settings (`d232ee4`), goldens (`fd8bd76`), Arabic PDF bug fixes (`96dc046`, `f4f0bd2`) |
 | 4 — Style engine (schema v7) | ✅ done. Schema v7 (`c0a2150`), StyleRepository & snapshots (`7aad4c7`), PdfStyle builders (`12bc577`), ADR-0012; follow-ups: VAT row correctness, 24h asset grace period & trash retention, 6 distinct presets (Formal with Naskh, Bold/Modern with Plex), word-level font fallback and bidi paragraph context preservation in vendored pdf (`9f8d21c`), text bidi guard test (`e86c606`), updated preset goldens |
 | 5 — Style editor UI | ✅ done (owner review 2026-11-17). Editor page, pickers + lock, styles in previews/exports, legacy lock, JSON import/export, trash; review fixes: Modern contrast (`98d6483`), preview language, «بارز», delete usage count |
-| 6 — Settings redesign | ⏳ in progress. Plan: `docs/worklog/SET-01.md`. Done: sectioned navigation + search (`689145f`, `489def5`). Waiting on owner Q1–Q3 (document-format settings vs rule 8) before schema v8 |
+| 6 — Settings redesign | ⏸ built, awaiting review. Sectioned navigation + search, schema v8 (`3022ebd`), issue snapshots (ADR-0014, `5b508df`), numbering pattern / VAT / currency / formats (`79e7ab5`), client preferred style (`5ad2449`), per-machine settings + shortcuts (`a99273f`) |
 | 7 — Contracts in English + styles | — |
 | 8 — UX polish | — |
 
 ## Next
 
-1. **Owner answers SET-01 Q1–Q3** (`docs/worklog/SET-01.md`): freeze date format / currency display / tax number / digits with the snapshot, or follow live settings.
-2. Then SET-01 commit 2 (per-machine controls: density, accent, start-up view, PDF file name, export folder, open after export, shortcuts reference), schema v8, numbering pattern, VAT/currency defaults, document-format settings.
-3. **Phase 7 note (owner, 2026-11-17):** in English contracts, Arabic values with numbers must not wrap with the number alone on a line.
+1. **Owner review of Phase 6 (SET-01).** Report and open questions in `docs/worklog/SET-01.md`.
+2. **Phase 7 — Contracts in English + styles (CON-01).** Owner note (2026-11-17): Arabic values with numbers must not wrap with the number alone on a line in English contracts.
 
 ## Decided (do not reopen without the owner)
 
@@ -47,4 +46,4 @@
 
 ## ADR index
 
-0001 Flutter desktop · 0002 drift/SQLite · 0003 integer money · 0004 30-day soft delete · 0005 clause snapshots · 0006 `$ORIGIN` runpath · 0007 RPM in /opt · 0008 offline first · 0009 free desktop / paid encrypted sync · 0010 E2E-encrypted sync · 0011 document language model · 0012 document styles · 0013 vendored `pdf` RTL fix
+0001 Flutter desktop · 0002 drift/SQLite · 0003 integer money · 0004 30-day soft delete · 0005 clause snapshots · 0006 `$ORIGIN` runpath · 0007 RPM in /opt · 0008 offline first · 0009 free desktop / paid encrypted sync · 0010 E2E-encrypted sync · 0011 document language model · 0012 document styles · 0013 vendored `pdf` RTL fix · 0014 issue snapshots
