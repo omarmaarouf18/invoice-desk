@@ -72,7 +72,7 @@ lib/
   widgets/, theme/, l10n/     shared widgets, tokens, the Arabic and English strings (ARB)
 drift_schemas/                committed schema snapshots, one per version
 tool/                         check_sizes, gen_data_model (+ dev helpers)
-scripts/                      package_linux.sh, ci_local.sh
+scripts/                      ci_local.sh, package_*/smoke_* (Linux, Arch, Windows, macOS)
 ```
 
 Large feature UIs are split into `part` files per card (for example `features/contracts/cards/`) so private widgets stay private to their feature.

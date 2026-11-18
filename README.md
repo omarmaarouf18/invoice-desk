@@ -36,39 +36,64 @@
 - **Two interface languages.** Arabic and English, picked in Settings → General (or followed from the system). The whole app follows the choice, reading direction included: Arabic is right-to-left, English left-to-right.
 - **Light and dark themes.** The interface is right-to-left in Arabic and left-to-right in English.
 
-## Install (Linux x86_64)
+## Install
 
-Download the files from the release page and check them against `SHA256SUMS.txt`:
+Every release is on the [releases page](https://github.com/omarmaarouf18/invoice-desk/releases/latest). The links below always point at the latest version. Installing, upgrading or uninstalling never touches your data.
+
+| System | Minimum |
+|---|---|
+| Windows | Windows 10 version 1809 (x64) or Windows 11 |
+| macOS | macOS 10.15 Catalina, Apple silicon or Intel (universal) |
+| Linux | x86_64 with glibc 2.35 and GTK 3: Ubuntu 22.04, Debian 12, Fedora 36, current Arch, or newer |
+
+**Windows**
+- **Installer:** [`InvoiceDesk-Setup-x64.exe`](https://github.com/omarmaarouf18/invoice-desk/releases/latest/download/InvoiceDesk-Setup-x64.exe). Installs for your user only, no admin rights. While the installer is unsigned, Windows SmartScreen says "Windows protected your PC": click **More info → Run anyway**.
+- **Portable:** [`InvoiceDesk-Windows-x64.zip`](https://github.com/omarmaarouf18/invoice-desk/releases/latest/download/InvoiceDesk-Windows-x64.zip). Unzip and run `InvoiceDesk\invoice_desk.exe`.
+- **winget** (once listed): `winget install OmarMaarouf.InvoiceDesk`. **Microsoft Store:** once the listing is live.
+
+**macOS:** [`InvoiceDesk-macOS.dmg`](https://github.com/omarmaarouf18/invoice-desk/releases/latest/download/InvoiceDesk-macOS.dmg). Open it and drag Invoice Desk to Applications.
+
+**Debian / Ubuntu:** [`invoice-desk_amd64.deb`](https://github.com/omarmaarouf18/invoice-desk/releases/latest/download/invoice-desk_amd64.deb)
+
+```bash
+sudo apt install ./invoice-desk_amd64.deb
+```
+
+**Fedora / RHEL:** [`invoice-desk.x86_64.rpm`](https://github.com/omarmaarouf18/invoice-desk/releases/latest/download/invoice-desk.x86_64.rpm)
+
+```bash
+sudo dnf install ./invoice-desk.x86_64.rpm
+```
+
+**Arch:** [`invoice-desk-x86_64.pkg.tar.zst`](https://github.com/omarmaarouf18/invoice-desk/releases/latest/download/invoice-desk-x86_64.pkg.tar.zst)
+
+```bash
+sudo pacman -U ./invoice-desk-x86_64.pkg.tar.zst
+```
+
+**Any distro (AppImage):** [`InvoiceDesk-x86_64.AppImage`](https://github.com/omarmaarouf18/invoice-desk/releases/latest/download/InvoiceDesk-x86_64.AppImage). A single file, nothing installed (needs FUSE 2, or set `APPIMAGE_EXTRACT_AND_RUN=1`).
+
+```bash
+chmod +x InvoiceDesk-x86_64.AppImage && ./InvoiceDesk-x86_64.AppImage
+```
+
+**Any distro (tarball):** [`invoice-desk-linux-x64.tar.gz`](https://github.com/omarmaarouf18/invoice-desk/releases/latest/download/invoice-desk-linux-x64.tar.gz). Installs for your user in `~/.local/opt/invoice-desk`, without root; `./uninstall.sh` removes it.
+
+```bash
+tar xzf invoice-desk-linux-x64.tar.gz && ./invoice-desk-*-linux-x64/install.sh
+```
+
+### Verify a download
 
 ```bash
 sha256sum -c SHA256SUMS.txt --ignore-missing
 ```
 
-**Fedora / RHEL (RPM).** Installs system-wide in `/opt/invoice-desk`, with a menu entry and the `invoice-desk` command:
-
 ```bash
-sudo dnf install ./invoice-desk-0.4.0-1.x86_64.rpm
+gh attestation verify InvoiceDesk-Setup-x64.exe --repo omarmaarouf18/invoice-desk
 ```
 
-```bash
-sudo dnf remove invoice-desk   # removes the app only; your data and backups stay
-```
-
-**Any distro (tarball).** Installs for your user only, in `~/.local/opt/invoice-desk`, without root:
-
-```bash
-tar xzf invoice-desk-0.4.0-linux-x64.tar.gz && ./invoice-desk-0.4.0-linux-x64/install.sh
-```
-
-To remove it later, run `./uninstall.sh` from the same folder.
-
-**Any distro (AppImage).** A single file; nothing is installed:
-
-```bash
-chmod +x InvoiceDesk-0.4.0-x86_64.AppImage && ./InvoiceDesk-0.4.0-x86_64.AppImage
-```
-
-All three need GTK 3, which every mainstream desktop has. Uninstalling never touches your data.
+The second command checks that the file was built by this repository's release workflow. Release metadata for scripts is in [`latest.json`](https://github.com/omarmaarouf18/invoice-desk/releases/latest/download/latest.json) (format in [docs/RELEASING.md](docs/RELEASING.md)).
 
 ## Build from source
 
@@ -86,7 +111,7 @@ flutter run -d linux
 flutter build linux --release
 ```
 
-The release build lands in `build/linux/x64/release/bundle/`. `./scripts/package_linux.sh` builds the tarball, AppImage, RPM and checksums into `dist/`; it needs `patchelf` and `rpmbuild`. `./scripts/ci_local.sh` runs every CI gate locally. See [docs/RELEASING.md](docs/RELEASING.md) and [docs/TESTING.md](docs/TESTING.md).
+The release build lands in `build/linux/x64/release/bundle/`. `./scripts/package_linux.sh` builds the Linux packages into `dist/` (Windows and macOS have `scripts/package_windows.ps1` and `scripts/package_macos.sh`). `./scripts/ci_local.sh` runs every CI gate locally. See [docs/RELEASING.md](docs/RELEASING.md) and [docs/TESTING.md](docs/TESTING.md).
 
 ## Data and backups
 

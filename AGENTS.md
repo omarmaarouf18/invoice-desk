@@ -79,7 +79,7 @@ lib/
 third_party/pdf vendored pdf 3.13.1 + RTL patch (ADR-0013)
 test/           architecture, core, domain, data, drift, pdf, l10n, ui (+ goldens/)
 docs/           ARCHITECTURE, DATA_MODEL, TESTING, RELEASING, adr/, briefs/, worklog/, ai/
-scripts/        ci_local.sh (the gate), package_linux.sh
+scripts/        ci_local.sh (the gate), package_* / smoke_* per platform
 tool/           check_sizes, gen_data_model, coverage_report, check_licenses
 ```
 
