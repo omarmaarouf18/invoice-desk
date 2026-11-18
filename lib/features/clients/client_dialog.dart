@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:invoice_desk/domain/doc_language.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/features/editor/editor_controller.dart' show newId;
+import 'package:invoice_desk/features/styles/style_picker.dart';
 import 'package:invoice_desk/l10n/l10n.dart';
 import 'package:invoice_desk/theme/app_theme.dart';
 import 'package:invoice_desk/widgets/text_direction.dart';
@@ -41,6 +42,7 @@ class _ClientDialogState extends State<_ClientDialog> {
     text: widget.client?.representativeTitle,
   );
   late DocLanguage? _preferredLanguage = widget.client?.preferredLanguage;
+  late String? _styleId = widget.client?.styleId;
   bool _showError = false;
 
   @override
@@ -81,6 +83,7 @@ class _ClientDialogState extends State<_ClientDialog> {
         representative: _rep.text.trim(),
         representativeTitle: _repTitle.text.trim(),
         preferredLanguage: _preferredLanguage,
+        styleId: _styleId,
       ),
     );
   }
@@ -141,6 +144,17 @@ class _ClientDialogState extends State<_ClientDialog> {
               _LanguageField(
                 value: _preferredLanguage,
                 onChanged: (v) => setState(() => _preferredLanguage = v),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: Space.xs),
+                child: DocStylePicker(
+                  key: const ValueKey('client-style'),
+                  label: l.clientPreferredStyle,
+                  value: _styleId,
+                  nullLabel: l.styleFollowDefault,
+                  showEditButton: false,
+                  onChanged: (v) => setState(() => _styleId = v),
+                ),
               ),
               _LegalSection(
                 expanded:

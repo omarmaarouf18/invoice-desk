@@ -23,6 +23,7 @@ class DocStylePicker extends ConsumerWidget {
     super.key,
     this.nullLabel,
     this.helper,
+    this.showEditButton = true,
   });
 
   final String label;
@@ -30,6 +31,10 @@ class DocStylePicker extends ConsumerWidget {
   final ValueChanged<String?>? onChanged;
   final String? nullLabel;
   final String? helper;
+
+  /// The "Edit styles…" button; off inside a dialog, where leaving for
+  /// the style editor would hide behind it.
+  final bool showEditButton;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -78,13 +83,15 @@ class DocStylePicker extends ConsumerWidget {
             onChanged: onChanged,
           ),
         ),
-        const SizedBox(width: Space.xs),
-        IconButton(
-          tooltip: l.docStyleEdit,
-          onPressed: () =>
-              ref.read(workspaceProvider.notifier).show(Workspace.styles),
-          icon: const Icon(Icons.palette_outlined),
-        ),
+        if (showEditButton) ...[
+          const SizedBox(width: Space.xs),
+          IconButton(
+            tooltip: l.docStyleEdit,
+            onPressed: () =>
+                ref.read(workspaceProvider.notifier).show(Workspace.styles),
+            icon: const Icon(Icons.palette_outlined),
+          ),
+        ],
       ],
     );
   }

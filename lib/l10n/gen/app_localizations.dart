@@ -3912,6 +3912,234 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'المستندات المرسلة أو المدفوعة أو الموقّعة تحتفظ بالتنسيق الذي صدرت به.'**
   String get docFormatsFrozenHint;
+
+  /// No description provided for @clientPreferredStyle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصميم المستندات المفضّل'**
+  String get clientPreferredStyle;
+
+  /// No description provided for @styleFollowDefault.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسب التصميم الافتراضي'**
+  String get styleFollowDefault;
+
+  /// No description provided for @thisMachineTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذا الجهاز'**
+  String get thisMachineTitle;
+
+  /// No description provided for @thisMachineHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'تُحفظ هذه الإعدادات على هذا الجهاز فقط.'**
+  String get thisMachineHint;
+
+  /// No description provided for @densityLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'كثافة العرض'**
+  String get densityLabel;
+
+  /// No description provided for @densityCompact.
+  ///
+  /// In ar, this message translates to:
+  /// **'مضغوط'**
+  String get densityCompact;
+
+  /// No description provided for @densityComfortable.
+  ///
+  /// In ar, this message translates to:
+  /// **'مريح'**
+  String get densityComfortable;
+
+  /// No description provided for @accentLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'لون التمييز'**
+  String get accentLabel;
+
+  /// No description provided for @accentTeal.
+  ///
+  /// In ar, this message translates to:
+  /// **'فيروزي'**
+  String get accentTeal;
+
+  /// No description provided for @accentBlue.
+  ///
+  /// In ar, this message translates to:
+  /// **'أزرق'**
+  String get accentBlue;
+
+  /// No description provided for @accentIndigo.
+  ///
+  /// In ar, this message translates to:
+  /// **'نيلي'**
+  String get accentIndigo;
+
+  /// No description provided for @accentPurple.
+  ///
+  /// In ar, this message translates to:
+  /// **'بنفسجي'**
+  String get accentPurple;
+
+  /// No description provided for @accentRose.
+  ///
+  /// In ar, this message translates to:
+  /// **'وردي'**
+  String get accentRose;
+
+  /// No description provided for @accentAmber.
+  ///
+  /// In ar, this message translates to:
+  /// **'كهرماني'**
+  String get accentAmber;
+
+  /// No description provided for @startupViewLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'عند فتح البرنامج'**
+  String get startupViewLabel;
+
+  /// No description provided for @startupLast.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر ما كان مفتوحًا'**
+  String get startupLast;
+
+  /// No description provided for @startupCalendar.
+  ///
+  /// In ar, this message translates to:
+  /// **'التقويم'**
+  String get startupCalendar;
+
+  /// No description provided for @pdfExportTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصدير PDF'**
+  String get pdfExportTitle;
+
+  /// No description provided for @pdfNamePattern.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم الملف المقترح'**
+  String get pdfNamePattern;
+
+  /// No description provided for @pdfNamePatternHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'{number} رقم المستند · {client} العميل · {date} تاريخ الإصدار'**
+  String pdfNamePatternHint(String number, String client, String date);
+
+  /// No description provided for @pdfNamePreview.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: {name}'**
+  String pdfNamePreview(String name);
+
+  /// No description provided for @exportFolder.
+  ///
+  /// In ar, this message translates to:
+  /// **'مجلد التصدير'**
+  String get exportFolder;
+
+  /// No description provided for @exportFolderLast.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر مجلد استُخدم'**
+  String get exportFolderLast;
+
+  /// No description provided for @exportFolderClear.
+  ///
+  /// In ar, this message translates to:
+  /// **'استخدام آخر مجلد'**
+  String get exportFolderClear;
+
+  /// No description provided for @openAfterExport.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح الملف بعد التصدير'**
+  String get openAfterExport;
+
+  /// No description provided for @shortcutsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختصارات لوحة المفاتيح'**
+  String get shortcutsTitle;
+
+  /// No description provided for @scNewInvoice.
+  ///
+  /// In ar, this message translates to:
+  /// **'فاتورة جديدة'**
+  String get scNewInvoice;
+
+  /// No description provided for @scNewClient.
+  ///
+  /// In ar, this message translates to:
+  /// **'عميل جديد'**
+  String get scNewClient;
+
+  /// No description provided for @scNewContract.
+  ///
+  /// In ar, this message translates to:
+  /// **'عقد جديد'**
+  String get scNewContract;
+
+  /// No description provided for @scToggleCalendar.
+  ///
+  /// In ar, this message translates to:
+  /// **'التبديل إلى التقويم والعودة'**
+  String get scToggleCalendar;
+
+  /// No description provided for @scSearch.
+  ///
+  /// In ar, this message translates to:
+  /// **'البحث'**
+  String get scSearch;
+
+  /// No description provided for @scFind.
+  ///
+  /// In ar, this message translates to:
+  /// **'البحث (بديل)'**
+  String get scFind;
+
+  /// No description provided for @scSave.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ'**
+  String get scSave;
+
+  /// No description provided for @scExportPdf.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصدير PDF'**
+  String get scExportPdf;
+
+  /// No description provided for @scDuplicate.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسخ المستند'**
+  String get scDuplicate;
+
+  /// No description provided for @scRenew.
+  ///
+  /// In ar, this message translates to:
+  /// **'تجديد الفاتورة'**
+  String get scRenew;
+
+  /// No description provided for @scEditTab.
+  ///
+  /// In ar, this message translates to:
+  /// **'تبويب التعديل'**
+  String get scEditTab;
+
+  /// No description provided for @scPreviewTab.
+  ///
+  /// In ar, this message translates to:
+  /// **'تبويب المعاينة'**
+  String get scPreviewTab;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

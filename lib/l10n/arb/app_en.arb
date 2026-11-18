@@ -1303,5 +1303,63 @@
         "type": "String"
       }
     }
-  }
+  },
+  "clientPreferredStyle": "Preferred document style",
+  "styleFollowDefault": "Follow the default",
+  "thisMachineTitle": "This computer",
+  "thisMachineHint": "These settings are kept on this computer only.",
+  "densityLabel": "Density",
+  "densityCompact": "Compact",
+  "densityComfortable": "Comfortable",
+  "accentLabel": "Accent colour",
+  "accentTeal": "Teal",
+  "accentBlue": "Blue",
+  "accentIndigo": "Indigo",
+  "accentPurple": "Purple",
+  "accentRose": "Rose",
+  "accentAmber": "Amber",
+  "startupViewLabel": "At start-up",
+  "startupLast": "Where I left off",
+  "startupCalendar": "The calendar",
+  "pdfExportTitle": "PDF export",
+  "pdfNamePattern": "Suggested file name",
+  "pdfNamePatternHint": "{number} document number · {client} client · {date} issue date",
+  "@pdfNamePatternHint": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      },
+      "client": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "pdfNamePreview": "Example: {name}",
+  "@pdfNamePreview": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "exportFolder": "Export folder",
+  "exportFolderLast": "The last folder used",
+  "exportFolderClear": "Use the last folder",
+  "openAfterExport": "Open the file after exporting",
+  "shortcutsTitle": "Keyboard shortcuts",
+  "scNewInvoice": "New invoice",
+  "scNewClient": "New client",
+  "scNewContract": "New contract",
+  "scToggleCalendar": "Switch to the calendar and back",
+  "scSearch": "Search",
+  "scFind": "Search (alternative)",
+  "scSave": "Save",
+  "scExportPdf": "Export PDF",
+  "scDuplicate": "Duplicate the document",
+  "scRenew": "Renew the invoice",
+  "scEditTab": "Edit tab",
+  "scPreviewTab": "Preview tab"
 }

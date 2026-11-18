@@ -2253,4 +2253,122 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get docFormatsFrozenHint => 'المستندات المرسلة أو المدفوعة أو الموقّعة تحتفظ بالتنسيق الذي صدرت به.';
+
+  @override
+  String get clientPreferredStyle => 'تصميم المستندات المفضّل';
+
+  @override
+  String get styleFollowDefault => 'حسب التصميم الافتراضي';
+
+  @override
+  String get thisMachineTitle => 'هذا الجهاز';
+
+  @override
+  String get thisMachineHint => 'تُحفظ هذه الإعدادات على هذا الجهاز فقط.';
+
+  @override
+  String get densityLabel => 'كثافة العرض';
+
+  @override
+  String get densityCompact => 'مضغوط';
+
+  @override
+  String get densityComfortable => 'مريح';
+
+  @override
+  String get accentLabel => 'لون التمييز';
+
+  @override
+  String get accentTeal => 'فيروزي';
+
+  @override
+  String get accentBlue => 'أزرق';
+
+  @override
+  String get accentIndigo => 'نيلي';
+
+  @override
+  String get accentPurple => 'بنفسجي';
+
+  @override
+  String get accentRose => 'وردي';
+
+  @override
+  String get accentAmber => 'كهرماني';
+
+  @override
+  String get startupViewLabel => 'عند فتح البرنامج';
+
+  @override
+  String get startupLast => 'آخر ما كان مفتوحًا';
+
+  @override
+  String get startupCalendar => 'التقويم';
+
+  @override
+  String get pdfExportTitle => 'تصدير PDF';
+
+  @override
+  String get pdfNamePattern => 'اسم الملف المقترح';
+
+  @override
+  String pdfNamePatternHint(String number, String client, String date) {
+    return '$number رقم المستند · $client العميل · $date تاريخ الإصدار';
+  }
+
+  @override
+  String pdfNamePreview(String name) {
+    return 'مثال: $name';
+  }
+
+  @override
+  String get exportFolder => 'مجلد التصدير';
+
+  @override
+  String get exportFolderLast => 'آخر مجلد استُخدم';
+
+  @override
+  String get exportFolderClear => 'استخدام آخر مجلد';
+
+  @override
+  String get openAfterExport => 'فتح الملف بعد التصدير';
+
+  @override
+  String get shortcutsTitle => 'اختصارات لوحة المفاتيح';
+
+  @override
+  String get scNewInvoice => 'فاتورة جديدة';
+
+  @override
+  String get scNewClient => 'عميل جديد';
+
+  @override
+  String get scNewContract => 'عقد جديد';
+
+  @override
+  String get scToggleCalendar => 'التبديل إلى التقويم والعودة';
+
+  @override
+  String get scSearch => 'البحث';
+
+  @override
+  String get scFind => 'البحث (بديل)';
+
+  @override
+  String get scSave => 'حفظ';
+
+  @override
+  String get scExportPdf => 'تصدير PDF';
+
+  @override
+  String get scDuplicate => 'نسخ المستند';
+
+  @override
+  String get scRenew => 'تجديد الفاتورة';
+
+  @override
+  String get scEditTab => 'تبويب التعديل';
+
+  @override
+  String get scPreviewTab => 'تبويب المعاينة';
 }

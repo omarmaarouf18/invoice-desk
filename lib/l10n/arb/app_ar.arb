@@ -1303,5 +1303,63 @@
         "type": "String"
       }
     }
-  }
+  },
+  "clientPreferredStyle": "تصميم المستندات المفضّل",
+  "styleFollowDefault": "حسب التصميم الافتراضي",
+  "thisMachineTitle": "هذا الجهاز",
+  "thisMachineHint": "تُحفظ هذه الإعدادات على هذا الجهاز فقط.",
+  "densityLabel": "كثافة العرض",
+  "densityCompact": "مضغوط",
+  "densityComfortable": "مريح",
+  "accentLabel": "لون التمييز",
+  "accentTeal": "فيروزي",
+  "accentBlue": "أزرق",
+  "accentIndigo": "نيلي",
+  "accentPurple": "بنفسجي",
+  "accentRose": "وردي",
+  "accentAmber": "كهرماني",
+  "startupViewLabel": "عند فتح البرنامج",
+  "startupLast": "آخر ما كان مفتوحًا",
+  "startupCalendar": "التقويم",
+  "pdfExportTitle": "تصدير PDF",
+  "pdfNamePattern": "اسم الملف المقترح",
+  "pdfNamePatternHint": "{number} رقم المستند · {client} العميل · {date} تاريخ الإصدار",
+  "@pdfNamePatternHint": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      },
+      "client": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "pdfNamePreview": "مثال: {name}",
+  "@pdfNamePreview": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "exportFolder": "مجلد التصدير",
+  "exportFolderLast": "آخر مجلد استُخدم",
+  "exportFolderClear": "استخدام آخر مجلد",
+  "openAfterExport": "فتح الملف بعد التصدير",
+  "shortcutsTitle": "اختصارات لوحة المفاتيح",
+  "scNewInvoice": "فاتورة جديدة",
+  "scNewClient": "عميل جديد",
+  "scNewContract": "عقد جديد",
+  "scToggleCalendar": "التبديل إلى التقويم والعودة",
+  "scSearch": "البحث",
+  "scFind": "البحث (بديل)",
+  "scSave": "حفظ",
+  "scExportPdf": "تصدير PDF",
+  "scDuplicate": "نسخ المستند",
+  "scRenew": "تجديد الفاتورة",
+  "scEditTab": "تبويب التعديل",
+  "scPreviewTab": "تبويب المعاينة"
 }

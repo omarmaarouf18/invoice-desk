@@ -2253,4 +2253,122 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get docFormatsFrozenHint => 'Documents already sent, paid or signed keep the formats they were issued with.';
+
+  @override
+  String get clientPreferredStyle => 'Preferred document style';
+
+  @override
+  String get styleFollowDefault => 'Follow the default';
+
+  @override
+  String get thisMachineTitle => 'This computer';
+
+  @override
+  String get thisMachineHint => 'These settings are kept on this computer only.';
+
+  @override
+  String get densityLabel => 'Density';
+
+  @override
+  String get densityCompact => 'Compact';
+
+  @override
+  String get densityComfortable => 'Comfortable';
+
+  @override
+  String get accentLabel => 'Accent colour';
+
+  @override
+  String get accentTeal => 'Teal';
+
+  @override
+  String get accentBlue => 'Blue';
+
+  @override
+  String get accentIndigo => 'Indigo';
+
+  @override
+  String get accentPurple => 'Purple';
+
+  @override
+  String get accentRose => 'Rose';
+
+  @override
+  String get accentAmber => 'Amber';
+
+  @override
+  String get startupViewLabel => 'At start-up';
+
+  @override
+  String get startupLast => 'Where I left off';
+
+  @override
+  String get startupCalendar => 'The calendar';
+
+  @override
+  String get pdfExportTitle => 'PDF export';
+
+  @override
+  String get pdfNamePattern => 'Suggested file name';
+
+  @override
+  String pdfNamePatternHint(String number, String client, String date) {
+    return '$number document number · $client client · $date issue date';
+  }
+
+  @override
+  String pdfNamePreview(String name) {
+    return 'Example: $name';
+  }
+
+  @override
+  String get exportFolder => 'Export folder';
+
+  @override
+  String get exportFolderLast => 'The last folder used';
+
+  @override
+  String get exportFolderClear => 'Use the last folder';
+
+  @override
+  String get openAfterExport => 'Open the file after exporting';
+
+  @override
+  String get shortcutsTitle => 'Keyboard shortcuts';
+
+  @override
+  String get scNewInvoice => 'New invoice';
+
+  @override
+  String get scNewClient => 'New client';
+
+  @override
+  String get scNewContract => 'New contract';
+
+  @override
+  String get scToggleCalendar => 'Switch to the calendar and back';
+
+  @override
+  String get scSearch => 'Search';
+
+  @override
+  String get scFind => 'Search (alternative)';
+
+  @override
+  String get scSave => 'Save';
+
+  @override
+  String get scExportPdf => 'Export PDF';
+
+  @override
+  String get scDuplicate => 'Duplicate the document';
+
+  @override
+  String get scRenew => 'Renew the invoice';
+
+  @override
+  String get scEditTab => 'Edit tab';
+
+  @override
+  String get scPreviewTab => 'Preview tab';
 }
