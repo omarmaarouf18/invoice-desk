@@ -6,8 +6,8 @@
 ## State (as of 2026-11-17)
 
 - **Released:** nothing is published yet. Only `v0.1.0` is tagged; `main` (`e4f63fa`) is from before 0.1.0. The 0.2.0–0.4.0 release commits (`98a7cb9`, `df865df`, `e120ecb`; 0.4.0 = calendar, demo data, schema v5) are untagged on the branch chain. This branch is at **schema v8**.
-- **Active branch:** `feat/bilingual-styles`. Nothing on it is pushed; the owner pushes.
-- **Active brief:** `docs/briefs/2026-11-16-bilingual-styles.md`, with phases 0–8 (bilingual UI, bilingual documents, document styles, settings, UX).
+- **Active branch:** `feat/release-pipeline` (off `feat/bilingual-styles` at SET-01). Nothing is pushed; the owner pushes.
+- **Active brief:** `docs/briefs/2026-11-18-release-pipeline.md` (REL-01 + WF-03 built, awaiting the owner sequence in `docs/RELEASING.md` §3; PERF-01 deferred). `docs/briefs/2026-11-16-bilingual-styles.md` stays open for phases 7–8 below.
 
 | Phase | Status |
 |---|---|
@@ -23,8 +23,10 @@
 
 ## Next
 
-1. **Owner review of Phase 6 (SET-01).** Report and open questions in `docs/worklog/SET-01.md`.
-2. **Phase 7 — Contracts in English + styles (CON-01).** Owner note (2026-11-17): Arabic values with numbers must not wrap with the number alone on a line in English contracts.
+1. **Owner: release pipeline (REL-01).** Push, fast-forward `main`, run the release dry run, tag the old versions: `docs/RELEASING.md` §3. Send failing run links to the agent. Report and open questions in `docs/worklog/REL-01.md`.
+2. **Owner review of Phase 6 (SET-01).** Report and open questions in `docs/worklog/SET-01.md`.
+3. **Phase 7 — Contracts in English + styles (CON-01).** Owner note (2026-11-17): Arabic values with numbers must not wrap with the number alone on a line in English contracts.
+4. **PERF-01** after the pipeline is merged (brief §7).
 
 ## Decided (do not reopen without the owner)
 

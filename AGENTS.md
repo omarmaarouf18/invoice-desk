@@ -12,7 +12,7 @@
 - One SQLite file (drift).
 - No account, no cloud, no network at runtime.
 - Sync is designed but not built (ADR-0009, ADR-0010).
-- Owner: Omar. Private repo `omarmaarouf18/invoice-desk`.
+- Owner: Omar. Public repo `omarmaarouf18/invoice-desk` (no open-source licence chosen; ADR-0009).
 
 ## 2. Read before you code
 

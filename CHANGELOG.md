@@ -5,6 +5,7 @@ All notable changes to Invoice Desk. The format follows [Keep a Changelog](https
 ## [Unreleased]
 
 ### Added
+- **Windows and macOS downloads, and more Linux packages.** Every release now ships a Windows installer (`InvoiceDesk-Setup-x64.exe`, per-user, no admin) and portable zip, a universal macOS dmg, a Debian/Ubuntu `.deb`, an Arch package, plus the RPM, AppImage and tarball. File names no longer carry the version, so `releases/latest/download/<name>` always works; `latest.json` describes each release. Releases are published automatically from a tag, with checksums and build-provenance attestations (docs/RELEASING.md).
 - **Settings, redesigned.** Settings is now ten sections in a list with search (it also finds control names, e.g. "IBAN" finds Payment), and remembers the last section. Other screens open the right section.
   - **Invoices:** a numbering pattern (`{PREFIX}-{YYYY}-{SEQ:4}` by default) with yearly reset and a "next number" preview; VAT on/off and rate for new invoices; tax registration number (printed with your details when set); date format (`14 Sep 2026` or `14/09/2026`); default currency; currency display (code, Arabic symbols in Arabic documents, or symbol).
   - **This computer:** density, accent colour and start-up view; PDF file-name pattern, export folder and "open after export"; a keyboard shortcuts reference.
@@ -35,6 +36,8 @@ All notable changes to Invoice Desk. The format follows [Keep a Changelog](https
   - The interface language is independent of the language of a document: an Arabic invoice can be edited in an English app (ADR-0011).
 
 ### Fixed
+- **Linux packages declare EGL/GLES.** On a minimal Ubuntu 22.04 the app aborted at launch because `libGLESv2` was missing; the deb, RPM and Arch packages now depend on it.
+- **Windows and macOS show the Invoice Desk icon** instead of Flutter's default, and the macOS app is named "Invoice Desk".
 - **Previews and exported PDFs now use the document's style.** Until now every document printed in Classic whatever style it was given.
 - **Documents sent before styles existed keep their look.** An invoice sent or paid, or a contract signed, before this version (or restored from an older backup) stays Classic, whatever default style is chosen later.
 - **The Arabic title «فاتورة» is no longer spaced out.** Letter spacing pulled the joined Arabic letters apart in the title, the table headers and the paid stamp of Arabic invoices; it now applies to English text only.

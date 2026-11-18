@@ -216,3 +216,4 @@ Flutter can't cross-compile desktop apps: Windows builds need Windows, macOS bui
 
 | Date | Ruling |
 |---|---|
+| 2026-11-18 | A local hook blocks `flutter create`; the owner chose to run it in a visible Terminal tab in a scratch folder and copy only `macos/` in. |

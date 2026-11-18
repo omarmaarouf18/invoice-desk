@@ -24,10 +24,22 @@
 
 - 2026-11-18 — The local Fedora build already stays at GLIBC_2.34 (`invoice_desk`, `libsqlite3.so`, `libdartjni.so`); the rest is older. Building on ubuntu-22.04 keeps everything ≤ 2.35.
 - 2026-11-18 — The current `macos/` has `PRODUCT_NAME = my_app`, `com.example.myApp`, `$(FLAVOR_APP_NAME)` in Info.plist and dev/stg configurations; it cannot have produced a usable app.
+- 2026-11-18 — A Fedora 45 build links GLib 2.80 symbols (`g_once_init_enter_pointer`) and aborts on Ubuntu 22.04 / Debian 12; only the ubuntu-22.04 build is shippable. Verified by building in an `ubuntu:22.04` container (glibc need: 2.34).
+- 2026-11-18 — On a minimal Ubuntu 22.04 the app aborted with "Couldn't open libGLESv2.so.2": the engine dlopen()s EGL/GLES, invisible to dpkg-shlibdeps/rpm/namcap. Now declared in all three packages; the smoke script no longer installs EGL itself, so it tests the packages' own dependencies.
+- 2026-11-18 — With those fixes, `scripts/smoke_linux.sh` passes in ubuntu:22.04, debian:12, fedora:latest and archlinux:latest; lintian (22.04 and Debian 12), rpmlint (with the rpmlintrc) and namcap are clean.
+- 2026-11-18 — Two podman containers with `:Z` on the same folder relabel it and break each other; use `:z`.
+- 2026-11-18 — `dart run` prints "Running build hooks..." on stdout; the workflows call `dart tool/release.dart` so captured output stays clean.
+- 2026-11-18 — The Windows exe icon was Flutter's default; replaced with the app icon.
 
 ## Open questions
 
-(none yet)
+1. GPG signs with a passphrase-less signing subkey, so no secret beyond `GPG_PRIVATE_KEY` is needed (brief §11). Want a `GPG_PASSPHRASE` secret instead? — recommended: no, a dedicated subkey without passphrase that lives only in GitHub secrets — open.
+2. `feat/bilingual-styles` phases 7–8 are not done. Does 0.5.0 ship without them? — recommended: yes, ship 0.5.0 with phases 0–6 and keep 7–8 for 0.6.0 — open.
+3. Signing runs only on releases (and release dry runs), not on `main` pushes, to save SignPath quota and notarization time — recommended: keep — open.
+
+## Unverified (needs the first `main` run)
+
+- Windows scripts (no `pwsh` locally), macOS scripts (no Mac), the AppImage smoke, the Arch build from the CI tarball, SignPath/Apple/GPG/winget/portfolio steps.
 
 ## Leftovers
 
