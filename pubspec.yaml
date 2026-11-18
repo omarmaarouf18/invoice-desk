@@ -26,14 +26,14 @@ dependencies:
   # Pinned: resolved from third_party/pdf (patched), see third_party/pdf/README.md.
   pdf: 3.13.1
   printing: ^5.15.1
-  sqlite3: ^3.5.2
+  sqlite3: ^3.9.1
   url_launcher: ^6.3.3
   uuid: ^4.6.0
-  window_manager: ^0.5.2
+  window_manager: ^0.7.0
 
 dev_dependencies:
   analyzer: ^13.0.0
-  build_runner: ^2.15.1
+  build_runner: ^2.16.1
   drift_dev: ^2.35.3
   flutter_driver:
     sdk: flutter
