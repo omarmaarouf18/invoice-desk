@@ -2179,4 +2179,78 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsInvoices => 'Invoices';
+
+  @override
+  String get numberingTitle => 'Invoice numbering';
+
+  @override
+  String get numberPattern => 'Number pattern';
+
+  @override
+  String numberPatternHint(String prefix, String year, String yy, String seq) {
+    return '$prefix prefix · $year or $yy year · $seq sequence';
+  }
+
+  @override
+  String get numberYearlyReset => 'Restart the sequence each year';
+
+  @override
+  String numberPatternNoSeq(String seq) {
+    return 'Add $seq to the pattern.';
+  }
+
+  @override
+  String numberPatternNoYear(String year, String yy) {
+    return 'When the sequence restarts each year, add $year or $yy so numbers never repeat.';
+  }
+
+  @override
+  String numberNextPreview(String number) {
+    return 'Next number: $number';
+  }
+
+  @override
+  String get numberExistingKept => 'Existing numbers don’t change.';
+
+  @override
+  String get taxVatTitle => 'Tax';
+
+  @override
+  String get defaultVatOn => 'VAT on for new invoices';
+
+  @override
+  String get defaultVatRate => 'VAT rate (%)';
+
+  @override
+  String get taxRegistrationNo => 'Tax registration number';
+
+  @override
+  String get taxRegistrationNoHint => 'Printed with your details when set.';
+
+  @override
+  String get docFormatsTitle => 'Document formats';
+
+  @override
+  String get dateFormatLabel => 'Date format';
+
+  @override
+  String get defaultCurrencyLabel => 'Default currency for new invoices';
+
+  @override
+  String get currencyDisplayLabel => 'Currency display';
+
+  @override
+  String get currencyDisplayCode => 'Code';
+
+  @override
+  String get currencyDisplayLocal => 'Arabic symbols';
+
+  @override
+  String get currencyDisplaySymbol => 'Symbol';
+
+  @override
+  String get currencyDisplayHint => '“Arabic symbols” apply to Arabic documents only; English and bilingual documents use the code.';
+
+  @override
+  String get docFormatsFrozenHint => 'Documents already sent, paid or signed keep the formats they were issued with.';
 }

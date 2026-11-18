@@ -1241,5 +1241,67 @@
   "settingsData": "Data & backups",
   "settingsSearchHint": "Search settings",
   "settingsNoMatch": "No settings match.",
-  "settingsInvoices": "Invoices"
+  "settingsInvoices": "Invoices",
+  "numberingTitle": "Invoice numbering",
+  "numberPattern": "Number pattern",
+  "numberPatternHint": "{prefix} prefix · {year} or {yy} year · {seq} sequence",
+  "numberYearlyReset": "Restart the sequence each year",
+  "numberPatternNoSeq": "Add {seq} to the pattern.",
+  "numberPatternNoYear": "When the sequence restarts each year, add {year} or {yy} so numbers never repeat.",
+  "numberNextPreview": "Next number: {number}",
+  "@numberNextPreview": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "numberExistingKept": "Existing numbers don’t change.",
+  "taxVatTitle": "Tax",
+  "defaultVatOn": "VAT on for new invoices",
+  "defaultVatRate": "VAT rate (%)",
+  "taxRegistrationNo": "Tax registration number",
+  "taxRegistrationNoHint": "Printed with your details when set.",
+  "docFormatsTitle": "Document formats",
+  "dateFormatLabel": "Date format",
+  "defaultCurrencyLabel": "Default currency for new invoices",
+  "currencyDisplayLabel": "Currency display",
+  "currencyDisplayCode": "Code",
+  "currencyDisplayLocal": "Arabic symbols",
+  "currencyDisplaySymbol": "Symbol",
+  "currencyDisplayHint": "“Arabic symbols” apply to Arabic documents only; English and bilingual documents use the code.",
+  "docFormatsFrozenHint": "Documents already sent, paid or signed keep the formats they were issued with.",
+  "@numberPatternHint": {
+    "placeholders": {
+      "prefix": {
+        "type": "String"
+      },
+      "year": {
+        "type": "String"
+      },
+      "yy": {
+        "type": "String"
+      },
+      "seq": {
+        "type": "String"
+      }
+    }
+  },
+  "@numberPatternNoSeq": {
+    "placeholders": {
+      "seq": {
+        "type": "String"
+      }
+    }
+  },
+  "@numberPatternNoYear": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      },
+      "yy": {
+        "type": "String"
+      }
+    }
+  }
 }

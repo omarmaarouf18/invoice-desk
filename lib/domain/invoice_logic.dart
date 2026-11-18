@@ -62,13 +62,74 @@ String formatInvoiceNumber(String prefix, int year, int seq) =>
     '$prefix-$year-${seq.toString().padLeft(4, '0')}';
 
 /// Next sequence for [year] given the (year, seq) pairs already used.
-int nextSeq(Iterable<({int year, int seq})> used, int year) {
+/// With [yearlyReset] off the count runs across years: the max of all.
+int nextSeq(
+  Iterable<({int year, int seq})> used,
+  int year, {
+  bool yearlyReset = true,
+}) {
   var max = 0;
   for (final u in used) {
-    if (u.year == year && u.seq > max) max = u.seq;
+    if ((!yearlyReset || u.year == year) && u.seq > max) max = u.seq;
   }
   return max + 1;
 }
+
+/// Why a numbering pattern cannot be used.
+enum NumberPatternProblem {
+  /// No `{SEQ}` / `{SEQ:n}`: every number would be the same.
+  noSequence,
+
+  /// Yearly reset without `{YYYY}` or `{YY}`: 2026 and 2027 would both
+  /// produce `…-0001`.
+  noYearWithReset,
+}
+
+final _seqToken = RegExp(r'\{SEQ(?::(\d))?\}');
+
+/// Null when [pattern] is usable with [yearlyReset].
+NumberPatternProblem? checkNumberPattern(
+  String pattern, {
+  required bool yearlyReset,
+}) {
+  if (!_seqToken.hasMatch(pattern)) return NumberPatternProblem.noSequence;
+  if (yearlyReset && !pattern.contains('{YYYY}') && !pattern.contains('{YY}')) {
+    return NumberPatternProblem.noYearWithReset;
+  }
+  return null;
+}
+
+/// [pattern] with its tokens filled: `{PREFIX}`, `{YYYY}`, `{YY}` (last two
+/// digits), `{SEQ}` and `{SEQ:n}` (zero-padded to n, 1–9). Other text is
+/// kept as typed. `{PREFIX}-{YYYY}-{SEQ:4}` is [formatInvoiceNumber].
+String formatNumberPattern(
+  String pattern, {
+  required String prefix,
+  required int year,
+  required int seq,
+}) => pattern
+    .replaceAll('{PREFIX}', prefix)
+    .replaceAll('{YYYY}', '$year')
+    .replaceAll('{YY}', (year % 100).toString().padLeft(2, '0'))
+    .replaceAllMapped(
+      _seqToken,
+      (m) => seq.toString().padLeft(int.tryParse(m.group(1) ?? '') ?? 1, '0'),
+    );
+
+/// The number [s] gives sequence [seq] of [year]. An unusable saved
+/// pattern falls back to the default, so numbering never breaks.
+String invoiceNumberFor(Settings s, int year, int seq) => formatNumberPattern(
+  checkNumberPattern(
+            s.invoiceNumberPattern,
+            yearlyReset: s.numberYearlyReset,
+          ) ==
+          null
+      ? s.invoiceNumberPattern
+      : Settings.defaultNumberPattern,
+  prefix: s.invoicePrefix,
+  year: year,
+  seq: seq,
+);
 
 /// Extracts (year, seq) from a number like `OM-2026-0001`. Null when the
 /// number does not end in `-YYYY-N`.

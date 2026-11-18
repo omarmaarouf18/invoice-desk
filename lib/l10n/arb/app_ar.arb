@@ -1241,5 +1241,67 @@
   "settingsData": "البيانات والنسخ الاحتياطية",
   "settingsSearchHint": "ابحث في الإعدادات",
   "settingsNoMatch": "لا توجد إعدادات بهذا الاسم.",
-  "settingsInvoices": "الفواتير"
+  "settingsInvoices": "الفواتير",
+  "numberingTitle": "ترقيم الفواتير",
+  "numberPattern": "نمط الرقم",
+  "numberPatternHint": "{prefix} البادئة · {year} أو {yy} السنة · {seq} التسلسل",
+  "numberYearlyReset": "يبدأ التسلسل من 1 كل سنة",
+  "numberPatternNoSeq": "أضف {seq} إلى النمط.",
+  "numberPatternNoYear": "مع البدء من 1 كل سنة، أضف {year} أو {yy} حتى لا تتكرر الأرقام.",
+  "numberNextPreview": "الرقم التالي: {number}",
+  "@numberNextPreview": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "numberExistingKept": "الأرقام الحالية لا تتغيّر.",
+  "taxVatTitle": "الضريبة",
+  "defaultVatOn": "ضريبة القيمة المضافة مفعّلة في الفواتير الجديدة",
+  "defaultVatRate": "نسبة الضريبة (%)",
+  "taxRegistrationNo": "رقم التسجيل الضريبي",
+  "taxRegistrationNoHint": "يُطبع مع بياناتك عند إدخاله.",
+  "docFormatsTitle": "تنسيق المستندات",
+  "dateFormatLabel": "صيغة التاريخ",
+  "defaultCurrencyLabel": "العملة الافتراضية للفواتير الجديدة",
+  "currencyDisplayLabel": "طريقة كتابة العملة",
+  "currencyDisplayCode": "الرمز الدولي",
+  "currencyDisplayLocal": "رموز عربية",
+  "currencyDisplaySymbol": "الرمز",
+  "currencyDisplayHint": "«رموز عربية» تُطبَّق في المستندات العربية فقط؛ الإنجليزية وثنائية اللغة تستخدم الرمز الدولي.",
+  "docFormatsFrozenHint": "المستندات المرسلة أو المدفوعة أو الموقّعة تحتفظ بالتنسيق الذي صدرت به.",
+  "@numberPatternHint": {
+    "placeholders": {
+      "prefix": {
+        "type": "String"
+      },
+      "year": {
+        "type": "String"
+      },
+      "yy": {
+        "type": "String"
+      },
+      "seq": {
+        "type": "String"
+      }
+    }
+  },
+  "@numberPatternNoSeq": {
+    "placeholders": {
+      "seq": {
+        "type": "String"
+      }
+    }
+  },
+  "@numberPatternNoYear": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      },
+      "yy": {
+        "type": "String"
+      }
+    }
+  }
 }

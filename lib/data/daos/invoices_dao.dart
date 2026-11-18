@@ -127,8 +127,8 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
     ];
   }
 
-  Future<int> nextSeqFor(int year) async =>
-      nextSeq(await usedSequences(), year);
+  Future<int> nextSeqFor(int year, {bool yearlyReset = true}) async =>
+      nextSeq(await usedSequences(), year, yearlyReset: yearlyReset);
 
   Future<bool> numberTaken(String number, {String? exceptId}) async {
     final q = select(invoices)..where((i) => i.number.equals(number.trim()));

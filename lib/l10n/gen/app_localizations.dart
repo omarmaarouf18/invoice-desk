@@ -3780,6 +3780,138 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'الفواتير'**
   String get settingsInvoices;
+
+  /// No description provided for @numberingTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ترقيم الفواتير'**
+  String get numberingTitle;
+
+  /// No description provided for @numberPattern.
+  ///
+  /// In ar, this message translates to:
+  /// **'نمط الرقم'**
+  String get numberPattern;
+
+  /// No description provided for @numberPatternHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'{prefix} البادئة · {year} أو {yy} السنة · {seq} التسلسل'**
+  String numberPatternHint(String prefix, String year, String yy, String seq);
+
+  /// No description provided for @numberYearlyReset.
+  ///
+  /// In ar, this message translates to:
+  /// **'يبدأ التسلسل من 1 كل سنة'**
+  String get numberYearlyReset;
+
+  /// No description provided for @numberPatternNoSeq.
+  ///
+  /// In ar, this message translates to:
+  /// **'أضف {seq} إلى النمط.'**
+  String numberPatternNoSeq(String seq);
+
+  /// No description provided for @numberPatternNoYear.
+  ///
+  /// In ar, this message translates to:
+  /// **'مع البدء من 1 كل سنة، أضف {year} أو {yy} حتى لا تتكرر الأرقام.'**
+  String numberPatternNoYear(String year, String yy);
+
+  /// No description provided for @numberNextPreview.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرقم التالي: {number}'**
+  String numberNextPreview(String number);
+
+  /// No description provided for @numberExistingKept.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأرقام الحالية لا تتغيّر.'**
+  String get numberExistingKept;
+
+  /// No description provided for @taxVatTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الضريبة'**
+  String get taxVatTitle;
+
+  /// No description provided for @defaultVatOn.
+  ///
+  /// In ar, this message translates to:
+  /// **'ضريبة القيمة المضافة مفعّلة في الفواتير الجديدة'**
+  String get defaultVatOn;
+
+  /// No description provided for @defaultVatRate.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسبة الضريبة (%)'**
+  String get defaultVatRate;
+
+  /// No description provided for @taxRegistrationNo.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم التسجيل الضريبي'**
+  String get taxRegistrationNo;
+
+  /// No description provided for @taxRegistrationNoHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'يُطبع مع بياناتك عند إدخاله.'**
+  String get taxRegistrationNoHint;
+
+  /// No description provided for @docFormatsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنسيق المستندات'**
+  String get docFormatsTitle;
+
+  /// No description provided for @dateFormatLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'صيغة التاريخ'**
+  String get dateFormatLabel;
+
+  /// No description provided for @defaultCurrencyLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'العملة الافتراضية للفواتير الجديدة'**
+  String get defaultCurrencyLabel;
+
+  /// No description provided for @currencyDisplayLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'طريقة كتابة العملة'**
+  String get currencyDisplayLabel;
+
+  /// No description provided for @currencyDisplayCode.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرمز الدولي'**
+  String get currencyDisplayCode;
+
+  /// No description provided for @currencyDisplayLocal.
+  ///
+  /// In ar, this message translates to:
+  /// **'رموز عربية'**
+  String get currencyDisplayLocal;
+
+  /// No description provided for @currencyDisplaySymbol.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرمز'**
+  String get currencyDisplaySymbol;
+
+  /// No description provided for @currencyDisplayHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'«رموز عربية» تُطبَّق في المستندات العربية فقط؛ الإنجليزية وثنائية اللغة تستخدم الرمز الدولي.'**
+  String get currencyDisplayHint;
+
+  /// No description provided for @docFormatsFrozenHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'المستندات المرسلة أو المدفوعة أو الموقّعة تحتفظ بالتنسيق الذي صدرت به.'**
+  String get docFormatsFrozenHint;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

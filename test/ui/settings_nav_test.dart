@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:invoice_desk/app/locale.dart';
 import 'package:invoice_desk/app/providers.dart';
+import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/data/db.dart';
+import 'package:invoice_desk/features/editor/editor_controller.dart';
 import 'package:invoice_desk/features/settings/settings_section.dart';
 
 import '../helpers/harness.dart';
@@ -65,4 +68,68 @@ void main() {
     final saved = (await tester.runAsync(db.settingsDao.get))!;
     expect(saved.website, 'acme.example');
   });
+
+  testWidgets('new invoices use the numbering, VAT and currency settings', (
+    tester,
+  ) async {
+    final db = AppDatabase.memory(seeder: legacySeed);
+    addTearDown(() => tester.runAsync(db.close));
+    final s = (await tester.runAsync(db.settingsDao.get))!;
+    await tester.runAsync(
+      () => db.settingsDao.save(
+        s.copyWith(
+          invoicePrefix: 'AS',
+          invoiceNumberPattern: '{PREFIX}/{YY}/{SEQ:3}',
+          defaultVatOn: true,
+          defaultVatRateBp: 500,
+          defaultCurrency: Currency.sar,
+        ),
+      ),
+    );
+    final c = await pumpShell(tester, db);
+    final client = (await tester.runAsync(db.clientsDao.getAll))!.single;
+    await drive(
+      tester,
+      () => c.read(editorProvider.notifier).newInvoice(clientId: client.id),
+    );
+    await settle(tester);
+    final inv = c.read(editorProvider).invoice!;
+    // The seed already has 2026-0001, so the next is 2.
+    expect(inv.number, 'AS/26/002');
+    expect((inv.year, inv.seq), (2026, 2));
+    expect(inv.vatOn, isTrue);
+    expect(inv.vatRateBp, 500);
+    expect(inv.sections.first.currency, Currency.sar);
+    await drive(tester, c.read(editorProvider.notifier).flush);
+    await settle(tester); // UiPrefs writes are debounced too.
+  });
+
+  testWidgets('the numbering card previews the next number and flags errors', (
+    tester,
+  ) async {
+    final db = AppDatabase.memory(seeder: legacySeed);
+    addTearDown(() => tester.runAsync(db.close));
+    final c = await pumpShell(tester, db, language: UiLanguage.en);
+    openSettingsFor(c, SettingsSection.invoices);
+    await settle(tester);
+    final preview = find.byKey(const ValueKey('number-next-preview'));
+    await tester.ensureVisible(preview);
+    expect(find.text('Next number: OM-2026-0002'), findsOneWidget);
+
+    await tester.enterText(
+      find.descendant(
+        of: find.byKey(const ValueKey('number-pattern')),
+        matching: find.byType(TextField),
+      ),
+      '{PREFIX}-{SEQ:4}',
+    );
+    await settle(tester);
+    expect(find.textContaining('so numbers never repeat'), findsOneWidget);
+    expect(preview, findsNothing);
+  });
+}
+
+void openSettingsFor(ProviderContainer c, SettingsSection s) {
+  c.read(settingsSectionProvider.notifier).set(s);
+  c.read(workspaceProvider.notifier).show(Workspace.settings);
 }

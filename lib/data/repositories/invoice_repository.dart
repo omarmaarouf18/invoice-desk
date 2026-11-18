@@ -6,6 +6,7 @@ import 'package:invoice_desk/data/repositories/document_snapshots.dart';
 import 'package:invoice_desk/data/repositories/repository.dart';
 import 'package:invoice_desk/data/repositories/style_repository.dart';
 import 'package:invoice_desk/domain/doc_language.dart';
+import 'package:invoice_desk/domain/invoice_logic.dart';
 import 'package:invoice_desk/domain/models.dart';
 import 'package:invoice_desk/domain/results.dart';
 
@@ -52,8 +53,30 @@ class InvoiceRepository with ClockedRepository {
     return s.defaultDocLanguage;
   }
 
-  /// Next free sequence in [year]; deleted invoices keep their numbers.
-  Future<int> nextSeqFor(int year) => _dao.nextSeqFor(year);
+  /// Next free sequence in [year] under the numbering settings (per year,
+  /// or across years without yearly reset); deleted invoices keep theirs.
+  Future<int> nextSeqFor(int year) async => _dao.nextSeqFor(
+    year,
+    yearlyReset: (await _db.settingsDao.get()).numberYearlyReset,
+  );
+
+  /// What the next number would be in [year] under [draft] numbering
+  /// settings (Settings' live preview, before they are saved).
+  Future<String> previewNumber(Settings draft, int year) async {
+    final seq = await _dao.nextSeqFor(
+      year,
+      yearlyReset: draft.numberYearlyReset,
+    );
+    return invoiceNumberFor(draft, year, seq);
+  }
+
+  /// The next invoice number dated in [year], from the numbering pattern
+  /// in Settings, with the year and sequence it stands for.
+  Future<({String number, int year, int seq})> nextNumber(int year) async {
+    final s = await _db.settingsDao.get();
+    final seq = await _dao.nextSeqFor(year, yearlyReset: s.numberYearlyReset);
+    return (number: invoiceNumberFor(s, year, seq), year: year, seq: seq);
+  }
 
   /// Whether another invoice (deleted ones included) already has [number].
   Future<bool> numberTaken(String number, {String? exceptId}) =>

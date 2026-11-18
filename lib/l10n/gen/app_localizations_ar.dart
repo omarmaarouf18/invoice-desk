@@ -2179,4 +2179,78 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsInvoices => 'الفواتير';
+
+  @override
+  String get numberingTitle => 'ترقيم الفواتير';
+
+  @override
+  String get numberPattern => 'نمط الرقم';
+
+  @override
+  String numberPatternHint(String prefix, String year, String yy, String seq) {
+    return '$prefix البادئة · $year أو $yy السنة · $seq التسلسل';
+  }
+
+  @override
+  String get numberYearlyReset => 'يبدأ التسلسل من 1 كل سنة';
+
+  @override
+  String numberPatternNoSeq(String seq) {
+    return 'أضف $seq إلى النمط.';
+  }
+
+  @override
+  String numberPatternNoYear(String year, String yy) {
+    return 'مع البدء من 1 كل سنة، أضف $year أو $yy حتى لا تتكرر الأرقام.';
+  }
+
+  @override
+  String numberNextPreview(String number) {
+    return 'الرقم التالي: $number';
+  }
+
+  @override
+  String get numberExistingKept => 'الأرقام الحالية لا تتغيّر.';
+
+  @override
+  String get taxVatTitle => 'الضريبة';
+
+  @override
+  String get defaultVatOn => 'ضريبة القيمة المضافة مفعّلة في الفواتير الجديدة';
+
+  @override
+  String get defaultVatRate => 'نسبة الضريبة (%)';
+
+  @override
+  String get taxRegistrationNo => 'رقم التسجيل الضريبي';
+
+  @override
+  String get taxRegistrationNoHint => 'يُطبع مع بياناتك عند إدخاله.';
+
+  @override
+  String get docFormatsTitle => 'تنسيق المستندات';
+
+  @override
+  String get dateFormatLabel => 'صيغة التاريخ';
+
+  @override
+  String get defaultCurrencyLabel => 'العملة الافتراضية للفواتير الجديدة';
+
+  @override
+  String get currencyDisplayLabel => 'طريقة كتابة العملة';
+
+  @override
+  String get currencyDisplayCode => 'الرمز الدولي';
+
+  @override
+  String get currencyDisplayLocal => 'رموز عربية';
+
+  @override
+  String get currencyDisplaySymbol => 'الرمز';
+
+  @override
+  String get currencyDisplayHint => '«رموز عربية» تُطبَّق في المستندات العربية فقط؛ الإنجليزية وثنائية اللغة تستخدم الرمز الدولي.';
+
+  @override
+  String get docFormatsFrozenHint => 'المستندات المرسلة أو المدفوعة أو الموقّعة تحتفظ بالتنسيق الذي صدرت به.';
 }

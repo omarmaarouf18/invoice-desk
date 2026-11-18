@@ -120,10 +120,8 @@ class EditorController extends Notifier<EditorState> {
     state = EditorState(revision: state.revision + 1);
   }
 
-  Future<String> _nextNumber(int year, String prefix) async {
-    final seq = await ref.read(invoiceRepositoryProvider).nextSeqFor(year);
-    return formatInvoiceNumber(prefix, year, seq);
-  }
+  Future<({String number, int year, int seq})> _nextNumber(int year) =>
+      ref.read(invoiceRepositoryProvider).nextNumber(year);
 
   /// Opens a fresh draft (not saved until it has a client).
   Future<void> newInvoice({String? clientId}) async {
@@ -131,8 +129,7 @@ class EditorController extends Notifier<EditorState> {
     await ref.read(contractProvider.notifier).flush();
     final settings = await ref.read(settingsRepositoryProvider).get();
     final today = _today;
-    final number = await _nextNumber(today.year, settings.invoicePrefix);
-    final parsed = parseInvoiceNumber(number)!;
+    final next = await _nextNumber(today.year);
     final lang = await ref
         .read(invoiceRepositoryProvider)
         .resolveLanguage(clientId: clientId);
@@ -145,14 +142,16 @@ class EditorController extends Notifier<EditorState> {
         id: newId(),
         clientId: clientId ?? '',
         language: lang,
-        number: number,
-        year: parsed.year,
-        seq: parsed.seq,
+        number: next.number,
+        year: next.year,
+        seq: next.seq,
         issueDate: today,
         dueDate: today.addDays(settings.defaultDueDays),
         notesEn: settings.notesEn,
         notesAr: settings.notesAr,
-        sections: defaultSections(newId),
+        vatOn: settings.defaultVatOn,
+        vatRateBp: settings.defaultVatRateBp,
+        sections: defaultSections(newId, currency: settings.defaultCurrency),
       ),
     );
     ref.read(workspaceProvider.notifier).show(Workspace.invoice);
@@ -353,14 +352,13 @@ class EditorController extends Notifier<EditorState> {
   }) async {
     final settings = await ref.read(settingsRepositoryProvider).get();
     final today = on ?? _today;
-    final number = await _nextNumber(today.year, settings.invoicePrefix);
-    final p = parseInvoiceNumber(number)!;
+    final next = await _nextNumber(today.year);
     final terms = src.issueDate.daysUntil(src.dueDate);
     final copy = src.copyWith(
       id: newId(),
-      number: number,
-      year: p.year,
-      seq: p.seq,
+      number: next.number,
+      year: next.year,
+      seq: next.seq,
       status: InvoiceStatus.draft,
       paidDate: () => null,
       issueDate: todayDates ? today : src.issueDate,
@@ -380,7 +378,7 @@ class EditorController extends Notifier<EditorState> {
       return const Failed();
     }
     await open(copy.id);
-    return Created(number);
+    return Created(next.number);
   }
 
   Future<ActionResult> duplicate(String id) async {

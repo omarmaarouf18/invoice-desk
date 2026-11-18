@@ -116,7 +116,7 @@ Invoice? invoiceForMilestone({
     id: newId(),
     clientId: c.clientId,
     language: language ?? settings.defaultDocLanguage,
-    number: formatInvoiceNumber(settings.invoicePrefix, today.year, seq),
+    number: invoiceNumberFor(settings, today.year, seq),
     year: today.year,
     seq: seq,
     issueDate: today,
