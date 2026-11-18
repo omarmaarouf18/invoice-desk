@@ -45,7 +45,7 @@ void main() {
           clientId: client.id,
           template: t,
           title: 'تطوير منصة',
-          projectName: 'منصة المتر',
+          projectName: 'منصة أكمي',
         ),
       ),
     );
@@ -60,7 +60,7 @@ void main() {
       tester,
       () => db.clientsDao.upsert(
         client.copyWith(
-          legalName: 'أكاديمية المتر',
+          legalName: 'أكاديمية العينة',
           representative: 'أحمد علي',
           representativeTitle: 'المدير',
         ),

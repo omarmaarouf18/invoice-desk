@@ -5,7 +5,7 @@
 
 ## State (as of 2026-11-17)
 
-- **Released:** 0.4.0 on `main` (calendar, postponements, demo data, schema v5). The branch is at **schema v8**.
+- **Released:** nothing is published yet. Only `v0.1.0` is tagged; `main` (`e4f63fa`) is from before 0.1.0. The 0.2.0–0.4.0 release commits (`98a7cb9`, `df865df`, `e120ecb`; 0.4.0 = calendar, demo data, schema v5) are untagged on the branch chain. This branch is at **schema v8**.
 - **Active branch:** `feat/bilingual-styles`. Nothing on it is pushed; the owner pushes.
 - **Active brief:** `docs/briefs/2026-11-16-bilingual-styles.md`, with phases 0–8 (bilingual UI, bilingual documents, document styles, settings, UX).
 
