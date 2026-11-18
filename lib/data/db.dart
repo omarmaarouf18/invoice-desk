@@ -75,7 +75,7 @@ class AppDatabase extends _$AppDatabase {
   /// What [seedOnCreate] runs.
   final Seeder seeder;
 
-  static const currentSchemaVersion = 7;
+  static const currentSchemaVersion = 8;
 
   @override
   int get schemaVersion => currentSchemaVersion;
@@ -333,6 +333,25 @@ class AppDatabase extends _$AppDatabase {
       ]) {
         await m.create(t);
       }
+    },
+    // v8: settings redesign (SET-01) and issue snapshots (ADR-0014). Every
+    // new column has a default that keeps v7's behaviour; documents already
+    // committed get no issue snapshot and keep rendering from live data.
+    from7To8: (m, schema) async {
+      for (final c in [
+        schema.settings.invoiceNumberPattern,
+        schema.settings.numberYearlyReset,
+        schema.settings.defaultVatOn,
+        schema.settings.defaultVatRateBp,
+        schema.settings.taxRegistrationNo,
+        schema.settings.dateFormat,
+        schema.settings.defaultCurrency,
+        schema.settings.currencyDisplay,
+      ]) {
+        await m.addColumn(schema.settings, c);
+      }
+      await m.addColumn(schema.invoices, schema.invoices.issueSnapshot);
+      await m.addColumn(schema.contracts, schema.contracts.issueSnapshot);
     },
   );
 

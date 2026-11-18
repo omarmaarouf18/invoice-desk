@@ -182,6 +182,7 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
         language: Value(inv.language.code),
         styleId: Value(inv.styleId),
         styleSnapshot: Value(inv.styleSnapshot),
+        issueSnapshot: Value(inv.issueSnapshot),
         scopeOn: Value(inv.scope.enabled),
         scopeTitle: Value(inv.scope.title),
         scopeOverview: Value(inv.scope.overview),
@@ -322,6 +323,7 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
     String id,
     CalendarDate date, {
     String? styleSnapshot,
+    String? issueSnapshot,
   }) => transaction(() async {
     await (update(invoices)..where((i) => i.id.equals(id))).write(
       InvoicesCompanion(
@@ -329,6 +331,9 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
         paidDate: Value(date.toIso()),
         styleSnapshot: styleSnapshot != null
             ? Value(styleSnapshot)
+            : const Value.absent(),
+        issueSnapshot: issueSnapshot != null
+            ? Value(issueSnapshot)
             : const Value.absent(),
         updatedAt: Value(_now()),
       ),
@@ -378,6 +383,7 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
     ),
     styleId: r.styleId,
     styleSnapshot: r.styleSnapshot,
+    issueSnapshot: r.issueSnapshot,
     scope: ScopePage(
       enabled: r.scopeOn,
       title: r.scopeTitle,

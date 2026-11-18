@@ -181,6 +181,7 @@ class ContractsDao extends DatabaseAccessor<AppDatabase>
         unlocked: Value(c.unlocked),
         styleId: Value(c.styleId),
         styleSnapshot: Value(c.styleSnapshot),
+        issueSnapshot: Value(c.issueSnapshot),
         history: Value(
           jsonEncode([for (final e in c.history) e.toJson()]),
         ),
@@ -307,6 +308,7 @@ class ContractsDao extends DatabaseAccessor<AppDatabase>
     unlocked: r.unlocked,
     styleId: r.styleId,
     styleSnapshot: r.styleSnapshot,
+    issueSnapshot: r.issueSnapshot,
     history: _decodeHistory(r.history),
     clauses: [
       for (final x in cl)

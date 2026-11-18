@@ -56,6 +56,35 @@ class AppSettings extends Table with SyncRev {
   TextColumn get defaultInvoiceStyleId => text().nullable()();
   TextColumn get defaultContractStyleId => text().nullable()();
 
+  // v8: settings redesign (SET-01). Defaults keep the behaviour of v7.
+  /// New invoice numbers: `{PREFIX}`, `{YYYY}`, `{YY}`, `{SEQ}`/`{SEQ:n}`.
+  TextColumn get invoiceNumberPattern =>
+      text().withDefault(const Constant('{PREFIX}-{YYYY}-{SEQ:4}'))();
+  BoolColumn get numberYearlyReset =>
+      boolean().withDefault(const Constant(true))();
+  BoolColumn get defaultVatOn => boolean().withDefault(const Constant(false))();
+
+  /// Basis points (1400 = 14 %).
+  IntColumn get defaultVatRateBp => integer()
+      .withDefault(const Constant(1400))
+      .check(defaultVatRateBp.isBetweenValues(0, 10000))();
+  TextColumn get taxRegistrationNo => text().withDefault(const Constant(''))();
+
+  /// `long` (14 Sep 2026) or `numeric` (14/09/2026).
+  TextColumn get dateFormat => text()
+      .withDefault(const Constant('long'))
+      .check(dateFormat.isIn(const ['long', 'numeric']))();
+
+  /// ISO code of a new invoice's first section.
+  TextColumn get defaultCurrency => text()
+      .withDefault(const Constant('EGP'))
+      .check(defaultCurrency.isIn(const ['EGP', 'USD', 'SAR', 'AED', 'EUR']))();
+
+  /// `code`, `local` or `symbol`.
+  TextColumn get currencyDisplay => text()
+      .withDefault(const Constant('code'))
+      .check(currencyDisplay.isIn(const ['code', 'local', 'symbol']))();
+
   // v4: sync.
   /// Random UUID of this installation, generated once.
   TextColumn get deviceId => text().withDefault(const Constant(''))();
@@ -151,6 +180,10 @@ class Invoices extends Table with SyncRev {
 
   /// v7: immutable style JSON snapshot taken when sent or paid (D3, ADR-0012).
   TextColumn get styleSnapshot => text().nullable()();
+
+  /// v8: provider, payment, client and format details as printed, frozen
+  /// with [styleSnapshot] (ADR-0014). Null renders from live data.
+  TextColumn get issueSnapshot => text().nullable()();
 
   /// v5: demo row (removed with the demo set; cleared on user edits).
   BoolColumn get isDemo => boolean().withDefault(const Constant(false))();
@@ -335,6 +368,10 @@ class Contracts extends Table with SyncRev {
 
   /// v7: immutable style JSON snapshot taken when signed (D3, ADR-0012).
   TextColumn get styleSnapshot => text().nullable()();
+
+  /// v8: provider and client details as printed, frozen with
+  /// [styleSnapshot] (ADR-0014). Null renders from live data.
+  TextColumn get issueSnapshot => text().nullable()();
 
   /// v5: demo row (removed with the demo set; cleared on user edits).
   BoolColumn get isDemo => boolean().withDefault(const Constant(false))();

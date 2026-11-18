@@ -178,6 +178,7 @@ class Invoice {
     this.language = DocLanguage.bilingual,
     this.styleId,
     this.styleSnapshot,
+    this.issueSnapshot,
     this.scope = const ScopePage(),
     this.sections = const [],
     this.createdAt = 0,
@@ -239,6 +240,10 @@ class Invoice {
   /// Frozen style JSON when sent or paid (ADR-0012).
   final String? styleSnapshot;
 
+  /// Provider, payment, client and formats as printed when it was
+  /// committed (ADR-0014); null renders from live data.
+  final String? issueSnapshot;
+
   /// Optional scope page.
   final ScopePage scope;
 
@@ -281,6 +286,7 @@ class Invoice {
     DocLanguage? language,
     String? Function()? styleId,
     String? Function()? styleSnapshot,
+    String? Function()? issueSnapshot,
     ScopePage? scope,
     List<InvoiceSection>? sections,
     int? createdAt,
@@ -305,6 +311,7 @@ class Invoice {
     language: language ?? this.language,
     styleId: styleId != null ? styleId() : this.styleId,
     styleSnapshot: styleSnapshot != null ? styleSnapshot() : this.styleSnapshot,
+    issueSnapshot: issueSnapshot != null ? issueSnapshot() : this.issueSnapshot,
     scope: scope ?? this.scope,
     sections: sections ?? this.sections,
     createdAt: createdAt ?? this.createdAt,

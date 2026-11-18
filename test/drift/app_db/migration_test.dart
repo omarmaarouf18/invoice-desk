@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:drift_dev/api/migrations_native.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/data/library_seed.dart';
 import 'package:invoice_desk/domain/doc_language.dart';
@@ -435,6 +436,52 @@ void main() {
           "AND row_id = 'hash123'",
         ),
         1,
+      );
+    },
+  );
+
+  test(
+    'v7 → v8: settings keep v7 behaviour; committed documents get no '
+    'issue snapshot',
+    () async {
+      final schema = await verifier.schemaAt(7);
+      insertV1Data(schema.rawDatabase);
+      schema.rawDatabase
+        ..execute(
+          "UPDATE settings SET bank_iban = 'EG00OLD', name = 'Provider'",
+        )
+        ..execute(
+          "UPDATE invoices SET style_snapshot = '{}' WHERE id = 'i1'",
+        );
+      final db = AppDatabase(schema.newConnection());
+      addTearDown(db.close);
+      await verifier.migrateAndValidate(db, AppDatabase.currentSchemaVersion);
+
+      // Every new setting starts at the value that keeps v7's output.
+      final s = await db.settingsDao.get();
+      expect(s.name, 'Provider');
+      expect(s.bankIban, 'EG00OLD');
+      expect(s.invoiceNumberPattern, '{PREFIX}-{YYYY}-{SEQ:4}');
+      expect(s.numberYearlyReset, isTrue);
+      expect(s.defaultVatOn, isFalse);
+      expect(s.defaultVatRateBp, 1400);
+      expect(s.taxRegistrationNo, '');
+      expect(s.dateFormat, DocDateFormat.long);
+      expect(s.defaultCurrency, Currency.egp);
+      expect(s.currencyDisplay, CurrencyDisplay.code);
+
+      // The paid invoice keeps its style snapshot and has no issue
+      // snapshot: it renders from live data, as before (ADR-0014).
+      final inv = (await db.invoicesDao.getAll()).single;
+      expect(inv.styleSnapshot, '{}');
+      expect(inv.issueSnapshot, null);
+
+      // The new CHECKs hold.
+      expect(
+        () => db.customStatement(
+          "UPDATE settings SET currency_display = 'bogus' WHERE id = 1",
+        ),
+        throwsA(anything),
       );
     },
   );

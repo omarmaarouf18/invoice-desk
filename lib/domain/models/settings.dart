@@ -30,6 +30,14 @@ class Settings {
     this.docDigitStyle = DigitStyle.western,
     this.defaultInvoiceStyleId,
     this.defaultContractStyleId,
+    this.invoiceNumberPattern = defaultNumberPattern,
+    this.numberYearlyReset = true,
+    this.defaultVatOn = false,
+    this.defaultVatRateBp = 1400,
+    this.taxRegistrationNo = '',
+    this.dateFormat = DocDateFormat.long,
+    this.defaultCurrency = Currency.egp,
+    this.currencyDisplay = CurrencyDisplay.code,
   });
 
   /// Printed on invoices; `{{provider.name}}`.
@@ -113,6 +121,37 @@ class Settings {
   /// Default style ID for new contracts; null means classic preset.
   final String? defaultContractStyleId;
 
+  /// The invoice-number pattern every install starts with (schema v8):
+  /// `OM-2026-0001`.
+  static const defaultNumberPattern = '{PREFIX}-{YYYY}-{SEQ:4}';
+
+  /// How new invoice numbers are built from tokens: `{PREFIX}`, `{YYYY}`,
+  /// `{YY}` and `{SEQ}` / `{SEQ:n}` (zero-padded to n digits). Existing
+  /// numbers are never rewritten.
+  final String invoiceNumberPattern;
+
+  /// The sequence starts again at 1 each year. Off, it keeps counting
+  /// across years.
+  final bool numberYearlyReset;
+
+  /// New invoices start with VAT on.
+  final bool defaultVatOn;
+
+  /// The VAT rate new invoices start with, in basis points (1400 = 14 %).
+  final int defaultVatRateBp;
+
+  /// Tax registration number, printed with the provider block when set.
+  final String taxRegistrationNo;
+
+  /// How documents print dates.
+  final DocDateFormat dateFormat;
+
+  /// The currency of a new invoice's first section.
+  final Currency defaultCurrency;
+
+  /// How documents write currencies next to amounts.
+  final CurrencyDisplay currencyDisplay;
+
   /// A name is set; the first-run checklist uses it.
   bool get hasProfile => name.trim().isNotEmpty;
 
@@ -144,6 +183,14 @@ class Settings {
     bool? contractWesternDigits,
     String? Function()? defaultInvoiceStyleId,
     String? Function()? defaultContractStyleId,
+    String? invoiceNumberPattern,
+    bool? numberYearlyReset,
+    bool? defaultVatOn,
+    int? defaultVatRateBp,
+    String? taxRegistrationNo,
+    DocDateFormat? dateFormat,
+    Currency? defaultCurrency,
+    CurrencyDisplay? currencyDisplay,
   }) => Settings(
     name: name ?? this.name,
     role: role ?? this.role,
@@ -173,6 +220,14 @@ class Settings {
     defaultContractStyleId: defaultContractStyleId != null
         ? defaultContractStyleId()
         : this.defaultContractStyleId,
+    invoiceNumberPattern: invoiceNumberPattern ?? this.invoiceNumberPattern,
+    numberYearlyReset: numberYearlyReset ?? this.numberYearlyReset,
+    defaultVatOn: defaultVatOn ?? this.defaultVatOn,
+    defaultVatRateBp: defaultVatRateBp ?? this.defaultVatRateBp,
+    taxRegistrationNo: taxRegistrationNo ?? this.taxRegistrationNo,
+    dateFormat: dateFormat ?? this.dateFormat,
+    defaultCurrency: defaultCurrency ?? this.defaultCurrency,
+    currencyDisplay: currencyDisplay ?? this.currencyDisplay,
     // The old per-contract switch is the document digit style now: the
     // first one given wins.
     docDigitStyle:

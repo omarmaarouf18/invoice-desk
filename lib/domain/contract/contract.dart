@@ -33,6 +33,7 @@ class Contract {
     this.unlocked = false,
     this.styleId,
     this.styleSnapshot,
+    this.issueSnapshot,
     this.history = const [],
     this.clauses = const [],
     this.scope = const [],
@@ -126,6 +127,10 @@ class Contract {
   /// Frozen style JSON when signed or locked (ADR-0012).
   final String? styleSnapshot;
 
+  /// Provider, payment, client and formats as printed when it was
+  /// committed (ADR-0014); null renders from live data.
+  final String? issueSnapshot;
+
   /// Oldest first.
   final List<ContractEvent> history;
 
@@ -190,6 +195,7 @@ class Contract {
     bool? unlocked,
     String? Function()? styleId,
     String? Function()? styleSnapshot,
+    String? Function()? issueSnapshot,
     List<ContractEvent>? history,
     List<ContractClause>? clauses,
     List<ScopeItem>? scope,
@@ -226,6 +232,7 @@ class Contract {
     unlocked: unlocked ?? this.unlocked,
     styleId: styleId != null ? styleId() : this.styleId,
     styleSnapshot: styleSnapshot != null ? styleSnapshot() : this.styleSnapshot,
+    issueSnapshot: issueSnapshot != null ? issueSnapshot() : this.issueSnapshot,
     history: history ?? this.history,
     clauses: clauses ?? this.clauses,
     scope: scope ?? this.scope,

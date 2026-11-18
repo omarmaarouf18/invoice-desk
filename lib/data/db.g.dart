@@ -329,6 +329,114 @@ class $AppSettingsTable extends AppSettings
         type: DriftSqlType.string,
         requiredDuringInsert: false,
       );
+  static const VerificationMeta _invoiceNumberPatternMeta =
+      const VerificationMeta('invoiceNumberPattern');
+  @override
+  late final GeneratedColumn<String> invoiceNumberPattern =
+      GeneratedColumn<String>(
+        'invoice_number_pattern',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant('{PREFIX}-{YYYY}-{SEQ:4}'),
+      );
+  static const VerificationMeta _numberYearlyResetMeta = const VerificationMeta(
+    'numberYearlyReset',
+  );
+  @override
+  late final GeneratedColumn<bool> numberYearlyReset = GeneratedColumn<bool>(
+    'number_yearly_reset',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("number_yearly_reset" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _defaultVatOnMeta = const VerificationMeta(
+    'defaultVatOn',
+  );
+  @override
+  late final GeneratedColumn<bool> defaultVatOn = GeneratedColumn<bool>(
+    'default_vat_on',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("default_vat_on" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _defaultVatRateBpMeta = const VerificationMeta(
+    'defaultVatRateBp',
+  );
+  @override
+  late final GeneratedColumn<int> defaultVatRateBp = GeneratedColumn<int>(
+    'default_vat_rate_bp',
+    aliasedName,
+    false,
+    check: () => ComparableExpr(defaultVatRateBp).isBetweenValues(0, 10000),
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1400),
+  );
+  static const VerificationMeta _taxRegistrationNoMeta = const VerificationMeta(
+    'taxRegistrationNo',
+  );
+  @override
+  late final GeneratedColumn<String> taxRegistrationNo =
+      GeneratedColumn<String>(
+        'tax_registration_no',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant(''),
+      );
+  static const VerificationMeta _dateFormatMeta = const VerificationMeta(
+    'dateFormat',
+  );
+  @override
+  late final GeneratedColumn<String> dateFormat = GeneratedColumn<String>(
+    'date_format',
+    aliasedName,
+    false,
+    check: () => dateFormat.isIn(const ['long', 'numeric']),
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('long'),
+  );
+  static const VerificationMeta _defaultCurrencyMeta = const VerificationMeta(
+    'defaultCurrency',
+  );
+  @override
+  late final GeneratedColumn<String> defaultCurrency = GeneratedColumn<String>(
+    'default_currency',
+    aliasedName,
+    false,
+    check: () =>
+        defaultCurrency.isIn(const ['EGP', 'USD', 'SAR', 'AED', 'EUR']),
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('EGP'),
+  );
+  static const VerificationMeta _currencyDisplayMeta = const VerificationMeta(
+    'currencyDisplay',
+  );
+  @override
+  late final GeneratedColumn<String> currencyDisplay = GeneratedColumn<String>(
+    'currency_display',
+    aliasedName,
+    false,
+    check: () => currencyDisplay.isIn(const ['code', 'local', 'symbol']),
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('code'),
+  );
   static const VerificationMeta _deviceIdMeta = const VerificationMeta(
     'deviceId',
   );
@@ -383,6 +491,14 @@ class $AppSettingsTable extends AppSettings
     docDigitStyle,
     defaultInvoiceStyleId,
     defaultContractStyleId,
+    invoiceNumberPattern,
+    numberYearlyReset,
+    defaultVatOn,
+    defaultVatRateBp,
+    taxRegistrationNo,
+    dateFormat,
+    defaultCurrency,
+    currencyDisplay,
     deviceId,
     updatedAt,
   ];
@@ -599,6 +715,75 @@ class $AppSettingsTable extends AppSettings
         ),
       );
     }
+    if (data.containsKey('invoice_number_pattern')) {
+      context.handle(
+        _invoiceNumberPatternMeta,
+        invoiceNumberPattern.isAcceptableOrUnknown(
+          data['invoice_number_pattern']!,
+          _invoiceNumberPatternMeta,
+        ),
+      );
+    }
+    if (data.containsKey('number_yearly_reset')) {
+      context.handle(
+        _numberYearlyResetMeta,
+        numberYearlyReset.isAcceptableOrUnknown(
+          data['number_yearly_reset']!,
+          _numberYearlyResetMeta,
+        ),
+      );
+    }
+    if (data.containsKey('default_vat_on')) {
+      context.handle(
+        _defaultVatOnMeta,
+        defaultVatOn.isAcceptableOrUnknown(
+          data['default_vat_on']!,
+          _defaultVatOnMeta,
+        ),
+      );
+    }
+    if (data.containsKey('default_vat_rate_bp')) {
+      context.handle(
+        _defaultVatRateBpMeta,
+        defaultVatRateBp.isAcceptableOrUnknown(
+          data['default_vat_rate_bp']!,
+          _defaultVatRateBpMeta,
+        ),
+      );
+    }
+    if (data.containsKey('tax_registration_no')) {
+      context.handle(
+        _taxRegistrationNoMeta,
+        taxRegistrationNo.isAcceptableOrUnknown(
+          data['tax_registration_no']!,
+          _taxRegistrationNoMeta,
+        ),
+      );
+    }
+    if (data.containsKey('date_format')) {
+      context.handle(
+        _dateFormatMeta,
+        dateFormat.isAcceptableOrUnknown(data['date_format']!, _dateFormatMeta),
+      );
+    }
+    if (data.containsKey('default_currency')) {
+      context.handle(
+        _defaultCurrencyMeta,
+        defaultCurrency.isAcceptableOrUnknown(
+          data['default_currency']!,
+          _defaultCurrencyMeta,
+        ),
+      );
+    }
+    if (data.containsKey('currency_display')) {
+      context.handle(
+        _currencyDisplayMeta,
+        currencyDisplay.isAcceptableOrUnknown(
+          data['currency_display']!,
+          _currencyDisplayMeta,
+        ),
+      );
+    }
     if (data.containsKey('device_id')) {
       context.handle(
         _deviceIdMeta,
@@ -732,6 +917,38 @@ class $AppSettingsTable extends AppSettings
         DriftSqlType.string,
         data['${effectivePrefix}default_contract_style_id'],
       ),
+      invoiceNumberPattern: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}invoice_number_pattern'],
+      )!,
+      numberYearlyReset: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}number_yearly_reset'],
+      )!,
+      defaultVatOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}default_vat_on'],
+      )!,
+      defaultVatRateBp: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}default_vat_rate_bp'],
+      )!,
+      taxRegistrationNo: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tax_registration_no'],
+      )!,
+      dateFormat: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}date_format'],
+      )!,
+      defaultCurrency: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}default_currency'],
+      )!,
+      currencyDisplay: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency_display'],
+      )!,
       deviceId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}device_id'],
@@ -789,6 +1006,24 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
   final String? defaultInvoiceStyleId;
   final String? defaultContractStyleId;
 
+  /// New invoice numbers: `{PREFIX}`, `{YYYY}`, `{YY}`, `{SEQ}`/`{SEQ:n}`.
+  final String invoiceNumberPattern;
+  final bool numberYearlyReset;
+  final bool defaultVatOn;
+
+  /// Basis points (1400 = 14 %).
+  final int defaultVatRateBp;
+  final String taxRegistrationNo;
+
+  /// `long` (14 Sep 2026) or `numeric` (14/09/2026).
+  final String dateFormat;
+
+  /// ISO code of a new invoice's first section.
+  final String defaultCurrency;
+
+  /// `code`, `local` or `symbol`.
+  final String currencyDisplay;
+
   /// Random UUID of this installation, generated once.
   final String deviceId;
   final int updatedAt;
@@ -821,6 +1056,14 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
     required this.docDigitStyle,
     this.defaultInvoiceStyleId,
     this.defaultContractStyleId,
+    required this.invoiceNumberPattern,
+    required this.numberYearlyReset,
+    required this.defaultVatOn,
+    required this.defaultVatRateBp,
+    required this.taxRegistrationNo,
+    required this.dateFormat,
+    required this.defaultCurrency,
+    required this.currencyDisplay,
     required this.deviceId,
     required this.updatedAt,
   });
@@ -865,6 +1108,14 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
         defaultContractStyleId,
       );
     }
+    map['invoice_number_pattern'] = Variable<String>(invoiceNumberPattern);
+    map['number_yearly_reset'] = Variable<bool>(numberYearlyReset);
+    map['default_vat_on'] = Variable<bool>(defaultVatOn);
+    map['default_vat_rate_bp'] = Variable<int>(defaultVatRateBp);
+    map['tax_registration_no'] = Variable<String>(taxRegistrationNo);
+    map['date_format'] = Variable<String>(dateFormat);
+    map['default_currency'] = Variable<String>(defaultCurrency);
+    map['currency_display'] = Variable<String>(currencyDisplay);
     map['device_id'] = Variable<String>(deviceId);
     map['updated_at'] = Variable<int>(updatedAt);
     return map;
@@ -908,6 +1159,14 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
       defaultContractStyleId: defaultContractStyleId == null && nullToAbsent
           ? const Value.absent()
           : Value(defaultContractStyleId),
+      invoiceNumberPattern: Value(invoiceNumberPattern),
+      numberYearlyReset: Value(numberYearlyReset),
+      defaultVatOn: Value(defaultVatOn),
+      defaultVatRateBp: Value(defaultVatRateBp),
+      taxRegistrationNo: Value(taxRegistrationNo),
+      dateFormat: Value(dateFormat),
+      defaultCurrency: Value(defaultCurrency),
+      currencyDisplay: Value(currencyDisplay),
       deviceId: Value(deviceId),
       updatedAt: Value(updatedAt),
     );
@@ -959,6 +1218,16 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
       defaultContractStyleId: serializer.fromJson<String?>(
         json['defaultContractStyleId'],
       ),
+      invoiceNumberPattern: serializer.fromJson<String>(
+        json['invoiceNumberPattern'],
+      ),
+      numberYearlyReset: serializer.fromJson<bool>(json['numberYearlyReset']),
+      defaultVatOn: serializer.fromJson<bool>(json['defaultVatOn']),
+      defaultVatRateBp: serializer.fromJson<int>(json['defaultVatRateBp']),
+      taxRegistrationNo: serializer.fromJson<String>(json['taxRegistrationNo']),
+      dateFormat: serializer.fromJson<String>(json['dateFormat']),
+      defaultCurrency: serializer.fromJson<String>(json['defaultCurrency']),
+      currencyDisplay: serializer.fromJson<String>(json['currencyDisplay']),
       deviceId: serializer.fromJson<String>(json['deviceId']),
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
     );
@@ -999,6 +1268,14 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
       'defaultContractStyleId': serializer.toJson<String?>(
         defaultContractStyleId,
       ),
+      'invoiceNumberPattern': serializer.toJson<String>(invoiceNumberPattern),
+      'numberYearlyReset': serializer.toJson<bool>(numberYearlyReset),
+      'defaultVatOn': serializer.toJson<bool>(defaultVatOn),
+      'defaultVatRateBp': serializer.toJson<int>(defaultVatRateBp),
+      'taxRegistrationNo': serializer.toJson<String>(taxRegistrationNo),
+      'dateFormat': serializer.toJson<String>(dateFormat),
+      'defaultCurrency': serializer.toJson<String>(defaultCurrency),
+      'currencyDisplay': serializer.toJson<String>(currencyDisplay),
       'deviceId': serializer.toJson<String>(deviceId),
       'updatedAt': serializer.toJson<int>(updatedAt),
     };
@@ -1033,6 +1310,14 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
     String? docDigitStyle,
     Value<String?> defaultInvoiceStyleId = const Value.absent(),
     Value<String?> defaultContractStyleId = const Value.absent(),
+    String? invoiceNumberPattern,
+    bool? numberYearlyReset,
+    bool? defaultVatOn,
+    int? defaultVatRateBp,
+    String? taxRegistrationNo,
+    String? dateFormat,
+    String? defaultCurrency,
+    String? currencyDisplay,
     String? deviceId,
     int? updatedAt,
   }) => SettingsRow(
@@ -1068,6 +1353,14 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
     defaultContractStyleId: defaultContractStyleId.present
         ? defaultContractStyleId.value
         : this.defaultContractStyleId,
+    invoiceNumberPattern: invoiceNumberPattern ?? this.invoiceNumberPattern,
+    numberYearlyReset: numberYearlyReset ?? this.numberYearlyReset,
+    defaultVatOn: defaultVatOn ?? this.defaultVatOn,
+    defaultVatRateBp: defaultVatRateBp ?? this.defaultVatRateBp,
+    taxRegistrationNo: taxRegistrationNo ?? this.taxRegistrationNo,
+    dateFormat: dateFormat ?? this.dateFormat,
+    defaultCurrency: defaultCurrency ?? this.defaultCurrency,
+    currencyDisplay: currencyDisplay ?? this.currencyDisplay,
     deviceId: deviceId ?? this.deviceId,
     updatedAt: updatedAt ?? this.updatedAt,
   );
@@ -1125,6 +1418,30 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
       defaultContractStyleId: data.defaultContractStyleId.present
           ? data.defaultContractStyleId.value
           : this.defaultContractStyleId,
+      invoiceNumberPattern: data.invoiceNumberPattern.present
+          ? data.invoiceNumberPattern.value
+          : this.invoiceNumberPattern,
+      numberYearlyReset: data.numberYearlyReset.present
+          ? data.numberYearlyReset.value
+          : this.numberYearlyReset,
+      defaultVatOn: data.defaultVatOn.present
+          ? data.defaultVatOn.value
+          : this.defaultVatOn,
+      defaultVatRateBp: data.defaultVatRateBp.present
+          ? data.defaultVatRateBp.value
+          : this.defaultVatRateBp,
+      taxRegistrationNo: data.taxRegistrationNo.present
+          ? data.taxRegistrationNo.value
+          : this.taxRegistrationNo,
+      dateFormat: data.dateFormat.present
+          ? data.dateFormat.value
+          : this.dateFormat,
+      defaultCurrency: data.defaultCurrency.present
+          ? data.defaultCurrency.value
+          : this.defaultCurrency,
+      currencyDisplay: data.currencyDisplay.present
+          ? data.currencyDisplay.value
+          : this.currencyDisplay,
       deviceId: data.deviceId.present ? data.deviceId.value : this.deviceId,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -1161,6 +1478,14 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
           ..write('docDigitStyle: $docDigitStyle, ')
           ..write('defaultInvoiceStyleId: $defaultInvoiceStyleId, ')
           ..write('defaultContractStyleId: $defaultContractStyleId, ')
+          ..write('invoiceNumberPattern: $invoiceNumberPattern, ')
+          ..write('numberYearlyReset: $numberYearlyReset, ')
+          ..write('defaultVatOn: $defaultVatOn, ')
+          ..write('defaultVatRateBp: $defaultVatRateBp, ')
+          ..write('taxRegistrationNo: $taxRegistrationNo, ')
+          ..write('dateFormat: $dateFormat, ')
+          ..write('defaultCurrency: $defaultCurrency, ')
+          ..write('currencyDisplay: $currencyDisplay, ')
           ..write('deviceId: $deviceId, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -1197,6 +1522,14 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
     docDigitStyle,
     defaultInvoiceStyleId,
     defaultContractStyleId,
+    invoiceNumberPattern,
+    numberYearlyReset,
+    defaultVatOn,
+    defaultVatRateBp,
+    taxRegistrationNo,
+    dateFormat,
+    defaultCurrency,
+    currencyDisplay,
     deviceId,
     updatedAt,
   ]);
@@ -1232,6 +1565,14 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
           other.docDigitStyle == this.docDigitStyle &&
           other.defaultInvoiceStyleId == this.defaultInvoiceStyleId &&
           other.defaultContractStyleId == this.defaultContractStyleId &&
+          other.invoiceNumberPattern == this.invoiceNumberPattern &&
+          other.numberYearlyReset == this.numberYearlyReset &&
+          other.defaultVatOn == this.defaultVatOn &&
+          other.defaultVatRateBp == this.defaultVatRateBp &&
+          other.taxRegistrationNo == this.taxRegistrationNo &&
+          other.dateFormat == this.dateFormat &&
+          other.defaultCurrency == this.defaultCurrency &&
+          other.currencyDisplay == this.currencyDisplay &&
           other.deviceId == this.deviceId &&
           other.updatedAt == this.updatedAt);
 }
@@ -1265,6 +1606,14 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
   final Value<String> docDigitStyle;
   final Value<String?> defaultInvoiceStyleId;
   final Value<String?> defaultContractStyleId;
+  final Value<String> invoiceNumberPattern;
+  final Value<bool> numberYearlyReset;
+  final Value<bool> defaultVatOn;
+  final Value<int> defaultVatRateBp;
+  final Value<String> taxRegistrationNo;
+  final Value<String> dateFormat;
+  final Value<String> defaultCurrency;
+  final Value<String> currencyDisplay;
   final Value<String> deviceId;
   final Value<int> updatedAt;
   const AppSettingsCompanion({
@@ -1296,6 +1645,14 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
     this.docDigitStyle = const Value.absent(),
     this.defaultInvoiceStyleId = const Value.absent(),
     this.defaultContractStyleId = const Value.absent(),
+    this.invoiceNumberPattern = const Value.absent(),
+    this.numberYearlyReset = const Value.absent(),
+    this.defaultVatOn = const Value.absent(),
+    this.defaultVatRateBp = const Value.absent(),
+    this.taxRegistrationNo = const Value.absent(),
+    this.dateFormat = const Value.absent(),
+    this.defaultCurrency = const Value.absent(),
+    this.currencyDisplay = const Value.absent(),
     this.deviceId = const Value.absent(),
     this.updatedAt = const Value.absent(),
   });
@@ -1328,6 +1685,14 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
     this.docDigitStyle = const Value.absent(),
     this.defaultInvoiceStyleId = const Value.absent(),
     this.defaultContractStyleId = const Value.absent(),
+    this.invoiceNumberPattern = const Value.absent(),
+    this.numberYearlyReset = const Value.absent(),
+    this.defaultVatOn = const Value.absent(),
+    this.defaultVatRateBp = const Value.absent(),
+    this.taxRegistrationNo = const Value.absent(),
+    this.dateFormat = const Value.absent(),
+    this.defaultCurrency = const Value.absent(),
+    this.currencyDisplay = const Value.absent(),
     this.deviceId = const Value.absent(),
     this.updatedAt = const Value.absent(),
   });
@@ -1360,6 +1725,14 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
     Expression<String>? docDigitStyle,
     Expression<String>? defaultInvoiceStyleId,
     Expression<String>? defaultContractStyleId,
+    Expression<String>? invoiceNumberPattern,
+    Expression<bool>? numberYearlyReset,
+    Expression<bool>? defaultVatOn,
+    Expression<int>? defaultVatRateBp,
+    Expression<String>? taxRegistrationNo,
+    Expression<String>? dateFormat,
+    Expression<String>? defaultCurrency,
+    Expression<String>? currencyDisplay,
     Expression<String>? deviceId,
     Expression<int>? updatedAt,
   }) {
@@ -1398,6 +1771,15 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
         'default_invoice_style_id': defaultInvoiceStyleId,
       if (defaultContractStyleId != null)
         'default_contract_style_id': defaultContractStyleId,
+      if (invoiceNumberPattern != null)
+        'invoice_number_pattern': invoiceNumberPattern,
+      if (numberYearlyReset != null) 'number_yearly_reset': numberYearlyReset,
+      if (defaultVatOn != null) 'default_vat_on': defaultVatOn,
+      if (defaultVatRateBp != null) 'default_vat_rate_bp': defaultVatRateBp,
+      if (taxRegistrationNo != null) 'tax_registration_no': taxRegistrationNo,
+      if (dateFormat != null) 'date_format': dateFormat,
+      if (defaultCurrency != null) 'default_currency': defaultCurrency,
+      if (currencyDisplay != null) 'currency_display': currencyDisplay,
       if (deviceId != null) 'device_id': deviceId,
       if (updatedAt != null) 'updated_at': updatedAt,
     });
@@ -1432,6 +1814,14 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
     Value<String>? docDigitStyle,
     Value<String?>? defaultInvoiceStyleId,
     Value<String?>? defaultContractStyleId,
+    Value<String>? invoiceNumberPattern,
+    Value<bool>? numberYearlyReset,
+    Value<bool>? defaultVatOn,
+    Value<int>? defaultVatRateBp,
+    Value<String>? taxRegistrationNo,
+    Value<String>? dateFormat,
+    Value<String>? defaultCurrency,
+    Value<String>? currencyDisplay,
     Value<String>? deviceId,
     Value<int>? updatedAt,
   }) {
@@ -1467,6 +1857,14 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
           defaultInvoiceStyleId ?? this.defaultInvoiceStyleId,
       defaultContractStyleId:
           defaultContractStyleId ?? this.defaultContractStyleId,
+      invoiceNumberPattern: invoiceNumberPattern ?? this.invoiceNumberPattern,
+      numberYearlyReset: numberYearlyReset ?? this.numberYearlyReset,
+      defaultVatOn: defaultVatOn ?? this.defaultVatOn,
+      defaultVatRateBp: defaultVatRateBp ?? this.defaultVatRateBp,
+      taxRegistrationNo: taxRegistrationNo ?? this.taxRegistrationNo,
+      dateFormat: dateFormat ?? this.dateFormat,
+      defaultCurrency: defaultCurrency ?? this.defaultCurrency,
+      currencyDisplay: currencyDisplay ?? this.currencyDisplay,
       deviceId: deviceId ?? this.deviceId,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -1567,6 +1965,32 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
         defaultContractStyleId.value,
       );
     }
+    if (invoiceNumberPattern.present) {
+      map['invoice_number_pattern'] = Variable<String>(
+        invoiceNumberPattern.value,
+      );
+    }
+    if (numberYearlyReset.present) {
+      map['number_yearly_reset'] = Variable<bool>(numberYearlyReset.value);
+    }
+    if (defaultVatOn.present) {
+      map['default_vat_on'] = Variable<bool>(defaultVatOn.value);
+    }
+    if (defaultVatRateBp.present) {
+      map['default_vat_rate_bp'] = Variable<int>(defaultVatRateBp.value);
+    }
+    if (taxRegistrationNo.present) {
+      map['tax_registration_no'] = Variable<String>(taxRegistrationNo.value);
+    }
+    if (dateFormat.present) {
+      map['date_format'] = Variable<String>(dateFormat.value);
+    }
+    if (defaultCurrency.present) {
+      map['default_currency'] = Variable<String>(defaultCurrency.value);
+    }
+    if (currencyDisplay.present) {
+      map['currency_display'] = Variable<String>(currencyDisplay.value);
+    }
     if (deviceId.present) {
       map['device_id'] = Variable<String>(deviceId.value);
     }
@@ -1607,6 +2031,14 @@ class AppSettingsCompanion extends UpdateCompanion<SettingsRow> {
           ..write('docDigitStyle: $docDigitStyle, ')
           ..write('defaultInvoiceStyleId: $defaultInvoiceStyleId, ')
           ..write('defaultContractStyleId: $defaultContractStyleId, ')
+          ..write('invoiceNumberPattern: $invoiceNumberPattern, ')
+          ..write('numberYearlyReset: $numberYearlyReset, ')
+          ..write('defaultVatOn: $defaultVatOn, ')
+          ..write('defaultVatRateBp: $defaultVatRateBp, ')
+          ..write('taxRegistrationNo: $taxRegistrationNo, ')
+          ..write('dateFormat: $dateFormat, ')
+          ..write('defaultCurrency: $defaultCurrency, ')
+          ..write('currencyDisplay: $currencyDisplay, ')
           ..write('deviceId: $deviceId, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -3314,6 +3746,17 @@ class $InvoicesTable extends Invoices
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _issueSnapshotMeta = const VerificationMeta(
+    'issueSnapshot',
+  );
+  @override
+  late final GeneratedColumn<String> issueSnapshot = GeneratedColumn<String>(
+    'issue_snapshot',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _isDemoMeta = const VerificationMeta('isDemo');
   @override
   late final GeneratedColumn<bool> isDemo = GeneratedColumn<bool>(
@@ -3376,6 +3819,7 @@ class $InvoicesTable extends Invoices
     language,
     styleId,
     styleSnapshot,
+    issueSnapshot,
     isDemo,
     createdAt,
     updatedAt,
@@ -3570,6 +4014,15 @@ class $InvoicesTable extends Invoices
         ),
       );
     }
+    if (data.containsKey('issue_snapshot')) {
+      context.handle(
+        _issueSnapshotMeta,
+        issueSnapshot.isAcceptableOrUnknown(
+          data['issue_snapshot']!,
+          _issueSnapshotMeta,
+        ),
+      );
+    }
     if (data.containsKey('is_demo')) {
       context.handle(
         _isDemoMeta,
@@ -3705,6 +4158,10 @@ class $InvoicesTable extends Invoices
         DriftSqlType.string,
         data['${effectivePrefix}style_snapshot'],
       ),
+      issueSnapshot: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}issue_snapshot'],
+      ),
       isDemo: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}is_demo'],
@@ -3764,6 +4221,10 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
   /// v7: immutable style JSON snapshot taken when sent or paid (D3, ADR-0012).
   final String? styleSnapshot;
 
+  /// v8: provider, payment, client and format details as printed, frozen
+  /// with [styleSnapshot] (ADR-0014). Null renders from live data.
+  final String? issueSnapshot;
+
   /// v5: demo row (removed with the demo set; cleared on user edits).
   final bool isDemo;
   final int createdAt;
@@ -3794,6 +4255,7 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
     required this.language,
     this.styleId,
     this.styleSnapshot,
+    this.issueSnapshot,
     required this.isDemo,
     required this.createdAt,
     required this.updatedAt,
@@ -3833,6 +4295,9 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
     }
     if (!nullToAbsent || styleSnapshot != null) {
       map['style_snapshot'] = Variable<String>(styleSnapshot);
+    }
+    if (!nullToAbsent || issueSnapshot != null) {
+      map['issue_snapshot'] = Variable<String>(issueSnapshot);
     }
     map['is_demo'] = Variable<bool>(isDemo);
     map['created_at'] = Variable<int>(createdAt);
@@ -3875,6 +4340,9 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
       styleSnapshot: styleSnapshot == null && nullToAbsent
           ? const Value.absent()
           : Value(styleSnapshot),
+      issueSnapshot: issueSnapshot == null && nullToAbsent
+          ? const Value.absent()
+          : Value(issueSnapshot),
       isDemo: Value(isDemo),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
@@ -3912,6 +4380,7 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
       language: serializer.fromJson<String>(json['language']),
       styleId: serializer.fromJson<String?>(json['styleId']),
       styleSnapshot: serializer.fromJson<String?>(json['styleSnapshot']),
+      issueSnapshot: serializer.fromJson<String?>(json['issueSnapshot']),
       isDemo: serializer.fromJson<bool>(json['isDemo']),
       createdAt: serializer.fromJson<int>(json['createdAt']),
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
@@ -3946,6 +4415,7 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
       'language': serializer.toJson<String>(language),
       'styleId': serializer.toJson<String?>(styleId),
       'styleSnapshot': serializer.toJson<String?>(styleSnapshot),
+      'issueSnapshot': serializer.toJson<String?>(issueSnapshot),
       'isDemo': serializer.toJson<bool>(isDemo),
       'createdAt': serializer.toJson<int>(createdAt),
       'updatedAt': serializer.toJson<int>(updatedAt),
@@ -3978,6 +4448,7 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
     String? language,
     Value<String?> styleId = const Value.absent(),
     Value<String?> styleSnapshot = const Value.absent(),
+    Value<String?> issueSnapshot = const Value.absent(),
     bool? isDemo,
     int? createdAt,
     int? updatedAt,
@@ -4009,6 +4480,9 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
     styleSnapshot: styleSnapshot.present
         ? styleSnapshot.value
         : this.styleSnapshot,
+    issueSnapshot: issueSnapshot.present
+        ? issueSnapshot.value
+        : this.issueSnapshot,
     isDemo: isDemo ?? this.isDemo,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
@@ -4052,6 +4526,9 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
       styleSnapshot: data.styleSnapshot.present
           ? data.styleSnapshot.value
           : this.styleSnapshot,
+      issueSnapshot: data.issueSnapshot.present
+          ? data.issueSnapshot.value
+          : this.issueSnapshot,
       isDemo: data.isDemo.present ? data.isDemo.value : this.isDemo,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
@@ -4086,6 +4563,7 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
           ..write('language: $language, ')
           ..write('styleId: $styleId, ')
           ..write('styleSnapshot: $styleSnapshot, ')
+          ..write('issueSnapshot: $issueSnapshot, ')
           ..write('isDemo: $isDemo, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
@@ -4120,6 +4598,7 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
     language,
     styleId,
     styleSnapshot,
+    issueSnapshot,
     isDemo,
     createdAt,
     updatedAt,
@@ -4153,6 +4632,7 @@ class InvoiceRow extends DataClass implements Insertable<InvoiceRow> {
           other.language == this.language &&
           other.styleId == this.styleId &&
           other.styleSnapshot == this.styleSnapshot &&
+          other.issueSnapshot == this.issueSnapshot &&
           other.isDemo == this.isDemo &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
@@ -4184,6 +4664,7 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
   final Value<String> language;
   final Value<String?> styleId;
   final Value<String?> styleSnapshot;
+  final Value<String?> issueSnapshot;
   final Value<bool> isDemo;
   final Value<int> createdAt;
   final Value<int> updatedAt;
@@ -4214,6 +4695,7 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
     this.language = const Value.absent(),
     this.styleId = const Value.absent(),
     this.styleSnapshot = const Value.absent(),
+    this.issueSnapshot = const Value.absent(),
     this.isDemo = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -4245,6 +4727,7 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
     this.language = const Value.absent(),
     this.styleId = const Value.absent(),
     this.styleSnapshot = const Value.absent(),
+    this.issueSnapshot = const Value.absent(),
     this.isDemo = const Value.absent(),
     required int createdAt,
     required int updatedAt,
@@ -4285,6 +4768,7 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
     Expression<String>? language,
     Expression<String>? styleId,
     Expression<String>? styleSnapshot,
+    Expression<String>? issueSnapshot,
     Expression<bool>? isDemo,
     Expression<int>? createdAt,
     Expression<int>? updatedAt,
@@ -4316,6 +4800,7 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
       if (language != null) 'language': language,
       if (styleId != null) 'style_id': styleId,
       if (styleSnapshot != null) 'style_snapshot': styleSnapshot,
+      if (issueSnapshot != null) 'issue_snapshot': issueSnapshot,
       if (isDemo != null) 'is_demo': isDemo,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
@@ -4349,6 +4834,7 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
     Value<String>? language,
     Value<String?>? styleId,
     Value<String?>? styleSnapshot,
+    Value<String?>? issueSnapshot,
     Value<bool>? isDemo,
     Value<int>? createdAt,
     Value<int>? updatedAt,
@@ -4380,6 +4866,7 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
       language: language ?? this.language,
       styleId: styleId ?? this.styleId,
       styleSnapshot: styleSnapshot ?? this.styleSnapshot,
+      issueSnapshot: issueSnapshot ?? this.issueSnapshot,
       isDemo: isDemo ?? this.isDemo,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -4465,6 +4952,9 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
     if (styleSnapshot.present) {
       map['style_snapshot'] = Variable<String>(styleSnapshot.value);
     }
+    if (issueSnapshot.present) {
+      map['issue_snapshot'] = Variable<String>(issueSnapshot.value);
+    }
     if (isDemo.present) {
       map['is_demo'] = Variable<bool>(isDemo.value);
     }
@@ -4508,6 +4998,7 @@ class InvoicesCompanion extends UpdateCompanion<InvoiceRow> {
           ..write('language: $language, ')
           ..write('styleId: $styleId, ')
           ..write('styleSnapshot: $styleSnapshot, ')
+          ..write('issueSnapshot: $issueSnapshot, ')
           ..write('isDemo: $isDemo, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
@@ -7484,6 +7975,17 @@ class $ContractsTable extends Contracts
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _issueSnapshotMeta = const VerificationMeta(
+    'issueSnapshot',
+  );
+  @override
+  late final GeneratedColumn<String> issueSnapshot = GeneratedColumn<String>(
+    'issue_snapshot',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _isDemoMeta = const VerificationMeta('isDemo');
   @override
   late final GeneratedColumn<bool> isDemo = GeneratedColumn<bool>(
@@ -7552,6 +8054,7 @@ class $ContractsTable extends Contracts
     deletedAt,
     styleId,
     styleSnapshot,
+    issueSnapshot,
     isDemo,
     createdAt,
     updatedAt,
@@ -7792,6 +8295,15 @@ class $ContractsTable extends Contracts
         ),
       );
     }
+    if (data.containsKey('issue_snapshot')) {
+      context.handle(
+        _issueSnapshotMeta,
+        issueSnapshot.isAcceptableOrUnknown(
+          data['issue_snapshot']!,
+          _issueSnapshotMeta,
+        ),
+      );
+    }
     if (data.containsKey('is_demo')) {
       context.handle(
         _isDemoMeta,
@@ -7951,6 +8463,10 @@ class $ContractsTable extends Contracts
         DriftSqlType.string,
         data['${effectivePrefix}style_snapshot'],
       ),
+      issueSnapshot: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}issue_snapshot'],
+      ),
       isDemo: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}is_demo'],
@@ -8025,6 +8541,10 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
   /// v7: immutable style JSON snapshot taken when signed (D3, ADR-0012).
   final String? styleSnapshot;
 
+  /// v8: provider and client details as printed, frozen with
+  /// [styleSnapshot] (ADR-0014). Null renders from live data.
+  final String? issueSnapshot;
+
   /// v5: demo row (removed with the demo set; cleared on user edits).
   final bool isDemo;
   final int createdAt;
@@ -8061,6 +8581,7 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
     this.deletedAt,
     this.styleId,
     this.styleSnapshot,
+    this.issueSnapshot,
     required this.isDemo,
     required this.createdAt,
     required this.updatedAt,
@@ -8112,6 +8633,9 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
     }
     if (!nullToAbsent || styleSnapshot != null) {
       map['style_snapshot'] = Variable<String>(styleSnapshot);
+    }
+    if (!nullToAbsent || issueSnapshot != null) {
+      map['issue_snapshot'] = Variable<String>(issueSnapshot);
     }
     map['is_demo'] = Variable<bool>(isDemo);
     map['created_at'] = Variable<int>(createdAt);
@@ -8166,6 +8690,9 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
       styleSnapshot: styleSnapshot == null && nullToAbsent
           ? const Value.absent()
           : Value(styleSnapshot),
+      issueSnapshot: issueSnapshot == null && nullToAbsent
+          ? const Value.absent()
+          : Value(issueSnapshot),
       isDemo: Value(isDemo),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
@@ -8209,6 +8736,7 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
       deletedAt: serializer.fromJson<int?>(json['deletedAt']),
       styleId: serializer.fromJson<String?>(json['styleId']),
       styleSnapshot: serializer.fromJson<String?>(json['styleSnapshot']),
+      issueSnapshot: serializer.fromJson<String?>(json['issueSnapshot']),
       isDemo: serializer.fromJson<bool>(json['isDemo']),
       createdAt: serializer.fromJson<int>(json['createdAt']),
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
@@ -8249,6 +8777,7 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
       'deletedAt': serializer.toJson<int?>(deletedAt),
       'styleId': serializer.toJson<String?>(styleId),
       'styleSnapshot': serializer.toJson<String?>(styleSnapshot),
+      'issueSnapshot': serializer.toJson<String?>(issueSnapshot),
       'isDemo': serializer.toJson<bool>(isDemo),
       'createdAt': serializer.toJson<int>(createdAt),
       'updatedAt': serializer.toJson<int>(updatedAt),
@@ -8287,6 +8816,7 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
     Value<int?> deletedAt = const Value.absent(),
     Value<String?> styleId = const Value.absent(),
     Value<String?> styleSnapshot = const Value.absent(),
+    Value<String?> issueSnapshot = const Value.absent(),
     bool? isDemo,
     int? createdAt,
     int? updatedAt,
@@ -8324,6 +8854,9 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
     styleSnapshot: styleSnapshot.present
         ? styleSnapshot.value
         : this.styleSnapshot,
+    issueSnapshot: issueSnapshot.present
+        ? issueSnapshot.value
+        : this.issueSnapshot,
     isDemo: isDemo ?? this.isDemo,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
@@ -8379,6 +8912,9 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
       styleSnapshot: data.styleSnapshot.present
           ? data.styleSnapshot.value
           : this.styleSnapshot,
+      issueSnapshot: data.issueSnapshot.present
+          ? data.issueSnapshot.value
+          : this.issueSnapshot,
       isDemo: data.isDemo.present ? data.isDemo.value : this.isDemo,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
@@ -8419,6 +8955,7 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
           ..write('deletedAt: $deletedAt, ')
           ..write('styleId: $styleId, ')
           ..write('styleSnapshot: $styleSnapshot, ')
+          ..write('issueSnapshot: $issueSnapshot, ')
           ..write('isDemo: $isDemo, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
@@ -8459,6 +8996,7 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
     deletedAt,
     styleId,
     styleSnapshot,
+    issueSnapshot,
     isDemo,
     createdAt,
     updatedAt,
@@ -8498,6 +9036,7 @@ class ContractRow extends DataClass implements Insertable<ContractRow> {
           other.deletedAt == this.deletedAt &&
           other.styleId == this.styleId &&
           other.styleSnapshot == this.styleSnapshot &&
+          other.issueSnapshot == this.issueSnapshot &&
           other.isDemo == this.isDemo &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
@@ -8535,6 +9074,7 @@ class ContractsCompanion extends UpdateCompanion<ContractRow> {
   final Value<int?> deletedAt;
   final Value<String?> styleId;
   final Value<String?> styleSnapshot;
+  final Value<String?> issueSnapshot;
   final Value<bool> isDemo;
   final Value<int> createdAt;
   final Value<int> updatedAt;
@@ -8571,6 +9111,7 @@ class ContractsCompanion extends UpdateCompanion<ContractRow> {
     this.deletedAt = const Value.absent(),
     this.styleId = const Value.absent(),
     this.styleSnapshot = const Value.absent(),
+    this.issueSnapshot = const Value.absent(),
     this.isDemo = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -8608,6 +9149,7 @@ class ContractsCompanion extends UpdateCompanion<ContractRow> {
     this.deletedAt = const Value.absent(),
     this.styleId = const Value.absent(),
     this.styleSnapshot = const Value.absent(),
+    this.issueSnapshot = const Value.absent(),
     this.isDemo = const Value.absent(),
     required int createdAt,
     required int updatedAt,
@@ -8656,6 +9198,7 @@ class ContractsCompanion extends UpdateCompanion<ContractRow> {
     Expression<int>? deletedAt,
     Expression<String>? styleId,
     Expression<String>? styleSnapshot,
+    Expression<String>? issueSnapshot,
     Expression<bool>? isDemo,
     Expression<int>? createdAt,
     Expression<int>? updatedAt,
@@ -8693,6 +9236,7 @@ class ContractsCompanion extends UpdateCompanion<ContractRow> {
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (styleId != null) 'style_id': styleId,
       if (styleSnapshot != null) 'style_snapshot': styleSnapshot,
+      if (issueSnapshot != null) 'issue_snapshot': issueSnapshot,
       if (isDemo != null) 'is_demo': isDemo,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
@@ -8732,6 +9276,7 @@ class ContractsCompanion extends UpdateCompanion<ContractRow> {
     Value<int?>? deletedAt,
     Value<String?>? styleId,
     Value<String?>? styleSnapshot,
+    Value<String?>? issueSnapshot,
     Value<bool>? isDemo,
     Value<int>? createdAt,
     Value<int>? updatedAt,
@@ -8769,6 +9314,7 @@ class ContractsCompanion extends UpdateCompanion<ContractRow> {
       deletedAt: deletedAt ?? this.deletedAt,
       styleId: styleId ?? this.styleId,
       styleSnapshot: styleSnapshot ?? this.styleSnapshot,
+      issueSnapshot: issueSnapshot ?? this.issueSnapshot,
       isDemo: isDemo ?? this.isDemo,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -8872,6 +9418,9 @@ class ContractsCompanion extends UpdateCompanion<ContractRow> {
     if (styleSnapshot.present) {
       map['style_snapshot'] = Variable<String>(styleSnapshot.value);
     }
+    if (issueSnapshot.present) {
+      map['issue_snapshot'] = Variable<String>(issueSnapshot.value);
+    }
     if (isDemo.present) {
       map['is_demo'] = Variable<bool>(isDemo.value);
     }
@@ -8921,6 +9470,7 @@ class ContractsCompanion extends UpdateCompanion<ContractRow> {
           ..write('deletedAt: $deletedAt, ')
           ..write('styleId: $styleId, ')
           ..write('styleSnapshot: $styleSnapshot, ')
+          ..write('issueSnapshot: $issueSnapshot, ')
           ..write('isDemo: $isDemo, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
@@ -14153,6 +14703,14 @@ typedef $$AppSettingsTableCreateCompanionBuilder =
       Value<String> docDigitStyle,
       Value<String?> defaultInvoiceStyleId,
       Value<String?> defaultContractStyleId,
+      Value<String> invoiceNumberPattern,
+      Value<bool> numberYearlyReset,
+      Value<bool> defaultVatOn,
+      Value<int> defaultVatRateBp,
+      Value<String> taxRegistrationNo,
+      Value<String> dateFormat,
+      Value<String> defaultCurrency,
+      Value<String> currencyDisplay,
       Value<String> deviceId,
       Value<int> updatedAt,
     });
@@ -14186,6 +14744,14 @@ typedef $$AppSettingsTableUpdateCompanionBuilder =
       Value<String> docDigitStyle,
       Value<String?> defaultInvoiceStyleId,
       Value<String?> defaultContractStyleId,
+      Value<String> invoiceNumberPattern,
+      Value<bool> numberYearlyReset,
+      Value<bool> defaultVatOn,
+      Value<int> defaultVatRateBp,
+      Value<String> taxRegistrationNo,
+      Value<String> dateFormat,
+      Value<String> defaultCurrency,
+      Value<String> currencyDisplay,
       Value<String> deviceId,
       Value<int> updatedAt,
     });
@@ -14336,6 +14902,46 @@ class $$AppSettingsTableFilterComposer
 
   ColumnFilters<String> get defaultContractStyleId => $composableBuilder(
     column: $table.defaultContractStyleId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get invoiceNumberPattern => $composableBuilder(
+    column: $table.invoiceNumberPattern,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get numberYearlyReset => $composableBuilder(
+    column: $table.numberYearlyReset,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get defaultVatOn => $composableBuilder(
+    column: $table.defaultVatOn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get defaultVatRateBp => $composableBuilder(
+    column: $table.defaultVatRateBp,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get taxRegistrationNo => $composableBuilder(
+    column: $table.taxRegistrationNo,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get dateFormat => $composableBuilder(
+    column: $table.dateFormat,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get defaultCurrency => $composableBuilder(
+    column: $table.defaultCurrency,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currencyDisplay => $composableBuilder(
+    column: $table.currencyDisplay,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -14499,6 +15105,46 @@ class $$AppSettingsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get invoiceNumberPattern => $composableBuilder(
+    column: $table.invoiceNumberPattern,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get numberYearlyReset => $composableBuilder(
+    column: $table.numberYearlyReset,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get defaultVatOn => $composableBuilder(
+    column: $table.defaultVatOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get defaultVatRateBp => $composableBuilder(
+    column: $table.defaultVatRateBp,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get taxRegistrationNo => $composableBuilder(
+    column: $table.taxRegistrationNo,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get dateFormat => $composableBuilder(
+    column: $table.dateFormat,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get defaultCurrency => $composableBuilder(
+    column: $table.defaultCurrency,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currencyDisplay => $composableBuilder(
+    column: $table.currencyDisplay,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get deviceId => $composableBuilder(
     column: $table.deviceId,
     builder: (column) => ColumnOrderings(column),
@@ -14627,6 +15273,46 @@ class $$AppSettingsTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get invoiceNumberPattern => $composableBuilder(
+    column: $table.invoiceNumberPattern,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get numberYearlyReset => $composableBuilder(
+    column: $table.numberYearlyReset,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get defaultVatOn => $composableBuilder(
+    column: $table.defaultVatOn,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get defaultVatRateBp => $composableBuilder(
+    column: $table.defaultVatRateBp,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get taxRegistrationNo => $composableBuilder(
+    column: $table.taxRegistrationNo,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get dateFormat => $composableBuilder(
+    column: $table.dateFormat,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get defaultCurrency => $composableBuilder(
+    column: $table.defaultCurrency,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get currencyDisplay => $composableBuilder(
+    column: $table.currencyDisplay,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get deviceId =>
       $composableBuilder(column: $table.deviceId, builder: (column) => column);
 
@@ -14693,6 +15379,14 @@ class $$AppSettingsTableTableManager
                 Value<String> docDigitStyle = const Value.absent(),
                 Value<String?> defaultInvoiceStyleId = const Value.absent(),
                 Value<String?> defaultContractStyleId = const Value.absent(),
+                Value<String> invoiceNumberPattern = const Value.absent(),
+                Value<bool> numberYearlyReset = const Value.absent(),
+                Value<bool> defaultVatOn = const Value.absent(),
+                Value<int> defaultVatRateBp = const Value.absent(),
+                Value<String> taxRegistrationNo = const Value.absent(),
+                Value<String> dateFormat = const Value.absent(),
+                Value<String> defaultCurrency = const Value.absent(),
+                Value<String> currencyDisplay = const Value.absent(),
                 Value<String> deviceId = const Value.absent(),
                 Value<int> updatedAt = const Value.absent(),
               }) => AppSettingsCompanion(
@@ -14724,6 +15418,14 @@ class $$AppSettingsTableTableManager
                 docDigitStyle: docDigitStyle,
                 defaultInvoiceStyleId: defaultInvoiceStyleId,
                 defaultContractStyleId: defaultContractStyleId,
+                invoiceNumberPattern: invoiceNumberPattern,
+                numberYearlyReset: numberYearlyReset,
+                defaultVatOn: defaultVatOn,
+                defaultVatRateBp: defaultVatRateBp,
+                taxRegistrationNo: taxRegistrationNo,
+                dateFormat: dateFormat,
+                defaultCurrency: defaultCurrency,
+                currencyDisplay: currencyDisplay,
                 deviceId: deviceId,
                 updatedAt: updatedAt,
               ),
@@ -14757,6 +15459,14 @@ class $$AppSettingsTableTableManager
                 Value<String> docDigitStyle = const Value.absent(),
                 Value<String?> defaultInvoiceStyleId = const Value.absent(),
                 Value<String?> defaultContractStyleId = const Value.absent(),
+                Value<String> invoiceNumberPattern = const Value.absent(),
+                Value<bool> numberYearlyReset = const Value.absent(),
+                Value<bool> defaultVatOn = const Value.absent(),
+                Value<int> defaultVatRateBp = const Value.absent(),
+                Value<String> taxRegistrationNo = const Value.absent(),
+                Value<String> dateFormat = const Value.absent(),
+                Value<String> defaultCurrency = const Value.absent(),
+                Value<String> currencyDisplay = const Value.absent(),
                 Value<String> deviceId = const Value.absent(),
                 Value<int> updatedAt = const Value.absent(),
               }) => AppSettingsCompanion.insert(
@@ -14788,6 +15498,14 @@ class $$AppSettingsTableTableManager
                 docDigitStyle: docDigitStyle,
                 defaultInvoiceStyleId: defaultInvoiceStyleId,
                 defaultContractStyleId: defaultContractStyleId,
+                invoiceNumberPattern: invoiceNumberPattern,
+                numberYearlyReset: numberYearlyReset,
+                defaultVatOn: defaultVatOn,
+                defaultVatRateBp: defaultVatRateBp,
+                taxRegistrationNo: taxRegistrationNo,
+                dateFormat: dateFormat,
+                defaultCurrency: defaultCurrency,
+                currencyDisplay: currencyDisplay,
                 deviceId: deviceId,
                 updatedAt: updatedAt,
               ),
@@ -15818,6 +16536,7 @@ typedef $$InvoicesTableCreateCompanionBuilder =
       Value<String> language,
       Value<String?> styleId,
       Value<String?> styleSnapshot,
+      Value<String?> issueSnapshot,
       Value<bool> isDemo,
       required int createdAt,
       required int updatedAt,
@@ -15850,6 +16569,7 @@ typedef $$InvoicesTableUpdateCompanionBuilder =
       Value<String> language,
       Value<String?> styleId,
       Value<String?> styleSnapshot,
+      Value<String?> issueSnapshot,
       Value<bool> isDemo,
       Value<int> createdAt,
       Value<int> updatedAt,
@@ -16043,6 +16763,11 @@ class $$InvoicesTableFilterComposer
 
   ColumnFilters<String> get styleSnapshot => $composableBuilder(
     column: $table.styleSnapshot,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get issueSnapshot => $composableBuilder(
+    column: $table.issueSnapshot,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -16264,6 +16989,11 @@ class $$InvoicesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get issueSnapshot => $composableBuilder(
+    column: $table.issueSnapshot,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<bool> get isDemo => $composableBuilder(
     column: $table.isDemo,
     builder: (column) => ColumnOrderings(column),
@@ -16393,6 +17123,11 @@ class $$InvoicesTableAnnotationComposer
 
   GeneratedColumn<String> get styleSnapshot => $composableBuilder(
     column: $table.styleSnapshot,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get issueSnapshot => $composableBuilder(
+    column: $table.issueSnapshot,
     builder: (column) => column,
   );
 
@@ -16537,6 +17272,7 @@ class $$InvoicesTableTableManager
                 Value<String> language = const Value.absent(),
                 Value<String?> styleId = const Value.absent(),
                 Value<String?> styleSnapshot = const Value.absent(),
+                Value<String?> issueSnapshot = const Value.absent(),
                 Value<bool> isDemo = const Value.absent(),
                 Value<int> createdAt = const Value.absent(),
                 Value<int> updatedAt = const Value.absent(),
@@ -16567,6 +17303,7 @@ class $$InvoicesTableTableManager
                 language: language,
                 styleId: styleId,
                 styleSnapshot: styleSnapshot,
+                issueSnapshot: issueSnapshot,
                 isDemo: isDemo,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
@@ -16599,6 +17336,7 @@ class $$InvoicesTableTableManager
                 Value<String> language = const Value.absent(),
                 Value<String?> styleId = const Value.absent(),
                 Value<String?> styleSnapshot = const Value.absent(),
+                Value<String?> issueSnapshot = const Value.absent(),
                 Value<bool> isDemo = const Value.absent(),
                 required int createdAt,
                 required int updatedAt,
@@ -16629,6 +17367,7 @@ class $$InvoicesTableTableManager
                 language: language,
                 styleId: styleId,
                 styleSnapshot: styleSnapshot,
+                issueSnapshot: issueSnapshot,
                 isDemo: isDemo,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
@@ -18587,6 +19326,7 @@ typedef $$ContractsTableCreateCompanionBuilder =
       Value<int?> deletedAt,
       Value<String?> styleId,
       Value<String?> styleSnapshot,
+      Value<String?> issueSnapshot,
       Value<bool> isDemo,
       required int createdAt,
       required int updatedAt,
@@ -18625,6 +19365,7 @@ typedef $$ContractsTableUpdateCompanionBuilder =
       Value<int?> deletedAt,
       Value<String?> styleId,
       Value<String?> styleSnapshot,
+      Value<String?> issueSnapshot,
       Value<bool> isDemo,
       Value<int> createdAt,
       Value<int> updatedAt,
@@ -18880,6 +19621,11 @@ class $$ContractsTableFilterComposer
 
   ColumnFilters<String> get styleSnapshot => $composableBuilder(
     column: $table.styleSnapshot,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get issueSnapshot => $composableBuilder(
+    column: $table.issueSnapshot,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -19174,6 +19920,11 @@ class $$ContractsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get issueSnapshot => $composableBuilder(
+    column: $table.issueSnapshot,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<bool> get isDemo => $composableBuilder(
     column: $table.isDemo,
     builder: (column) => ColumnOrderings(column),
@@ -19347,6 +20098,11 @@ class $$ContractsTableAnnotationComposer
 
   GeneratedColumn<String> get styleSnapshot => $composableBuilder(
     column: $table.styleSnapshot,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get issueSnapshot => $composableBuilder(
+    column: $table.issueSnapshot,
     builder: (column) => column,
   );
 
@@ -19547,6 +20303,7 @@ class $$ContractsTableTableManager
                 Value<int?> deletedAt = const Value.absent(),
                 Value<String?> styleId = const Value.absent(),
                 Value<String?> styleSnapshot = const Value.absent(),
+                Value<String?> issueSnapshot = const Value.absent(),
                 Value<bool> isDemo = const Value.absent(),
                 Value<int> createdAt = const Value.absent(),
                 Value<int> updatedAt = const Value.absent(),
@@ -19583,6 +20340,7 @@ class $$ContractsTableTableManager
                 deletedAt: deletedAt,
                 styleId: styleId,
                 styleSnapshot: styleSnapshot,
+                issueSnapshot: issueSnapshot,
                 isDemo: isDemo,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
@@ -19621,6 +20379,7 @@ class $$ContractsTableTableManager
                 Value<int?> deletedAt = const Value.absent(),
                 Value<String?> styleId = const Value.absent(),
                 Value<String?> styleSnapshot = const Value.absent(),
+                Value<String?> issueSnapshot = const Value.absent(),
                 Value<bool> isDemo = const Value.absent(),
                 required int createdAt,
                 required int updatedAt,
@@ -19657,6 +20416,7 @@ class $$ContractsTableTableManager
                 deletedAt: deletedAt,
                 styleId: styleId,
                 styleSnapshot: styleSnapshot,
+                issueSnapshot: issueSnapshot,
                 isDemo: isDemo,
                 createdAt: createdAt,
                 updatedAt: updatedAt,

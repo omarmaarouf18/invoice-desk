@@ -5691,6 +5691,1018 @@ i1.GeneratedColumn<int> _column_133(String aliasedName) =>
       $customConstraints: 'NOT NULL DEFAULT 1',
       defaultValue: const i1.CustomExpression('1'),
     );
+
+final class Schema8 extends i0.VersionedSchema {
+  Schema8({required super.database}) : super(version: 8);
+  @override
+  late final List<i1.DatabaseSchemaEntity> entities = [
+    settings,
+    outbox,
+    settingsSyncInsert,
+    settingsSyncUpdate,
+    clients,
+    clientsSyncInsert,
+    clientsSyncUpdate,
+    invoices,
+    invoicesSyncInsert,
+    invoicesSyncUpdate,
+    sections,
+    sectionsSyncInsert,
+    sectionsSyncUpdate,
+    items,
+    itemsSyncInsert,
+    itemsSyncUpdate,
+    clauseTemplates,
+    clauseTemplatesSyncInsert,
+    clauseTemplatesSyncUpdate,
+    libraryClauses,
+    libraryClausesSyncInsert,
+    libraryClausesSyncUpdate,
+    contracts,
+    contractsSyncInsert,
+    contractsSyncUpdate,
+    contractClauses,
+    contractClausesSyncInsert,
+    contractClausesSyncUpdate,
+    scopeItems,
+    scopeItemsSyncInsert,
+    scopeItemsSyncUpdate,
+    paymentMilestones,
+    paymentMilestonesSyncInsert,
+    paymentMilestonesSyncUpdate,
+    postponements,
+    postponementsSyncInsert,
+    postponementsSyncUpdate,
+    reminders,
+    remindersSyncInsert,
+    remindersSyncUpdate,
+    documentAssets,
+    documentAssetsSyncInsert,
+    documentAssetsSyncUpdate,
+    documentStyles,
+    documentStylesSyncInsert,
+    documentStylesSyncUpdate,
+    postponementsEntity,
+    remindersDate,
+    invoicesClient,
+    invoicesDue,
+    invoicesPaid,
+    sectionsInvoice,
+    itemsSection,
+    libraryClausesTemplate,
+    contractsClient,
+    contractsParent,
+    contractClausesContract,
+    scopeItemsContract,
+    milestonesContract,
+    milestonesInvoice,
+    milestonesDue,
+    clientsSoftDeleteGuard,
+    invoicesReviveGuard,
+    invoicesInsertGuard,
+    contractsReviveGuard,
+    contractsInsertGuard,
+  ];
+  late final Shape40 settings = Shape40(
+    source: i0.VersionedTable(
+      entityName: 'settings',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_99,
+        _column_29,
+        _column_30,
+        _column_31,
+        _column_3,
+        _column_5,
+        _column_4,
+        _column_32,
+        _column_33,
+        _column_34,
+        _column_35,
+        _column_36,
+        _column_37,
+        _column_21,
+        _column_22,
+        _column_38,
+        _column_39,
+        _column_51,
+        _column_76,
+        _column_53,
+        _column_77,
+        _column_78,
+        _column_79,
+        _column_80,
+        _column_120,
+        _column_121,
+        _column_124,
+        _column_125,
+        _column_134,
+        _column_135,
+        _column_136,
+        _column_137,
+        _column_138,
+        _column_139,
+        _column_140,
+        _column_141,
+        _column_100,
+        _column_101,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape14 outbox = Shape14(
+    source: i0.VersionedTable(
+      entityName: 'outbox',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['UNIQUE(entity, row_id)'],
+      columns: [
+        _column_102,
+        _column_103,
+        _column_104,
+        _column_105,
+        _column_106,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger settingsSyncInsert = i1.Trigger(
+    'CREATE TRIGGER settings_sync_insert AFTER INSERT ON settings BEGIN UPDATE settings SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'settings\' AND row_id = CAST(NEW.id AS TEXT);INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'settings\', CAST(NEW.id AS TEXT), NEW.rev + 1, NEW.updated_at);END',
+    'settings_sync_insert',
+  );
+  final i1.Trigger settingsSyncUpdate = i1.Trigger(
+    'CREATE TRIGGER settings_sync_update AFTER UPDATE ON settings WHEN NEW.rev = OLD.rev BEGIN UPDATE settings SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'settings\' AND row_id = CAST(NEW.id AS TEXT);INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'settings\', CAST(NEW.id AS TEXT), OLD.rev + 1, NEW.updated_at);END',
+    'settings_sync_update',
+  );
+  late final Shape35 clients = Shape35(
+    source: i0.VersionedTable(
+      entityName: 'clients',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_99,
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_3,
+        _column_4,
+        _column_5,
+        _column_6,
+        _column_7,
+        _column_8,
+        _column_9,
+        _column_51,
+        _column_52,
+        _column_53,
+        _column_54,
+        _column_55,
+        _column_107,
+        _column_122,
+        _column_126,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger clientsSyncInsert = i1.Trigger(
+    'CREATE TRIGGER clients_sync_insert AFTER INSERT ON clients BEGIN UPDATE clients SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'clients\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'clients\', NEW.id, NEW.rev + 1, NEW.updated_at);END',
+    'clients_sync_insert',
+  );
+  final i1.Trigger clientsSyncUpdate = i1.Trigger(
+    'CREATE TRIGGER clients_sync_update AFTER UPDATE ON clients WHEN NEW.rev = OLD.rev BEGIN UPDATE clients SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'clients\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'clients\', NEW.id, OLD.rev + 1, NEW.updated_at);END',
+    'clients_sync_update',
+  );
+  late final Shape41 invoices = Shape41(
+    source: i0.VersionedTable(
+      entityName: 'invoices',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['PRIMARY KEY(id)', 'UNIQUE(year, seq)'],
+      columns: [
+        _column_99,
+        _column_0,
+        _column_10,
+        _column_11,
+        _column_12,
+        _column_13,
+        _column_14,
+        _column_15,
+        _column_16,
+        _column_17,
+        _column_18,
+        _column_19,
+        _column_20,
+        _column_21,
+        _column_22,
+        _column_23,
+        _column_24,
+        _column_25,
+        _column_26,
+        _column_27,
+        _column_28,
+        _column_9,
+        _column_123,
+        _column_126,
+        _column_127,
+        _column_142,
+        _column_107,
+        _column_6,
+        _column_7,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger invoicesSyncInsert = i1.Trigger(
+    'CREATE TRIGGER invoices_sync_insert AFTER INSERT ON invoices BEGIN UPDATE invoices SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'invoices\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'invoices\', NEW.id, NEW.rev + 1, NEW.updated_at);END',
+    'invoices_sync_insert',
+  );
+  final i1.Trigger invoicesSyncUpdate = i1.Trigger(
+    'CREATE TRIGGER invoices_sync_update AFTER UPDATE ON invoices WHEN NEW.rev = OLD.rev BEGIN UPDATE invoices SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'invoices\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'invoices\', NEW.id, OLD.rev + 1, NEW.updated_at);END',
+    'invoices_sync_update',
+  );
+  late final Shape17 sections = Shape17(
+    source: i0.VersionedTable(
+      entityName: 'sections',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_99,
+        _column_101,
+        _column_9,
+        _column_0,
+        _column_40,
+        _column_41,
+        _column_42,
+        _column_43,
+        _column_44,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger sectionsSyncInsert = i1.Trigger(
+    'CREATE TRIGGER sections_sync_insert AFTER INSERT ON sections BEGIN UPDATE sections SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'sections\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'sections\', NEW.id, NEW.rev + 1, NEW.updated_at);END',
+    'sections_sync_insert',
+  );
+  final i1.Trigger sectionsSyncUpdate = i1.Trigger(
+    'CREATE TRIGGER sections_sync_update AFTER UPDATE ON sections WHEN NEW.rev = OLD.rev BEGIN UPDATE sections SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'sections\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'sections\', NEW.id, OLD.rev + 1, NEW.updated_at);END',
+    'sections_sync_update',
+  );
+  late final Shape18 items = Shape18(
+    source: i0.VersionedTable(
+      entityName: 'items',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_99,
+        _column_101,
+        _column_9,
+        _column_0,
+        _column_45,
+        _column_41,
+        _column_46,
+        _column_47,
+        _column_48,
+        _column_49,
+        _column_50,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger itemsSyncInsert = i1.Trigger(
+    'CREATE TRIGGER items_sync_insert AFTER INSERT ON items BEGIN UPDATE items SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'items\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'items\', NEW.id, NEW.rev + 1, NEW.updated_at);END',
+    'items_sync_insert',
+  );
+  final i1.Trigger itemsSyncUpdate = i1.Trigger(
+    'CREATE TRIGGER items_sync_update AFTER UPDATE ON items WHEN NEW.rev = OLD.rev BEGIN UPDATE items SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'items\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'items\', NEW.id, OLD.rev + 1, NEW.updated_at);END',
+    'items_sync_update',
+  );
+  late final Shape27 clauseTemplates = Shape27(
+    source: i0.VersionedTable(
+      entityName: 'clause_templates',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_99,
+        _column_0,
+        _column_1,
+        _column_81,
+        _column_41,
+        _column_8,
+        _column_64,
+        _column_65,
+        _column_82,
+        _column_9,
+        _column_107,
+        _column_6,
+        _column_7,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger clauseTemplatesSyncInsert = i1.Trigger(
+    'CREATE TRIGGER clause_templates_sync_insert AFTER INSERT ON clause_templates BEGIN UPDATE clause_templates SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'clause_templates\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'clause_templates\', NEW.id, NEW.rev + 1, NEW.updated_at);END',
+    'clause_templates_sync_insert',
+  );
+  final i1.Trigger clauseTemplatesSyncUpdate = i1.Trigger(
+    'CREATE TRIGGER clause_templates_sync_update AFTER UPDATE ON clause_templates WHEN NEW.rev = OLD.rev BEGIN UPDATE clause_templates SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'clause_templates\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'clause_templates\', NEW.id, OLD.rev + 1, NEW.updated_at);END',
+    'clause_templates_sync_update',
+  );
+  late final Shape20 libraryClauses = Shape20(
+    source: i0.VersionedTable(
+      entityName: 'library_clauses',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_99,
+        _column_101,
+        _column_9,
+        _column_0,
+        _column_83,
+        _column_41,
+        _column_61,
+        _column_84,
+        _column_85,
+        _column_86,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger libraryClausesSyncInsert = i1.Trigger(
+    'CREATE TRIGGER library_clauses_sync_insert AFTER INSERT ON library_clauses BEGIN UPDATE library_clauses SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'library_clauses\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'library_clauses\', NEW.id, NEW.rev + 1, NEW.updated_at);END',
+    'library_clauses_sync_insert',
+  );
+  final i1.Trigger libraryClausesSyncUpdate = i1.Trigger(
+    'CREATE TRIGGER library_clauses_sync_update AFTER UPDATE ON library_clauses WHEN NEW.rev = OLD.rev BEGIN UPDATE library_clauses SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'library_clauses\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'library_clauses\', NEW.id, OLD.rev + 1, NEW.updated_at);END',
+    'library_clauses_sync_update',
+  );
+  late final Shape42 contracts = Shape42(
+    source: i0.VersionedTable(
+      entityName: 'contracts',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: [
+        'PRIMARY KEY(id)',
+        'UNIQUE(series, year, seq, amendment_no)',
+      ],
+      columns: [
+        _column_99,
+        _column_0,
+        _column_10,
+        _column_11,
+        _column_56,
+        _column_12,
+        _column_13,
+        _column_57,
+        _column_58,
+        _column_59,
+        _column_60,
+        _column_61,
+        _column_62,
+        _column_63,
+        _column_64,
+        _column_65,
+        _column_14,
+        _column_66,
+        _column_67,
+        _column_68,
+        _column_69,
+        _column_70,
+        _column_44,
+        _column_71,
+        _column_72,
+        _column_73,
+        _column_74,
+        _column_75,
+        _column_9,
+        _column_126,
+        _column_127,
+        _column_142,
+        _column_107,
+        _column_6,
+        _column_7,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger contractsSyncInsert = i1.Trigger(
+    'CREATE TRIGGER contracts_sync_insert AFTER INSERT ON contracts BEGIN UPDATE contracts SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'contracts\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'contracts\', NEW.id, NEW.rev + 1, NEW.updated_at);END',
+    'contracts_sync_insert',
+  );
+  final i1.Trigger contractsSyncUpdate = i1.Trigger(
+    'CREATE TRIGGER contracts_sync_update AFTER UPDATE ON contracts WHEN NEW.rev = OLD.rev BEGIN UPDATE contracts SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'contracts\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'contracts\', NEW.id, OLD.rev + 1, NEW.updated_at);END',
+    'contracts_sync_update',
+  );
+  late final Shape22 contractClauses = Shape22(
+    source: i0.VersionedTable(
+      entityName: 'contract_clauses',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_99,
+        _column_101,
+        _column_9,
+        _column_0,
+        _column_87,
+        _column_41,
+        _column_61,
+        _column_84,
+        _column_88,
+        _column_85,
+        _column_89,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger contractClausesSyncInsert = i1.Trigger(
+    'CREATE TRIGGER contract_clauses_sync_insert AFTER INSERT ON contract_clauses BEGIN UPDATE contract_clauses SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'contract_clauses\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'contract_clauses\', NEW.id, NEW.rev + 1, NEW.updated_at);END',
+    'contract_clauses_sync_insert',
+  );
+  final i1.Trigger contractClausesSyncUpdate = i1.Trigger(
+    'CREATE TRIGGER contract_clauses_sync_update AFTER UPDATE ON contract_clauses WHEN NEW.rev = OLD.rev BEGIN UPDATE contract_clauses SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'contract_clauses\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'contract_clauses\', NEW.id, OLD.rev + 1, NEW.updated_at);END',
+    'contract_clauses_sync_update',
+  );
+  late final Shape23 scopeItems = Shape23(
+    source: i0.VersionedTable(
+      entityName: 'scope_items',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_99,
+        _column_101,
+        _column_9,
+        _column_0,
+        _column_87,
+        _column_41,
+        _column_90,
+        _column_91,
+        _column_47,
+        _column_92,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger scopeItemsSyncInsert = i1.Trigger(
+    'CREATE TRIGGER scope_items_sync_insert AFTER INSERT ON scope_items BEGIN UPDATE scope_items SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'scope_items\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'scope_items\', NEW.id, NEW.rev + 1, NEW.updated_at);END',
+    'scope_items_sync_insert',
+  );
+  final i1.Trigger scopeItemsSyncUpdate = i1.Trigger(
+    'CREATE TRIGGER scope_items_sync_update AFTER UPDATE ON scope_items WHEN NEW.rev = OLD.rev BEGIN UPDATE scope_items SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'scope_items\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'scope_items\', NEW.id, OLD.rev + 1, NEW.updated_at);END',
+    'scope_items_sync_update',
+  );
+  late final Shape24 paymentMilestones = Shape24(
+    source: i0.VersionedTable(
+      entityName: 'payment_milestones',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_99,
+        _column_101,
+        _column_9,
+        _column_0,
+        _column_87,
+        _column_41,
+        _column_93,
+        _column_94,
+        _column_95,
+        _column_96,
+        _column_97,
+        _column_98,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger paymentMilestonesSyncInsert = i1.Trigger(
+    'CREATE TRIGGER payment_milestones_sync_insert AFTER INSERT ON payment_milestones BEGIN UPDATE payment_milestones SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'payment_milestones\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'payment_milestones\', NEW.id, NEW.rev + 1, NEW.updated_at);END',
+    'payment_milestones_sync_insert',
+  );
+  final i1.Trigger paymentMilestonesSyncUpdate = i1.Trigger(
+    'CREATE TRIGGER payment_milestones_sync_update AFTER UPDATE ON payment_milestones WHEN NEW.rev = OLD.rev BEGIN UPDATE payment_milestones SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'payment_milestones\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'payment_milestones\', NEW.id, OLD.rev + 1, NEW.updated_at);END',
+    'payment_milestones_sync_update',
+  );
+  late final Shape29 postponements = Shape29(
+    source: i0.VersionedTable(
+      entityName: 'postponements',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_99,
+        _column_0,
+        _column_108,
+        _column_109,
+        _column_110,
+        _column_111,
+        _column_112,
+        _column_6,
+        _column_7,
+        _column_9,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger postponementsSyncInsert = i1.Trigger(
+    'CREATE TRIGGER postponements_sync_insert AFTER INSERT ON postponements BEGIN UPDATE postponements SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'postponements\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'postponements\', NEW.id, NEW.rev + 1, NEW.updated_at);END',
+    'postponements_sync_insert',
+  );
+  final i1.Trigger postponementsSyncUpdate = i1.Trigger(
+    'CREATE TRIGGER postponements_sync_update AFTER UPDATE ON postponements WHEN NEW.rev = OLD.rev BEGIN UPDATE postponements SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'postponements\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'postponements\', NEW.id, OLD.rev + 1, NEW.updated_at);END',
+    'postponements_sync_update',
+  );
+  late final Shape30 reminders = Shape30(
+    source: i0.VersionedTable(
+      entityName: 'reminders',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_99,
+        _column_0,
+        _column_113,
+        _column_114,
+        _column_115,
+        _column_116,
+        _column_117,
+        _column_118,
+        _column_119,
+        _column_9,
+        _column_107,
+        _column_6,
+        _column_7,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger remindersSyncInsert = i1.Trigger(
+    'CREATE TRIGGER reminders_sync_insert AFTER INSERT ON reminders BEGIN UPDATE reminders SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'reminders\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'reminders\', NEW.id, NEW.rev + 1, NEW.updated_at);END',
+    'reminders_sync_insert',
+  );
+  final i1.Trigger remindersSyncUpdate = i1.Trigger(
+    'CREATE TRIGGER reminders_sync_update AFTER UPDATE ON reminders WHEN NEW.rev = OLD.rev BEGIN UPDATE reminders SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'reminders\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'reminders\', NEW.id, OLD.rev + 1, NEW.updated_at);END',
+    'reminders_sync_update',
+  );
+  late final Shape38 documentAssets = Shape38(
+    source: i0.VersionedTable(
+      entityName: 'document_assets',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [_column_99, _column_0, _column_128, _column_129, _column_6],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger documentAssetsSyncInsert = i1.Trigger(
+    'CREATE TRIGGER document_assets_sync_insert AFTER INSERT ON document_assets BEGIN UPDATE document_assets SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'document_assets\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'document_assets\', NEW.id, NEW.rev + 1, NEW.created_at);END',
+    'document_assets_sync_insert',
+  );
+  final i1.Trigger documentAssetsSyncUpdate = i1.Trigger(
+    'CREATE TRIGGER document_assets_sync_update AFTER UPDATE ON document_assets WHEN NEW.rev = OLD.rev BEGIN UPDATE document_assets SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'document_assets\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'document_assets\', NEW.id, OLD.rev + 1, NEW.created_at);END',
+    'document_assets_sync_update',
+  );
+  late final Shape39 documentStyles = Shape39(
+    source: i0.VersionedTable(
+      entityName: 'document_styles',
+      withoutRowId: false,
+      isStrict: true,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_99,
+        _column_0,
+        _column_1,
+        _column_130,
+        _column_131,
+        _column_132,
+        _column_133,
+        _column_8,
+        _column_107,
+        _column_6,
+        _column_7,
+        _column_9,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger documentStylesSyncInsert = i1.Trigger(
+    'CREATE TRIGGER document_styles_sync_insert AFTER INSERT ON document_styles BEGIN UPDATE document_styles SET rev = NEW.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'document_styles\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'document_styles\', NEW.id, NEW.rev + 1, NEW.updated_at);END',
+    'document_styles_sync_insert',
+  );
+  final i1.Trigger documentStylesSyncUpdate = i1.Trigger(
+    'CREATE TRIGGER document_styles_sync_update AFTER UPDATE ON document_styles WHEN NEW.rev = OLD.rev BEGIN UPDATE document_styles SET rev = OLD.rev + 1 WHERE id = NEW.id;DELETE FROM outbox WHERE entity = \'document_styles\' AND row_id = NEW.id;INSERT INTO outbox (entity, row_id, rev, changed_at) VALUES (\'document_styles\', NEW.id, OLD.rev + 1, NEW.updated_at);END',
+    'document_styles_sync_update',
+  );
+  final i1.Index postponementsEntity = i1.Index(
+    'postponements_entity',
+    'CREATE INDEX postponements_entity ON postponements (entity_id)',
+  );
+  final i1.Index remindersDate = i1.Index(
+    'reminders_date',
+    'CREATE INDEX reminders_date ON reminders (date)',
+  );
+  final i1.Index invoicesClient = i1.Index(
+    'invoices_client',
+    'CREATE INDEX invoices_client ON invoices (client_id)',
+  );
+  final i1.Index invoicesDue = i1.Index(
+    'invoices_due',
+    'CREATE INDEX invoices_due ON invoices (due_date)',
+  );
+  final i1.Index invoicesPaid = i1.Index(
+    'invoices_paid',
+    'CREATE INDEX invoices_paid ON invoices (paid_date)',
+  );
+  final i1.Index sectionsInvoice = i1.Index(
+    'sections_invoice',
+    'CREATE INDEX sections_invoice ON sections (invoice_id)',
+  );
+  final i1.Index itemsSection = i1.Index(
+    'items_section',
+    'CREATE INDEX items_section ON items (section_id)',
+  );
+  final i1.Index libraryClausesTemplate = i1.Index(
+    'library_clauses_template',
+    'CREATE INDEX library_clauses_template ON library_clauses (template_id)',
+  );
+  final i1.Index contractsClient = i1.Index(
+    'contracts_client',
+    'CREATE INDEX contracts_client ON contracts (client_id)',
+  );
+  final i1.Index contractsParent = i1.Index(
+    'contracts_parent',
+    'CREATE INDEX contracts_parent ON contracts (parent_id)',
+  );
+  final i1.Index contractClausesContract = i1.Index(
+    'contract_clauses_contract',
+    'CREATE INDEX contract_clauses_contract ON contract_clauses (contract_id)',
+  );
+  final i1.Index scopeItemsContract = i1.Index(
+    'scope_items_contract',
+    'CREATE INDEX scope_items_contract ON scope_items (contract_id)',
+  );
+  final i1.Index milestonesContract = i1.Index(
+    'milestones_contract',
+    'CREATE INDEX milestones_contract ON payment_milestones (contract_id)',
+  );
+  final i1.Index milestonesInvoice = i1.Index(
+    'milestones_invoice',
+    'CREATE INDEX milestones_invoice ON payment_milestones (invoice_id)',
+  );
+  final i1.Index milestonesDue = i1.Index(
+    'milestones_due',
+    'CREATE INDEX milestones_due ON payment_milestones (due_date)',
+  );
+  final i1.Trigger clientsSoftDeleteGuard = i1.Trigger(
+    'CREATE TRIGGER clients_soft_delete_guard BEFORE UPDATE OF deleted_at ON clients WHEN NEW.deleted_at IS NOT NULL AND(EXISTS (SELECT 1 FROM invoices WHERE client_id = NEW.id AND deleted_at IS NULL) OR EXISTS (SELECT 1 FROM contracts WHERE client_id = NEW.id AND deleted_at IS NULL))BEGIN SELECT RAISE (ABORT, \'client has live documents\');END',
+    'clients_soft_delete_guard',
+  );
+  final i1.Trigger invoicesReviveGuard = i1.Trigger(
+    'CREATE TRIGGER invoices_revive_guard BEFORE UPDATE OF deleted_at ON invoices WHEN NEW.deleted_at IS NULL AND EXISTS (SELECT 1 FROM clients WHERE id = NEW.client_id AND deleted_at IS NOT NULL) BEGIN SELECT RAISE (ABORT, \'client is deleted\');END',
+    'invoices_revive_guard',
+  );
+  final i1.Trigger invoicesInsertGuard = i1.Trigger(
+    'CREATE TRIGGER invoices_insert_guard BEFORE INSERT ON invoices WHEN NEW.deleted_at IS NULL AND EXISTS (SELECT 1 FROM clients WHERE id = NEW.client_id AND deleted_at IS NOT NULL) BEGIN SELECT RAISE (ABORT, \'client is deleted\');END',
+    'invoices_insert_guard',
+  );
+  final i1.Trigger contractsReviveGuard = i1.Trigger(
+    'CREATE TRIGGER contracts_revive_guard BEFORE UPDATE OF deleted_at ON contracts WHEN NEW.deleted_at IS NULL AND EXISTS (SELECT 1 FROM clients WHERE id = NEW.client_id AND deleted_at IS NOT NULL) BEGIN SELECT RAISE (ABORT, \'client is deleted\');END',
+    'contracts_revive_guard',
+  );
+  final i1.Trigger contractsInsertGuard = i1.Trigger(
+    'CREATE TRIGGER contracts_insert_guard BEFORE INSERT ON contracts WHEN NEW.deleted_at IS NULL AND EXISTS (SELECT 1 FROM clients WHERE id = NEW.client_id AND deleted_at IS NOT NULL) BEGIN SELECT RAISE (ABORT, \'client is deleted\');END',
+    'contracts_insert_guard',
+  );
+}
+
+class Shape40 extends i0.VersionedTable {
+  Shape40({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<int> get rev =>
+      columnsByName['rev']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get id =>
+      columnsByName['id']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get name =>
+      columnsByName['name']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get role =>
+      columnsByName['role']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get city =>
+      columnsByName['city']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get email =>
+      columnsByName['email']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get phone =>
+      columnsByName['phone']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get website =>
+      columnsByName['website']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get invoicePrefix =>
+      columnsByName['invoice_prefix']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get defaultDueDays =>
+      columnsByName['default_due_days']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get instapay =>
+      columnsByName['instapay']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get wallet =>
+      columnsByName['wallet']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get bankIban =>
+      columnsByName['bank_iban']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get notesEn =>
+      columnsByName['notes_en']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get notesAr =>
+      columnsByName['notes_ar']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get backupDir =>
+      columnsByName['backup_dir']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get lastBackupAt =>
+      columnsByName['last_backup_at']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get legalName =>
+      columnsByName['legal_name']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get nationalIdOrRegistry =>
+      columnsByName['national_id_or_registry']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get address =>
+      columnsByName['address']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get contractPrefix =>
+      columnsByName['contract_prefix']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get quotePrefix =>
+      columnsByName['quote_prefix']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get defaultJurisdiction =>
+      columnsByName['default_jurisdiction']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get contractWesternDigits =>
+      columnsByName['contract_western_digits']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get defaultDocLanguage =>
+      columnsByName['default_doc_language']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get docDigitStyle =>
+      columnsByName['doc_digit_style']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get defaultInvoiceStyleId =>
+      columnsByName['default_invoice_style_id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get defaultContractStyleId =>
+      columnsByName['default_contract_style_id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get invoiceNumberPattern =>
+      columnsByName['invoice_number_pattern']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get numberYearlyReset =>
+      columnsByName['number_yearly_reset']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get defaultVatOn =>
+      columnsByName['default_vat_on']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get defaultVatRateBp =>
+      columnsByName['default_vat_rate_bp']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get taxRegistrationNo =>
+      columnsByName['tax_registration_no']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get dateFormat =>
+      columnsByName['date_format']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get defaultCurrency =>
+      columnsByName['default_currency']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get currencyDisplay =>
+      columnsByName['currency_display']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get deviceId =>
+      columnsByName['device_id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get updatedAt =>
+      columnsByName['updated_at']! as i1.GeneratedColumn<int>;
+}
+
+i1.GeneratedColumn<String> _column_134(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'invoice_number_pattern',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'{PREFIX}-{YYYY}-{SEQ:4}\'',
+      defaultValue: const i1.CustomExpression('\'{PREFIX}-{YYYY}-{SEQ:4}\''),
+    );
+i1.GeneratedColumn<int> _column_135(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'number_yearly_reset',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.int,
+      $customConstraints:
+          'NOT NULL DEFAULT 1 CHECK (number_yearly_reset IN (0, 1))',
+      defaultValue: const i1.CustomExpression('1'),
+    );
+i1.GeneratedColumn<int> _column_136(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'default_vat_on',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NOT NULL DEFAULT 0 CHECK (default_vat_on IN (0, 1))',
+      defaultValue: const i1.CustomExpression('0'),
+    );
+i1.GeneratedColumn<int> _column_137(
+  String aliasedName,
+) => i1.GeneratedColumn<int>(
+  'default_vat_rate_bp',
+  aliasedName,
+  false,
+  type: i1.DriftSqlType.int,
+  $customConstraints:
+      'NOT NULL DEFAULT 1400 CHECK (default_vat_rate_bp BETWEEN 0 AND 10000)',
+  defaultValue: const i1.CustomExpression('1400'),
+);
+i1.GeneratedColumn<String> _column_138(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'tax_registration_no',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'\'',
+      defaultValue: const i1.CustomExpression('\'\''),
+    );
+i1.GeneratedColumn<String> _column_139(
+  String aliasedName,
+) => i1.GeneratedColumn<String>(
+  'date_format',
+  aliasedName,
+  false,
+  type: i1.DriftSqlType.string,
+  $customConstraints:
+      'NOT NULL DEFAULT \'long\' CHECK (date_format IN (\'long\', \'numeric\'))',
+  defaultValue: const i1.CustomExpression('\'long\''),
+);
+i1.GeneratedColumn<String> _column_140(
+  String aliasedName,
+) => i1.GeneratedColumn<String>(
+  'default_currency',
+  aliasedName,
+  false,
+  type: i1.DriftSqlType.string,
+  $customConstraints:
+      'NOT NULL DEFAULT \'EGP\' CHECK (default_currency IN (\'EGP\', \'USD\', \'SAR\', \'AED\', \'EUR\'))',
+  defaultValue: const i1.CustomExpression('\'EGP\''),
+);
+i1.GeneratedColumn<String> _column_141(
+  String aliasedName,
+) => i1.GeneratedColumn<String>(
+  'currency_display',
+  aliasedName,
+  false,
+  type: i1.DriftSqlType.string,
+  $customConstraints:
+      'NOT NULL DEFAULT \'code\' CHECK (currency_display IN (\'code\', \'local\', \'symbol\'))',
+  defaultValue: const i1.CustomExpression('\'code\''),
+);
+
+class Shape41 extends i0.VersionedTable {
+  Shape41({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<int> get rev =>
+      columnsByName['rev']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get id =>
+      columnsByName['id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get clientId =>
+      columnsByName['client_id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get number =>
+      columnsByName['number']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get year =>
+      columnsByName['year']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get seq =>
+      columnsByName['seq']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get issueDate =>
+      columnsByName['issue_date']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get dueDate =>
+      columnsByName['due_date']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get paidDate =>
+      columnsByName['paid_date']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get status =>
+      columnsByName['status']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get contractRef =>
+      columnsByName['contract_ref']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get vatOn =>
+      columnsByName['vat_on']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get vatRateBp =>
+      columnsByName['vat_rate_bp']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get notesEn =>
+      columnsByName['notes_en']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get notesAr =>
+      columnsByName['notes_ar']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get scopeOn =>
+      columnsByName['scope_on']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get scopeTitle =>
+      columnsByName['scope_title']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get scopeOverview =>
+      columnsByName['scope_overview']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get scopeDone =>
+      columnsByName['scope_done']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get scopeDelivered =>
+      columnsByName['scope_delivered']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get scopeWarranty =>
+      columnsByName['scope_warranty']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get deletedAt =>
+      columnsByName['deleted_at']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get language =>
+      columnsByName['language']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get styleId =>
+      columnsByName['style_id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get styleSnapshot =>
+      columnsByName['style_snapshot']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get issueSnapshot =>
+      columnsByName['issue_snapshot']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get isDemo =>
+      columnsByName['is_demo']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get createdAt =>
+      columnsByName['created_at']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get updatedAt =>
+      columnsByName['updated_at']! as i1.GeneratedColumn<int>;
+}
+
+i1.GeneratedColumn<String> _column_142(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'issue_snapshot',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NULL',
+    );
+
+class Shape42 extends i0.VersionedTable {
+  Shape42({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<int> get rev =>
+      columnsByName['rev']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get id =>
+      columnsByName['id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get clientId =>
+      columnsByName['client_id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get number =>
+      columnsByName['number']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get series =>
+      columnsByName['series']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get year =>
+      columnsByName['year']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get seq =>
+      columnsByName['seq']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get amendmentNo =>
+      columnsByName['amendment_no']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get parentId =>
+      columnsByName['parent_id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get kind =>
+      columnsByName['kind']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get templateName =>
+      columnsByName['template_name']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get title =>
+      columnsByName['title']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get projectName =>
+      columnsByName['project_name']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get projectSummary =>
+      columnsByName['project_summary']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get preamble =>
+      columnsByName['preamble']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get closing =>
+      columnsByName['closing']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get issueDate =>
+      columnsByName['issue_date']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get startDate =>
+      columnsByName['start_date']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get signedDate =>
+      columnsByName['signed_date']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get endDate =>
+      columnsByName['end_date']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get status =>
+      columnsByName['status']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get jurisdiction =>
+      columnsByName['jurisdiction']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get currency =>
+      columnsByName['currency']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get totalMinor =>
+      columnsByName['total_minor']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get vars =>
+      columnsByName['vars']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get outOfScope =>
+      columnsByName['out_of_scope']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get unlocked =>
+      columnsByName['unlocked']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get history =>
+      columnsByName['history']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get deletedAt =>
+      columnsByName['deleted_at']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get styleId =>
+      columnsByName['style_id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get styleSnapshot =>
+      columnsByName['style_snapshot']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get issueSnapshot =>
+      columnsByName['issue_snapshot']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get isDemo =>
+      columnsByName['is_demo']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get createdAt =>
+      columnsByName['created_at']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get updatedAt =>
+      columnsByName['updated_at']! as i1.GeneratedColumn<int>;
+}
+
 i0.MigrationStepWithVersion migrationSteps({
   required Future<void> Function(i1.Migrator m, Schema2 schema) from1To2,
   required Future<void> Function(i1.Migrator m, Schema3 schema) from2To3,
@@ -5698,6 +6710,7 @@ i0.MigrationStepWithVersion migrationSteps({
   required Future<void> Function(i1.Migrator m, Schema5 schema) from4To5,
   required Future<void> Function(i1.Migrator m, Schema6 schema) from5To6,
   required Future<void> Function(i1.Migrator m, Schema7 schema) from6To7,
+  required Future<void> Function(i1.Migrator m, Schema8 schema) from7To8,
 }) {
   return (currentVersion, database) async {
     switch (currentVersion) {
@@ -5731,6 +6744,11 @@ i0.MigrationStepWithVersion migrationSteps({
         final migrator = i1.Migrator(database, schema);
         await from6To7(migrator, schema);
         return 7;
+      case 7:
+        final schema = Schema8(database: database);
+        final migrator = i1.Migrator(database, schema);
+        await from7To8(migrator, schema);
+        return 8;
       default:
         throw ArgumentError.value('Unknown migration from $currentVersion');
     }
@@ -5744,6 +6762,7 @@ i1.OnUpgrade stepByStep({
   required Future<void> Function(i1.Migrator m, Schema5 schema) from4To5,
   required Future<void> Function(i1.Migrator m, Schema6 schema) from5To6,
   required Future<void> Function(i1.Migrator m, Schema7 schema) from6To7,
+  required Future<void> Function(i1.Migrator m, Schema8 schema) from7To8,
 }) => i0.VersionedSchema.stepByStepHelper(
   step: migrationSteps(
     from1To2: from1To2,
@@ -5752,5 +6771,6 @@ i1.OnUpgrade stepByStep({
     from4To5: from4To5,
     from5To6: from5To6,
     from6To7: from6To7,
+    from7To8: from7To8,
   ),
 );

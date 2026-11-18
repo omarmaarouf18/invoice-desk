@@ -1,5 +1,6 @@
 import 'package:clock/clock.dart';
 import 'package:drift/drift.dart';
+import 'package:invoice_desk/core/money.dart';
 import 'package:invoice_desk/data/db.dart';
 import 'package:invoice_desk/data/tables.dart';
 import 'package:invoice_desk/domain/doc_language.dart';
@@ -51,6 +52,14 @@ class SettingsDao extends DatabaseAccessor<AppDatabase>
         docDigitStyle: Value(s.docDigitStyle.code),
         defaultInvoiceStyleId: Value(s.defaultInvoiceStyleId),
         defaultContractStyleId: Value(s.defaultContractStyleId),
+        invoiceNumberPattern: Value(s.invoiceNumberPattern),
+        numberYearlyReset: Value(s.numberYearlyReset),
+        defaultVatOn: Value(s.defaultVatOn),
+        defaultVatRateBp: Value(s.defaultVatRateBp),
+        taxRegistrationNo: Value(s.taxRegistrationNo),
+        dateFormat: Value(s.dateFormat.code),
+        defaultCurrency: Value(s.defaultCurrency.code),
+        currencyDisplay: Value(s.currencyDisplay.dbValue),
       ),
     );
   });
@@ -83,5 +92,22 @@ class SettingsDao extends DatabaseAccessor<AppDatabase>
           docDigitStyle: DigitStyle.fromCode(r.docDigitStyle),
           defaultInvoiceStyleId: r.defaultInvoiceStyleId,
           defaultContractStyleId: r.defaultContractStyleId,
+          invoiceNumberPattern: r.invoiceNumberPattern,
+          numberYearlyReset: r.numberYearlyReset,
+          defaultVatOn: r.defaultVatOn,
+          defaultVatRateBp: r.defaultVatRateBp,
+          taxRegistrationNo: r.taxRegistrationNo,
+          dateFormat: DocDateFormat.fromCode(r.dateFormat),
+          defaultCurrency: _currency(r.defaultCurrency),
+          currencyDisplay: CurrencyDisplay.fromDb(r.currencyDisplay),
         );
+
+  /// A stored ISO code back to a currency; an unknown one is EGP.
+  static Currency _currency(String code) {
+    try {
+      return Currency.fromCode(code);
+    } on Object {
+      return Currency.egp;
+    }
+  }
 }
