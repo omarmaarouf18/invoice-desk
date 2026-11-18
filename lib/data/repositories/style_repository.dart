@@ -19,7 +19,12 @@ part 'style_editing.dart';
 class ResolvedLook {
   /// A look; [logo] is null when the style has no logo or its asset is
   /// missing (the PDF then simply has no logo).
-  const ResolvedLook({required this.style, this.logo, this.locked = false});
+  const ResolvedLook({
+    required this.style,
+    this.logo,
+    this.locked = false,
+    this.issueSnapshot,
+  });
 
   /// The style to render.
   final DocumentStyle style;
@@ -30,6 +35,10 @@ class ResolvedLook {
   /// The look is frozen: the document was sent, paid or signed, so the
   /// editor shows the style as fixed and the picker is disabled.
   final bool locked;
+
+  /// The document's issue snapshot JSON (ADR-0014): the caller's copy,
+  /// else the stored row's; null renders from live settings and client.
+  final String? issueSnapshot;
 }
 
 /// How many unfrozen documents and clients point at a style.
@@ -159,6 +168,7 @@ class StyleRepository with ClockedRepository {
           row != null && const {'sent', 'paid', 'void'}.contains(row.status),
       live: () => resolveStyle(styleId: inv.styleId, clientId: inv.clientId),
       withLogo: withLogo,
+      issue: _nonEmpty(inv.issueSnapshot) ?? _nonEmpty(row?.issueSnapshot),
     );
   }
 
@@ -187,6 +197,7 @@ class StyleRepository with ClockedRepository {
         isContract: true,
       ),
       withLogo: withLogo,
+      issue: _nonEmpty(c.issueSnapshot) ?? _nonEmpty(row?.issueSnapshot),
     );
   }
 
@@ -202,6 +213,7 @@ class StyleRepository with ClockedRepository {
     required bool legacyCommitted,
     required Future<DocumentStyle> Function() live,
     required bool withLogo,
+    String? issue,
   }) async {
     DocumentStyle? frozen;
     if (snapshot != null) {
@@ -219,6 +231,7 @@ class StyleRepository with ClockedRepository {
       style: style,
       logo: withLogo && logoId != null ? await getAsset(logoId) : null,
       locked: locked,
+      issueSnapshot: issue,
     );
   }
 

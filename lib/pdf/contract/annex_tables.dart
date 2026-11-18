@@ -198,7 +198,7 @@ extension _AnnexTables on _Builder {
                 cell(t(pct(m, check.amounts[i]), style: st(size: 9.5))),
                 cell(
                   t(
-                    formatMoney(check.amounts[i], c.currency),
+                    contractMoney(check.amounts[i], c.currency, lang, s),
                     style: st(size: 9.5, font: semi),
                   ),
                   end: true,
@@ -222,7 +222,7 @@ extension _AnnexTables on _Builder {
               cell(t('')),
               cell(
                 t(
-                  formatMoney(check.sum, c.currency),
+                  contractMoney(check.sum, c.currency, lang, s),
                   style: st(size: 9.5, font: bold),
                 ),
                 end: true,

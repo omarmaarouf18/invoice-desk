@@ -118,6 +118,7 @@ extension _Cover on _Builder {
               child: party(labels.firstPartyProvider, [
                 (null, provider),
                 (labels.providerIdOrRegistry, s.nationalIdOrRegistry),
+                (labels.taxRegistrationNo, s.taxRegistrationNo),
                 (labels.address, s.address),
                 (labels.email, s.email),
                 (labels.phone, s.phone),

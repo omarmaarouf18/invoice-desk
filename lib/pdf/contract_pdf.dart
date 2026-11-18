@@ -219,7 +219,10 @@ class _Builder {
 
   /// `15 فبراير 2027` as two runs in an RTL row: the PDF's bidi pass drops
   /// the space before a trailing number when it is one string.
-  pw.Widget date(CalendarDate d, pw.TextStyle style) => lang.isRtl
+  pw.Widget date(CalendarDate d, pw.TextStyle style) =>
+      s.dateFormat == DocDateFormat.numeric
+      ? t(formatDocDateAs(d, lang, s.dateFormat), style: style)
+      : lang.isRtl
       ? pw.Row(
           mainAxisSize: pw.MainAxisSize.min,
           children: [
@@ -281,3 +284,8 @@ class _Builder {
 
 /// Money in the PDF's annex columns (Western digits, as on invoices).
 String contractAmount(Money m) => formatMoney(m.minor, m.currency);
+
+/// An annex amount in the settings' currency display (ADR-0014 freezes it
+/// for signed contracts).
+String contractMoney(int minor, Currency c, DocLanguage lang, Settings s) =>
+    formatDocCurrency(minor, c, lang, s.currencyDisplay);

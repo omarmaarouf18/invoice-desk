@@ -55,6 +55,7 @@ class DocLabels {
     required this.firstParty,
     required this.secondParty,
     required this.providerIdOrRegistry,
+    required this.taxRegistrationNo,
     required this.clientRegistryOrId,
     required this.address,
     required this.email,
@@ -159,6 +160,9 @@ class DocLabels {
   final String firstParty;
   final String secondParty;
   final String providerIdOrRegistry;
+
+  /// Printed with the provider block when Settings has a tax number.
+  final String taxRegistrationNo;
   final String clientRegistryOrId;
   final String address;
   final String email;
@@ -235,6 +239,7 @@ class DocLabels {
     firstParty: 'First party',
     secondParty: 'Second party',
     providerIdOrRegistry: 'National ID / commercial registry',
+    taxRegistrationNo: 'Tax registration No.',
     clientRegistryOrId: 'Commercial registry / national ID',
     address: 'Address',
     email: 'Email',
@@ -312,6 +317,7 @@ class DocLabels {
     firstParty: 'الطرف الأول',
     secondParty: 'الطرف الثاني',
     providerIdOrRegistry: 'رقم قومي / سجل تجاري',
+    taxRegistrationNo: 'رقم التسجيل الضريبي',
     clientRegistryOrId: 'سجل تجاري / رقم قومي',
     address: 'العنوان',
     email: 'البريد الإلكتروني',

@@ -1,6 +1,7 @@
 import 'package:clock/clock.dart';
 import 'package:invoice_desk/data/daos/contracts_dao.dart';
 import 'package:invoice_desk/data/db.dart';
+import 'package:invoice_desk/data/repositories/document_snapshots.dart';
 import 'package:invoice_desk/data/repositories/repository.dart';
 import 'package:invoice_desk/data/repositories/style_repository.dart';
 import 'package:invoice_desk/domain/contract_models.dart';
@@ -48,19 +49,12 @@ class ContractRepository with ClockedRepository {
   /// Saves the aggregate atomically (clauses, scope, milestones replaced);
   /// [DuplicateNumber] when the number or series/year/seq is taken.
   ///
-  /// Snapshots the resolved style when status is [ContractStatus.signed],
-  /// [ContractStatus.active], or [ContractStatus.completed] and not already
-  /// snapshotted (ADR-0012).
+  /// Committing it (signed, active or completed) freezes its look and its
+  /// parties and formats; snapshots already stored are kept
+  /// ([DocumentSnapshots], ADR-0012, ADR-0014).
   Future<SaveResult> save(Contract c) => at(() async {
     try {
-      var toSave = c;
-      if ((toSave.status == ContractStatus.signed ||
-              toSave.status == ContractStatus.active ||
-              toSave.status == ContractStatus.completed) &&
-          (toSave.styleSnapshot == null || toSave.styleSnapshot!.isEmpty)) {
-        final style = await _styles.resolveForContract(toSave);
-        toSave = toSave.copyWith(styleSnapshot: style.toRawJson);
-      }
+      final toSave = await DocumentSnapshots(_db, _styles).forContract(c);
       // A user save adopts a demo row: it is real data from now on.
       await _dao.saveContract(toSave.copyWith(isDemo: false));
       return const Saved();

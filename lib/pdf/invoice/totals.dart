@@ -48,12 +48,12 @@ extension _Totals on _Builder {
                 isArabic && digits == DigitStyle.arabicIndic
                     ? '${docNumber('${i + 1}')} – ${_sectionName(sec)}'
                     : '${docNumber('${i + 1}')} · ${_sectionName(sec)}',
-                docNumber(sec.subtotal.format()),
+                money(sec.subtotal),
               ),
           if (inv.vatOn)
             line(
               '${label.vat} (${docNumber(formatBpAsPercent(inv.vatRateBp))}%)',
-              docNumber(totals.vat.format(separator: '\n')),
+              moneyBag(totals.vat, separator: '\n'),
             )
           else if (style.showVatRow)
             line(label.vat, label.vatNotApplicable, color: style.muted),
@@ -86,7 +86,7 @@ extension _Totals on _Builder {
                   children: [
                     for (final m in totals.total.nonZero)
                       t(
-                        docNumber(m.format()),
+                        money(m),
                         style: st(
                           size: 13,
                           font: bold,
@@ -189,9 +189,14 @@ extension _Totals on _Builder {
       'مستحقة',
       'السداد',
       'في',
-      docNumber('${d.day}'),
-      formatArabicDate(d).split(' ')[1],
-      docNumber('${d.year}'),
+      if (s.dateFormat == DocDateFormat.numeric)
+        // One LTR run: `14/10/2026` (digits per the document).
+        formatDocDateAs(d, DocLanguage.ar, s.dateFormat, digits: digits)
+      else ...[
+        docNumber('${d.day}'),
+        formatArabicDate(d).split(' ')[1],
+        docNumber('${d.year}'),
+      ],
     ];
     return pw.Directionality(
       textDirection: pw.TextDirection.rtl,

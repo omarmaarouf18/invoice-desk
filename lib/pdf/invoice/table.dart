@@ -114,7 +114,7 @@ extension _Table on _Builder {
             t(label.subtotal, style: st(color: style.muted)),
             pw.SizedBox(width: 16),
             t(
-              docNumber(sec.subtotal.format()),
+              money(sec.subtotal),
               style: st(size: 10.5, font: bold),
             ),
           ],

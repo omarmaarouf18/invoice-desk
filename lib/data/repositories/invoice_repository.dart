@@ -2,6 +2,7 @@ import 'package:clock/clock.dart';
 import 'package:invoice_desk/core/dates.dart';
 import 'package:invoice_desk/data/daos/invoices_dao.dart';
 import 'package:invoice_desk/data/db.dart';
+import 'package:invoice_desk/data/repositories/document_snapshots.dart';
 import 'package:invoice_desk/data/repositories/repository.dart';
 import 'package:invoice_desk/data/repositories/style_repository.dart';
 import 'package:invoice_desk/domain/doc_language.dart';
@@ -23,6 +24,8 @@ class InvoiceRepository with ClockedRepository {
   final StyleRepository _styles;
 
   InvoicesDao get _dao => _db.invoicesDao;
+
+  DocumentSnapshots get _snapshots => DocumentSnapshots(_db, _styles);
 
   /// Live invoices, fully loaded, re-emitting on any related change.
   Stream<List<Invoice>> watchAll() => _dao.watchAll();
@@ -59,17 +62,12 @@ class InvoiceRepository with ClockedRepository {
   /// Saves the aggregate atomically; [DuplicateNumber] when the number or
   /// its year/sequence is taken.
   ///
-  /// Snapshots the resolved style when status is [InvoiceStatus.sent] or
-  /// [InvoiceStatus.paid] and not already snapshotted (ADR-0012).
+  /// Committing it (sent or paid) freezes its look and its parties and
+  /// formats; snapshots already stored are kept ([DocumentSnapshots],
+  /// ADR-0012, ADR-0014).
   Future<SaveResult> save(Invoice inv) => at(() async {
     try {
-      var toSave = inv;
-      if ((toSave.status == InvoiceStatus.sent ||
-              toSave.status == InvoiceStatus.paid) &&
-          (toSave.styleSnapshot == null || toSave.styleSnapshot!.isEmpty)) {
-        final style = await _styles.resolveForInvoice(toSave);
-        toSave = toSave.copyWith(styleSnapshot: style.toRawJson);
-      }
+      final toSave = await _snapshots.forInvoice(inv);
       // A user save adopts a demo row: it is real data from now on.
       await _dao.saveInvoice(toSave.copyWith(isDemo: false));
       return const Saved();
@@ -85,16 +83,20 @@ class InvoiceRepository with ClockedRepository {
   /// client is deleted.
   Future<void> undoDelete(String id) => at(() => _dao.undoDelete(id));
 
-  /// Status paid with [date] as the paid date, snapshotting the resolved style if not already frozen.
+  /// Status paid with [date] as the paid date; freezes the snapshots if
+  /// it was never committed before ([DocumentSnapshots]).
   Future<void> markPaid(String id, CalendarDate date) => at(() async {
     final inv = await _dao.getById(id);
-    if (inv != null &&
-        (inv.styleSnapshot == null || inv.styleSnapshot!.isEmpty)) {
-      final style = await _styles.resolveForInvoice(inv);
-      await _dao.markPaid(id, date, styleSnapshot: style.toRawJson());
-    } else {
-      await _dao.markPaid(id, date);
-    }
+    if (inv == null) return _dao.markPaid(id, date);
+    final frozen = await _snapshots.forInvoice(
+      inv.copyWith(status: InvoiceStatus.paid, paidDate: () => date),
+    );
+    await _dao.markPaid(
+      id,
+      date,
+      styleSnapshot: frozen.styleSnapshot,
+      issueSnapshot: frozen.issueSnapshot,
+    );
   });
 
   /// Undo of [markPaid]: sent again, paid date cleared.

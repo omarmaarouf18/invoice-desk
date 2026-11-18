@@ -47,6 +47,18 @@ extension _Header on _Builder {
           t(s.city, style: st(color: style.muted)),
         if (contacts.isNotEmpty && style.showContacts)
           t(contacts, style: st(color: style.muted)),
+        if (s.taxRegistrationNo.trim().isNotEmpty)
+          pw.Row(
+            mainAxisSize: pw.MainAxisSize.min,
+            children: [
+              t('${label.taxRegistrationNo}: ', style: st(color: style.muted)),
+              t(
+                docNumber(s.taxRegistrationNo.trim()),
+                style: st(color: style.muted),
+                dir: pw.TextDirection.ltr,
+              ),
+            ],
+          ),
       ],
     );
 

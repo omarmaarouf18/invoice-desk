@@ -300,7 +300,18 @@ class _Builder {
 
   /// The date as the document prints it: the Arabic date and the
   /// configured digits in an Arabic document, the English one otherwise.
-  String docDate(CalendarDate d) => formatDocDate(d, lang, digits: digits);
+  String docDate(CalendarDate d) =>
+      formatDocDateAs(d, lang, s.dateFormat, digits: digits);
+
+  /// An amount as the document prints it (currency display, then digits).
+  String money(Money m) => docNumber(
+    formatDocCurrency(m.minor, m.currency, lang, s.currencyDisplay),
+  );
+
+  /// Per-currency totals, each as [money] prints it.
+  String moneyBag(MoneyBag b, {String separator = ' + '}) => docNumber(
+    formatDocCurrencyBag(b, lang, s.currencyDisplay, separator: separator),
+  );
 
   /// A number in the document's digits: the Arabic text uses the
   /// configured style, the English text always uses Western digits.
