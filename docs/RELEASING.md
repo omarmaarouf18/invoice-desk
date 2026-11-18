@@ -100,24 +100,22 @@ The app is signed with the hardened runtime and **no** App Sandbox:
 
 ## 3. Owner sequence (first time)
 
-The state on 2026-11-18: `main` is at `e4f63fa` (before 0.1.0), the branches form one chain `main → release-packaging → feature/contracts → hardening/v0.3 → feature/calendar → feat/bilingual-styles → feat/release-pipeline`, and only `v0.1.0` is tagged.
+**Branches (done 2026-11-18).** The old chain `main → release-packaging → feature/contracts → hardening/v0.3 → feature/calendar → feat/bilingual-styles → feat/release-pipeline` was fast-forwarded into one integration branch, `dev`. The old branches are deleted locally and on GitHub, and PRs #1–#3 are closed. Work now lands on `dev`; `main` only moves by fast-forward to a `dev` commit whose CI is green.
 
-**1. Push both branches.** CI runs on each (quality, tests, build).
+**1. Push `dev`** and wait for its CI run (quality, tests, build):
 
 ```bash
-git push -u origin feat/bilingual-styles feat/release-pipeline
+git push origin dev
 ```
 
-**2. Fast-forward `main` to `feat/release-pipeline`** once CI is green on it. A fast-forward keeps every SHA, so the old release commits stay taggable.
-
 ```bash
-git push origin feat/release-pipeline:main
+gh run list --branch dev --limit 1
 ```
 
-If the `protect-main` ruleset refuses the push, add "Repository admin" to its bypass list (Settings → Rules → protect-main) and push again; do not use a squash or rebase merge, which would rewrite the SHAs. Then update your local `main`:
+**2. Fast-forward `main` to `dev`.** The `protect-main` ruleset only accepts a commit that already has the required checks, which is why `dev` goes first. A fast-forward keeps every SHA, so the old release commits stay taggable; never squash- or rebase-merge into `main`.
 
 ```bash
-git fetch origin && git branch -f main origin/main
+git push origin dev:main
 ```
 
 This `main` push runs `package.yml`: the first real build and smoke test of the whole matrix. Check it:
@@ -136,7 +134,7 @@ gh workflow run release.yml --ref main -f dry_run=true
 gh run list --workflow release.yml --limit 1
 ```
 
-**4. Tag the old releases, close PRs #1–#3, delete the merged branches.**
+**4. Tag the old releases.**
 
 Pushing a tag runs the `release.yml` **of the tagged commit**. The old commits still carry the old workflow, which would create draft releases. Pause the workflow while pushing the old tags:
 
@@ -155,24 +153,6 @@ git push origin v0.2.0 v0.3.0 v0.4.0
 ```bash
 gh workflow enable release.yml
 ```
-
-Close the stacked PRs (they target `release-packaging`, whose commits are now in `main`):
-
-```bash
-for n in 1 2 3; do gh pr close "$n" --comment "Included in main (fast-forwarded to feat/release-pipeline)."; done
-```
-
-Delete the merged branches, remote and local:
-
-```bash
-git push origin --delete release-packaging feature/contracts hardening/v0.3 feature/calendar
-```
-
-```bash
-git branch -d release-packaging feature/contracts hardening/v0.3 feature/calendar
-```
-
-`feat/bilingual-styles` and `feat/release-pipeline` are in `main` too; delete them the same way once no work continues on them.
 
 **5. Add certificates and secrets when ready** (§5): Apple, then optionally SignPath, GPG, winget and the portfolio hook. Re-run the dry run (step 3) after each.
 
