@@ -1,0 +1,17 @@
+# gitleaks config: the default rules plus signing material (WF-03).
+# Release signing keys and certificates live only in GitHub secrets
+# (docs/RELEASING.md). Any such file in a commit fails the security gate,
+# whatever its content.
+[extend]
+useDefault = true
+
+[[rules]]
+id = "signing-material-file"
+description = "Code-signing certificate or private key file (.p12, .p8, .pfx, .cer, .key, .mobileprovision)"
+path = '''(?i)\.(p12|p8|pfx|cer|key|mobileprovision)$'''
+
+[[rules]]
+id = "pgp-private-key-block"
+description = "ASCII-armoured PGP private key"
+regex = '''-----BEGIN PGP PRIVATE KEY BLOCK-----'''
+keywords = ["begin pgp private key block"]

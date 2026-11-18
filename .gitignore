@@ -135,3 +135,13 @@ test/**/failures/
 
 # Agent working notes (never committed)
 Claude outputs/
+
+# signing material — lives in GitHub secrets only (docs/RELEASING.md)
+*.p12
+*.p8
+*.pfx
+*.cer
+*.key
+*.mobileprovision
+*.asc
+*.keychain-db
