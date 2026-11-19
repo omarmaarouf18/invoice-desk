@@ -58,6 +58,23 @@ runpath_of() { readelf -d "$1" 2>/dev/null | sed -n 's/.*(\(RUNPATH\|RPATH\)).*\
 patched="${dist}/stage/bundle"
 mkdir -p "${patched}"
 cp -a "${bundle}/." "${patched}/"
+
+# ── no JVM ─────────────────────────────────────────────────────────────
+# Transitive `jni` (Android-only use, via path_provider_android) builds
+# libdartjni.so whenever CMake finds a JDK. It hard-links libjvm.so, which a
+# user's system doesn't have, and nothing opens it on desktop. Removed from
+# every package (owner ruling 2026-11-19, docs/worklog/REL-02.md).
+rm -f "${patched}/lib/libdartjni.so"
+jvm=0
+while IFS= read -r -d '' f; do
+  is_elf "${f}" || continue
+  if readelf -d "${f}" 2>/dev/null | grep -E 'NEEDED.*\[libjvm\.so' >/dev/null; then
+    echo "needs libjvm: ${f#"${patched}/"}" >&2; jvm=1
+  fi
+done < <(find "${patched}" -type f -print0)
+[[ ${jvm} -eq 0 ]] || { echo "a bundled binary needs a JVM; refusing to package" >&2; exit 1; }
+echo "==> no bundled binary needs a JVM"
+
 while IFS= read -r -d '' f; do
   is_elf "${f}" || continue
   [[ -n "$(runpath_of "${f}")" ]] || continue   # no RUNPATH: leave untouched

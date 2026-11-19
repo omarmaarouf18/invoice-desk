@@ -45,10 +45,9 @@ echo "==> namcap package"
 namcap "${pkg}" | tee -a "${work}/namcap.txt"
 # Accepted (docs/RELEASING.md "Package checks"): the prebuilt Flutter
 # bundle lives in /opt, is not stripped or relinked, and its libraries keep
-# the DT_NEEDED entries Flutter gives them; libdartjni.so names libjvm.so,
-# which only loads when a JVM is present (never on desktop). libglvnd
-# (EGL/GLES) is dlopen()ed by the engine, so namcap cannot see it is used.
-accepted='(ELF files outside of a valid path|ELF file .* is unstripped|lacks FULL RELRO|lacks PIE|Unused shared library|libjvm\.so. is an uninstalled dependency|may not be needed \(.libglvnd.\))'
+# the DT_NEEDED entries Flutter gives them. libglvnd (EGL/GLES) is
+# dlopen()ed by the engine, so namcap cannot see it is used.
+accepted='(ELF files outside of a valid path|ELF file .* is unstripped|lacks FULL RELRO|lacks PIE|Unused shared library|may not be needed \(.libglvnd.\))'
 bad="$(grep -E ' [EW]: ' "${work}/namcap.txt" | grep -vE "${accepted}" || true)"
 if [[ -n "${bad}" ]]; then
   echo "::error::namcap reported:"; echo "${bad}"; exit 1

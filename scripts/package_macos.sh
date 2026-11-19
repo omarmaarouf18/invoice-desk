@@ -59,6 +59,22 @@ echo "${archs}" > "${dist}/macos-archs.txt"
 plist_version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "${app}/Contents/Info.plist")"
 [[ "${plist_version}" == "${VERSION}" ]] || { echo "Info.plist version ${plist_version} != ${VERSION}" >&2; exit 1; }
 
+# ── no JVM ─────────────────────────────────────────────────────────────
+# Transitive `jni` builds dartjni on Linux/Windows only (it declares no macOS
+# platform), and those packages remove it (docs/worklog/REL-02.md). Fail
+# rather than strip here: removing a file from the built .app would break
+# its signature.
+jvm=0
+while IFS= read -r -d '' f; do
+  case "$(basename "${f}")" in *dartjni*) echo "bundled dartjni: ${f#"${app}/"}" >&2; jvm=1; continue ;; esac
+  file -b "${f}" | grep -q 'Mach-O' || continue
+  if otool -L "${f}" | grep -E 'libjvm\.dylib|JavaVM\.framework' >/dev/null; then
+    echo "needs a JVM: ${f#"${app}/"}" >&2; jvm=1
+  fi
+done < <(find "${app}/Contents" -type f -print0)
+[[ ${jvm} -eq 0 ]] || { echo "the app bundles dartjni or needs a JVM; refusing to package" >&2; exit 1; }
+echo "==> no bundled binary needs a JVM"
+
 # ── signing (only with every secret) ───────────────────────────────────
 sign=1
 for v in MACOS_CERT_P12_BASE64 MACOS_CERT_PASSWORD MACOS_KEYCHAIN_PASSWORD APPLE_TEAM_ID \

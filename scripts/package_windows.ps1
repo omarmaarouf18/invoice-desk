@@ -45,6 +45,14 @@ if (-not $crt) { throw 'VC++ redistributable folder not found' }
 $dumpbin = Get-ChildItem "$vs\VC\Tools\MSVC\*\bin\Hostx64\x64\dumpbin.exe" | Sort-Object FullName | Select-Object -Last 1
 if (-not $dumpbin) { throw 'dumpbin.exe not found' }
 
+# ── no JVM ─────────────────────────────────────────────────────────────
+# Transitive `jni` (Android-only use, via path_provider_android) builds
+# dartjni.dll whenever CMake finds a JDK (the runner has one). Its
+# /DELAYLOAD:jvm.dll never applies, so it hard-imports jvm.dll, and nothing
+# opens it on desktop. Removed from every package (owner ruling 2026-11-19,
+# docs/worklog/REL-02.md). The DLL check below fails on any jvm.dll import.
+Remove-Item (Join-Path $bundle 'dartjni.dll') -Force -ErrorAction SilentlyContinue
+
 # ── app-local VC++ runtime ─────────────────────────────────────────────
 Copy-Item "$($crt.FullName)\*.dll" $bundle -Force
 Write-Host "==> VC++ runtime from $($crt.FullName)"
@@ -62,6 +70,7 @@ foreach ($bin in Get-ChildItem $bundle -Recurse -Include *.dll, *.exe) {
   $deps = & $dumpbin.FullName /nologo /dependents $bin.FullName |
     Where-Object { $_ -match '^\s+(\S+\.dll)\s*$' } | ForEach-Object { $Matches[1].ToLower() }
   foreach ($d in $deps) {
+    if ($d -eq 'jvm.dll') { $missing += "$($bin.Name) -> $d (needs a JVM)"; continue }
     if ($bundled.ContainsKey($d)) { continue }
     # Redistributable runtimes are on the runner but not on a clean Windows.
     $redist = $d -match '^(msvcp|vcruntime|concrt|vccorlib|vcomp|ucrtbased)'
