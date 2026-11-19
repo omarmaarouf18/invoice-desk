@@ -15,5 +15,3 @@ addFilter("W: missing-gnu-hash-section")
 addFilter("W: files-duplicate .*/flutter_assets/.*")
 # Stable asset name without the version (release decision R3).
 addFilter("W: non-coherent-filename invoice-desk.x86_64.rpm")
-# No open-source licence has been chosen (owner decision); fonts are OFL-1.1.
-addFilter("W: invalid-license LicenseRef-Proprietary")

@@ -294,7 +294,7 @@ gh variable set MSIX_IDENTITY_NAME --body "<Package/Identity/Name>" && gh variab
 
 Until this exists the `.exe` is unsigned and SmartScreen shows "Windows protected your PC" (More info → Run anyway).
 
-1. SignPath Foundation signs **open-source** projects only: the repository needs an OSI-approved licence. Choosing one is the owner's decision (ADR-0009); nothing in this pipeline assumes it.
+1. SignPath Foundation signs **open-source** projects only: the repository needs an OSI-approved licence. It has one: GPL-3.0-or-later (ADR-0015).
 2. Apply at signpath.org, then in SignPath create the project (slug), a release signing policy, and connect GitHub as a trusted build system for this repo with an artifact configuration that signs `InvoiceDesk-Setup-x64.exe`.
 3. Set:
 

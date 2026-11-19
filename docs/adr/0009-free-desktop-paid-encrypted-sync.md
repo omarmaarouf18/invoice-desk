@@ -19,6 +19,6 @@ The app will be distributed to other people, and it needs a sustainable business
 
 ## Consequences
 
-- The desktop client could be open source (MIT) without undermining the business, because the paid value is the service. The licence decision is left to the owner.
+- The desktop client could be open source (MIT) without undermining the business, because the paid value is the service. The licence decision is left to the owner. (2026-11-19: GPL-3.0-or-later, ADR-0015.)
 - Every write path pays a small cost (an outbox row).
 - Purge must keep unsynced tombstones once sync exists. A TODO and a placeholder test mark the spot.

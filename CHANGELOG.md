@@ -4,6 +4,9 @@ All notable changes to Invoice Desk. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+### Changed
+- **Invoice Desk is free software under the GNU GPL v3 or later** (`LICENSE`, ADR-0015). The Linux packages declare it and ship the licence text.
+
 ## [0.5.0] - 2026-11-19
 
 ### Added

@@ -156,3 +156,7 @@ In the items table, Tab moves across cells, and Enter in the last price cell add
 - [Data model](docs/DATA_MODEL.md): every table, constraint and trigger, and the migration history
 - [Decisions](docs/adr/): ADRs
 - [Testing](docs/TESTING.md) · [Releasing](docs/RELEASING.md) · [Contributing](CONTRIBUTING.md) · [AI agents](AGENTS.md) · [Security](SECURITY.md) · [Changelog](CHANGELOG.md)
+
+## Licence
+
+Invoice Desk is free software: you can redistribute it and/or modify it under the terms of the [GNU General Public License](LICENSE), version 3 or (at your option) any later version. It comes with no warranty. The bundled fonts are under the SIL Open Font License 1.1.

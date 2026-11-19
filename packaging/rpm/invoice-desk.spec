@@ -15,7 +15,7 @@ Name:           invoice-desk
 Version:        %{pkgversion}
 Release:        1
 Summary:        Bilingual (Arabic/English) desktop invoicing for freelancers
-License:        LicenseRef-Proprietary AND OFL-1.1
+License:        GPL-3.0-or-later AND OFL-1.1
 URL:            https://github.com/omarmaarouf18/invoice-desk
 Source0:        invoice-desk-linux-x64.tar.gz
 ExclusiveArch:  x86_64
@@ -73,7 +73,7 @@ fi
 %{_datadir}/applications/invoice-desk.desktop
 %{_datadir}/icons/hicolor/*/apps/invoice-desk.png
 %{_mandir}/man1/invoice-desk.1*
-%license COPYRIGHT.txt
+%license LICENSE COPYRIGHT.txt
 
 %changelog
 * Thu Nov 19 2026 Omar Maarouf <omarmaarouf18@users.noreply.github.com> - 0.5.0-1
