@@ -19,17 +19,29 @@
   - **Why it's a hard import:** `jni-1.1.2/src/CMakeLists.txt:45-47` sets `/DELAYLOAD:jvm.dll` on `${TARGET_NAME}`, but no CMake file in `jni` or this app defines `TARGET_NAME`. With an empty target list, `set_target_properties` is a silent no-op. Checked with CMake 4.3.0: a one-line project that calls it with an empty `${TARGET_NAME}` configures with no error. The library is then linked with `target_link_libraries(jni ${JNI_LIBRARIES})`, which pulls in `jvm.lib`. So `jvm.dll` lands in the normal import table.
   - **Not seen in the binary:** the failed job uploads no Windows artifact, and `dumpbin` doesn't run here. The evidence comes from the build files, not from the DLL's headers.
   - **Linux has the same library:** `deb.log` in `linux-packaging-logs` shows `dpkg-shlibdeps: warning: cannot find library libjvm.so needed by …/lib/libdartjni.so`. The RPM hides it with `__requires_exclude_from ^/opt/invoice-desk/.*$`. So every Linux package already ships a `libdartjni.so` that can't load. That's harmless as long as nothing opens it: `jni` opens it lazily with `DynamicLibrary.open`, and only Android code paths use `jni`.
-  - **Status:** stopped per brief §6, since a hard import means a dependency decision. Not fixed. Open question 1.
+  - **Status:** fixed per the owner ruling of 2026-11-19, option (b). See the next finding.
+- 2026-11-19 — **`dartjni` removed from the desktop bundles; JVM guards added on all three platforms.**
+  - **Removal:** `package_linux.sh` deletes `lib/libdartjni.so` from the staged copy, and `package_windows.ps1` deletes `dartjni.dll` from the bundle. Both run after `flutter build`. The Arch package is built from the tarball, so it doesn't have it either.
+  - **Guards:**
+    - Linux: any ELF with `NEEDED libjvm.so` fails the build.
+    - Windows: any `jvm.dll` import fails the DLL check, even if the DLL were somehow bundled.
+    - macOS: any `dartjni` file, or any Mach-O linking `libjvm.dylib` / `JavaVM.framework`, fails the build. macOS doesn't strip, because removing a file from a built `.app` breaks its signature.
+  - **macOS has no dartjni today:** `jni 1.1.2` declares only linux, windows and android. The `.dmg` from run 44468227612 contains no file matching `jni` or `jvm`; its frameworks are App, FlutterMacOS, objective_c and sqlite3. That also confirms the brief's "sqlite3 is bundled" item for macOS.
+  - **namcap:** dropped the `libjvm.so is an uninstalled dependency` acceptance from `package_arch.sh`. It's no longer needed and would hide a regression.
+  - **RPM `__requires_exclude_from ^/opt/invoice-desk/.*$` is kept.** It was never specific to `libdartjni.so`. It keeps rpm's dependency scan away from the whole prebuilt bundle (ADR-0007). `__provides_exclude_from` hides the bundle's own libraries, so without it rpm would add `Requires` on `libflutter_linux_gtk.so` and friends that nothing provides. The real requirements are declared by hand in the spec.
+  - **Smoke tests add a launch without `INVOICE_DESK_DATA_DIR`.**
+    - Linux: every package, on a throwaway `HOME`/`XDG_*`. `path_provider_linux` uses `xdg.dataHome`, so a real `~/.local/share/me.omarmaarouf.invoice_desk` is never opened.
+    - Windows (zip) and macOS: CI only (`CI=true`). The OS resolves the folder there, so it can't be redirected. The launch refuses to start if a database already exists there, and it removes the folder afterwards.
+  - **Checked locally** (Fedora, `MAX_GLIBC=2.42 ./scripts/package_linux.sh --no-deb`, exit 0):
+    - "no bundled binary needs a JVM";
+    - `dartjni` matches 0 entries in both the tarball and the RPM;
+    - the unstripped `build/linux/x64/release/bundle/lib/libdartjni.so` shows `(NEEDED) Shared library: [libjvm.so]`, so the guard's pattern matches what it should catch;
+    - in `fedora:latest`: `smoke OK: invoice-desk-linux-x64.tar.gz (2 × 15 s: temp data dir, default data dir on a temp HOME)` (gtk3 pre-installed, standing in for the runner), and `smoke OK: invoice-desk.x86_64.rpm (…)`. The default data dir was `<temp HOME>/.local/share/me.omarmaarouf.invoice_desk`.
+  - **Not checked locally:** the Windows and macOS changes (no `pwsh`, no macOS here), the `.deb` (no `dpkg-shlibdeps`) and the AppImage smoke.
 
 ## Open questions
 
-1. How should desktop bundles deal with `dartjni` (hard-imports `jvm.dll` / `libjvm.so`, never loaded on desktop)? — Options:
-   - (a) Build without a visible JDK, so CMake's `find_package(JNI)` fails and `jni` bundles nothing. That's what a machine without Java produces. Packaging-only, but it depends on how FindJNI searches on each runner (`JAVA_HOME`, PATH, registry on Windows).
-   - (b) Delete `dartjni.dll` / `libdartjni.so` from the bundle after `flutter build`, in the package scripts. The smoke tests prove the app starts without it.
-   - (c) Allowlist `dartjni.dll -> jvm.dll` in the DLL check and ship it as is.
-   - (d) Dependency route (pin or override `path_provider`/`jni`): out of scope (brief §6/§7).
-
-   Recommended: (b). It's deterministic on every runner and dev box, it removes a library that can't load from all six Linux/Windows assets, and the existing smoke tests already prove startup. Any desktop code path that ever reached `jni` would fail anyway, because there is no JVM. Status: open.
+1. How should desktop bundles deal with `dartjni`? — Answered 2026-11-19: option (b), remove it after `flutter build` and guard on all three platforms (brief Decisions table).
 
 ## Leftovers
-- Upstream `jni` bug: `/DELAYLOAD:jvm.dll` targets the undefined `${TARGET_NAME}` instead of `jni`. Worth an upstream issue (owner's call; it's a public post).
+- Upstream `jni` bug: `/DELAYLOAD:jvm.dll` targets the undefined `${TARGET_NAME}` instead of `jni`. Owner decides later whether to file it (ruling 2026-11-19).

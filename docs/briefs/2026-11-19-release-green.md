@@ -163,3 +163,4 @@ On top of `AGENTS.md` §6, stop and ask when:
 | Date | Ruling |
 |---|---|
 | 2026-11-19 | Phase 0 done: `origin/dev` = `5dd01de` (merge of `origin/main`), `dev` CI run 44466037046 green, #5 and #6 closed per D3. Builder branches `feat/release-green` off `5dd01de`. |
+| 2026-11-19 | `dartjni` (from transitive `jni`; hard-imports `jvm.dll` / `libjvm.so`; never loaded on desktop): option (b). The package scripts remove it from the desktop bundles after `flutter build`, on all three platforms. A guard fails the build if any bundled binary still needs `jvm.dll` / `libjvm.*`, and the smoke tests add one launch without `INVOICE_DESK_DATA_DIR`, so the default data-dir lookup is proven to work without `jni`. Upstream `jni` issue: owner decides later. |
