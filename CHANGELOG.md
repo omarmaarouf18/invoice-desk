@@ -4,6 +4,8 @@ All notable changes to Invoice Desk. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-19
+
 ### Added
 - **Windows and macOS downloads, and more Linux packages.** Every release now ships a Windows installer (`InvoiceDesk-Setup-x64.exe`, per-user, no admin) and portable zip, a universal macOS dmg, a Debian/Ubuntu `.deb`, an Arch package, plus the RPM, AppImage and tarball. File names no longer carry the version, so `releases/latest/download/<name>` always works; `latest.json` describes each release. Releases are published automatically from a tag, with checksums and build-provenance attestations (docs/RELEASING.md).
 - **Settings, redesigned.** Settings is now ten sections in a list with search (it also finds control names, e.g. "IBAN" finds Payment), and remembers the last section. Other screens open the right section.
@@ -36,6 +38,7 @@ All notable changes to Invoice Desk. The format follows [Keep a Changelog](https
   - The interface language is independent of the language of a document: an Arabic invoice can be edited in an English app (ADR-0011).
 
 ### Fixed
+- **No package ships a library that cannot load.** The Linux and Windows builds no longer include `dartjni` (pulled in by an Android-only dependency), which needed a Java runtime that a desktop doesn't have; every package build now fails if a bundled file needs one.
 - **Linux packages declare EGL/GLES.** On a minimal Ubuntu 22.04 the app aborted at launch because `libGLESv2` was missing; the deb, RPM and Arch packages now depend on it.
 - **Windows and macOS show the Invoice Desk icon** instead of Flutter's default, and the macOS app is named "Invoice Desk".
 - **Previews and exported PDFs now use the document's style.** Until now every document printed in Classic whatever style it was given.
@@ -151,6 +154,8 @@ All notable changes to Invoice Desk. The format follows [Keep a Changelog](https
 - **Backups.** Daily `VACUUM INTO` backups (last 30 kept), plus manual backup and restore. `INVOICE_DESK_DATA_DIR` overrides the data folder.
 - **Linux packages.** Tarball with install/uninstall scripts, AppImage, and an RPM in `/opt/invoice-desk`, all with RUNPATHs rewritten to `$ORIGIN`.
 
+[Unreleased]: https://github.com/omarmaarouf18/invoice-desk/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/omarmaarouf18/invoice-desk/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/omarmaarouf18/invoice-desk/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/omarmaarouf18/invoice-desk/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/omarmaarouf18/invoice-desk/compare/v0.1.0...v0.2.0

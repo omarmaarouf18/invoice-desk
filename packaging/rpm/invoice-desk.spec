@@ -9,7 +9,7 @@
 %global __provides_exclude_from ^/opt/invoice-desk/.*$
 
 # Passed by scripts/package_linux.sh from pubspec.yaml.
-%{!?pkgversion: %global pkgversion 0.4.0}
+%{!?pkgversion: %global pkgversion 0.5.0}
 
 Name:           invoice-desk
 Version:        %{pkgversion}
@@ -76,6 +76,11 @@ fi
 %license COPYRIGHT.txt
 
 %changelog
+* Thu Nov 19 2026 Omar Maarouf <omarmaarouf18@users.noreply.github.com> - 0.5.0-1
+- English interface; Arabic, English or bilingual invoices; document
+  styles with an editor; redesigned settings; issue snapshots; schema v8
+- Windows and macOS packages, .deb and Arch package; automatic releases
+
 * Mon Nov 16 2026 Omar Maarouf <omarmaarouf18@users.noreply.github.com> - 0.4.0-1
 - Calendar (التقويم) with postponements, reminders and .ics export;
   fictional demo data; schema v5
