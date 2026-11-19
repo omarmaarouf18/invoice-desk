@@ -23,30 +23,62 @@ sudo=(); [[ "$(id -u)" -eq 0 ]] || sudo=(sudo)
 # pm <seconds> <command…> runs one apt/dnf/pacman call with no stdin, its
 # output appended to a log. On failure or timeout the log is printed, so a
 # stalled mirror or a prompt shows up in the job log instead of a silent
-# hang. Worst case (apt: 90 + 120 + 120 + 60 s, plus 10 s kill grace each)
-# stays well under the install job's timeout-minutes: 10.
+# hang. pm_retry <tries> <seconds> <command…> retries the same call.
+# Worst case, kill grace (10 s) included:
+#   apt: update 3 × 55 + deps 120 + package 120 + remove 55 = 460 s
+#   dnf/pacman: deps 190 + package 120 + remove 55 = 365 s
+# Both stay inside the install job's timeout-minutes: 10 with room for
+# checkout, the artifact download and the two 15 s launches.
 pm_log="$(mktemp)"
-pm() {
+pm_run() {
   local limit="$1"; shift
   echo "==> $* (limit ${limit} s)"
   echo "+ $(date -u +%H:%M:%S) $*" >>"${pm_log}"
   local rc=0
   timeout -k 10 "${limit}" "${sudo[@]}" "$@" </dev/null >>"${pm_log}" 2>&1 || rc=$?
-  if [[ ${rc} -ne 0 ]]; then
-    echo "::group::package manager log (${pm_log})"; cat "${pm_log}"; echo "::endgroup::"
-    if [[ ${rc} -eq 124 || ${rc} -eq 137 ]]; then
-      echo "::error::timed out after ${limit} s: $*"
-    else
-      echo "::error::failed (exit ${rc}): $*"
-    fi
-    exit 1
-  fi
+  return "${rc}"
+}
+pm_why() { if [[ $1 -eq 124 || $1 -eq 137 ]]; then echo "timed out after $2 s"; else echo "failed (exit $1)"; fi; }
+pm_fail() {
+  local rc="$1" limit="$2"; shift 2
+  echo "::group::package manager log (${pm_log})"; cat "${pm_log}"; echo "::endgroup::"
+  echo "::error::$(pm_why "${rc}" "${limit}"): $*"
+  exit 1
+}
+pm() {
+  local limit="$1"; shift
+  local rc=0
+  pm_run "${limit}" "$@" || rc=$?
+  [[ ${rc} -eq 0 ]] || pm_fail "${rc}" "${limit}" "$@"
+}
+pm_retry() {
+  local tries="$1" limit="$2"; shift 2
+  local i rc=0
+  for ((i = 1; i <= tries; i++)); do
+    rc=0
+    pm_run "${limit}" "$@" || rc=$?
+    [[ ${rc} -eq 0 ]] && return 0
+    echo "::warning::attempt ${i}/${tries} $(pm_why "${rc}" "${limit}"): $*"
+  done
+  pm_fail "${rc}" "${limit}" "$@"
 }
 apt_opts=(-o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Dpkg::Use-Pty=0)
 
 # ── a virtual display and software GL drivers only: everything else the
 #    app needs must come from the package's own dependencies ────────────
-if command -v apt-get >/dev/null 2>&1; then
+# On the CI runner they are installed by the job's own dependency step, so
+# the smoke never touches the package manager there (a stalled runner mirror
+# failed run 44478892261). Bare containers install them here.
+have_display() {
+  local t
+  for t in xvfb-run xauth pgrep; do command -v "${t}" >/dev/null 2>&1 || { echo "missing ${t}"; return 1; }; done
+  find /usr/lib /usr/lib64 -maxdepth 3 -path '*/dri/*.so' -print -quit 2>/dev/null | grep -q . \
+    || { echo "missing a Mesa DRI driver"; return 1; }
+}
+if why="$(have_display)"; then
+  echo "==> xvfb-run, xauth, pgrep and a Mesa DRI driver are present: no package-manager setup"
+elif command -v apt-get >/dev/null 2>&1; then
+  echo "==> display setup needed (${why})"
   export DEBIAN_FRONTEND=noninteractive
   # SMOKE_APT_MIRROR (set by package.yml for the ubuntu container only):
   # replaces archive.ubuntu.com for jammy, jammy-updates and jammy-backports.
@@ -61,27 +93,32 @@ if command -v apt-get >/dev/null 2>&1; then
   fi
   # --error-on=any: a failed fetch fails the update instead of leaving an
   # empty or stale index ("Package 'xauth' has no installation candidate").
-  pm 90 env DEBIAN_FRONTEND=noninteractive apt-get "${apt_opts[@]}" update --error-on=any
-  pm 120 env DEBIAN_FRONTEND=noninteractive apt-get "${apt_opts[@]}" install -y xvfb xauth libgl1-mesa-dri procps
+  # Ubuntu's mirrors stall intermittently, so the whole update is retried.
+  pm_retry 3 45 env DEBIAN_FRONTEND=noninteractive apt-get "${apt_opts[@]}" update --error-on=any
+  pm 110 env DEBIAN_FRONTEND=noninteractive apt-get "${apt_opts[@]}" install -y xvfb xauth libgl1-mesa-dri procps
 elif command -v dnf >/dev/null 2>&1; then
+  echo "==> display setup needed (${why})"
   pm 180 dnf install -y xorg-x11-server-Xvfb xorg-x11-xauth mesa-dri-drivers procps-ng
 elif command -v pacman >/dev/null 2>&1; then
+  echo "==> display setup needed (${why})"
   pm 180 pacman -Sy --noconfirm --needed xorg-server-xvfb xorg-xauth mesa procps-ng
+else
+  echo "::error::${why}, and no known package manager to install it"; exit 1
 fi
 
 # ── install ────────────────────────────────────────────────────────────
 remove=()
 case "${pkg}" in
   *.deb)
-    pm 120 env DEBIAN_FRONTEND=noninteractive apt-get "${apt_opts[@]}" install -y "${pkg}"
+    pm 110 env DEBIAN_FRONTEND=noninteractive apt-get "${apt_opts[@]}" install -y "${pkg}"
     dpkg -s invoice-desk | grep -E '^(Status|Version):'
     exe=/usr/bin/invoice-desk; remove=(env DEBIAN_FRONTEND=noninteractive apt-get "${apt_opts[@]}" remove -y invoice-desk) ;;
   *.rpm)
-    pm 120 dnf install -y "${pkg}"
+    pm 110 dnf install -y "${pkg}"
     rpm -q invoice-desk && rpm -V invoice-desk
     exe=/usr/bin/invoice-desk; remove=(dnf remove -y invoice-desk) ;;
   *.pkg.tar.zst)
-    pm 120 pacman -U --noconfirm "${pkg}"
+    pm 110 pacman -U --noconfirm "${pkg}"
     pacman -Qi invoice-desk-bin | grep -E '^(Name|Version)'
     exe=/usr/bin/invoice-desk; remove=(pacman -R --noconfirm invoice-desk-bin) ;;
   *.AppImage)
@@ -129,7 +166,7 @@ echo "default data dir: $(dirname "$(find "${home}" -name invoice_desk.sqlite -p
 
 # ── remove ─────────────────────────────────────────────────────────────
 if [[ ${#remove[@]} -gt 0 ]]; then
-  pm 60 "${remove[@]}"
+  pm 45 "${remove[@]}"
   [[ ! -e /opt/invoice-desk/invoice_desk && ! -e /usr/bin/invoice-desk ]] || { echo "::error::files left after removal"; exit 1; }
 fi
 [[ -f "${data}/invoice_desk.sqlite" ]] || { echo "::error::removal touched the data folder"; exit 1; }

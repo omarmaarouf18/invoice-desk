@@ -55,7 +55,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev \
-            patchelf rpm dpkg-dev lintian desktop-file-utils file xvfb xauth
+            patchelf rpm dpkg-dev lintian desktop-file-utils file xvfb xauth libgl1-mesa-dri procps
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
