@@ -19,33 +19,58 @@ secs="${SMOKE_SECONDS:-15}"
 [[ -f "${pkg}" ]] || { echo "no such package: $1" >&2; exit 2; }
 sudo=(); [[ "$(id -u)" -eq 0 ]] || sudo=(sudo)
 
+# ── package-manager calls: time-boxed and logged ───────────────────────
+# pm <seconds> <command…> runs one apt/dnf/pacman call with no stdin, its
+# output appended to a log. On failure or timeout the log is printed, so a
+# stalled mirror or a prompt shows up in the job log instead of a silent
+# hang. Worst case (apt: 60 + 120 + 120 + 60 s, plus 10 s kill grace each)
+# stays well under the install job's timeout-minutes: 10.
+pm_log="$(mktemp)"
+pm() {
+  local limit="$1"; shift
+  echo "==> $* (limit ${limit} s)"
+  echo "+ $(date -u +%H:%M:%S) $*" >>"${pm_log}"
+  local rc=0
+  timeout -k 10 "${limit}" "${sudo[@]}" "$@" </dev/null >>"${pm_log}" 2>&1 || rc=$?
+  if [[ ${rc} -ne 0 ]]; then
+    echo "::group::package manager log (${pm_log})"; cat "${pm_log}"; echo "::endgroup::"
+    if [[ ${rc} -eq 124 || ${rc} -eq 137 ]]; then
+      echo "::error::timed out after ${limit} s: $*"
+    else
+      echo "::error::failed (exit ${rc}): $*"
+    fi
+    exit 1
+  fi
+}
+apt_opts=(-o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Dpkg::Use-Pty=0)
+
 # ── a virtual display and software GL drivers only: everything else the
 #    app needs must come from the package's own dependencies ────────────
 if command -v apt-get >/dev/null 2>&1; then
   export DEBIAN_FRONTEND=noninteractive
-  "${sudo[@]}" apt-get update -qq
-  "${sudo[@]}" apt-get install -y -qq xvfb xauth libgl1-mesa-dri procps >/dev/null
+  pm 60 env DEBIAN_FRONTEND=noninteractive apt-get "${apt_opts[@]}" update
+  pm 120 env DEBIAN_FRONTEND=noninteractive apt-get "${apt_opts[@]}" install -y xvfb xauth libgl1-mesa-dri procps
 elif command -v dnf >/dev/null 2>&1; then
-  "${sudo[@]}" dnf install -y -q xorg-x11-server-Xvfb xorg-x11-xauth mesa-dri-drivers procps-ng >/dev/null
+  pm 180 dnf install -y xorg-x11-server-Xvfb xorg-x11-xauth mesa-dri-drivers procps-ng
 elif command -v pacman >/dev/null 2>&1; then
-  "${sudo[@]}" pacman -Sy --noconfirm --needed xorg-server-xvfb xorg-xauth mesa procps-ng >/dev/null
+  pm 180 pacman -Sy --noconfirm --needed xorg-server-xvfb xorg-xauth mesa procps-ng
 fi
 
 # ── install ────────────────────────────────────────────────────────────
 remove=()
 case "${pkg}" in
   *.deb)
-    "${sudo[@]}" apt-get install -y -qq "${pkg}" >/dev/null
+    pm 120 env DEBIAN_FRONTEND=noninteractive apt-get "${apt_opts[@]}" install -y "${pkg}"
     dpkg -s invoice-desk | grep -E '^(Status|Version):'
-    exe=/usr/bin/invoice-desk; remove=("${sudo[@]}" apt-get remove -y -qq invoice-desk) ;;
+    exe=/usr/bin/invoice-desk; remove=(env DEBIAN_FRONTEND=noninteractive apt-get "${apt_opts[@]}" remove -y invoice-desk) ;;
   *.rpm)
-    "${sudo[@]}" dnf install -y -q "${pkg}" >/dev/null
+    pm 120 dnf install -y "${pkg}"
     rpm -q invoice-desk && rpm -V invoice-desk
-    exe=/usr/bin/invoice-desk; remove=("${sudo[@]}" dnf remove -y -q invoice-desk) ;;
+    exe=/usr/bin/invoice-desk; remove=(dnf remove -y invoice-desk) ;;
   *.pkg.tar.zst)
-    "${sudo[@]}" pacman -U --noconfirm "${pkg}" >/dev/null
+    pm 120 pacman -U --noconfirm "${pkg}"
     pacman -Qi invoice-desk-bin | grep -E '^(Name|Version)'
-    exe=/usr/bin/invoice-desk; remove=("${sudo[@]}" pacman -R --noconfirm invoice-desk-bin) ;;
+    exe=/usr/bin/invoice-desk; remove=(pacman -R --noconfirm invoice-desk-bin) ;;
   *.AppImage)
     work="$(mktemp -d)"; cp "${pkg}" "${work}/app.AppImage"; chmod +x "${work}/app.AppImage"
     export APPIMAGE_EXTRACT_AND_RUN=1   # no FUSE in containers/runners
@@ -91,7 +116,7 @@ echo "default data dir: $(dirname "$(find "${home}" -name invoice_desk.sqlite -p
 
 # ── remove ─────────────────────────────────────────────────────────────
 if [[ ${#remove[@]} -gt 0 ]]; then
-  "${remove[@]}" >/dev/null
+  pm 60 "${remove[@]}"
   [[ ! -e /opt/invoice-desk/invoice_desk && ! -e /usr/bin/invoice-desk ]] || { echo "::error::files left after removal"; exit 1; }
 fi
 [[ -f "${data}/invoice_desk.sqlite" ]] || { echo "::error::removal touched the data folder"; exit 1; }
