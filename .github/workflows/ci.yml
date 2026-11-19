@@ -175,9 +175,8 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Linux build dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev xvfb xauth
+        # Time limits and retries: the runner's mirror stalls (REL-02).
+        run: scripts/apt_retry.sh clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev xvfb xauth
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}

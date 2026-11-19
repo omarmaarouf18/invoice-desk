@@ -52,9 +52,9 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Build and packaging dependencies
+        # Time limits and retries: the runner's mirror stalls (REL-02).
         run: |
-          sudo apt-get update
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev \
+          scripts/apt_retry.sh clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev \
             patchelf rpm dpkg-dev lintian desktop-file-utils file xvfb xauth libgl1-mesa-dri procps
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
         with:
