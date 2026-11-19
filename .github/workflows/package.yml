@@ -142,7 +142,7 @@ jobs:
     needs: [linux, arch]
     runs-on: ubuntu-24.04
     container: ${{ matrix.image }}
-    timeout-minutes: 10
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:

@@ -24,10 +24,15 @@ sudo=(); [[ "$(id -u)" -eq 0 ]] || sudo=(sudo)
 # output appended to a log. On failure or timeout the log is printed, so a
 # stalled mirror or a prompt shows up in the job log instead of a silent
 # hang. pm_retry <tries> <seconds> <command…> retries the same call.
+# apt_install <args…>: the download (`--download-only`) is retried, since apt
+# resumes partial downloads from /var/cache/apt/archives/partial and each try
+# makes progress on a slow mirror. The install itself then runs once from the
+# cache: retrying it is no use, because a try killed while dpkg runs leaves
+# "dpkg was interrupted" and every later try fails (docs/worklog/REL-02.md).
 # Worst case, kill grace (10 s) included:
-#   apt: update 3 × 55 + deps 120 + package 120 + remove 55 = 460 s
+#   apt: update 3 × 55 + (download 3 × 110 + install 70) × 2 + remove 55 = 1020 s
 #   dnf/pacman: deps 190 + package 120 + remove 55 = 365 s
-# Both stay inside the install job's timeout-minutes: 10 with room for
+# Both stay inside the install job's timeout-minutes: 20 with ~200 s for
 # checkout, the artifact download and the two 15 s launches.
 pm_log="$(mktemp)"
 pm_run() {
@@ -63,6 +68,10 @@ pm_retry() {
   pm_fail "${rc}" "${limit}" "$@"
 }
 apt_opts=(-o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Dpkg::Use-Pty=0)
+apt_install() {
+  pm_retry 3 100 env DEBIAN_FRONTEND=noninteractive apt-get "${apt_opts[@]}" install -y --download-only "$@"
+  pm 60 env DEBIAN_FRONTEND=noninteractive apt-get "${apt_opts[@]}" install -y "$@"
+}
 
 # ── a virtual display and software GL drivers only: everything else the
 #    app needs must come from the package's own dependencies ────────────
@@ -95,7 +104,7 @@ elif command -v apt-get >/dev/null 2>&1; then
   # empty or stale index ("Package 'xauth' has no installation candidate").
   # Ubuntu's mirrors stall intermittently, so the whole update is retried.
   pm_retry 3 45 env DEBIAN_FRONTEND=noninteractive apt-get "${apt_opts[@]}" update --error-on=any
-  pm 110 env DEBIAN_FRONTEND=noninteractive apt-get "${apt_opts[@]}" install -y xvfb xauth libgl1-mesa-dri procps
+  apt_install xvfb xauth libgl1-mesa-dri procps
 elif command -v dnf >/dev/null 2>&1; then
   echo "==> display setup needed (${why})"
   pm 180 dnf install -y xorg-x11-server-Xvfb xorg-x11-xauth mesa-dri-drivers procps-ng
@@ -110,7 +119,7 @@ fi
 remove=()
 case "${pkg}" in
   *.deb)
-    pm 110 env DEBIAN_FRONTEND=noninteractive apt-get "${apt_opts[@]}" install -y "${pkg}"
+    apt_install "${pkg}"
     dpkg -s invoice-desk | grep -E '^(Status|Version):'
     exe=/usr/bin/invoice-desk; remove=(env DEBIAN_FRONTEND=noninteractive apt-get "${apt_opts[@]}" remove -y invoice-desk) ;;
   *.rpm)
