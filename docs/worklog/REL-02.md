@@ -9,6 +9,7 @@
 | 44468227612 | `5deb348` | ❌ rpmlint | ❌ DLL check | ✅ | arch + install matrix skipped (they need the Linux job) |
 | 44471887698 | `8e8295c` | ✅ (+ arch, install debian:12, fedora, arch) | ✅ | ✅ | `install ubuntu:22.04` hung 20 min with no output and was cancelled. The re-run (job 135394180551) failed after 14 min: `Failed to fetch http://archive.ubuntu.com/ubuntu/dists/jammy/InRelease Connection failed [IP: 185.125.190.82 80]`, then `E: Package 'xauth' has no installation candidate` |
 | 44478892261 | `a97328c` | ❌ AppImage smoke | ✅ | ✅ | the runner's own `apt-get update` (in `smoke_linux.sh`) timed out at 90 s: `azure.archive.ubuntu.com` stalled, every InRelease `Ign`, and `packages.microsoft.com` was a `Hit`. The tarball smoke's update a minute earlier took 30 s. Arch and the install matrix were skipped |
+| 44484076707 | `173f74e` | ✅ (+ arch, install debian:12, fedora, arch) | ✅ | ✅ | `install ubuntu:22.04`: `apt-get update` took 2 s (Azure, 49.5 MB), then `install -y xvfb xauth libgl1-mesa-dri procps` stalled mid-download (`libgl1-amber-dri`, 4.2 MB) and hit its 110 s limit. On the runner, `apt_retry.sh` worked under sudo, but its install took 6.5 min at 44 kB/s, close to the 600 s limit. Branch CI run 44484076759 green |
 
 ## Findings
 
@@ -96,7 +97,19 @@
     - stall, with a blackhole source (`10.255.255.1`) and `APT_UPDATE_LIMIT=5`: three `::warning::apt-get update try n/3 timed out after 5 s`, then `::error::apt-get update failed 3 times`. Exit 1, 15 s in total;
     - success via Azure: `xauth` and `procps` installed, exit 0;
     - install limit, with `APT_INSTALL_LIMIT=2` and `clang`: `::error::apt-get install timed out after 2 s`, exit 1.
-  - **Not checked:** the `sudo` path (non-root), which the runner uses. It's the same `sudo=(…)` pattern as `smoke_linux.sh`, which already runs on the runner.
+  - **sudo path:** confirmed on the runner in run 44484076707.
+
+- 2026-11-19 — **Slow mirrors stall `apt-get install`, not only `update`** (run 44484076707, owner instruction 2026-11-19).
+  - **What happened:** in the container, the display-tools install stalled mid-download and used up its single 110 s try. On the runner, the dependency install took 6.5 min at 44 kB/s against a 600 s limit. That shows `apt_retry.sh` works under sudo on the runner, which was the open "not checked" item.
+  - **Retrying the install as is would not have worked.** A local test retried `apt-get install` with 8 tries of 6 s each.
+    - The downloads resumed (`Need to get 61.8 MB` → `47.6 MB/61.8 MB` → `43.4 MB/61.8 MB` → `7017 kB/61.8 MB`).
+    - But the try that finished downloading was killed while dpkg was unpacking. Every later try then failed with `E: dpkg was interrupted, you must manually run 'dpkg --configure -a' to correct the problem.` (exit 100).
+  - **Fix, in both helpers:** only `apt-get install -y --download-only …` is retried. That step is network-only, resumes from `/var/cache/apt/archives/partial`, and never runs dpkg. Then `apt-get install -y …` runs once from the cache, under its own limit.
+    - `smoke_linux.sh` (containers): `apt_install` = download 3 × 100 s, then install 60 s, for both the display tools and the package. The install job is now `timeout-minutes: 20`. Worst case with apt: update 3 × 55 + (3 × 110 + 70) × 2 + remove 55 = 1020 s, which leaves about 180 s for checkout, the artifact download and the launches. dnf/pacman are unchanged at 365 s.
+    - `apt_retry.sh` (runner): update 3 × 90 s, download 3 × 300 s (`APT_DOWNLOAD_LIMIT`), install once 300 s (`APT_INSTALL_LIMIT`). Worst case is about 26 min, inside the 40- and 45-minute jobs that call it. The last failed try now ends in `::error::` with its reason, instead of a `::warning::` followed by a generic error.
+  - **Checked locally (`ubuntu:22.04`, Azure mirror):**
+    - `apt_retry.sh` with `APT_TRIES=8 APT_DOWNLOAD_LIMIT=6`: four download tries timed out with a warning each, while the amount left to get fell to `7689 kB/61.8 MB`. Try 5 finished, then `install -y … try 1/1` reported `Need to get 0 B/61.8 MB of archives`. `xvfb-run` and `xauth` were installed, exit 0.
+    - Full `.deb` smoke via Azure: download, then install, for the display tools and the local `.deb` (`--download-only` works with a `.deb` path), `Status: install ok installed`, `smoke OK: invoice-desk_amd64.deb (…)`. 2 min 47 s.
 
 ## Open questions
 
