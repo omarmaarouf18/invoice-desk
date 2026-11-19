@@ -3,11 +3,12 @@
 > The **current** state only. It is rewritten in place, never appended to: replace stale lines, don't add dated amendments. History goes in `CHANGELOG.md`, git log and the worklogs. Keep this file under ~120 lines.
 > Agents update the "State" and "Next" sections in the same commit that changes them.
 
-## State (as of 2026-11-17)
+## State (as of 2026-11-19)
 
-- **Released:** nothing is published yet. Only `v0.1.0` is tagged; `main` (`e4f63fa`) is from before 0.1.0. The 0.2.0–0.4.0 release commits (`98a7cb9`, `df865df`, `e120ecb`; 0.4.0 = calendar, demo data, schema v5) are untagged on the branch chain. This branch is at **schema v8**.
-- **Active branch:** `dev`, the single integration branch (owner ruling 2026-11-18). Every old branch is fast-forwarded into it and deleted; `main` moves only by fast-forward to a green `dev` commit.
-- **Active brief:** `docs/briefs/2026-11-18-release-pipeline.md` (REL-01 + WF-03 built, awaiting the owner sequence in `docs/RELEASING.md` §3; PERF-01 deferred). `docs/briefs/2026-11-16-bilingual-styles.md` stays open for phases 7–8 below.
+- **Released:** `v0.1.0`–`v0.4.0` are tagged (`v0.2.0`–`v0.4.0` pushed 2026-11-19 with no GitHub release; the old drafts were deleted). No GitHub release is published yet. **0.5.0 is prepared** on `feat/release-green` (`chore(release): 0.5.0`, `pubspec.yaml` `0.5.0+6`, CHANGELOG `## [0.5.0] - 2026-11-19`) and **not tagged**. Schema **v8**.
+- **Pipeline:** `main` CI 44495539215 and the release dry run 44495540370 are fully green (all 8 assets, `SHA256SUMS.txt`, `latest.json`, attestations). `package.yml` runs by hand on any branch; `install ubuntu:22.04` is non-blocking (Ubuntu mirror stalls, `docs/RELEASING.md` §1). Windows and macOS ship unsigned (D6).
+- **Active branch:** `feat/release-green` (off `main` = `dev` = `e9f3a72`). `dev` is the integration branch; `main` only fast-forwards to a green `dev` commit, never by PR merge (RELEASING "Never merge into `main`").
+- **Active brief:** `docs/briefs/2026-11-19-release-green.md`. Phases 0–3 done (WF-04, REL-02); Phase 4 / REL-03 is at "release commit ready, owner tags". Worklogs: `docs/worklog/WF-04.md`, `REL-02.md`. `docs/briefs/2026-11-16-bilingual-styles.md` stays open for phases 7–8 (0.6.0, D5).
 
 | Phase | Status |
 |---|---|
@@ -17,16 +18,17 @@
 | 3 — Document language: invoices | ✅ done. Schema v6 (`627e6a0`), PDF builder (`baf5940`), UI/repos/settings (`d232ee4`), goldens (`fd8bd76`), Arabic PDF bug fixes (`96dc046`, `f4f0bd2`) |
 | 4 — Style engine (schema v7) | ✅ done. Schema v7 (`c0a2150`), StyleRepository & snapshots (`7aad4c7`), PdfStyle builders (`12bc577`), ADR-0012; follow-ups: VAT row correctness, 24h asset grace period & trash retention, 6 distinct presets (Formal with Naskh, Bold/Modern with Plex), word-level font fallback and bidi paragraph context preservation in vendored pdf (`9f8d21c`), text bidi guard test (`e86c606`), updated preset goldens |
 | 5 — Style editor UI | ✅ done (owner review 2026-11-17). Editor page, pickers + lock, styles in previews/exports, legacy lock, JSON import/export, trash; review fixes: Modern contrast (`98d6483`), preview language, «بارز», delete usage count |
-| 6 — Settings redesign | ⏸ built, awaiting review. Sectioned navigation + search, schema v8 (`3022ebd`), issue snapshots (ADR-0014, `5b508df`), numbering pattern / VAT / currency / formats (`79e7ab5`), client preferred style (`5ad2449`), per-machine settings + shortcuts (`a99273f`) |
-| 7 — Contracts in English + styles | — |
-| 8 — UX polish | — |
+| 6 — Settings redesign | ✅ ships in 0.5.0 (D5, owner 2026-11-19); review questions in `docs/worklog/SET-01.md`. Sectioned navigation + search, schema v8 (`3022ebd`), issue snapshots (ADR-0014, `5b508df`), numbering pattern / VAT / currency / formats (`79e7ab5`), client preferred style (`5ad2449`), per-machine settings + shortcuts (`a99273f`) |
+| 7 — Contracts in English + styles | — (0.6.0, D5) |
+| 8 — UX polish | — (0.6.0, D5) |
 
 ## Next
 
-1. **Owner: release pipeline (REL-01).** Fast-forward `main` to `dev`, run the release dry run, tag the old versions: `docs/RELEASING.md` §3. Send failing run links to the agent. Report and open questions in `docs/worklog/REL-01.md`.
-2. **Owner review of Phase 6 (SET-01).** Report and open questions in `docs/worklog/SET-01.md`.
-3. **Phase 7 — Contracts in English + styles (CON-01).** Owner note (2026-11-17): Arabic values with numbers must not wrap with the number alone on a line in English contracts.
-4. **PERF-01** after the pipeline is merged (brief §7).
+1. **Owner: release 0.5.0** (`docs/RELEASING.md` §4, brief Phase 4). Push `feat/release-green` and land it on `dev`, run `package.yml` on `dev`, fast-forward `main`, wait for green, then push `v0.5.0`. Then check the brief's Phase 4 "Done when" (downloads, `latest.json`, `sha256sum -c`, `gh attestation verify` per platform).
+2. **Owner: add "Require linear history" to `protect-main`** (D4). `main` now holds the Phase 0 merge `5dd01de`, so the fast-forward is no longer refused; `dev` must stay merge-free from then on.
+3. **Phase 7 — Contracts in English + styles (CON-01)** for 0.6.0. Owner note (2026-11-17): Arabic values with numbers must not wrap with the number alone on a line in English contracts.
+4. **Flutter SDK bump** (separate task): lifts the Dependabot ignores for `window_manager >=0.7` and `very_good_analysis >=11` (D3).
+5. **PERF-01** (release-pipeline brief §7).
 
 ## Decided (do not reopen without the owner)
 
@@ -42,6 +44,8 @@
 - **The visual feature is named «تصميم المستند» / `DocumentStyle`.** «Template» stays reserved for clause templates.
 
 ## Open (owner)
+
+- Whether to file the upstream `jni` bug (`/DELAYLOAD:jvm.dll` on an undefined `${TARGET_NAME}`; `docs/worklog/REL-02.md`).
 
 - Whether to purge the old real-data sample PDFs from git history (they were deleted from the tree only).
 - A native read of the English UI strings before 0.5.
