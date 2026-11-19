@@ -8,6 +8,7 @@
 |---|---|---|---|---|---|
 | 44468227612 | `5deb348` | ❌ rpmlint | ❌ DLL check | ✅ | arch + install matrix skipped (they need the Linux job) |
 | 44471887698 | `8e8295c` | ✅ (+ arch, install debian:12, fedora, arch) | ✅ | ✅ | `install ubuntu:22.04` hung 20 min with no output and was cancelled. The re-run (job 135394180551) failed after 14 min: `Failed to fetch http://archive.ubuntu.com/ubuntu/dists/jammy/InRelease Connection failed [IP: 185.125.190.82 80]`, then `E: Package 'xauth' has no installation candidate` |
+| 44478892261 | `a97328c` | ❌ AppImage smoke | ✅ | ✅ | the runner's own `apt-get update` (in `smoke_linux.sh`) timed out at 90 s: `azure.archive.ubuntu.com` stalled, every InRelease `Ign`, and `packages.microsoft.com` was a `Hit`. The tarball smoke's update a minute earlier took 30 s. Arch and the install matrix were skipped |
 
 ## Findings
 
@@ -67,10 +68,28 @@
     - `--error-on=any` with one unreachable source (`127.0.0.1:9`): `E: Failed to fetch …` and `rc=100`. The same update without the flag gives `rc=0`, which is how CI carried on with an empty index.
   - **Side effect, not yet seen in CI:** the tarball and AppImage smokes run `smoke_linux.sh` on the `ubuntu-22.04` runner itself, so the runner's `apt-get update` (its own mirror plus third-party repos) now fails on any fetch error too. Before, a broken third-party repo was ignored. If that turns out flaky, the fix is to limit the flag to the containers.
 
+- 2026-11-19 — **The runner's own mirror stalled the AppImage smoke** (run 44478892261, owner instruction 2026-11-19).
+  - **What happened:** `smoke_linux.sh` always ran `apt-get update` + `install`, even on the runner, where the job's "Build and packaging dependencies" step had already installed `xvfb` and `xauth`. This time `azure.archive.ubuntu.com` stalled (every InRelease `Ign`). `packages.microsoft.com` was a `Hit`, so it wasn't the `--error-on=any` side effect flagged earlier.
+  - **Fix 1, the runner never touches the package manager:**
+    - The script now checks for `xvfb-run`, `xauth`, `pgrep` and a Mesa DRI driver (`*/dri/*.so` under `/usr/lib` or `/usr/lib64`). If all are present it prints "no package-manager setup" and skips the block. Otherwise it names what is missing and installs it, which is what happens in the bare containers.
+    - `package.yml`'s dependency step now also installs `libgl1-mesa-dri` and `procps`, so the check always passes on the runner.
+  - **Fix 2, containers retry `apt-get update`:** `pm_retry 3 45` runs the whole update up to 3 times with a 45 s limit each, and logs `::warning::attempt n/3 …` between tries. The other limits were lowered so the worst case stays inside `timeout-minutes: 10`: apt deps 110 s, package 110 s, remove 45 s.
+    - apt total: 3 × 55 + 120 + 120 + 55 = 460 s;
+    - dnf/pacman total: 190 + 120 + 55 = 365 s;
+
+    both including the 10 s kill grace.
+  - **Checked locally** (packages from run 44471887698):
+    - Runner-like: `ubuntu:22.04` with the display tools, gtk3 and EGL/GLES pre-installed, then `apt-get` and `dpkg` moved away so any package-manager call would fail. The tarball smoke printed "xvfb-run, xauth, pgrep and a Mesa DRI driver are present: no package-manager setup" and `smoke OK: invoice-desk-linux-x64.tar.gz (…)`.
+    - Retry: `ubuntu:22.04` with one unreachable source. Three `::warning::attempt n/3 failed (exit 100)` lines, the log with the `E: Failed to fetch …` lines, then `::error::failed (exit 100): …`. Exit 1.
+    - Containers: the `.deb` in `ubuntu:22.04` via Azure (2 min 54 s), the RPM in `fedora:latest` and the Arch package in `archlinux:latest`. All three printed "display setup needed (missing xvfb-run)" and then `smoke OK`.
+  - **Still exposed:** the job's own "Build and packaging dependencies" step runs `sudo apt-get update` on the runner mirror with no limit and no retry. A stall there would block the whole Linux job. It's outside this fix and is open question 3.
+
 ## Open questions
 
 1. How should desktop bundles deal with `dartjni`? — Answered 2026-11-19: option (b), remove it after `flutter build` and guard on all three platforms (brief Decisions table).
 2. Should the `ubuntu:22.04` container use another Ubuntu mirror? — Answered 2026-11-19: yes, `azure.archive.ubuntu.com` in CI only, with `security.ubuntu.com` kept (brief Decisions table).
+
+3. Should the Linux job's own "Build and packaging dependencies" step get the same treatment (a time limit and retries on `apt-get update`)? The runner mirror stalled in the smoke step today, and the same mirror serves that step. — Recommended: yes, a `timeout` + 3-try loop around its `apt-get update` in `package.yml` (and in `ci.yml`'s Linux build, which has the same step) — status: open.
 
 ## Leftovers
 - Upstream `jni` bug: `/DELAYLOAD:jvm.dll` targets the undefined `${TARGET_NAME}` instead of `jni`. Owner decides later whether to file it (ruling 2026-11-19).
