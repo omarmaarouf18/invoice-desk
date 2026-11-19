@@ -25,10 +25,11 @@
 ## Next
 
 1. **Owner: release 0.5.0** (`docs/RELEASING.md` §4, brief Phase 4). Push `feat/release-green` and land it on `dev`, run `package.yml` on `dev`, fast-forward `main`, wait for green, then push `v0.5.0`. Then check the brief's Phase 4 "Done when" (downloads, `latest.json`, `sha256sum -c`, `gh attestation verify` per platform).
-2. **Owner: add "Require linear history" to `protect-main`** (D4). `main` now holds the Phase 0 merge `5dd01de`, so the fast-forward is no longer refused; `dev` must stay merge-free from then on.
-3. **Phase 7 — Contracts in English + styles (CON-01)** for 0.6.0. Owner note (2026-11-17): Arabic values with numbers must not wrap with the number alone on a line in English contracts.
-4. **Flutter SDK bump** (separate task): lifts the Dependabot ignores for `window_manager >=0.7` and `very_good_analysis >=11` (D3).
-5. **PERF-01** (release-pipeline brief §7).
+2. **D4:** the owner is enabling "Require linear history" on `protect-main` (2026-11-19). `dev` must stay merge-free: branches land on it by fast-forward.
+3. **0.5.1: English UI wording fixes** from a native read of the English strings (owner ruling 2026-11-19: 0.5.0 ships without it).
+4. **Phase 7 — Contracts in English + styles (CON-01)** for 0.6.0. Owner note (2026-11-17): Arabic values with numbers must not wrap with the number alone on a line in English contracts.
+5. **Flutter SDK bump** (separate task): lifts the Dependabot ignores for `window_manager >=0.7` and `very_good_analysis >=11` (D3).
+6. **PERF-01** (release-pipeline brief §7).
 
 ## Decided (do not reopen without the owner)
 
@@ -46,9 +47,7 @@
 ## Open (owner)
 
 - Whether to file the upstream `jni` bug (`/DELAYLOAD:jvm.dll` on an undefined `${TARGET_NAME}`; `docs/worklog/REL-02.md`).
-
 - Whether to purge the old real-data sample PDFs from git history (they were deleted from the tree only).
-- A native read of the English UI strings before 0.5.
 
 ## ADR index
 

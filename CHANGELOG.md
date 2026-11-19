@@ -21,8 +21,8 @@ All notable changes to Invoice Desk. The format follows [Keep a Changelog](https
   - Each invoice and contract now has a "Document style" picker. Once a document is sent, paid or signed its look is fixed and the picker says so. Settings has the default invoice and contract styles.
 - **Document style engine (ADR-0012).** Complete styling engine for invoices and contracts with 6 built-in presets (`Classic`, `Modern`, `Minimal`, `Bold`, `Formal`, `Blank`).
   - `DocumentStyle` immutable value object supporting primary/accent colors, custom margins, typography selection, header bands, table layout styles (plain, striped, bordered), solid totals bars, and modular block visibility.
-  - Dedicated `document_assets` table (schema v7) for content-addressed, deduplicated image storage (logos $\le$ 1 MB with PNG/JPEG validation).
-  - Style resolution hierarchy: snapshot $\to$ document style $\to$ client preferred style $\to$ settings default $\to$ Classic.
+  - Dedicated `document_assets` table (schema v7) for content-addressed, deduplicated image storage (logos ≤ 1 MB with PNG/JPEG validation).
+  - Style resolution hierarchy: snapshot → document style → client preferred style → settings default → Classic.
   - Automatic style snapshots: sent and paid invoices, and signed contracts, freeze their resolved style and logo in the exact same transaction, guaranteeing that historical documents never change appearance.
   - Bundled Noto Naskh Arabic font with automatic IBM Plex Sans Arabic Latin fallback.
   - 100% byte-identical Classic preservation backed by PDF goldens.

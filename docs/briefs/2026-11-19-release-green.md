@@ -169,3 +169,6 @@ On top of `AGENTS.md` §6, stop and ask when:
 | 2026-11-19 | D5 confirmed: 0.5.0 ships phases 0–6 of the bilingual-styles brief and the release pipeline; phases 7–8 go to 0.6.0. |
 | 2026-11-19 | D6 confirmed: Windows and macOS ship unsigned for 0.5.0. |
 | 2026-11-19 | Phase 3 done: `main` CI 44495539215 and release dry run 44495540370 green; old drafts v0.1.0–v0.4.0 deleted; `v0.2.0`–`v0.4.0` pushed. Phase 4 / REL-03 starts on `feat/release-green`: no tag by the Builder. |
+| 2026-11-19 | The 0.5.0 CHANGELOG section uses `≤` and `→` instead of `$\le$` and `$\to$`, so `latest.json` notes carry no LaTeX. |
+| 2026-11-19 | 0.5.0 ships without the native read of the English UI strings; wording fixes go to 0.5.1. |
+| 2026-11-19 | D4 in force: the owner is enabling "Require linear history" on `protect-main`. |
