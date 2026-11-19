@@ -7,7 +7,7 @@
 | Run | Commit | Linux | Windows | macOS | Notes |
 |---|---|---|---|---|---|
 | 44468227612 | `5deb348` | ❌ rpmlint | ❌ DLL check | ✅ | arch + install matrix skipped (they need the Linux job) |
-| 44471887698 | `8e8295c` | ✅ (+ arch, install debian:12, fedora, arch) | ✅ | ✅ | `install ubuntu:22.04` hung 20 min with no output and was cancelled. Owner re-running that job |
+| 44471887698 | `8e8295c` | ✅ (+ arch, install debian:12, fedora, arch) | ✅ | ✅ | `install ubuntu:22.04` hung 20 min with no output and was cancelled. The re-run (job 135394180551) failed after 14 min: `Failed to fetch http://archive.ubuntu.com/ubuntu/dists/jammy/InRelease Connection failed [IP: 185.125.190.82 80]`, then `E: Package 'xauth' has no installation candidate` |
 
 ## Findings
 
@@ -52,10 +52,25 @@
   - **Success path checked locally:** the CI RPM from this run, in `fedora:latest`: `dnf install` … `(limit 180 s)`, the package install `(limit 120 s)`, `dnf remove` `(limit 60 s)`, then `smoke OK: invoice-desk.x86_64.rpm (2 × 15 s: temp data dir, default data dir on a temp HOME)`.
   - **This run's Linux assets have no `dartjni`:** checked in the tarball, the RPM and the `.deb` (the `.deb` holds 9 libraries in `/opt/invoice-desk/lib`, none of them dartjni).
 
+- 2026-11-19 — **`install ubuntu:22.04`: `archive.ubuntu.com` stalls, and apt carried on with an empty index** (re-run job 135394180551; owner ruling 2026-11-19).
+  - **Cause confirmed in CI:** the re-run shows the connection failure to `archive.ubuntu.com`, then `Package 'xauth' has no installation candidate`. So `apt-get update` exited 0 despite the failed fetch, and the install found an empty index. That matches the local measurement in the previous finding.
+  - **Fix:**
+    - With `SMOKE_APT_MIRROR` set, `smoke_linux.sh` rewrites the `archive.ubuntu.com` lines (`jammy`, `jammy-updates`, `jammy-backports`) in `/etc/apt/sources.list` and prints the result. `security.ubuntu.com` stays.
+    - `package.yml` sets `SMOKE_APT_MIRROR=http://azure.archive.ubuntu.com/ubuntu` for the `ubuntu:22.04` matrix entry only. Local runs and the other images keep their defaults. If the variable is set and the file has no `archive.ubuntu.com` line, the script fails rather than silently doing nothing.
+    - `apt-get update` runs with `--error-on=any` (apt ≥ 2.1, so available in 22.04's apt 2.4.15).
+  - **Update limit raised from 60 s to 90 s:**
+    - The first local Azure run timed out at 60 s, after every index had started downloading.
+    - Timed on its own, the same update finished in 22 s (`Fetched 49.5 MB in 22s (2247 kB/s)`, rc=0), so the limit was too tight for fetch-speed variance.
+    - The new worst case on apt is 90 + 120 + 120 + 60 s plus a 10 s kill grace each, which still fits the 10-minute job.
+  - **Checked locally:**
+    - The CI `.deb` from run 44471887698 in `ubuntu:22.04`, with `SMOKE_APT_MIRROR=http://azure.archive.ubuntu.com/ubuntu`: the 7 rewritten Azure lines, the 3 security lines, `Status: install ok installed`, `smoke OK: invoice-desk_amd64.deb (2 × 15 s: temp data dir, default data dir on a temp HOME)`. Exit 0, 2 min 43 s in total.
+    - `--error-on=any` with one unreachable source (`127.0.0.1:9`): `E: Failed to fetch …` and `rc=100`. The same update without the flag gives `rc=0`, which is how CI carried on with an empty index.
+  - **Side effect, not yet seen in CI:** the tarball and AppImage smokes run `smoke_linux.sh` on the `ubuntu-22.04` runner itself, so the runner's `apt-get update` (its own mirror plus third-party repos) now fails on any fetch error too. Before, a broken third-party repo was ignored. If that turns out flaky, the fix is to limit the flag to the containers.
+
 ## Open questions
 
 1. How should desktop bundles deal with `dartjni`? — Answered 2026-11-19: option (b), remove it after `flutter build` and guard on all three platforms (brief Decisions table).
-2. If `archive.ubuntu.com` keeps stalling the `ubuntu:22.04` install job, should the container use another Ubuntu mirror? — Recommended: wait for the re-run first. Only if it hangs again with the new log showing `archive.ubuntu.com`, point the container at a mirror the owner picks. The mirror choice is the owner's — status: open.
+2. Should the `ubuntu:22.04` container use another Ubuntu mirror? — Answered 2026-11-19: yes, `azure.archive.ubuntu.com` in CI only, with `security.ubuntu.com` kept (brief Decisions table).
 
 ## Leftovers
 - Upstream `jni` bug: `/DELAYLOAD:jvm.dll` targets the undefined `${TARGET_NAME}` instead of `jni`. Owner decides later whether to file it (ruling 2026-11-19).
