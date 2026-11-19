@@ -2,7 +2,7 @@
 
 The owner pushes a `vX.Y.Z` tag on `main`. Everything after that is automatic: every package for Windows, macOS and Linux is built, smoke-tested and **published** to GitHub Releases in this repo. Nothing is published if any check, build or smoke test fails.
 
-Every push to `main` builds and smoke-tests the same packages as 14-day CI artifacts, so a release is never the first time a package is built.
+The same packages are built and smoke-tested by hand on `dev` before every fast-forward of `main`, and again on every push to `main` (14-day CI artifacts), so a release is never the first time a package is built and a packaging bug never reaches `main`.
 
 Agents never push, tag or publish; the commands in this file are the owner's.
 
@@ -11,6 +11,7 @@ Agents never push, tag or publish; the commands in this file are the owner's.
 | Workflow | When | What |
 |---|---|---|
 | `ci.yml` | every push and PR | format, analyze, layering, sizes, codegen, schema guard, tests + coverage, goldens, security, Linux build + smoke run |
+| `package.yml` | by hand, on `dev` or a feature branch | the full package matrix below, **unsigned** by default, as artifacts (7 days) |
 | `ci.yml` → `package.yml` | push to `main` | the full package matrix below, **unsigned**, as artifacts (14 days) |
 | `release.yml` | tag `v*`, or by hand | `verify` → `package.yml` (signed when the secrets exist) → `publish` |
 
@@ -32,6 +33,20 @@ Agents never push, tag or publish; the commands in this file are the owner's.
 Run by hand (**Actions → Release → Run workflow**) with `dry_run` ticked (the default), it does everything except creating the release and its follow-ups; the would-be release is kept as the `release-preview` artifact. `dry_run` unticked is only accepted when the workflow is run on a tag, to re-run a release whose run failed.
 
 Every step that needs a secret is skipped cleanly while that secret is absent, so certificates can be added later without code changes. Every third-party action is pinned to a commit SHA.
+
+### Package run before `main` moves
+
+`ci.yml` builds the package matrix only on `main`. Run `package.yml` by hand on the `dev` commit you are about to fast-forward `main` to, and move `main` only when that run is fully green:
+
+```bash
+gh workflow run package.yml --ref dev
+```
+
+```bash
+gh run list --workflow package.yml --branch dev --limit 1
+```
+
+The same command with `--ref <branch>` checks a feature branch. Inputs: `sign` (default off) and `retention-days` (default 7).
 
 ### Smoke test
 
@@ -102,7 +117,16 @@ The app is signed with the hardened runtime and **no** App Sandbox:
 
 **Branches (done 2026-11-18).** The old chain `main → release-packaging → feature/contracts → hardening/v0.3 → feature/calendar → feat/bilingual-styles → feat/release-pipeline` was fast-forwarded into one integration branch, `dev`. The old branches are deleted locally and on GitHub, and PRs #1–#3 are closed. Work now lands on `dev`; `main` only moves by fast-forward to a `dev` commit whose CI is green.
 
-**1. Push `dev`** and wait for its CI run (quality, tests, build):
+### Never merge into `main`
+
+`main` only moves by `git push origin dev:main`, a fast-forward to a green `dev` commit. Nobody presses **Merge** on a pull request into `main`: a merge, squash or rebase commit on `main` splits it from `dev`, and the next fast-forward is refused. Dependabot PRs target `dev` (`.github/dependabot.yml`).
+
+The owner adds **Require linear history** to the `protect-main` ruleset (Settings → Rules → Rulesets → `protect-main`), so a merge commit can't be pushed to `main` at all. GitHub documents it as refusing pushed merge commits, with no exception for a fast-forward. Two consequences:
+
+- Add the rule only **after** `main` already contains every merge commit now on `dev` (the Phase 0 merge `5dd01de` of `docs/briefs/2026-11-19-release-green.md`), or the fast-forward that brings it is refused.
+- From then on `dev` must stay free of merge commits as well: branches land on `dev` by fast-forward.
+
+**1. Push `dev`** and wait for its CI run (quality, tests, build). Then run `package.yml` on it ([Package run before `main` moves](#package-run-before-main-moves)) and wait until it is fully green:
 
 ```bash
 git push origin dev
@@ -118,7 +142,7 @@ gh run list --branch dev --limit 1
 git push origin dev:main
 ```
 
-This `main` push runs `package.yml`: the first real build and smoke test of the whole matrix. Check it:
+This `main` push runs `package.yml` again, unsigned, as 14-day artifacts. Check it:
 
 ```bash
 gh run list --workflow ci.yml --branch main --limit 1
@@ -156,7 +180,7 @@ gh workflow enable release.yml
 
 **5. Add certificates and secrets when ready** (§5): Apple, then optionally SignPath, GPG, winget and the portfolio hook. Re-run the dry run (step 3) after each.
 
-**6. Release 0.5.0** (§4): bump to `0.5.0+6`, add the `## [0.5.0]` CHANGELOG section, merge to `main`, then:
+**6. Release 0.5.0** (§4): bump to `0.5.0+6`, add the `## [0.5.0]` CHANGELOG section, run `package.yml` on `dev`, fast-forward `main` to it, wait for the `main` CI run, then:
 
 ```bash
 git tag -a v0.5.0 -m "Invoice Desk 0.5.0" && git push origin v0.5.0
@@ -166,12 +190,12 @@ The release publishes itself.
 
 ## 4. Every release
 
-1. **Prepare on a branch from `main`.** `./scripts/ci_local.sh --no-package` is green.
+1. **Prepare on a branch from `dev`.** `./scripts/ci_local.sh --no-package` is green.
 2. **Bump the version** in `pubspec.yaml`: `version: X.Y.Z+N`, where `N` goes up by one every release (0.5.0 is `0.5.0+6`).
 3. **Move `[Unreleased]`** in `CHANGELOG.md` under `## [X.Y.Z] - YYYY-MM-DD`. This section becomes the release notes.
 4. **Packaging metadata:** add a `%changelog` entry and bump the `pkgversion` default in `packaging/rpm/invoice-desk.spec`; set `pkgver` in `packaging/arch/PKGBUILD`.
 5. **If the schema changed:** rehearse the upgrade (§6) and regenerate `docs/DATA_MODEL.md` (`dart run tool/gen_data_model.dart`).
-6. **Commit** `chore(release): X.Y.Z`, merge to `main` (fast-forward or merge commit), wait for the `main` CI run, then tag that commit:
+6. **Commit** `chore(release): X.Y.Z` and land it on `dev`. Run `package.yml` on `dev` ([Package run before `main` moves](#package-run-before-main-moves)) and wait until it is fully green. Fast-forward `main` (`git push origin dev:main`, never a PR merge), wait for the `main` CI run, then tag that commit:
 
 ```bash
 git tag -a vX.Y.Z -m "Invoice Desk X.Y.Z" && git push origin vX.Y.Z
@@ -185,7 +209,7 @@ gh release download vX.Y.Z -D /tmp/check && (cd /tmp/check && sha256sum -c SHA25
 
 8. **AUR (optional):** copy `PKGBUILD` and `.SRCINFO` from the run's `aur-pkgbuild` artifact into the AUR repository and push it.
 
-If the tag run fails after the tag is pushed, fix the cause on `main`, delete and re-push the tag on the fixed commit (nothing was published), or re-run the failed jobs if the cause was outside the repo.
+If the tag run fails after the tag is pushed, fix the cause on `dev`, fast-forward `main` to it as above, delete and re-push the tag on the fixed commit (nothing was published), or re-run the failed jobs if the cause was outside the repo.
 
 ## 5. One-time setup (secrets and variables)
 

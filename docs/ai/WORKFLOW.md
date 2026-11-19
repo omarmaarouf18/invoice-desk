@@ -50,7 +50,7 @@ A brief maps each phase to an ID (e.g. Phase 3 = `INV-01`).
 - **A change outside the task's scope** (a shared widget, a doc fix) is called out in its own paragraph of the commit message and in the report.
 - **No full 40-character SHAs in docs on feature branches.** Short SHAs go in reports. Never `--amend` a commit whose hash appears anywhere.
 - **Branches:** `dev` is the integration branch. A brief's `feat/<slug>` branch starts from `dev` and goes back into it. `main` moves only by fast-forward to a `dev` commit whose CI is green (docs/RELEASING.md §3).
-- **Agents never push, merge, rebase, force-push, or use `--no-verify`.** `main` moves only when the owner merges a branch whose gate is green.
+- **Agents never push, merge, rebase, force-push, or use `--no-verify`.** `main` moves only when the owner fast-forwards it to a green `dev` commit, after a green hand run of `package.yml` on that commit; nobody merges a PR into `main` (docs/RELEASING.md, "Never merge into `main`").
 - **Parallel agents** each work in their own worktree (`git worktree add ../invoice-desk-wt/<ID> -b feat/<slug>`), never in a shared directory. Two agents never own the same file in the same period. The brief or the owner assigns the lanes.
 
 ## 5. Report format (end of every phase or task)
