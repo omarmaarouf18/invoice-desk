@@ -42,7 +42,7 @@ Run this on every Builder report before the owner says "go". Check the claims ag
 
 ## 6. Output to the owner
 
-Write in Egyptian Arabic:
+Write in English (`AGENTS.md` §6):
 
 1. Verdict: approve, or approve with fixes.
 2. What you checked yourself.

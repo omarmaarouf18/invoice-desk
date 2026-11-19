@@ -111,4 +111,4 @@ tool/           check_sizes, gen_data_model, coverage_report, check_licenses
 - **Record decisions:** new ones as an ADR (`docs/adr/0000-template.md`); owner rulings as a dated line in the brief's "Decisions" table. Never silently change a decided default.
 - **Keep docs true:** a doc sentence your change makes false is in scope. Fix it and list it under "Docs corrected" in the report.
 - **Report** at the end of every phase or task in the format of `docs/ai/WORKFLOW.md` §5: literal command output, never reconstructed. Anything not run is listed as **unverified**.
-- **Language:** code, comments, commits and docs in **English**. User-facing Arabic copy is natural Modern Standard Arabic. Chat with Omar in **Egyptian Arabic** unless he writes otherwise.
+- **Language:** everything in **English**: code, comments, commits, docs, worklogs, reports and chat with Omar. User-facing Arabic copy is natural Modern Standard Arabic.
