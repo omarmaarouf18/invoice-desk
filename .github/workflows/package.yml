@@ -55,7 +55,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev \
-            patchelf rpm rpmlint dpkg-dev lintian desktop-file-utils file xvfb xauth
+            patchelf rpm dpkg-dev lintian desktop-file-utils file xvfb xauth
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -74,8 +74,16 @@ jobs:
           for f in invoice-desk-linux-x64.tar.gz InvoiceDesk-x86_64.AppImage invoice-desk.x86_64.rpm invoice-desk_amd64.deb; do
             test -s "dist/$f" || { echo "::error::missing dist/$f"; exit 1; }
           done
-      - name: rpmlint (accepted findings are filtered in the rpmlintrc)
-        run: rpmlint -r packaging/rpm/invoice-desk.rpmlintrc dist/invoice-desk.x86_64.rpm
+      # The RPM targets Fedora, so it is linted by Fedora's rpmlint. Ubuntu
+      # 22.04's rpmlint 2.2.0 applies Debian-era rules (library-package
+      # naming, Group/Packager tags, an old SPDX list) and reports ~40 errors
+      # Fedora's doesn't. The build stays on 22.04 (decision R4).
+      - name: rpmlint on fedora:latest (accepted findings are filtered in the rpmlintrc)
+        run: |
+          docker run --rm -v "$PWD:/w:ro" -w /w fedora:latest bash -euo pipefail -c '
+            dnf -y -q install rpmlint >/dev/null
+            rpmlint --version
+            rpmlint -r packaging/rpm/invoice-desk.rpmlintrc dist/invoice-desk.x86_64.rpm'
       - name: lintian (accepted findings are package overrides)
         run: lintian --fail-on error,warning dist/invoice-desk_amd64.deb
       - name: Smoke run (tarball)
