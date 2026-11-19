@@ -10,6 +10,7 @@
 | 44471887698 | `8e8295c` | ✅ (+ arch, install debian:12, fedora, arch) | ✅ | ✅ | `install ubuntu:22.04` hung 20 min with no output and was cancelled. The re-run (job 135394180551) failed after 14 min: `Failed to fetch http://archive.ubuntu.com/ubuntu/dists/jammy/InRelease Connection failed [IP: 185.125.190.82 80]`, then `E: Package 'xauth' has no installation candidate` |
 | 44478892261 | `a97328c` | ❌ AppImage smoke | ✅ | ✅ | the runner's own `apt-get update` (in `smoke_linux.sh`) timed out at 90 s: `azure.archive.ubuntu.com` stalled, every InRelease `Ign`, and `packages.microsoft.com` was a `Hit`. The tarball smoke's update a minute earlier took 30 s. Arch and the install matrix were skipped |
 | 44484076707 | `173f74e` | ✅ (+ arch, install debian:12, fedora, arch) | ✅ | ✅ | `install ubuntu:22.04`: `apt-get update` took 2 s (Azure, 49.5 MB), then `install -y xvfb xauth libgl1-mesa-dri procps` stalled mid-download (`libgl1-amber-dri`, 4.2 MB) and hit its 110 s limit. On the runner, `apt_retry.sh` worked under sudo, but its install took 6.5 min at 44 kB/s, close to the 600 s limit. Branch CI run 44484076759 green |
+| 44490378245 (`main` CI) | `c312104` | ✅ except `install ubuntu:22.04` | ✅ | ✅ | first `main` run with packages. `install ubuntu:22.04` ran out of its 3 download tries while each try was resuming (`81.0 → 74.0 → 36.2 MB` left of 93.7 MB). Every other job green |
 
 ## Findings
 
@@ -110,6 +111,16 @@
   - **Checked locally (`ubuntu:22.04`, Azure mirror):**
     - `apt_retry.sh` with `APT_TRIES=8 APT_DOWNLOAD_LIMIT=6`: four download tries timed out with a warning each, while the amount left to get fell to `7689 kB/61.8 MB`. Try 5 finished, then `install -y … try 1/1` reported `Need to get 0 B/61.8 MB of archives`. `xvfb-run` and `xauth` were installed, exit 0.
     - Full `.deb` smoke via Azure: download, then install, for the display tools and the local `.deb` (`--download-only` works with a `.deb` path), `Status: install ok installed`, `smoke OK: invoice-desk_amd64.deb (…)`. 2 min 47 s.
+
+- 2026-11-19 — **`install ubuntu:22.04` is non-blocking; 6 download tries** (`main` CI run 44490378245, owner ruling 2026-11-19).
+  - **What happened:** the download-only retry worked as designed. Each try resumed (`81.0 → 74.0 → 36.2 MB` left of 93.7 MB), but 3 tries weren't enough on a mirror that slow.
+  - **Fix:**
+    - **More tries:** `smoke_linux.sh` downloads with 6 tries of 90 s. Worst case with apt: update 3 × 55 + (6 × 100 + 70) × 2 + remove 55 = 1560 s. The install job goes from `timeout-minutes: 20` to 30 (1800 s), which leaves about 240 s for checkout, the artifact download and the launches.
+    - **Non-blocking:** `package.yml` `linux-install` has `continue-on-error: ${{ matrix.image == 'ubuntu:22.04' }}`, so a mirror stall can't fail `package.yml` and therefore can't block `release.yml`. `debian:12` keeps covering the `.deb`.
+    - **Warning:** on failure, a step limited to that entry emits `::warning title=install ubuntu%3A22.04 failed (non-blocking)::Most likely a stalled Ubuntu mirror (http://azure.archive.ubuntu.com/ubuntu) …`. The `:` in the title is escaped, as workflow-command properties require.
+    - **`RELEASING.md`:** the install row of the §1 package table now marks `ubuntu:22.04` as non-blocking. A new §1 paragraph says how to check a red one by hand before tagging: a package-manager timeout or fetch error means re-run the job; an app failure is a release blocker. §4 step 6 points to it.
+  - **Checked locally:** the full `.deb` smoke in `ubuntu:22.04` via Azure, with the download tries at `(limit 90 s)`: `smoke OK: invoice-desk_amd64.deb (…)`, 2 min 53 s. actionlint and shellcheck are clean.
+  - **Not checked:** `continue-on-error`, and the warning step's `if: failure() && matrix.image == 'ubuntu:22.04'`. Both only run on GitHub.
 
 ## Open questions
 
