@@ -52,6 +52,10 @@ The same command with `--ref <branch>` checks a feature branch. Inputs: `sign` (
 
 Every package is installed (or unpacked) and launched with `INVOICE_DESK_DATA_DIR` set to an empty temporary folder. It passes when the app is still running after 15 s, has created `invoice_desk.sqlite`, logged no Dart/Flutter exception and stops when asked; removing the package must leave that data folder alone.
 
+A second launch has no `INVOICE_DESK_DATA_DIR`, so the default data-dir lookup (path_provider) is proven too. On Linux it runs for every package on a throwaway `HOME`. Windows (`%APPDATA%`) and macOS (`~/Library/Application Support`) resolve that folder from the account, not the environment, so there it runs on CI only (`CI=true`), refuses to start if a database already exists there, and removes the folder afterwards.
+
+No package ships `dartjni` (from transitive `jni`, which only Android uses): it hard-links a JVM that users don't have. The Linux and Windows scripts remove it after `flutter build`, and every package script fails if a bundled binary still needs `libjvm` / `jvm.dll`.
+
 ## 2. Assets
 
 Names never carry the version, so `https://github.com/omarmaarouf18/invoice-desk/releases/latest/download/<name>` always points at the latest release. The version lives inside each package and in `latest.json`.

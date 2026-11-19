@@ -4,16 +4,29 @@ Smoke test for the Windows packages (windows-2022 runner):
 Installer: silent per-user install → Start-menu shortcut exists → launch on a
 throwaway INVOICE_DESK_DATA_DIR → alive after $Seconds, database created →
 close → silent uninstall → program folder gone, data folder kept.
-Zip: unpack → the same launch check.
+Zip: unpack → the same launch check, then (on CI only) one more launch without
+INVOICE_DESK_DATA_DIR, so the default data-dir lookup (path_provider, with no
+`jni` in the bundle) is proven. Windows resolves that folder itself
+(%APPDATA%), so it can't be redirected: off CI the launch is skipped, so it
+never opens a developer's real data.
 #>
 param([string]$Installer, [string]$Zip, [int]$Seconds = 15)
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
-function Test-Launch([string]$exe) {
+function Find-DefaultDb {
+  Get-ChildItem $env:APPDATA -Recurse -Depth 3 -Filter 'invoice_desk.sqlite' -ErrorAction SilentlyContinue |
+    Select-Object -First 1
+}
+
+function Test-Launch([string]$exe, [switch]$DefaultDataDir) {
   $data = Join-Path ([IO.Path]::GetTempPath()) ("invoice-desk-smoke-" + [guid]::NewGuid())
   New-Item -ItemType Directory $data | Out-Null
-  $env:INVOICE_DESK_DATA_DIR = $data
+  if ($DefaultDataDir) {
+    if (Find-DefaultDb) { throw "a database already exists under $env:APPDATA; refusing to launch on it" }
+  } else {
+    $env:INVOICE_DESK_DATA_DIR = $data
+  }
   $out = Join-Path $data 'stdout.log'; $err = Join-Path $data 'stderr.log'
   $p = Start-Process -FilePath $exe -PassThru -RedirectStandardOutput $out -RedirectStandardError $err
   Start-Sleep -Seconds $Seconds
@@ -22,10 +35,15 @@ function Test-Launch([string]$exe) {
     $null = $p.CloseMainWindow()
     if (-not $p.WaitForExit(10000)) { Stop-Process -Id $p.Id -Force }
   }
-  Remove-Item Env:\INVOICE_DESK_DATA_DIR
+  Remove-Item Env:\INVOICE_DESK_DATA_DIR -ErrorAction SilentlyContinue
   Get-Content $out, $err -ErrorAction SilentlyContinue
   if (-not $alive) { throw "app exited early (exit code $($p.ExitCode))" }
-  if (-not (Test-Path (Join-Path $data 'invoice_desk.sqlite'))) { throw 'database was not created' }
+  if ($DefaultDataDir) {
+    $db = Find-DefaultDb
+    if (-not $db) { throw "database was not created under $env:APPDATA" }
+    Write-Host "default data dir: $($db.DirectoryName)"
+    Remove-Item -Recurse -Force $db.DirectoryName
+  } elseif (-not (Test-Path (Join-Path $data 'invoice_desk.sqlite'))) { throw 'database was not created' }
   if (Select-String -Path $out, $err -Pattern 'Unhandled Exception|\[ERROR:flutter|Exception caught by' -Quiet -ErrorAction SilentlyContinue) {
     throw 'Dart exception during smoke run'
   }
@@ -61,6 +79,12 @@ if ($Installer) {
 if ($Zip) {
   $dest = Join-Path ([IO.Path]::GetTempPath()) ("invoice-desk-zip-" + [guid]::NewGuid())
   Expand-Archive -Path $Zip -DestinationPath $dest
-  $null = Test-Launch (Join-Path $dest 'InvoiceDesk\invoice_desk.exe')
-  Write-Host "smoke OK: $(Split-Path $Zip -Leaf)"
+  $exe = Join-Path $dest 'InvoiceDesk\invoice_desk.exe'
+  $null = Test-Launch $exe
+  if ($env:CI -eq 'true') {
+    $null = Test-Launch $exe -DefaultDataDir
+    Write-Host "smoke OK: $(Split-Path $Zip -Leaf) (temp data dir, default data dir)"
+  } else {
+    Write-Host "smoke OK: $(Split-Path $Zip -Leaf) (temp data dir; default data dir skipped off CI)"
+  }
 }

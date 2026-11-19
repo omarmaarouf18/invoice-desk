@@ -7,7 +7,8 @@
 # fedora:latest, archlinux:latest) or, for the AppImage/tarball, as a normal
 # user on the runner. Passes when the app:
 #   - is still running after SMOKE_SECONDS (default 15) under xvfb-run,
-#   - created its database in a throwaway INVOICE_DESK_DATA_DIR,
+#   - created its database in a throwaway INVOICE_DESK_DATA_DIR, and, in a
+#     second launch without it, in the default data dir of a throwaway HOME,
 #   - logged no Dart/Flutter exception,
 #   - stops on SIGTERM;
 # and the package removal leaves that data folder alone.
@@ -58,19 +59,35 @@ esac
 [[ "${exe}" != /usr/bin/* ]] || test -f /usr/share/applications/invoice-desk.desktop
 
 # ── launch ─────────────────────────────────────────────────────────────
-data="$(mktemp -d)"; log="$(mktemp)"
-set +e
-INVOICE_DESK_DATA_DIR="${data}" xvfb-run -a timeout -s TERM -k 5 "${secs}" "${exe}" >"${log}" 2>&1
-rc=$?
-set -e
-cat "${log}"
-# 124 = still running when the timeout sent SIGTERM, and it then stopped.
-[[ ${rc} -eq 124 ]] || { echo "::error::app exited early or ignored SIGTERM (exit ${rc})"; exit 1; }
-[[ -f "${data}/invoice_desk.sqlite" ]] || { echo "::error::database was not created"; exit 1; }
-if grep -E "Unhandled Exception|\[ERROR:flutter|Exception caught by" "${log}"; then
-  echo "::error::Dart exception during smoke run"; exit 1
-fi
-if pgrep -f "${exe}" >/dev/null 2>&1; then echo "::error::app still running after SIGTERM"; exit 1; fi
+# launch <data dir to expect the database in> [env assignments…]
+launch() {
+  local expect="$1"; shift
+  local log; log="$(mktemp)"
+  set +e
+  env "$@" xvfb-run -a timeout -s TERM -k 5 "${secs}" "${exe}" >"${log}" 2>&1
+  local rc=$?
+  set -e
+  cat "${log}"
+  # 124 = still running when the timeout sent SIGTERM, and it then stopped.
+  [[ ${rc} -eq 124 ]] || { echo "::error::app exited early or ignored SIGTERM (exit ${rc})"; exit 1; }
+  find "${expect}" -name invoice_desk.sqlite -print -quit | grep -q . \
+    || { echo "::error::database was not created under ${expect}"; exit 1; }
+  if grep -E "Unhandled Exception|\[ERROR:flutter|Exception caught by" "${log}"; then
+    echo "::error::Dart exception during smoke run"; exit 1
+  fi
+  if pgrep -f "${exe}" >/dev/null 2>&1; then echo "::error::app still running after SIGTERM"; exit 1; fi
+}
+
+# 1. Throwaway INVOICE_DESK_DATA_DIR.
+data="$(mktemp -d)"
+launch "${data}" INVOICE_DESK_DATA_DIR="${data}"
+
+# 2. No override: the default data-dir lookup (path_provider, no `jni` in the
+#    bundle) on a throwaway HOME, so a real user's data is never opened.
+home="$(mktemp -d)"
+launch "${home}" -u INVOICE_DESK_DATA_DIR HOME="${home}" XDG_DATA_HOME="${home}/.local/share" \
+  XDG_CONFIG_HOME="${home}/.config" XDG_CACHE_HOME="${home}/.cache"
+echo "default data dir: $(dirname "$(find "${home}" -name invoice_desk.sqlite -print -quit)")"
 
 # ── remove ─────────────────────────────────────────────────────────────
 if [[ ${#remove[@]} -gt 0 ]]; then
@@ -78,4 +95,4 @@ if [[ ${#remove[@]} -gt 0 ]]; then
   [[ ! -e /opt/invoice-desk/invoice_desk && ! -e /usr/bin/invoice-desk ]] || { echo "::error::files left after removal"; exit 1; }
 fi
 [[ -f "${data}/invoice_desk.sqlite" ]] || { echo "::error::removal touched the data folder"; exit 1; }
-echo "smoke OK: $(basename "${pkg}") (${secs} s, temp data dir)"
+echo "smoke OK: $(basename "${pkg}") (2 × ${secs} s: temp data dir, default data dir on a temp HOME)"
