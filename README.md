@@ -51,7 +51,9 @@ Every release is on the [releases page](https://github.com/omarmaarouf18/invoice
 - **Portable:** [`InvoiceDesk-Windows-x64.zip`](https://github.com/omarmaarouf18/invoice-desk/releases/latest/download/InvoiceDesk-Windows-x64.zip). Unzip and run `InvoiceDesk\invoice_desk.exe`.
 - **winget** (once listed): `winget install OmarMaarouf.InvoiceDesk`. **Microsoft Store:** once the listing is live.
 
-**macOS:** [`InvoiceDesk-macOS.dmg`](https://github.com/omarmaarouf18/invoice-desk/releases/latest/download/InvoiceDesk-macOS.dmg). Open it and drag Invoice Desk to Applications.
+**macOS:** [`InvoiceDesk-macOS.dmg`](https://github.com/omarmaarouf18/invoice-desk/releases/latest/download/InvoiceDesk-macOS.dmg). Open it and drag Invoice Desk to Applications. The app isn't signed by Apple yet, so the first launch is blocked by Gatekeeper ("Apple could not verify…"). This is needed once:
+- **macOS 15 Sequoia and later:** open the app and click **Done**. Then go to **System Settings → Privacy & Security**, scroll to **Security**, click **Open Anyway** next to Invoice Desk, and confirm with your password.
+- **macOS 14 and earlier:** Control-click the app in Applications, choose **Open**, then **Open** again.
 
 **Debian / Ubuntu:** [`invoice-desk_amd64.deb`](https://github.com/omarmaarouf18/invoice-desk/releases/latest/download/invoice-desk_amd64.deb)
 
