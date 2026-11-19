@@ -2,7 +2,14 @@ name: Package
 
 # Builds and smoke-tests every package for every target (docs/RELEASING.md).
 # Called by ci.yml on pushes to main (unsigned, artifacts only) and by
-# release.yml (signed when the secrets exist). Never publishes anything.
+# release.yml (signed when the secrets exist). Run by hand on dev (or a
+# feature branch) before main is fast-forwarded, so a packaging bug never
+# costs a red main run (decision D1, docs/briefs/2026-11-19-release-green.md).
+# Never publishes anything.
+#
+# Both triggers declare the same inputs, and every job reads them as
+# `inputs.*`, which resolves under workflow_call and workflow_dispatch alike
+# (never `github.event.inputs`, which is empty under workflow_call).
 #
 # Artifacts:
 #   pkg-linux, pkg-arch, pkg-windows, pkg-macos   the release assets
@@ -16,8 +23,19 @@ on:
         type: boolean
         default: false
       retention-days:
+        description: Days to keep the artifacts
         type: number
         default: 14
+  workflow_dispatch:
+    inputs:
+      sign:
+        description: Sign (SignPath, Apple) when the secrets exist
+        type: boolean
+        default: false
+      retention-days:
+        description: Days to keep the artifacts
+        type: number
+        default: 7
 
 permissions:
   contents: read
