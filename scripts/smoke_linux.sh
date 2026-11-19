@@ -23,7 +23,7 @@ sudo=(); [[ "$(id -u)" -eq 0 ]] || sudo=(sudo)
 # pm <seconds> <command…> runs one apt/dnf/pacman call with no stdin, its
 # output appended to a log. On failure or timeout the log is printed, so a
 # stalled mirror or a prompt shows up in the job log instead of a silent
-# hang. Worst case (apt: 60 + 120 + 120 + 60 s, plus 10 s kill grace each)
+# hang. Worst case (apt: 90 + 120 + 120 + 60 s, plus 10 s kill grace each)
 # stays well under the install job's timeout-minutes: 10.
 pm_log="$(mktemp)"
 pm() {
@@ -48,7 +48,20 @@ apt_opts=(-o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Dpkg::Use-Pty=0)
 #    app needs must come from the package's own dependencies ────────────
 if command -v apt-get >/dev/null 2>&1; then
   export DEBIAN_FRONTEND=noninteractive
-  pm 60 env DEBIAN_FRONTEND=noninteractive apt-get "${apt_opts[@]}" update
+  # SMOKE_APT_MIRROR (set by package.yml for the ubuntu container only):
+  # replaces archive.ubuntu.com for jammy, jammy-updates and jammy-backports.
+  # security.ubuntu.com stays. archive.ubuntu.com stalled the CI job
+  # (docs/worklog/REL-02.md). Unset, the image's default mirror is used.
+  if [[ -n "${SMOKE_APT_MIRROR:-}" ]]; then
+    grep -q '^deb http://archive.ubuntu.com/ubuntu' /etc/apt/sources.list 2>/dev/null \
+      || { echo "::error::SMOKE_APT_MIRROR is set but /etc/apt/sources.list has no archive.ubuntu.com entry"; exit 1; }
+    "${sudo[@]}" sed -i "s|^deb http://archive.ubuntu.com/ubuntu/\?|deb ${SMOKE_APT_MIRROR%/}/|" /etc/apt/sources.list
+    echo "==> apt mirror ${SMOKE_APT_MIRROR} (security.ubuntu.com kept):"
+    grep '^deb ' /etc/apt/sources.list
+  fi
+  # --error-on=any: a failed fetch fails the update instead of leaving an
+  # empty or stale index ("Package 'xauth' has no installation candidate").
+  pm 90 env DEBIAN_FRONTEND=noninteractive apt-get "${apt_opts[@]}" update --error-on=any
   pm 120 env DEBIAN_FRONTEND=noninteractive apt-get "${apt_opts[@]}" install -y xvfb xauth libgl1-mesa-dri procps
 elif command -v dnf >/dev/null 2>&1; then
   pm 180 dnf install -y xorg-x11-server-Xvfb xorg-x11-xauth mesa-dri-drivers procps-ng

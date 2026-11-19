@@ -147,7 +147,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { image: "ubuntu:22.04", package: invoice-desk_amd64.deb }
+          # archive.ubuntu.com stalled this job (docs/worklog/REL-02.md); the
+          # runners are on Azure, so the ubuntu container uses Azure's mirror.
+          - { image: "ubuntu:22.04", package: invoice-desk_amd64.deb, apt_mirror: "http://azure.archive.ubuntu.com/ubuntu" }
           - { image: "debian:12", package: invoice-desk_amd64.deb }
           - { image: "fedora:latest", package: invoice-desk.x86_64.rpm }
           - { image: "archlinux:latest", package: invoice-desk-x86_64.pkg.tar.zst }
@@ -159,6 +161,8 @@ jobs:
           merge-multiple: true
           path: dist
       - name: Install, launch headless, remove
+        env:
+          SMOKE_APT_MIRROR: ${{ matrix.apt_mirror || '' }}
         run: bash scripts/smoke_linux.sh "dist/${{ matrix.package }}"
 
   windows:
