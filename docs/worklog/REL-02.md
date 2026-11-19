@@ -11,6 +11,8 @@
 | 44478892261 | `a97328c` | ❌ AppImage smoke | ✅ | ✅ | the runner's own `apt-get update` (in `smoke_linux.sh`) timed out at 90 s: `azure.archive.ubuntu.com` stalled, every InRelease `Ign`, and `packages.microsoft.com` was a `Hit`. The tarball smoke's update a minute earlier took 30 s. Arch and the install matrix were skipped |
 | 44484076707 | `173f74e` | ✅ (+ arch, install debian:12, fedora, arch) | ✅ | ✅ | `install ubuntu:22.04`: `apt-get update` took 2 s (Azure, 49.5 MB), then `install -y xvfb xauth libgl1-mesa-dri procps` stalled mid-download (`libgl1-amber-dri`, 4.2 MB) and hit its 110 s limit. On the runner, `apt_retry.sh` worked under sudo, but its install took 6.5 min at 44 kB/s, close to the 600 s limit. Branch CI run 44484076759 green |
 | 44490378245 (`main` CI) | `c312104` | ✅ except `install ubuntu:22.04` | ✅ | ✅ | first `main` run with packages. `install ubuntu:22.04` ran out of its 3 download tries while each try was resuming (`81.0 → 74.0 → 36.2 MB` left of 93.7 MB). Every other job green |
+| 44495539215 (`main` CI) | `e9f3a72` | ✅ | ✅ | ✅ | **fully green, including the package matrix** (Phase 3) |
+| 44495540370 (`release.yml` dry run on `main`) | `e9f3a72` | ✅ | ✅ | ✅ | **fully green** (Phase 3). `publish` produced all 8 stable-named assets, `SHA256SUMS.txt`, `latest.json` and attestations, and created no release. `install ubuntu:22.04` passed after one download retry |
 
 ## Findings
 
@@ -121,6 +123,12 @@
     - **`RELEASING.md`:** the install row of the §1 package table now marks `ubuntu:22.04` as non-blocking. A new §1 paragraph says how to check a red one by hand before tagging: a package-manager timeout or fetch error means re-run the job; an app failure is a release blocker. §4 step 6 points to it.
   - **Checked locally:** the full `.deb` smoke in `ubuntu:22.04` via Azure, with the download tries at `(limit 90 s)`: `smoke OK: invoice-desk_amd64.deb (…)`, 2 min 53 s. actionlint and shellcheck are clean.
   - **Not checked:** `continue-on-error`, and the warning step's `if: failure() && matrix.image == 'ubuntu:22.04'`. Both only run on GitHub.
+
+- 2026-11-19 — **Phase 3 done** (reported by the owner).
+  - **Green runs:** `main` CI run 44495539215 and the release dry run 44495540370 on `main` (see the Runs table).
+  - **Old drafts:** the 4 draft releases v0.1.0–v0.4.0 that the old workflow made were deleted by the owner.
+  - **Old tags:** `v0.2.0`, `v0.3.0` and `v0.4.0` were pushed with `release.yml` disabled. Re-enabling it right after the push still started three Release runs (44498581999, 44498582189, 44498584153). They were cancelled, and no drafts were created.
+  - **RELEASING §3 step 4 now:** wait before re-enabling, then watch for about 60 s after enabling. While the workflow is disabled `gh run list` shows nothing, so the watch has to come after enabling, not before. If a run appears, cancel it and delete only draft releases, keeping the tags. Fixed in REL-03.
 
 ## Open questions
 
