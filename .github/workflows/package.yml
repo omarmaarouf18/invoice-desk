@@ -142,7 +142,13 @@ jobs:
     needs: [linux, arch]
     runs-on: ubuntu-24.04
     container: ${{ matrix.image }}
-    timeout-minutes: 20
+    # Worst case of smoke_linux.sh with apt is 1560 s (its header).
+    timeout-minutes: 30
+    # ubuntu:22.04 depends on Ubuntu's mirrors, which stall for long
+    # stretches (docs/worklog/REL-02.md). Its failure must not block
+    # release.yml; debian:12 keeps covering the .deb, and a red ubuntu:22.04
+    # install is checked by hand before tagging (docs/RELEASING.md).
+    continue-on-error: ${{ matrix.image == 'ubuntu:22.04' }}
     strategy:
       fail-fast: false
       matrix:
@@ -164,6 +170,13 @@ jobs:
         env:
           SMOKE_APT_MIRROR: ${{ matrix.apt_mirror || '' }}
         run: bash scripts/smoke_linux.sh "dist/${{ matrix.package }}"
+      - name: Non-blocking failure
+        if: failure() && matrix.image == 'ubuntu:22.04'
+        run: >-
+          echo "::warning title=install ubuntu%3A22.04 failed (non-blocking)::Most likely a
+          stalled Ubuntu mirror (${{ matrix.apt_mirror }}): see the package manager log
+          in the step above. debian:12 covers the .deb; check this one by hand before
+          tagging (docs/RELEASING.md)."
 
   windows:
     name: windows packages

@@ -30,9 +30,9 @@ sudo=(); [[ "$(id -u)" -eq 0 ]] || sudo=(sudo)
 # cache: retrying it is no use, because a try killed while dpkg runs leaves
 # "dpkg was interrupted" and every later try fails (docs/worklog/REL-02.md).
 # Worst case, kill grace (10 s) included:
-#   apt: update 3 × 55 + (download 3 × 110 + install 70) × 2 + remove 55 = 1020 s
+#   apt: update 3 × 55 + (download 6 × 100 + install 70) × 2 + remove 55 = 1560 s
 #   dnf/pacman: deps 190 + package 120 + remove 55 = 365 s
-# Both stay inside the install job's timeout-minutes: 20 with ~200 s for
+# Both stay inside the install job's timeout-minutes: 30 with ~240 s for
 # checkout, the artifact download and the two 15 s launches.
 pm_log="$(mktemp)"
 pm_run() {
@@ -69,7 +69,7 @@ pm_retry() {
 }
 apt_opts=(-o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Dpkg::Use-Pty=0)
 apt_install() {
-  pm_retry 3 100 env DEBIAN_FRONTEND=noninteractive apt-get "${apt_opts[@]}" install -y --download-only "$@"
+  pm_retry 6 90 env DEBIAN_FRONTEND=noninteractive apt-get "${apt_opts[@]}" install -y --download-only "$@"
   pm 60 env DEBIAN_FRONTEND=noninteractive apt-get "${apt_opts[@]}" install -y "$@"
 }
 

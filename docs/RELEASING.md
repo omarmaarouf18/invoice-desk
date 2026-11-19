@@ -24,11 +24,16 @@ Agents never push, tag or publish; the commands in this file are the owner's.
    |---|---|---|---|
    | linux | `ubuntu-22.04` (glibc 2.35) | one `flutter build linux`, then tarball, AppImage, RPM, deb | glibc ceiling 2.35, `rpmlint`, `lintian`, tarball + AppImage smoke runs |
    | arch | `archlinux:latest` container | `makepkg` from the tarball, as a non-root user | `namcap` |
-   | install (×4) | `ubuntu:22.04`, `debian:12`, `fedora:latest`, `archlinux:latest` containers | — | install the package, launch headless 15 s, remove (`scripts/smoke_linux.sh`) |
+   | install (×4) | `ubuntu:22.04`, `debian:12`, `fedora:latest`, `archlinux:latest` containers | — | install the package, launch headless 15 s, remove (`scripts/smoke_linux.sh`). `ubuntu:22.04` is **non-blocking**: see below |
    | windows | `windows-2022` | Inno Setup `.exe`, portable `.zip`, `.msix`; optional SignPath signing | bundled-DLL check; silent install → launch → uninstall, zip launch (`scripts/smoke_windows.ps1`) |
    | macos | `macos-15` | universal `.app` → `.dmg`; optional Developer ID signing + notarization | `codesign`/`spctl` when signed; mount → launch → quit (`scripts/smoke_macos.sh`) |
 
 3. **publish** downloads the release assets, writes `SHA256SUMS.txt` and `latest.json`, adds build-provenance attestations for every asset, optionally GPG-signs the checksums, and creates the **published** release with the CHANGELOG section as its notes. Then, optionally, it calls the portfolio deploy hook and opens a winget PR.
+
+**`install ubuntu:22.04` is non-blocking.** It depends on Ubuntu's package mirrors, which stall for long stretches (`docs/worklog/REL-02.md`). A failure there turns that job red with a "non-blocking" warning, but doesn't fail the run, so it can't block `release.yml`. `debian:12` keeps covering the `.deb`. A red `ubuntu:22.04` install must be **checked by hand before tagging**:
+
+- Read its step log. If the package-manager log shows a timeout or fetch error, it's a mirror stall: re-run that job.
+- If the app itself failed (it exited early, created no database, or logged a Dart exception), stop and treat it as a release blocker.
 
 Run by hand (**Actions → Release → Run workflow**) with `dry_run` ticked (the default), it does everything except creating the release and its follow-ups; the would-be release is kept as the `release-preview` artifact. `dry_run` unticked is only accepted when the workflow is run on a tag, to re-run a release whose run failed.
 
@@ -199,7 +204,7 @@ The release publishes itself.
 3. **Move `[Unreleased]`** in `CHANGELOG.md` under `## [X.Y.Z] - YYYY-MM-DD`. This section becomes the release notes.
 4. **Packaging metadata:** add a `%changelog` entry and bump the `pkgversion` default in `packaging/rpm/invoice-desk.spec`; set `pkgver` in `packaging/arch/PKGBUILD`.
 5. **If the schema changed:** rehearse the upgrade (§6) and regenerate `docs/DATA_MODEL.md` (`dart run tool/gen_data_model.dart`).
-6. **Commit** `chore(release): X.Y.Z` and land it on `dev`. Run `package.yml` on `dev` ([Package run before `main` moves](#package-run-before-main-moves)) and wait until it is fully green. Fast-forward `main` (`git push origin dev:main`, never a PR merge), wait for the `main` CI run, then tag that commit:
+6. **Commit** `chore(release): X.Y.Z` and land it on `dev`. Run `package.yml` on `dev` ([Package run before `main` moves](#package-run-before-main-moves)) and wait until it is fully green (a red `install ubuntu:22.04` is non-blocking but must be checked by hand: see §1, "`install ubuntu:22.04` is non-blocking"). Fast-forward `main` (`git push origin dev:main`, never a PR merge), wait for the `main` CI run, then tag that commit:
 
 ```bash
 git tag -a vX.Y.Z -m "Invoice Desk X.Y.Z" && git push origin vX.Y.Z
