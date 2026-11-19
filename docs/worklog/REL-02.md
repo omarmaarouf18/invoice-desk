@@ -82,14 +82,28 @@
     - Runner-like: `ubuntu:22.04` with the display tools, gtk3 and EGL/GLES pre-installed, then `apt-get` and `dpkg` moved away so any package-manager call would fail. The tarball smoke printed "xvfb-run, xauth, pgrep and a Mesa DRI driver are present: no package-manager setup" and `smoke OK: invoice-desk-linux-x64.tar.gz (…)`.
     - Retry: `ubuntu:22.04` with one unreachable source. Three `::warning::attempt n/3 failed (exit 100)` lines, the log with the `E: Failed to fetch …` lines, then `::error::failed (exit 100): …`. Exit 1.
     - Containers: the `.deb` in `ubuntu:22.04` via Azure (2 min 54 s), the RPM in `fedora:latest` and the Arch package in `archlinux:latest`. All three printed "display setup needed (missing xvfb-run)" and then `smoke OK`.
-  - **Still exposed:** the job's own "Build and packaging dependencies" step runs `sudo apt-get update` on the runner mirror with no limit and no retry. A stall there would block the whole Linux job. It's outside this fix and is open question 3.
+  - **Still exposed at the time:** the job's own "Build and packaging dependencies" step ran `sudo apt-get update` with no limit and no retry. Open question 3, fixed in the next finding.
+
+- 2026-11-19 — **The runner's dependency steps now have time limits and retries** (owner, answering open question 3).
+  - **Helper:** new `scripts/apt_retry.sh <package>…`:
+    - `apt-get update` up to 3 tries of 90 s each, with `::warning::apt-get update try n/3 …` after each failed try;
+    - then `apt-get install -y` with a single 600 s limit;
+    - both with `-o Acquire::Retries=3 -o Acquire::http::Timeout=30`.
+
+    The limits can be changed with `APT_TRIES`, `APT_UPDATE_LIMIT` and `APT_INSTALL_LIMIT`. Output goes straight to the job log, and it uses sudo unless run as root. Both `package.yml` "Build and packaging dependencies" and `ci.yml` "Linux build dependencies" now call it. No bare `apt-get update` is left in the workflows.
+  - **No `--error-on=any` here,** unlike the container smoke. The runner carries third-party repos, and the owner asked only for limits and retries. This means a refused fetch still exits 0 on the runner. A stall is caught by the time limit, and the follow-up `install` fails if the index is unusable.
+  - **Checked locally (`ubuntu:22.04`, as root):**
+    - stall, with a blackhole source (`10.255.255.1`) and `APT_UPDATE_LIMIT=5`: three `::warning::apt-get update try n/3 timed out after 5 s`, then `::error::apt-get update failed 3 times`. Exit 1, 15 s in total;
+    - success via Azure: `xauth` and `procps` installed, exit 0;
+    - install limit, with `APT_INSTALL_LIMIT=2` and `clang`: `::error::apt-get install timed out after 2 s`, exit 1.
+  - **Not checked:** the `sudo` path (non-root), which the runner uses. It's the same `sudo=(…)` pattern as `smoke_linux.sh`, which already runs on the runner.
 
 ## Open questions
 
 1. How should desktop bundles deal with `dartjni`? — Answered 2026-11-19: option (b), remove it after `flutter build` and guard on all three platforms (brief Decisions table).
 2. Should the `ubuntu:22.04` container use another Ubuntu mirror? — Answered 2026-11-19: yes, `azure.archive.ubuntu.com` in CI only, with `security.ubuntu.com` kept (brief Decisions table).
 
-3. Should the Linux job's own "Build and packaging dependencies" step get the same treatment (a time limit and retries on `apt-get update`)? The runner mirror stalled in the smoke step today, and the same mirror serves that step. — Recommended: yes, a `timeout` + 3-try loop around its `apt-get update` in `package.yml` (and in `ci.yml`'s Linux build, which has the same step) — status: open.
+3. Should the Linux job's own "Build and packaging dependencies" step get the same treatment? — Answered 2026-11-19: yes, in `package.yml` and `ci.yml`, through one helper (`scripts/apt_retry.sh`).
 
 ## Leftovers
 - Upstream `jni` bug: `/DELAYLOAD:jvm.dll` targets the undefined `${TARGET_NAME}` instead of `jni`. Owner decides later whether to file it (ruling 2026-11-19).
