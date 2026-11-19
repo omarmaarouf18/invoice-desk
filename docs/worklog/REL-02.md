@@ -7,6 +7,7 @@
 | Run | Commit | Linux | Windows | macOS | Notes |
 |---|---|---|---|---|---|
 | 44468227612 | `5deb348` | ❌ rpmlint | ❌ DLL check | ✅ | arch + install matrix skipped (they need the Linux job) |
+| 44471887698 | `8e8295c` | ✅ (+ arch, install debian:12, fedora, arch) | ✅ | ✅ | `install ubuntu:22.04` hung 20 min with no output and was cancelled. Owner re-running that job |
 
 ## Findings
 
@@ -39,9 +40,22 @@
     - in `fedora:latest`: `smoke OK: invoice-desk-linux-x64.tar.gz (2 × 15 s: temp data dir, default data dir on a temp HOME)` (gtk3 pre-installed, standing in for the runner), and `smoke OK: invoice-desk.x86_64.rpm (…)`. The default data dir was `<temp HOME>/.local/share/me.omarmaarouf.invoice_desk`.
   - **Not checked locally:** the Windows and macOS changes (no `pwsh`, no macOS here), the `.deb` (no `dpkg-shlibdeps`) and the AppImage smoke.
 
+- 2026-11-19 — **`install ubuntu:22.04` hung silently** (run 44471887698).
+  - **What happened:** no output at all from `smoke_linux.sh`, not even the `dpkg -s` line, until the 20-minute job limit cancelled it. All apt output went to `/dev/null` with `-qq`, so the stall couldn't be seen.
+  - **Fix:** every apt/dnf/pacman call now goes through `pm <limit> …`. It prints the command and its limit, runs it under `timeout` with no stdin, and appends the output to a log. On failure or timeout it prints the log in a `::group::` and names the call. Apt also gets `Acquire::Retries=3` and `Acquire::http::Timeout=30`. The install job is now `timeout-minutes: 10`, and the per-call limits (worst case on apt: 60 + 120 + 120 + 60 s, plus a 10 s kill grace each) stay below it, so a stalled call always prints its log before the job is killed.
+  - **Reproduced locally, probable cause:** in `ubuntu:22.04` here, `apt-get update` stalled too.
+    - The new failure path printed: `::error::timed out after 60 s: env DEBIAN_FRONTEND=noninteractive apt-get … update`. The log shows `security.ubuntu.com` complete, then `Ign:7 http://archive.ubuntu.com/ubuntu jammy-updates InRelease`, then nothing.
+    - A bare `apt-get update` with a 300 s limit got as far as `Get:9 http://archive.ubuntu.com/ubuntu jammy/universe amd64 Packages [17.5 MB]` and was then killed (`rc=124`).
+    - `curl` with a 20 s limit got 0 bytes from `archive.ubuntu.com` (91.189.91.83), and 3,721,312 bytes in 3.5 s from `security.ubuntu.com` (91.189.90.11).
+
+    So Canonical's main archive was stalling from here at the same time as the CI hang. That's consistent with the CI symptom, but it's my network's view, not proof of what the runner saw. The next CI hang will now print its own log.
+  - **Success path checked locally:** the CI RPM from this run, in `fedora:latest`: `dnf install` … `(limit 180 s)`, the package install `(limit 120 s)`, `dnf remove` `(limit 60 s)`, then `smoke OK: invoice-desk.x86_64.rpm (2 × 15 s: temp data dir, default data dir on a temp HOME)`.
+  - **This run's Linux assets have no `dartjni`:** checked in the tarball, the RPM and the `.deb` (the `.deb` holds 9 libraries in `/opt/invoice-desk/lib`, none of them dartjni).
+
 ## Open questions
 
 1. How should desktop bundles deal with `dartjni`? — Answered 2026-11-19: option (b), remove it after `flutter build` and guard on all three platforms (brief Decisions table).
+2. If `archive.ubuntu.com` keeps stalling the `ubuntu:22.04` install job, should the container use another Ubuntu mirror? — Recommended: wait for the re-run first. Only if it hangs again with the new log showing `archive.ubuntu.com`, point the container at a mirror the owner picks. The mirror choice is the owner's — status: open.
 
 ## Leftovers
 - Upstream `jni` bug: `/DELAYLOAD:jvm.dll` targets the undefined `${TARGET_NAME}` instead of `jni`. Owner decides later whether to file it (ruling 2026-11-19).
