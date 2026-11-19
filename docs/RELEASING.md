@@ -183,8 +183,28 @@ git tag -a v0.2.0 98a7cb9 -m "Invoice Desk 0.2.0" && git tag -a v0.3.0 df865df -
 git push origin v0.2.0 v0.3.0 v0.4.0
 ```
 
+Don't re-enable the workflow straight away. On 2026-11-19, enabling it right after the push still started one Release run per old tag (runs 44498581999, 44498582189, 44498584153; cancelled, no drafts made). While the workflow is disabled, `gh run list` shows nothing, so there's nothing to watch yet. Wait a few minutes, then enable it:
+
 ```bash
-gh workflow enable release.yml
+sleep 300 && gh workflow enable release.yml
+```
+
+Then watch for about 60 s for a run that a tag push started:
+
+```bash
+gh run list --workflow release.yml --event push --limit 10
+```
+
+If one appears, cancel it:
+
+```bash
+for s in requested waiting pending queued in_progress; do gh run list --workflow release.yml --event push --status "$s" --json databaseId -q '.[].databaseId'; done | xargs -r -n1 gh run cancel
+```
+
+Then delete any draft release it made. Only drafts are deleted, and the tags stay:
+
+```bash
+gh release list --json tagName,isDraft -q '.[] | select(.isDraft) | .tagName' | xargs -r -n1 gh release delete --yes
 ```
 
 **5. Add certificates and secrets when ready** (§5): Apple, then optionally SignPath, GPG, winget and the portfolio hook. Re-run the dry run (step 3) after each.
